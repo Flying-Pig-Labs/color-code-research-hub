@@ -72,7 +72,9 @@ export default {
 					light: 'hsl(var(--black-team-light))',
 					dark: 'hsl(var(--black-team-dark))',
 					'bg-dark': 'hsl(var(--black-team-bg-dark))',
-					'text-light': 'hsl(var(--black-team-text-light))'
+					'bg-darker': 'hsl(var(--black-team-bg-darker))',
+					'text-light': 'hsl(var(--black-team-text-light))',
+					'text-muted': 'hsl(var(--black-team-text-muted))'
 				},
 				'white-team': {
 					DEFAULT: 'hsl(var(--white-team))',

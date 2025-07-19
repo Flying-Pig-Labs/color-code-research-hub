@@ -47,8 +47,10 @@ All colors MUST be HSL.
     --black-team: 220 15% 15%;
     --black-team-light: 220 10% 95%;
     --black-team-dark: 220 20% 8%;
-    --black-team-bg-dark: 220 20% 12%;
-    --black-team-text-light: 220 10% 85%;
+    --black-team-bg-dark: 220 30% 4%;
+    --black-team-bg-darker: 220 30% 2%;
+    --black-team-text-light: 220 10% 90%;
+    --black-team-text-muted: 220 10% 70%;
     
     --white-team: 60 10% 98%;
     --white-team-accent: 45 15% 85%;

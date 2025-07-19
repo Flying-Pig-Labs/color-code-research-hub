@@ -8,7 +8,7 @@ import { Bug, Code, Wrench, Database, ArrowRight, Shield, Cloud, Scan, Cpu, File
 
 const BlackTeam = () => {
   return (
-    <div className="min-h-screen bg-black-team-bg-dark text-black-team-text-light flex flex-col">
+    <div className="min-h-screen bg-black-team-bg-darker text-black-team-text-light flex flex-col">
       <Header />
       
       {/* Vendor Analysis */}

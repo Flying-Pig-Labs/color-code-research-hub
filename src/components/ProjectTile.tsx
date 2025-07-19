@@ -13,19 +13,19 @@ interface ProjectTileProps {
 const ProjectTile = ({ name, icon: Icon, theme, status, priority }: ProjectTileProps) => {
   const themeClasses = {
     red: "border-red-team/30 hover:border-red-team/50",
-    black: "bg-black-team-bg-dark border-gray-600 hover:border-gray-500",
+    black: "bg-black-team-bg-dark border-gray-800 hover:border-gray-700 hover:bg-black-team-bg-darker",
     white: "border-white-team-accent/40 hover:border-white-team-accent/70"
   };
 
   const iconClasses = {
     red: "bg-red-team/10 text-red-team",
-    black: "bg-gray-800 text-gray-300",
+    black: "bg-gray-900 text-gray-100 border border-gray-800",
     white: "bg-white-team-accent/20 text-white-team-dark"
   };
 
   const textClasses = {
     red: "text-foreground",
-    black: "text-gray-200",
+    black: "text-gray-100",
     white: "text-foreground"
   };
 
@@ -75,7 +75,7 @@ const ProjectTile = ({ name, icon: Icon, theme, status, priority }: ProjectTileP
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded-full ${statusColors[status]}`}></div>
-            <span className={`text-sm capitalize ${theme === 'black' ? 'text-gray-400' : 'text-muted-foreground'}`}>
+            <span className={`text-sm capitalize ${theme === 'black' ? 'text-gray-300' : 'text-muted-foreground'}`}>
               {status.replace('-', ' ')}
             </span>
           </div>
