@@ -54,8 +54,37 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   };
 
   const handleLaunchSwarm = () => {
-    // Handle form submission
-    console.log("Launching Research Swarm...");
+    // Create research task object
+    const researchTask = {
+      id: Date.now().toString(),
+      vendorName,
+      researchWhy,
+      focusArea,
+      deliverables,
+      teamSize,
+      roles,
+      deadline: deadline?.toISOString(),
+      maxHours,
+      allowTesting,
+      successCriteria,
+      referenceMaterials,
+      createdAt: new Date().toISOString(),
+      status: 'launched'
+    };
+
+    // Get existing tasks from localStorage
+    const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+    
+    // Add new task
+    existingTasks.push(researchTask);
+    
+    // Save back to localStorage
+    localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
+    
+    console.log("Research Swarm Launched:", researchTask);
+    alert(`Research Swarm launched for ${vendorName || 'Unknown Vendor'}!`);
+    
+    handleReset();
     setOpen(false);
   };
 
