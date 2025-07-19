@@ -11,7 +11,7 @@ const SectionWrapper = ({ children, className, theme = "default" }: SectionWrapp
   const themeClasses = {
     default: "bg-background",
     red: "bg-red-team-light/30",
-    black: "bg-black",
+    black: "bg-black-team-light/50",
     white: "bg-white-team/80"
   };
 

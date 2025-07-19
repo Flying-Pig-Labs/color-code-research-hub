@@ -70,21 +70,12 @@ export default {
 				'black-team': {
 					DEFAULT: 'hsl(var(--black-team))',
 					light: 'hsl(var(--black-team-light))',
-					dark: 'hsl(var(--black-team-dark))',
-					'bg-dark': 'hsl(var(--black-team-bg-dark))',
-					'bg-darker': 'hsl(var(--black-team-bg-darker))',
-					'text-light': 'hsl(var(--black-team-text-light))',
-					'text-muted': 'hsl(var(--black-team-text-muted))'
+					dark: 'hsl(var(--black-team-dark))'
 				},
 				'white-team': {
 					DEFAULT: 'hsl(var(--white-team))',
 					accent: 'hsl(var(--white-team-accent))',
 					dark: 'hsl(var(--white-team-dark))'
-				},
-				'baby-blue': {
-					DEFAULT: 'hsl(var(--baby-blue))',
-					light: 'hsl(var(--baby-blue-light))',
-					dark: 'hsl(var(--baby-blue-dark))'
 				}
 			},
 			backgroundImage: {
