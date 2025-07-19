@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SectionWrapper from "@/components/SectionWrapper";
+import ResearchSwarmForm from "@/components/ResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield } from "lucide-react";
@@ -28,10 +29,12 @@ const RedTeam = () => {
             Strategic analysis of marketplace competitors and identification of disruption opportunities through advanced competitive intelligence methodologies.
           </p>
           
-          <Button variant="red-team" size="xl" className="gap-2">
-            <Shield className="h-5 w-5" />
-            View Research Findings
-          </Button>
+          <ResearchSwarmForm>
+            <Button variant="red-team" size="xl" className="gap-2">
+              <Target className="h-5 w-5" />
+              🔴 Launch Research Swarm
+            </Button>
+          </ResearchSwarmForm>
         </div>
       </SectionWrapper>
 
