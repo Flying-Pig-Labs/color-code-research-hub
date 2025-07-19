@@ -57,6 +57,7 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
     // Create research task object
     const researchTask = {
       id: Date.now().toString(),
+      team: 'red',
       vendorName,
       researchWhy,
       focusArea,
@@ -80,6 +81,9 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
     
     // Save back to localStorage
     localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
+    
+    // Dispatch custom event to update tables
+    window.dispatchEvent(new CustomEvent('taskAdded'));
     
     console.log("Research Swarm Launched:", researchTask);
     alert(`Research Swarm launched for ${vendorName || 'Unknown Vendor'}!`);

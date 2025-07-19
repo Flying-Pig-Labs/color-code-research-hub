@@ -80,6 +80,9 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
     // Save back to localStorage
     localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
     
+    // Dispatch custom event to update tables
+    window.dispatchEvent(new CustomEvent('taskAdded'));
+    
     console.log("White Team Research Swarm Launched:", researchTask);
     alert(`Research Swarm launched for whitespace opportunity discovery!`);
     

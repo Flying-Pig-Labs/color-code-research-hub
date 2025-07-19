@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 
 import SectionWrapper from "@/components/SectionWrapper";
+import ResearchRequestTable from "@/components/ResearchRequestTable";
 import ResearchSwarmForm from "@/components/ResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +37,11 @@ const RedTeam = () => {
             </Button>
           </ResearchSwarmForm>
         </div>
+      </SectionWrapper>
+
+      {/* Research Requests Table */}
+      <SectionWrapper>
+        <ResearchRequestTable teamType="red" />
       </SectionWrapper>
 
 

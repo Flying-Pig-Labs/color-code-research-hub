@@ -79,6 +79,9 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
     // Save back to localStorage
     localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
     
+    // Dispatch custom event to update tables
+    window.dispatchEvent(new CustomEvent('taskAdded'));
+    
     console.log("Black Team Research Swarm Launched:", researchTask);
     alert(`Research Swarm launched for ${vendorName || 'Unknown Tool'}!`);
     
