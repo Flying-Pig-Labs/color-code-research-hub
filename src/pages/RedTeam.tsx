@@ -1,9 +1,10 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SectionWrapper from "@/components/SectionWrapper";
+import CompanyTile from "@/components/CompanyTile";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield } from "lucide-react";
+import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield, Car, Building2, Truck } from "lucide-react";
 
 const RedTeam = () => {
   return (
@@ -159,6 +160,25 @@ const RedTeam = () => {
               </Button>
             </CardContent>
           </Card>
+        </div>
+      </SectionWrapper>
+
+      {/* Competitor Analysis */}
+      <SectionWrapper>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Key Marketplace Competitors</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Strategic analysis targets for competitive disruption research
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <CompanyTile name="Carvana" icon={Car} theme="red" />
+          <CompanyTile name="Vroom" icon={Car} theme="red" />
+          <CompanyTile name="Shift (ex-Lithia)" icon={Building2} theme="red" />
+          <CompanyTile name="AutoNation" icon={Building2} theme="red" />
+          <CompanyTile name="Driveway (Lithia)" icon={Car} theme="red" />
+          <CompanyTile name="Enterprise" icon={Truck} theme="red" />
         </div>
       </SectionWrapper>
       

@@ -1,9 +1,10 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SectionWrapper from "@/components/SectionWrapper";
+import OpportunityTile from "@/components/OpportunityTile";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lightbulb, Compass, Sparkles, Map, ArrowRight, Shield } from "lucide-react";
+import { Lightbulb, Compass, Sparkles, Map, ArrowRight, Shield, Bot, UserCheck, Truck, ScanLine, Route, CreditCard, Award, Battery, Leaf, Recycle } from "lucide-react";
 
 const WhiteTeam = () => {
   return (
@@ -159,6 +160,69 @@ const WhiteTeam = () => {
               </Button>
             </CardContent>
           </Card>
+        </div>
+      </SectionWrapper>
+
+      {/* Market Opportunities */}
+      <SectionWrapper>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Market Opportunities</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Identified white space opportunities for new product development
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <OpportunityTile 
+            title="AI-Powered Tools for Independent Dealers" 
+            icon={Bot}
+            description="Advanced AI solutions tailored for independent automotive dealers to enhance operations and customer experience."
+          />
+          <OpportunityTile 
+            title="Secure Peer-to-Peer Resale Platform" 
+            icon={UserCheck}
+            description="Secure platform enabling direct peer-to-peer vehicle transactions with built-in verification and protection."
+          />
+          <OpportunityTile 
+            title="Fleet and Lease Operator Remarketing Services" 
+            icon={Truck}
+            description="Specialized remarketing services targeting fleet operators and lease companies for end-of-term vehicle disposition."
+          />
+          <OpportunityTile 
+            title="AI-Based Vehicle Inspection and Valuation" 
+            icon={ScanLine}
+            description="Automated vehicle inspection and valuation systems using computer vision and machine learning."
+          />
+          <OpportunityTile 
+            title="Integrated Vehicle Logistics and Transport Services" 
+            icon={Route}
+            description="Comprehensive logistics platform integrating vehicle transport, tracking, and delivery coordination."
+          />
+          <OpportunityTile 
+            title="Used-Car Financing and Warranty Extensions" 
+            icon={CreditCard}
+            description="Innovative financing solutions and extended warranty programs specifically for the used vehicle market."
+          />
+          <OpportunityTile 
+            title="OEM-Certified Used Vehicle Sales Programs" 
+            icon={Award}
+            description="Manufacturer-certified pre-owned vehicle programs with quality assurance and brand backing."
+          />
+          <OpportunityTile 
+            title="EV Battery Health and Resale Certification" 
+            icon={Battery}
+            description="Specialized certification and assessment services for electric vehicle battery health and resale value."
+          />
+          <OpportunityTile 
+            title="Carbon Footprint and ESG Reporting Tools" 
+            icon={Leaf}
+            description="Environmental impact tracking and ESG reporting solutions for automotive industry stakeholders."
+          />
+          <OpportunityTile 
+            title="Circular Economy Programs for Vehicle Parts Reuse" 
+            icon={Recycle}
+            description="Sustainable programs facilitating the reuse and recycling of automotive parts and components."
+          />
         </div>
       </SectionWrapper>
       
