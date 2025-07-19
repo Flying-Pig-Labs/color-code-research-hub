@@ -7,7 +7,7 @@ import { Target, Bug, Lightbulb, Shield, Zap, Search } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-baby-blue flex flex-col">
       <Header />
       
       {/* Hero Section */}

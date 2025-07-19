@@ -7,7 +7,7 @@ import { Bug, Code, Wrench, Database, ArrowRight, Shield } from "lucide-react";
 
 const BlackTeam = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-black-team-bg-dark text-black-team-text-light flex flex-col">
       <Header />
       
       {/* Hero Section */}
@@ -19,12 +19,12 @@ const BlackTeam = () => {
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-black-team-text-light mb-6">
             Black Team Research
-            <span className="block text-black-team">Vendor Replacement Engineering</span>
+            <span className="block text-gray-300">Vendor Replacement Engineering</span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+          <p className="text-xl text-gray-400 mb-8 leading-relaxed">
             Specialized reverse engineering and vendor replacement strategies through technical analysis and systematic implementation pathways.
           </p>
           
@@ -39,13 +39,13 @@ const BlackTeam = () => {
       <SectionWrapper>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-6">
+            <h2 className="text-3xl font-bold text-black-team-text-light mb-6">
               Reverse Engineering Excellence
             </h2>
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-lg text-gray-400 mb-6 leading-relaxed">
               Our Black Team focuses on systematic reverse engineering of software solutions to identify vendor replacement opportunities and develop alternative implementation strategies.
             </p>
-            <ul className="space-y-3 text-foreground/80">
+            <ul className="space-y-3 text-gray-300">
               <li className="flex items-start gap-3">
                 <div className="p-1 rounded bg-black-team/20 mt-1">
                   <Code className="h-4 w-4 text-black-team" />
@@ -68,23 +68,23 @@ const BlackTeam = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Card className="border-black-team/20 hover:border-black-team/40 transition-colors">
+            <Card className="bg-black-team-bg-dark border-gray-600 hover:border-gray-500 transition-colors">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-black-team">Technical Analysis</CardTitle>
+                <CardTitle className="text-lg text-gray-200">Technical Analysis</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-400">
                   Deep technical analysis of vendor solutions and system architecture mapping.
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="border-black-team/20 hover:border-black-team/40 transition-colors">
+            <Card className="bg-black-team-bg-dark border-gray-600 hover:border-gray-500 transition-colors">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-black-team">Implementation Strategy</CardTitle>
+                <CardTitle className="text-lg text-gray-200">Implementation Strategy</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-400">
                   Strategic development of replacement implementation pathways and migration strategies.
                 </p>
               </CardContent>
@@ -96,65 +96,65 @@ const BlackTeam = () => {
       {/* Methodologies */}
       <SectionWrapper theme="black">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Engineering Methodologies</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-black-team-text-light mb-4">Engineering Methodologies</h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
             Our systematic approach to vendor replacement engineering
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="text-center border-black-team/20">
+          <Card className="text-center bg-black-team-bg-dark border-gray-600">
             <CardHeader>
               <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-black-team/10">
-                  <Bug className="h-8 w-8 text-black-team" />
+                <div className="p-3 rounded-xl bg-gray-800">
+                  <Bug className="h-8 w-8 text-gray-300" />
                 </div>
               </div>
-              <CardTitle className="text-black-team">System Analysis</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-gray-200">System Analysis</CardTitle>
+              <CardDescription className="text-gray-400">
                 Comprehensive reverse engineering and system architecture analysis
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 text-gray-300 border-gray-600 hover:bg-gray-800">
                 Learn More <ArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="text-center border-black-team/20">
+          <Card className="text-center bg-black-team-bg-dark border-gray-600">
             <CardHeader>
               <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-black-team/10">
-                  <Code className="h-8 w-8 text-black-team" />
+                <div className="p-3 rounded-xl bg-gray-800">
+                  <Code className="h-8 w-8 text-gray-300" />
                 </div>
               </div>
-              <CardTitle className="text-black-team">Code Engineering</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-gray-200">Code Engineering</CardTitle>
+              <CardDescription className="text-gray-400">
                 Advanced code analysis and alternative implementation development
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 text-gray-300 border-gray-600 hover:bg-gray-800">
                 Learn More <ArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="text-center border-black-team/20">
+          <Card className="text-center bg-black-team-bg-dark border-gray-600">
             <CardHeader>
               <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-black-team/10">
-                  <Wrench className="h-8 w-8 text-black-team" />
+                <div className="p-3 rounded-xl bg-gray-800">
+                  <Wrench className="h-8 w-8 text-gray-300" />
                 </div>
               </div>
-              <CardTitle className="text-black-team">Implementation</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-gray-200">Implementation</CardTitle>
+              <CardDescription className="text-gray-400">
                 Strategic implementation planning and migration pathway development
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 text-gray-300 border-gray-600 hover:bg-gray-800">
                 Learn More <ArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
