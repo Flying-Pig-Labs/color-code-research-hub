@@ -33,16 +33,6 @@ const Index = () => {
             Advanced competitive intelligence across three specialized domains. Our teams provide strategic insights for marketplace disruption, vendor replacement, and white space opportunities.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="corporate" size="xl" className="gap-2 bg-gradient-carmax-blue hover:scale-105 transition-transform shadow-smooth-lg">
-              <Zap className="h-5 w-5" />
-              Explore Research Teams
-            </Button>
-            <Button variant="outline" size="xl" className="gap-2 border-carmax-blue/40 hover:bg-carmax-blue/10 transition-all">
-              <Search className="h-5 w-5" />
-              View Methodologies
-            </Button>
-          </div>
         </div>
       </SectionWrapper>
 
@@ -54,14 +44,6 @@ const Index = () => {
           <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
         </div>
         
-        <div className="text-center mb-16 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Research Team Specializations
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Each team brings unique expertise and methodologies to deliver comprehensive competitive intelligence.
-          </p>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
           <TeamCard
