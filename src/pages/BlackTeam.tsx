@@ -12,7 +12,7 @@ const BlackTeam = () => {
       <Header />
       
       {/* Vendor Analysis */}
-      <SectionWrapper className="py-8">
+      <SectionWrapper theme="black" className="py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Black Team - Vendor Replacement Projects</h1>
         </div>

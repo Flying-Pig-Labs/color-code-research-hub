@@ -5,6 +5,9 @@ import { Shield, Target, Bug, Lightbulb } from "lucide-react";
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Check if we're on black team page for dark theme
+  const isBlackTeamPage = location.pathname === "/black-team";
 
   const navItems = [
     { path: "/", label: "Home", icon: Shield, variant: "corporate" as const },
@@ -14,15 +17,15 @@ const Header = () => {
   ];
 
   return (
-    <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <header className={`border-b ${isBlackTeamPage ? 'border-gray-800 bg-black' : 'border-border bg-card/50'} backdrop-blur-sm sticky top-0 z-50`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div 
             className="flex items-center gap-3 cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate("/")}
           >
-            <Shield className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">Research Labs</span>
+            <Shield className={`h-8 w-8 ${isBlackTeamPage ? 'text-white' : 'text-primary'}`} />
+            <span className={`text-xl font-bold ${isBlackTeamPage ? 'text-white' : 'text-foreground'}`}>Research Labs</span>
           </div>
           
           <nav className="hidden md:flex items-center gap-2">
