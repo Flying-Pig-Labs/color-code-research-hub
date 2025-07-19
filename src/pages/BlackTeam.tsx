@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SectionWrapper from "@/components/SectionWrapper";
+import BlackResearchSwarmForm from "@/components/BlackResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bug, Code, Wrench, Database, ArrowRight, Shield } from "lucide-react";
@@ -28,10 +29,12 @@ const BlackTeam = () => {
             Specialized reverse engineering and vendor replacement strategies through technical analysis and systematic implementation pathways.
           </p>
           
-          <Button variant="black-team" size="xl" className="gap-2 bg-white text-black hover:bg-white/90">
-            <Shield className="h-5 w-5" />
-            Access Technical Reports
-          </Button>
+          <BlackResearchSwarmForm>
+            <Button variant="black-team" size="xl" className="gap-2 bg-white text-black hover:bg-white/90">
+              <Bug className="h-5 w-5" />
+              ⚫ Launch Research Swarm
+            </Button>
+          </BlackResearchSwarmForm>
         </div>
       </SectionWrapper>
 
