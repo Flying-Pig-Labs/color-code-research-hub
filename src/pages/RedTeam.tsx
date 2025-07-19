@@ -7,11 +7,11 @@ import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield } from "lucide
 
 const RedTeam = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-red-team-pink flex flex-col">
       <Header />
       
       {/* Hero Section */}
-      <SectionWrapper theme="red" className="pt-16">
+      <SectionWrapper theme="red" className="pt-16 bg-gradient-red-pink">
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
             <div className="p-4 rounded-2xl bg-red-team shadow-smooth-lg">
@@ -19,12 +19,12 @@ const RedTeam = () => {
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Red Team Research
-            <span className="block text-red-team">Competitive Disruption</span>
+            <span className="block text-white/90">Competitive Disruption</span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+          <p className="text-xl text-white/80 mb-8 leading-relaxed">
             Strategic analysis of marketplace competitors and identification of disruption opportunities through advanced competitive intelligence methodologies.
           </p>
           

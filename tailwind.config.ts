@@ -65,12 +65,14 @@ export default {
 				'red-team': {
 					DEFAULT: 'hsl(var(--red-team))',
 					light: 'hsl(var(--red-team-light))',
-					dark: 'hsl(var(--red-team-dark))'
+					dark: 'hsl(var(--red-team-dark))',
+					pink: 'hsl(var(--red-team-pink))'
 				},
 				'black-team': {
 					DEFAULT: 'hsl(var(--black-team))',
 					light: 'hsl(var(--black-team-light))',
-					dark: 'hsl(var(--black-team-dark))'
+					dark: 'hsl(var(--black-team-dark))',
+					bg: 'hsl(var(--black-team-bg))'
 				},
 				'white-team': {
 					DEFAULT: 'hsl(var(--white-team))',
@@ -81,6 +83,7 @@ export default {
 			backgroundImage: {
 				'gradient-corporate': 'var(--gradient-corporate)',
 				'gradient-red': 'var(--gradient-red)',
+				'gradient-red-pink': 'var(--gradient-red-pink)',
 				'gradient-black': 'var(--gradient-black)',
 				'gradient-white': 'var(--gradient-white)'
 			},
