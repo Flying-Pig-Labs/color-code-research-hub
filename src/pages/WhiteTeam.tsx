@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import SectionWrapper from "@/components/SectionWrapper";
 import WhiteResearchSwarmForm from "@/components/WhiteResearchSwarmForm";
 import { Button } from "@/components/ui/button";
@@ -108,7 +108,7 @@ const WhiteTeam = () => {
         </div>
       </SectionWrapper>
       
-      <Footer />
+      
     </div>
   );
 };

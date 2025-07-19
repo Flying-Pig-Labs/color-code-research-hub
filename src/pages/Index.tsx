@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import SectionWrapper from "@/components/SectionWrapper";
 import TeamCard from "@/components/TeamCard";
 import { Button } from "@/components/ui/button";
@@ -96,7 +96,7 @@ const Index = () => {
         </div>
       </SectionWrapper>
       
-      <Footer />
+      
     </div>
   );
 };
