@@ -38,63 +38,6 @@ const BlackTeam = () => {
         </div>
       </SectionWrapper>
 
-      {/* Focus Areas */}
-      <SectionWrapper className="bg-black-team-bg">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-white mb-6">
-              Reverse Engineering Excellence
-            </h2>
-            <p className="text-lg text-white/70 mb-6 leading-relaxed">
-              Our Black Team focuses on systematic reverse engineering of software solutions to identify vendor replacement opportunities and develop alternative implementation strategies.
-            </p>
-            <ul className="space-y-3 text-white/80">
-              <li className="flex items-start gap-3">
-                <div className="p-1 rounded bg-white/20 mt-1">
-                  <Code className="h-4 w-4 text-white" />
-                </div>
-                Software architecture analysis and system decomposition
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="p-1 rounded bg-white/20 mt-1">
-                  <Database className="h-4 w-4 text-white" />
-                </div>
-                Data flow mapping and integration point identification
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="p-1 rounded bg-white/20 mt-1">
-                  <Wrench className="h-4 w-4 text-white" />
-                </div>
-                Implementation pathway development and technical feasibility
-              </li>
-            </ul>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Card className="border-white/20 hover:border-white/40 transition-colors bg-black-team-light">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">Technical Analysis</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-white/70">
-                  Deep technical analysis of vendor solutions and system architecture mapping.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-white/20 hover:border-white/40 transition-colors bg-black-team-light">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">Implementation Strategy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-white/70">
-                  Strategic development of replacement implementation pathways and migration strategies.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </SectionWrapper>
 
       {/* Methodologies */}
       <SectionWrapper className="bg-gradient-black">

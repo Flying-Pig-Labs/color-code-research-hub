@@ -38,63 +38,6 @@ const RedTeam = () => {
         </div>
       </SectionWrapper>
 
-      {/* Focus Areas */}
-      <SectionWrapper>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground mb-6">
-              Marketplace Competitor Analysis
-            </h2>
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              Our Red Team specializes in deep competitive analysis within marketplace ecosystems. We identify strategic vulnerabilities, market positioning gaps, and opportunities for competitive disruption.
-            </p>
-            <ul className="space-y-3 text-foreground/80">
-              <li className="flex items-start gap-3">
-                <div className="p-1 rounded bg-red-team/20 mt-1">
-                  <TrendingUp className="h-4 w-4 text-red-team" />
-                </div>
-                Market share analysis and competitive positioning assessment
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="p-1 rounded bg-red-team/20 mt-1">
-                  <Users className="h-4 w-4 text-red-team" />
-                </div>
-                Customer acquisition strategy evaluation and optimization
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="p-1 rounded bg-red-team/20 mt-1">
-                  <BarChart3 className="h-4 w-4 text-red-team" />
-                </div>
-                Revenue model disruption and pricing strategy analysis
-              </li>
-            </ul>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-red-team">Strategic Intelligence</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Comprehensive competitor profiling and market intelligence gathering for strategic advantage.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-red-team">Disruption Modeling</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Advanced modeling of market disruption scenarios and competitive response strategies.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </SectionWrapper>
 
       {/* Methodologies */}
       <SectionWrapper theme="red">
