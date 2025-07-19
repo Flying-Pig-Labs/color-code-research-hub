@@ -8,36 +8,42 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Base Corporate Theme */
-    --background: 220 20% 98%;
-    --foreground: 220 15% 15%;
+    /* CarMax Color Scheme - Pale Yellow and Baby Blue */
+    --background: 50 100% 96%;  /* Very pale yellow background */
+    --foreground: 215 25% 25%;  /* Dark blue-gray text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card: 50 90% 98%;
+    --card-foreground: 215 25% 25%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover: 50 90% 98%;
+    --popover-foreground: 215 25% 25%;
 
-    --primary: 220 25% 25%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 200 85% 70%;  /* Baby blue primary */
+    --primary-foreground: 50 100% 98%;
 
-    --secondary: 220 15% 95%;
-    --secondary-foreground: 220 15% 25%;
+    --secondary: 50 80% 85%;  /* Pale yellow secondary */
+    --secondary-foreground: 215 25% 25%;
 
-    --muted: 220 15% 96%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 50 70% 92%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 220 20% 92%;
-    --accent-foreground: 220 15% 25%;
+    --accent: 200 70% 85%;  /* Light baby blue accent */
+    --accent-foreground: 215 25% 25%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 220 25% 25%;
+    --border: 50 50% 88%;
+    --input: 50 50% 88%;
+    --ring: 200 85% 70%;
 
     --radius: 0.75rem;
+
+    /* CarMax Brand Colors */
+    --carmax-yellow: 50 100% 88%;
+    --carmax-blue: 200 85% 70%;
+    --carmax-blue-dark: 200 85% 60%;
+    --carmax-yellow-light: 50 100% 95%;
 
     /* Team Color Variants */
     --red-team: 345 85% 55%;
@@ -54,17 +60,24 @@ All colors MUST be HSL.
     --white-team-accent: 45 15% 85%;
     --white-team-dark: 45 10% 25%;
 
+    /* CarMax Gradients with Fading Effects */
+    --gradient-carmax-hero: linear-gradient(135deg, hsl(50 100% 96%) 0%, hsl(200 70% 90%) 50%, hsl(50 80% 88%) 100%);
+    --gradient-carmax-fade: linear-gradient(180deg, hsl(50 100% 96%) 0%, hsl(200 40% 95%) 100%);
+    --gradient-carmax-blue: linear-gradient(135deg, hsl(200 85% 70%), hsl(200 70% 80%));
+    --gradient-carmax-yellow: linear-gradient(135deg, hsl(50 100% 88%), hsl(50 80% 95%));
+    
     /* Professional Gradients */
-    --gradient-corporate: linear-gradient(135deg, hsl(220 25% 25%), hsl(220 20% 35%));
+    --gradient-corporate: linear-gradient(135deg, hsl(200 85% 70%), hsl(200 70% 80%));
     --gradient-red: linear-gradient(135deg, hsl(345 85% 55%), hsl(330 70% 65%));
     --gradient-black: linear-gradient(135deg, hsl(0 0% 0%), hsl(0 0% 8%));
     --gradient-white: linear-gradient(135deg, hsl(60 10% 98%), hsl(45 15% 92%));
     --gradient-red-pink: linear-gradient(135deg, hsl(345 85% 55%), hsl(320 60% 85%));
 
     /* Shadows */
-    --shadow-sm: 0 2px 8px -2px hsl(220 25% 25% / 0.1);
-    --shadow-md: 0 8px 24px -4px hsl(220 25% 25% / 0.15);
-    --shadow-lg: 0 16px 40px -8px hsl(220 25% 25% / 0.2);
+    --shadow-sm: 0 2px 8px -2px hsl(200 85% 70% / 0.1);
+    --shadow-md: 0 8px 24px -4px hsl(200 85% 70% / 0.15);
+    --shadow-lg: 0 16px 40px -8px hsl(200 85% 70% / 0.2);
+    --shadow-smooth-lg: 0 20px 60px -12px hsl(200 85% 70% / 0.25);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

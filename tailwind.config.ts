@@ -78,6 +78,12 @@ export default {
 					DEFAULT: 'hsl(var(--white-team))',
 					accent: 'hsl(var(--white-team-accent))',
 					dark: 'hsl(var(--white-team-dark))'
+				},
+				'carmax': {
+					yellow: 'hsl(var(--carmax-yellow))',
+					blue: 'hsl(var(--carmax-blue))',
+					'blue-dark': 'hsl(var(--carmax-blue-dark))',
+					'yellow-light': 'hsl(var(--carmax-yellow-light))'
 				}
 			},
 			backgroundImage: {
@@ -85,12 +91,17 @@ export default {
 				'gradient-red': 'var(--gradient-red)',
 				'gradient-red-pink': 'var(--gradient-red-pink)',
 				'gradient-black': 'var(--gradient-black)',
-				'gradient-white': 'var(--gradient-white)'
+				'gradient-white': 'var(--gradient-white)',
+				'gradient-carmax-hero': 'var(--gradient-carmax-hero)',
+				'gradient-carmax-fade': 'var(--gradient-carmax-fade)',
+				'gradient-carmax-blue': 'var(--gradient-carmax-blue)',
+				'gradient-carmax-yellow': 'var(--gradient-carmax-yellow)'
 			},
 			boxShadow: {
 				'smooth-sm': 'var(--shadow-sm)',
 				'smooth-md': 'var(--shadow-md)',
-				'smooth-lg': 'var(--shadow-lg)'
+				'smooth-lg': 'var(--shadow-lg)',
+				'smooth-xl': 'var(--shadow-smooth-lg)'
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',

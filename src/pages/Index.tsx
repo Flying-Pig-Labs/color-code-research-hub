@@ -7,21 +7,28 @@ import { Target, Bug, Lightbulb, Shield, Zap, Search } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
       <Header />
       
-      {/* Hero Section */}
-      <SectionWrapper className="pt-20 pb-16">
-        <div className="text-center max-w-4xl mx-auto">
+      {/* Hero Section with CarMax Fading */}
+      <SectionWrapper className="pt-20 pb-16 bg-gradient-carmax-hero relative overflow-hidden">
+        {/* Decorative fading elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
+        </div>
+        
+        <div className="text-center max-w-4xl mx-auto relative z-10">
           <div className="flex justify-center mb-6">
-            <div className="p-4 rounded-2xl bg-gradient-corporate shadow-smooth-lg">
+            <div className="p-4 rounded-2xl bg-gradient-carmax-blue shadow-smooth-xl border border-carmax-blue/20">
               <Shield className="h-12 w-12 text-primary-foreground" />
             </div>
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
             Strategic Research
-            <span className="block text-primary">Intelligence Labs</span>
+            <span className="block text-primary bg-gradient-to-r from-carmax-blue to-carmax-blue-dark bg-clip-text text-transparent">Intelligence Labs</span>
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
@@ -29,11 +36,11 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="corporate" size="xl" className="gap-2">
+            <Button variant="corporate" size="xl" className="gap-2 bg-gradient-carmax-blue hover:scale-105 transition-transform shadow-smooth-lg">
               <Zap className="h-5 w-5" />
               Explore Research Teams
             </Button>
-            <Button variant="outline" size="xl" className="gap-2">
+            <Button variant="outline" size="xl" className="gap-2 border-carmax-blue/40 hover:bg-carmax-blue/10 transition-all">
               <Search className="h-5 w-5" />
               View Methodologies
             </Button>
@@ -42,8 +49,14 @@ const Index = () => {
       </SectionWrapper>
 
       {/* Teams Overview */}
-      <SectionWrapper className="bg-muted/30">
-        <div className="text-center mb-16">
+      <SectionWrapper className="bg-gradient-carmax-fade relative">
+        {/* Subtle fading background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
+          <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
+        </div>
+        
+        <div className="text-center mb-16 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Research Team Specializations
           </h2>
@@ -52,7 +65,7 @@ const Index = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
           <TeamCard
             title="Red Team"
             description="Competitive Disruption Specialists"
