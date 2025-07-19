@@ -61,7 +61,37 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				'red-team': {
+					DEFAULT: 'hsl(var(--red-team))',
+					light: 'hsl(var(--red-team-light))',
+					dark: 'hsl(var(--red-team-dark))'
+				},
+				'black-team': {
+					DEFAULT: 'hsl(var(--black-team))',
+					light: 'hsl(var(--black-team-light))',
+					dark: 'hsl(var(--black-team-dark))'
+				},
+				'white-team': {
+					DEFAULT: 'hsl(var(--white-team))',
+					accent: 'hsl(var(--white-team-accent))',
+					dark: 'hsl(var(--white-team-dark))'
 				}
+			},
+			backgroundImage: {
+				'gradient-corporate': 'var(--gradient-corporate)',
+				'gradient-red': 'var(--gradient-red)',
+				'gradient-black': 'var(--gradient-black)',
+				'gradient-white': 'var(--gradient-white)'
+			},
+			boxShadow: {
+				'smooth-sm': 'var(--shadow-sm)',
+				'smooth-md': 'var(--shadow-md)',
+				'smooth-lg': 'var(--shadow-lg)'
+			},
+			transitionTimingFunction: {
+				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+				'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

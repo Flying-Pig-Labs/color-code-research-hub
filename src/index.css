@@ -8,35 +8,64 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base Corporate Theme */
+    --background: 220 20% 98%;
+    --foreground: 220 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 220 25% 25%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 15% 95%;
+    --secondary-foreground: 220 15% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 20% 92%;
+    --accent-foreground: 220 15% 25%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 220 25% 25%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Team Color Variants */
+    --red-team: 355 70% 50%;
+    --red-team-light: 355 60% 95%;
+    --red-team-dark: 355 70% 35%;
+    
+    --black-team: 220 15% 15%;
+    --black-team-light: 220 10% 95%;
+    --black-team-dark: 220 20% 8%;
+    
+    --white-team: 60 10% 98%;
+    --white-team-accent: 45 15% 85%;
+    --white-team-dark: 45 10% 25%;
+
+    /* Professional Gradients */
+    --gradient-corporate: linear-gradient(135deg, hsl(220 25% 25%), hsl(220 20% 35%));
+    --gradient-red: linear-gradient(135deg, hsl(355 70% 50%), hsl(355 60% 60%));
+    --gradient-black: linear-gradient(135deg, hsl(220 20% 8%), hsl(220 15% 20%));
+    --gradient-white: linear-gradient(135deg, hsl(60 10% 98%), hsl(45 15% 92%));
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px -2px hsl(220 25% 25% / 0.1);
+    --shadow-md: 0 8px 24px -4px hsl(220 25% 25% / 0.15);
+    --shadow-lg: 0 16px 40px -8px hsl(220 25% 25% / 0.2);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 

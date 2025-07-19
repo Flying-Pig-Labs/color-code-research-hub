@@ -1,0 +1,170 @@
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import SectionWrapper from "@/components/SectionWrapper";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield } from "lucide-react";
+
+const RedTeam = () => {
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
+      
+      {/* Hero Section */}
+      <SectionWrapper theme="red" className="pt-16">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="flex justify-center mb-6">
+            <div className="p-4 rounded-2xl bg-red-team shadow-smooth-lg">
+              <Target className="h-12 w-12 text-primary-foreground" />
+            </div>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            Red Team Research
+            <span className="block text-red-team">Competitive Disruption</span>
+          </h1>
+          
+          <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+            Strategic analysis of marketplace competitors and identification of disruption opportunities through advanced competitive intelligence methodologies.
+          </p>
+          
+          <Button variant="red-team" size="xl" className="gap-2">
+            <Shield className="h-5 w-5" />
+            View Research Findings
+          </Button>
+        </div>
+      </SectionWrapper>
+
+      {/* Focus Areas */}
+      <SectionWrapper>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-foreground mb-6">
+              Marketplace Competitor Analysis
+            </h2>
+            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+              Our Red Team specializes in deep competitive analysis within marketplace ecosystems. We identify strategic vulnerabilities, market positioning gaps, and opportunities for competitive disruption.
+            </p>
+            <ul className="space-y-3 text-foreground/80">
+              <li className="flex items-start gap-3">
+                <div className="p-1 rounded bg-red-team/20 mt-1">
+                  <TrendingUp className="h-4 w-4 text-red-team" />
+                </div>
+                Market share analysis and competitive positioning assessment
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="p-1 rounded bg-red-team/20 mt-1">
+                  <Users className="h-4 w-4 text-red-team" />
+                </div>
+                Customer acquisition strategy evaluation and optimization
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="p-1 rounded bg-red-team/20 mt-1">
+                  <BarChart3 className="h-4 w-4 text-red-team" />
+                </div>
+                Revenue model disruption and pricing strategy analysis
+              </li>
+            </ul>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-red-team">Strategic Intelligence</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Comprehensive competitor profiling and market intelligence gathering for strategic advantage.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-red-team">Disruption Modeling</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Advanced modeling of market disruption scenarios and competitive response strategies.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </SectionWrapper>
+
+      {/* Methodologies */}
+      <SectionWrapper theme="red">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Research Methodologies</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Our systematic approach to competitive disruption analysis
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="text-center border-red-team/20">
+            <CardHeader>
+              <div className="flex justify-center mb-4">
+                <div className="p-3 rounded-xl bg-red-team/10">
+                  <Target className="h-8 w-8 text-red-team" />
+                </div>
+              </div>
+              <CardTitle className="text-red-team">Competitive Mapping</CardTitle>
+              <CardDescription>
+                Comprehensive mapping of competitive landscape and market positioning
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" className="gap-2">
+                Learn More <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center border-red-team/20">
+            <CardHeader>
+              <div className="flex justify-center mb-4">
+                <div className="p-3 rounded-xl bg-red-team/10">
+                  <TrendingUp className="h-8 w-8 text-red-team" />
+                </div>
+              </div>
+              <CardTitle className="text-red-team">Market Analysis</CardTitle>
+              <CardDescription>
+                Deep dive analysis of market trends and competitive dynamics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" className="gap-2">
+                Learn More <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center border-red-team/20">
+            <CardHeader>
+              <div className="flex justify-center mb-4">
+                <div className="p-3 rounded-xl bg-red-team/10">
+                  <BarChart3 className="h-8 w-8 text-red-team" />
+                </div>
+              </div>
+              <CardTitle className="text-red-team">Strategic Modeling</CardTitle>
+              <CardDescription>
+                Advanced modeling of disruption scenarios and strategic responses
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" className="gap-2">
+                Learn More <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </SectionWrapper>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default RedTeam;
