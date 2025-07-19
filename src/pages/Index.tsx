@@ -21,9 +21,7 @@ const Index = () => {
         
         <div className="text-center max-w-4xl mx-auto relative z-10">
           <div className="flex justify-center mb-6">
-            <div className="p-4 rounded-2xl bg-gradient-carmax-blue shadow-smooth-xl border border-carmax-blue/20">
-              <img src="/lovable-uploads/0f54ff99-2650-422d-892d-969ac8e49e13.png" alt="Flying Pig Logo" className="h-12 w-12" />
-            </div>
+            <img src="/lovable-uploads/0f54ff99-2650-422d-892d-969ac8e49e13.png" alt="Flying Pig Logo" className="h-32 w-auto" />
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
