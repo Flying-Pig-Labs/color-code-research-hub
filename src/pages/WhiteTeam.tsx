@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SectionWrapper from "@/components/SectionWrapper";
+import WhiteResearchSwarmForm from "@/components/WhiteResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lightbulb, Compass, Sparkles, Map, ArrowRight, Shield } from "lucide-react";
@@ -28,10 +29,12 @@ const WhiteTeam = () => {
             Dedicated research into competitive white space identification and new product opportunity development through systematic market gap analysis.
           </p>
           
-          <Button variant="white-team" size="xl" className="gap-2">
-            <Shield className="h-5 w-5" />
-            Explore Opportunities
-          </Button>
+          <WhiteResearchSwarmForm>
+            <Button variant="white-team" size="xl" className="gap-2">
+              <Lightbulb className="h-5 w-5" />
+              ⚪ Launch Research Swarm
+            </Button>
+          </WhiteResearchSwarmForm>
         </div>
       </SectionWrapper>
 
