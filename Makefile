@@ -10,6 +10,7 @@ help:
 	@echo "  make start    - Start frontend, backend, and open browser"
 	@echo "  make test     - Run e2e tests"
 	@echo "  make stop     - Stop all servers"
+	@echo "  make clean    - Kill all related processes"
 	@echo "  make install  - Install dependencies"
 
 # All-in-one command: install and start
@@ -48,6 +49,23 @@ stop:
 	@pkill -f "vite" 2>/dev/null || true
 	@echo "✅ All servers stopped"
 
+# Clean - Kill all related processes
+clean:
+	@echo "🧹 Cleaning up all related processes..."
+	@echo "🔍 Killing processes on ports 3000 and 3001..."
+	@lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+	@lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+	@echo "🔍 Killing Node.js processes..."
+	@pkill -f "node server-endpoint.js" 2>/dev/null || true
+	@pkill -f "node backend/server.js" 2>/dev/null || true
+	@pkill -f "node scripts/start.js" 2>/dev/null || true
+	@pkill -f "vite" 2>/dev/null || true
+	@pkill -f "npm start" 2>/dev/null || true
+	@pkill -f "npm run" 2>/dev/null || true
+	@echo "🔍 Removing PID files..."
+	@rm -f .frontend.pid .backend.pid 2>/dev/null || true
+	@echo "✅ All processes cleaned up"
+
 # Run tests
 test:
 	@echo "🧪 Running e2e tests..."
@@ -61,4 +79,4 @@ install:
 	@npx playwright install
 	@echo "✅ Dependencies installed"
 
-.PHONY: help all start stop test install
+.PHONY: help all start stop clean test install
