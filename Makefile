@@ -14,6 +14,10 @@ help:
 # Start both servers and open browser
 start:
 	@echo "🚀 Starting Color Code Research Hub..."
+	@echo "🔍 Checking for processes on ports 3000 and 3001..."
+	@lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+	@lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+	@echo "✅ Ports cleared"
 	@echo "📦 Starting backend API on port 3001..."
 	@cd backend && npm start & echo $$! > ../.backend.pid
 	@sleep 3
