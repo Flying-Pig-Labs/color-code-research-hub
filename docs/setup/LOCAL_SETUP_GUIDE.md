@@ -67,17 +67,14 @@ cd color-code-research-hub
 
 ### Step 2: Install Dependencies
 
-Install both frontend and backend dependencies:
+Install all dependencies:
 
 ```bash
-# Install frontend dependencies
-npm install
-
-# Install backend dependencies
-cd backend
-npm install
-cd ..
+# Install all dependencies (frontend and backend)
+make install
 ```
+
+This command will install dependencies for both the frontend and backend automatically.
 
 ### Step 3: Environment Configuration
 
@@ -98,15 +95,21 @@ EOF
 
 ## Running the Application
 
-### Option 1: Run Frontend and Backend Together (Recommended)
+### Primary Method (Recommended)
 
 ```bash
-npm run start:all
+make start
 ```
 
-This command will start both the backend API server (port 3001) and the frontend development server (port 3000) concurrently.
+This command will:
+- Kill any processes on ports 3000 and 3001 (prevents port conflicts)
+- Start the backend API server on port 3001
+- Start the frontend development server on port 3000
+- Open your browser automatically to http://localhost:3000
 
-### Option 2: Run Separately
+To stop all servers, press `Ctrl+C`.
+
+### Alternative Methods
 
 In separate terminal windows:
 

@@ -10,16 +10,19 @@ git clone <repository-url>
 cd color-code-research-hub
 
 # Install dependencies
-npm install
-cd backend && npm install && cd ..
+make install
 
-# Run both frontend and backend
-npm run start:all
+# Start the application
+make start
 ```
 
-The application will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
+This will:
+- Kill any processes on ports 3000 and 3001
+- Start the backend API server on port 3001
+- Start the frontend development server on port 3000
+- Open your browser automatically to http://localhost:3000
+
+To stop all servers, press `Ctrl+C`.
 
 ## Research Teams Overview
 
@@ -240,19 +243,16 @@ When a research request is submitted, the backend sends a structured payload to 
 - **Forms**: React Hook Form with Zod validation
 - **State Management**: Tanstack Query
 
-## Available Scripts
+## Available Commands
 
-### Development
-- `npm start` - Start frontend development server
-- `npm run start:backend` - Start backend server
-- `npm run start:all` - Start both frontend and backend
+### Primary Commands
+- `make start` - Start both frontend and backend servers and open browser
+- `make stop` - Stop all running servers
+- `make test` - Run e2e tests
+- `make install` - Install all dependencies
 
-### Building
+### Other Scripts
 - `npm run build` - Build for production
-
-### Testing
-- `npm test` - Run unit tests
-- `npm run test:e2e` - Run end-to-end tests
 - `npm run lint` - Run ESLint
 
 ## Documentation
