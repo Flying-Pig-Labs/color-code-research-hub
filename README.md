@@ -9,20 +9,30 @@ A strategic intelligence platform featuring three specialized research teams for
 git clone <repository-url>
 cd color-code-research-hub
 
-# Install dependencies
-make install
-
-# Start the application
-make start
+# Install and start everything
+make all
 ```
 
-This will:
-- Kill any processes on ports 3000 and 3001
-- Start the backend API server on port 3001
-- Start the frontend development server on port 3000
-- Open your browser automatically to http://localhost:3000
+This will install all dependencies and start both servers.
 
-To stop all servers, press `Ctrl+C`.
+### Server Architecture
+
+- **Frontend**: Vite development server on port 3000
+- **Backend API**: Express server on port 3001
+- The frontend proxies API calls to the backend
+
+### Starting the Application
+
+```bash
+make all      # Install dependencies and start both servers
+make start    # Start both servers (if already installed)
+make api      # Start only the API server
+make web      # Start only the web server
+```
+
+**Important**: The `make` commands automatically kill any processes on the required ports before starting, preventing "port already in use" errors.
+
+To stop all servers, press `Ctrl+C` (this triggers `make stop` automatically).
 
 ## Research Teams Overview
 
@@ -246,12 +256,16 @@ When a research request is submitted, the backend sends a structured payload to 
 ## Available Commands
 
 ### Primary Commands
-- `make start` - Start both frontend and backend servers and open browser
-- `make stop` - Stop all running servers
+- `make all` - Install dependencies and start both servers
+- `make start` - Start both frontend and backend servers
+- `make api` - Start only the API server
+- `make web` - Start only the web server
+- `make stop` - Stop all servers (automatically called on Ctrl+C)
+- `make clean` - Force kill all processes if something is stuck
 - `make test` - Run e2e tests
 - `make install` - Install all dependencies
 
-### Other Scripts
+### Build Scripts
 - `npm run build` - Build for production
 - `npm run lint` - Run ESLint
 

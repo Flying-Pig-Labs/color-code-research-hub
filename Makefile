@@ -8,6 +8,8 @@ help:
 	@echo "Available commands:"
 	@echo "  make all      - Install dependencies, start servers, and open browser"
 	@echo "  make start    - Start frontend, backend, and open browser"
+	@echo "  make api      - Start only the API server"
+	@echo "  make web      - Start only the web server"
 	@echo "  make test     - Run e2e tests"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make clean    - Kill all related processes"
@@ -38,6 +40,18 @@ start:
 	@echo ""
 	@echo "Press Ctrl+C to stop all servers"
 	@trap 'make stop' INT; wait
+
+# Start only API server
+api:
+	@echo "📦 Starting backend API on port 3001..."
+	@lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+	@cd backend && npm start
+
+# Start only web server
+web:
+	@echo "🎨 Starting frontend on port 3000..."
+	@lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+	@npm start
 
 # Stop all servers
 stop:
@@ -79,4 +93,4 @@ install:
 	@npx playwright install
 	@echo "✅ Dependencies installed"
 
-.PHONY: help all start stop clean test install
+.PHONY: help all start api web stop clean test install
