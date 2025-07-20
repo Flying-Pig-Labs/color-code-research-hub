@@ -8,7 +8,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Loader2, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
+import { useApiEnvironment } from "@/hooks/useApiEnvironment";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
 
 interface WhiteResearchSwarmFormProps {
   children: React.ReactNode;
@@ -27,6 +33,15 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   const [minimumOpportunitySize, setMinimumOpportunitySize] = useState("");
   const [ecosystemIntegration, setEcosystemIntegration] = useState<string[]>([]);
   const [customSearchAreas, setCustomSearchAreas] = useState<string[]>([]);
+  
+  // API state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [jobStatus, setJobStatus] = useState<ResearchJob | null>(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const [pollProgress, setPollProgress] = useState(0);
+  
+  const apiEnvironment = useApiEnvironment();
 
   const handleCheckboxChange = (value: string, currentValues: string[], setter: (values: string[]) => void) => {
     if (currentValues.includes(value)) {
@@ -58,10 +73,8 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
     setCustomSearchAreas([]);
   };
 
-  const handleLaunchSwarm = () => {
-    const researchTask = {
-      id: Date.now().toString(),
-      team: 'white',
+  const handleLaunchSwarm = async () => {
+    const researchData = {
       opportunityTypes,
       targetCustomerSize,
       businessModelPreference,
@@ -73,20 +86,71 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
       minimumOpportunitySize,
       ecosystemIntegration,
       customSearchAreas,
-      createdAt: new Date().toISOString(),
-      status: 'launched'
     };
 
-    const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-    existingTasks.push(researchTask);
-    localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
-    window.dispatchEvent(new CustomEvent('taskAdded'));
-    
-    console.log("White Team Research Swarm Launched:", researchTask);
-    alert(`White Team Research Swarm launched for opportunity discovery!`);
-    
-    handleReset();
-    setOpen(false);
+    setIsSubmitting(true);
+    setJobId(null);
+    setJobStatus(null);
+    setPollProgress(0);
+
+    try {
+      // Submit research request
+      const { jobId } = await apiService.submitResearch({
+        teamType: 'white',
+        fields: researchData,
+      });
+
+      setJobId(jobId);
+      toast.success('White Team Research Swarm launched!', {
+        description: `Job ID: ${jobId}`,
+      });
+
+      // Start polling for job status
+      setIsPolling(true);
+      const result = await apiService.pollJobCompletion(jobId, (status) => {
+        setJobStatus(status);
+        // Update progress based on status
+        if (status.status === 'processing') {
+          setPollProgress(50);
+        } else if (status.status === 'completed') {
+          setPollProgress(100);
+        }
+      });
+
+      // Job completed successfully
+      toast.success('Research completed!', {
+        description: 'Your opportunity discovery results are ready.',
+      });
+      
+      // Store in localStorage for compatibility
+      const researchTask = {
+        id: jobId,
+        team: 'white',
+        ...researchData,
+        createdAt: new Date().toISOString(),
+        status: 'completed',
+        results: result,
+      };
+      
+      const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+      existingTasks.push(researchTask);
+      localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
+      window.dispatchEvent(new CustomEvent('taskAdded'));
+
+      handleReset();
+      setOpen(false);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        toast.error('Failed to launch research swarm', {
+          description: error instanceof Error ? error.message : 'Unknown error occurred',
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+      setIsPolling(false);
+    }
   };
 
   const opportunityTypeOptions = [
@@ -153,6 +217,47 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
             Find untapped opportunities near CarMax's market.
           </DialogDescription>
         </DialogHeader>
+
+        {/* Environment Status */}
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Environment:</span>
+          <Badge variant={apiEnvironment.isHealthy ? "default" : "destructive"}>
+            {apiEnvironment.environment === 'ec2' ? 'EC2' : 
+             apiEnvironment.environment === 'local' ? 'Local' : 'Unknown'}
+          </Badge>
+          {apiEnvironment.isChecking && <Loader2 className="h-3 w-3 animate-spin" />}
+          {!apiEnvironment.isHealthy && !apiEnvironment.isChecking && (
+            <span className="text-red-500 text-xs">Not connected</span>
+          )}
+        </div>
+
+        {/* Job Status */}
+        {(isPolling || jobStatus) && (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">Job Status:</span>
+                  <Badge variant={
+                    jobStatus?.status === 'completed' ? 'default' :
+                    jobStatus?.status === 'failed' ? 'destructive' :
+                    jobStatus?.status === 'processing' ? 'secondary' : 'outline'
+                  }>
+                    {jobStatus?.status || 'pending'}
+                  </Badge>
+                  {jobId && <span className="text-xs text-muted-foreground">ID: {jobId}</span>}
+                </div>
+                {isPolling && (
+                  <div className="space-y-1">
+                    <Progress value={pollProgress} className="h-2" />
+                    <p className="text-xs text-muted-foreground">Processing research request...</p>
+                  </div>
+                )}
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="space-y-6">
           {/* Opportunity Types */}
@@ -401,8 +506,16 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
             <Button 
               onClick={handleLaunchSwarm}
               className="flex-1 bg-white-team-dark hover:bg-white-team-dark/90 text-white"
+              disabled={isSubmitting || isPolling}
             >
-              🔘 Launch Swarm
+              {isSubmitting || isPolling ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isPolling ? 'Processing...' : 'Launching...'}
+                </>
+              ) : (
+                '🔘 Launch Swarm'
+              )}
             </Button>
             <Button 
               variant="outline" 

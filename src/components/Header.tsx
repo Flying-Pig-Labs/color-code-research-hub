@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Shield, Target, Bug, Lightbulb } from "lucide-react";
+import { HealthCheck } from "@/components/HealthCheck";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -25,24 +26,29 @@ const Header = () => {
             <span className="text-xl font-bold text-foreground">Research Labs</span>
           </div>
           
-          <nav className="hidden md:flex items-center gap-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              
-              return (
-                <Button
-                  key={item.path}
-                  variant={isActive ? item.variant : "ghost"}
-                  size="sm"
-                  onClick={() => navigate(item.path)}
-                  className="gap-2"
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </Button>
-              );
-            })}
+          <nav className="hidden md:flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                
+                return (
+                  <Button
+                    key={item.path}
+                    variant={isActive ? item.variant : "ghost"}
+                    size="sm"
+                    onClick={() => navigate(item.path)}
+                    className="gap-2"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Button>
+                );
+              })}
+            </div>
+            <div className="pl-4 border-l border-border">
+              <HealthCheck />
+            </div>
           </nav>
 
           {/* Mobile menu button - simplified for now */}

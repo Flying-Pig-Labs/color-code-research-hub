@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { apiService } from "@/services/api";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ResearchTask {
   id: string;
@@ -23,12 +26,32 @@ interface ResearchRequestTableProps {
 
 const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
   const [tasks, setTasks] = useState<ResearchTask[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUsingApi, setIsUsingApi] = useState(false);
 
   useEffect(() => {
-    const loadTasks = () => {
+    const loadTasks = async () => {
+      // First, try to get tasks from API
+      setIsLoading(true);
+      try {
+        // Check if API is available
+        const health = await apiService.checkHealth();
+        if (health.status === 'healthy') {
+          setIsUsingApi(true);
+          // TODO: Implement API endpoint to fetch research tasks
+          // For now, we'll still use localStorage but show API is connected
+          toast.info('API is connected, but task fetching endpoint is not yet implemented');
+        }
+      } catch (error) {
+        setIsUsingApi(false);
+        // API not available, continue with localStorage
+      }
+      
+      // Load from localStorage (fallback or primary for now)
       const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
       const teamTasks = existingTasks.filter((task: ResearchTask) => task.team === teamType);
       setTasks(teamTasks.reverse()); // Show newest first
+      setIsLoading(false);
     };
 
     loadTasks();
@@ -80,12 +103,34 @@ const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
     return 'Research in progress';
   };
 
-  if (tasks.length === 0) {
+  if (isLoading) {
     return (
       <Card className={`${teamType === 'black' ? 'bg-black-team-light border-white/20' : 'border-gray-200'}`}>
         <CardHeader>
           <CardTitle className={`text-lg ${teamType === 'black' ? 'text-white' : 'text-foreground'}`}>
             Recent Research Requests
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className={`h-6 w-6 animate-spin ${teamType === 'black' ? 'text-white' : 'text-muted-foreground'}`} />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <Card className={`${teamType === 'black' ? 'bg-black-team-light border-white/20' : 'border-gray-200'}`}>
+        <CardHeader>
+          <CardTitle className={`text-lg ${teamType === 'black' ? 'text-white' : 'text-foreground'} flex items-center justify-between`}>
+            <span>Recent Research Requests</span>
+            {isUsingApi && (
+              <Badge variant="outline" className="text-xs">
+                API Connected
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -100,8 +145,13 @@ const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
   return (
     <Card className={`${teamType === 'black' ? 'bg-black-team-light border-white/20' : 'border-gray-200'}`}>
       <CardHeader>
-        <CardTitle className={`text-lg ${teamType === 'black' ? 'text-white' : 'text-foreground'}`}>
-          Recent Research Requests
+        <CardTitle className={`text-lg ${teamType === 'black' ? 'text-white' : 'text-foreground'} flex items-center justify-between`}>
+          <span>Recent Research Requests</span>
+          {isUsingApi && (
+            <Badge variant="outline" className="text-xs">
+              API Connected
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
