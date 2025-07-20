@@ -62,28 +62,27 @@ export function HealthCheck() {
       case 'checking':
         return 'Checking connection...';
       case 'healthy':
-        return `Connected to EC2 (${environment})`;
+        return 'Connected to backend';
       case 'local':
-        return 'Running locally (no backend)';
+        return 'Connected to local backend';
       case 'error':
-        return 'EC2 connection failed';
+        return 'Backend connection failed';
     }
   };
 
   const getTooltipContent = () => {
     switch (status) {
       case 'healthy':
-        return 'Successfully connected to the EC2 backend instance';
+        return 'Successfully connected to the backend';
       case 'local':
-        return 'Running in local mode. To connect to EC2, update the VITE_API_BASE_URL in .env.local';
+        return 'Running in local mode with backend on port 3001';
       case 'error':
         return (
           <div className="space-y-2">
-            <p>Unable to connect to EC2. Please check:</p>
+            <p>Unable to connect to backend. Please check:</p>
             <ul className="list-disc list-inside text-xs">
-              <li>EC2 instance is running</li>
-              <li>Security group allows traffic on port 3000</li>
-              <li>VITE_API_BASE_URL is correctly set in .env.local</li>
+              <li>Backend server is running on port 3001</li>
+              <li>Run: npm run start:backend</li>
             </ul>
           </div>
         );

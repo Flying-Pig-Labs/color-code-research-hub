@@ -75,7 +75,8 @@ This document summarizes the comprehensive refactoring of the Color Code Researc
 
 ### 5. **Documentation**
 
-- ✅ `SETUP_GUIDE.md` - Complete setup instructions for EC2 integration
+- ✅ [Local Setup Guide](../setup/LOCAL_SETUP_GUIDE.md) - Complete setup instructions for local development
+- ✅ [Remote Execution Guide](../setup/REMOTE_EXECUTION_GUIDE.md) - EC2 integration setup instructions
 - ✅ `TEST_GUIDE.md` - Comprehensive testing documentation
 - ✅ `IMPLEMENTATION_SUMMARY.md` - This summary document
 - ✅ Updated inline code documentation

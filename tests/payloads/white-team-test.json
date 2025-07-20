@@ -1,0 +1,50 @@
+{
+  "repository": "Flying-Pig-Labs/ci-white-z9a3q",
+  "branch": "main",
+  "researchConfig": {
+    "teamType": "white",
+    "researchSpecs": {
+      "opportunityTypes": [
+        "Market gaps",
+        "Technology disruptions",
+        "Platform opportunities",
+        "Partnership opportunities"
+      ],
+      "targetCustomerSize": [
+        "Small businesses (1-50 employees)",
+        "Medium businesses (51-500 employees)"
+      ],
+      "businessModelPreference": [
+        "SaaS/Subscription",
+        "Marketplace",
+        "Usage-based pricing"
+      ],
+      "technicalApproach": "hybrid-approach",
+      "marketEntrySpeed": "fast",
+      "competitiveLandscape": "emerging",
+      "successMetrics": [
+        "Revenue potential",
+        "User adoption rate", 
+        "Time to profitability",
+        "Scalability potential"
+      ],
+      "riskTolerance": 4,
+      "minimumOpportunitySize": "medium",
+      "ecosystemIntegration": [
+        "CarMax ecosystem",
+        "Third-party APIs",
+        "Industry standards"
+      ],
+      "customSearchAreas": [
+        "vehicle inspection services",
+        "automotive warranty platforms",
+        "car maintenance scheduling",
+        "fleet management tools"
+      ]
+    },
+    "metadata": {
+      "timestamp": "2024-01-20T15:30:00.000Z",
+      "client": "CarMax"
+    }
+  }
+}

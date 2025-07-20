@@ -25,27 +25,27 @@ describe('useApiEnvironment', () => {
   });
 
   it('should start with checking status', () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockImplementation(() => new Promise(() => {})); // Never resolves
 
     const { result } = renderHook(() => useApiEnvironment());
 
     expect(result.current).toEqual({
-      environment: 'ec2',
+      environment: 'local',
       isHealthy: false,
       isChecking: true,
     });
   });
 
   it('should update to healthy when API check succeeds', async () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
 
     const { result } = renderHook(() => useApiEnvironment());
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        environment: 'ec2',
+        environment: 'local',
         isHealthy: true,
         isChecking: false,
       });
@@ -53,14 +53,14 @@ describe('useApiEnvironment', () => {
   });
 
   it('should update to unhealthy when API check fails', async () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockRejectedValue(new Error('Connection failed'));
 
     const { result } = renderHook(() => useApiEnvironment());
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        environment: 'ec2',
+        environment: 'local',
         isHealthy: false,
         isChecking: false,
       });
@@ -83,7 +83,7 @@ describe('useApiEnvironment', () => {
   });
 
   it('should re-check health every 30 seconds', async () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
 
     renderHook(() => useApiEnvironment());
@@ -108,7 +108,7 @@ describe('useApiEnvironment', () => {
   });
 
   it('should clean up interval on unmount', async () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
 
     const { unmount } = renderHook(() => useApiEnvironment());
@@ -139,27 +139,27 @@ describe('useApiEnvironment', () => {
     });
 
     // Mock environment change
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
 
     // Trigger re-check after 30 seconds
     vi.advanceTimersByTime(30000);
 
     await waitFor(() => {
-      expect(result.current.environment).toBe('ec2');
+      expect(result.current.environment).toBe('local');
       expect(result.current.isHealthy).toBe(true);
     });
   });
 
   it('should handle non-healthy status responses', async () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     (apiService.checkHealth as any).mockResolvedValue({ status: 'degraded', environment: 'production' });
 
     const { result } = renderHook(() => useApiEnvironment());
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        environment: 'ec2',
+        environment: 'local',
         isHealthy: false,
         isChecking: false,
       });
@@ -167,7 +167,7 @@ describe('useApiEnvironment', () => {
   });
 
   it('should update isChecking state during re-check', async () => {
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
     
     let resolveHealth: (value: any) => void;
     (apiService.checkHealth as any).mockImplementation(() => 

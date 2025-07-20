@@ -1,0 +1,40 @@
+{
+  "repository": "Flying-Pig-Labs/ci-red-m8k4x",
+  "branch": "main",
+  "researchConfig": {
+    "teamType": "red",
+    "researchSpecs": {
+      "companyName": "Carvana",
+      "analysisFocus": [
+        "Market positioning analysis",
+        "Competitive intelligence", 
+        "Pricing strategies",
+        "Customer acquisition strategies"
+      ],
+      "marketScope": "north-america",
+      "customCountries": [],
+      "disruptionTimeline": 18,
+      "investmentRange": [500000, 2000000],
+      "targetMarketSize": [
+        "Large ($1B-$10B)",
+        "Very Large (>$10B)"
+      ],
+      "competitiveIntensity": "high",
+      "customKeywords": [
+        "online car sales",
+        "vehicle financing",
+        "car vending machines",
+        "used car market"
+      ],
+      "industryVerticals": [
+        "Automotive",
+        "Financial Services"
+      ],
+      "disruptionStrategy": "cost-leadership"
+    },
+    "metadata": {
+      "timestamp": "2024-01-20T15:30:00.000Z",
+      "client": "CarMax"
+    }
+  }
+}

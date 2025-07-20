@@ -1,0 +1,348 @@
+{
+  "teams": {
+    "red": {
+      "name": "Red Team - Market Disruption Analysis",
+      "templateId": "market_disruption",
+      "baseFields": {
+        "companyName": {
+          "type": "text",
+          "label": "Target Company Name",
+          "required": true,
+          "placeholder": "e.g., Salesforce, Microsoft, etc."
+        }
+      },
+      "customizableFields": {
+        "analysisFocus": {
+          "type": "multiselect",
+          "label": "Analysis Focus Areas",
+          "required": false,
+          "options": [
+            { "value": "revenue_unbundling", "label": "Revenue Stream Unbundling" },
+            { "value": "feature_extraction", "label": "Feature Extraction Opportunities" },
+            { "value": "geographic_gaps", "label": "Geographic Market Gaps" },
+            { "value": "customer_segments", "label": "Customer Segment Analysis" },
+            { "value": "pricing_disruption", "label": "Pricing Model Disruption" }
+          ],
+          "default": ["revenue_unbundling", "feature_extraction"]
+        },
+        "marketScope": {
+          "type": "dropdown",
+          "label": "Market Scope",
+          "required": false,
+          "options": [
+            { "value": "global", "label": "Global" },
+            { "value": "north_america", "label": "North America" },
+            { "value": "europe", "label": "Europe" },
+            { "value": "asia_pacific", "label": "Asia-Pacific" },
+            { "value": "specific", "label": "Specific Countries" }
+          ],
+          "default": "global",
+          "conditionalField": {
+            "showWhen": "specific",
+            "field": {
+              "type": "multiselect",
+              "label": "Select Countries",
+              "options": ["United States", "Canada", "United Kingdom", "Germany", "Japan", "Australia"]
+            }
+          }
+        },
+        "disruptionTimeline": {
+          "type": "slider",
+          "label": "Disruption Timeline",
+          "min": 0,
+          "max": 24,
+          "step": 3,
+          "unit": "months",
+          "labels": {
+            "0": "Immediate",
+            "3": "3 months",
+            "6": "6 months",
+            "12": "1 year",
+            "24": "2+ years"
+          },
+          "default": 6
+        },
+        "investmentRange": {
+          "type": "range",
+          "label": "Investment Range",
+          "options": [
+            { "value": "micro", "label": "Micro ($0-$100k)", "min": 0, "max": 100000 },
+            { "value": "small", "label": "Small ($100k-$500k)", "min": 100000, "max": 500000 },
+            { "value": "medium", "label": "Medium ($500k-$2M)", "min": 500000, "max": 2000000 },
+            { "value": "large", "label": "Large ($2M+)", "min": 2000000, "max": null }
+          ],
+          "default": ["small", "medium"]
+        },
+        "targetMarketSize": {
+          "type": "checkbox",
+          "label": "Target Market Size",
+          "options": [
+            { "value": "billion_plus", "label": "Billion+ Opportunity" },
+            { "value": "hundred_million", "label": "$100M-$1B Opportunity" },
+            { "value": "ten_million", "label": "$10M-$100M Opportunity" },
+            { "value": "niche", "label": "Niche Markets Acceptable" }
+          ],
+          "default": ["billion_plus", "hundred_million"]
+        },
+        "competitiveIntensity": {
+          "type": "radio",
+          "label": "Competitive Intensity Preference",
+          "options": [
+            { "value": "blue_ocean", "label": "Blue Ocean Only" },
+            { "value": "low_competition", "label": "Low Competition Acceptable" },
+            { "value": "medium_competition", "label": "Medium Competition Acceptable" },
+            { "value": "red_ocean", "label": "Red Ocean Acceptable" }
+          ],
+          "default": "low_competition"
+        },
+        "customKeywords": {
+          "type": "tags",
+          "label": "Custom Keywords",
+          "placeholder": "Add additional search terms...",
+          "maxTags": 10,
+          "default": []
+        }
+      }
+    },
+    "black": {
+      "name": "Black Team - Internal Tool Reverse Engineering",
+      "templateId": "tool_reverse_engineering",
+      "baseFields": {
+        "companyName": {
+          "type": "text",
+          "label": "Target Company Name",
+          "required": true,
+          "placeholder": "e.g., Google, Amazon, etc."
+        }
+      },
+      "customizableFields": {
+        "toolCategories": {
+          "type": "multiselect",
+          "label": "Tool Categories to Analyze",
+          "required": true,
+          "options": [
+            { "value": "data_infrastructure", "label": "Data Infrastructure" },
+            { "value": "dev_tools", "label": "Development Tools" },
+            { "value": "monitoring", "label": "Monitoring/Observability" },
+            { "value": "security", "label": "Security Tools" },
+            { "value": "ml_ai", "label": "ML/AI Platforms" },
+            { "value": "workflow", "label": "Workflow Automation" },
+            { "value": "communication", "label": "Communication Tools" }
+          ],
+          "default": ["data_infrastructure", "dev_tools"]
+        },
+        "informationSources": {
+          "type": "toggles",
+          "label": "Information Sources",
+          "options": [
+            { "value": "eng_blogs", "label": "Engineering Blogs", "enabled": true },
+            { "value": "patents", "label": "Patent Database", "enabled": true },
+            { "value": "github", "label": "GitHub/Open Source", "enabled": true },
+            { "value": "conferences", "label": "Conference Talks", "enabled": true },
+            { "value": "job_posts", "label": "Job Postings", "enabled": true },
+            { "value": "social_media", "label": "Social Media", "enabled": false },
+            { "value": "podcasts", "label": "Technical Podcasts", "enabled": false }
+          ]
+        },
+        "implementationComplexity": {
+          "type": "dropdown",
+          "label": "Implementation Complexity",
+          "options": [
+            { "value": "mvp", "label": "MVP Only (Simplest Version)" },
+            { "value": "core", "label": "Core Features (80/20 Rule)" },
+            { "value": "full", "label": "Full Feature Parity" },
+            { "value": "enhanced", "label": "Enhanced Version" }
+          ],
+          "default": "core"
+        },
+        "teamSizeConstraint": {
+          "type": "radio",
+          "label": "Team Size Constraint",
+          "options": [
+            { "value": "solo", "label": "Solo Developer" },
+            { "value": "small", "label": "Small Team (2-3)" },
+            { "value": "medium", "label": "Medium Team (4-8)" },
+            { "value": "large", "label": "Large Team (8+)" }
+          ],
+          "default": "small"
+        },
+        "techStackPreference": {
+          "type": "multiselect",
+          "label": "Technology Stack Preference",
+          "options": [
+            { "value": "javascript", "label": "JavaScript/Node.js" },
+            { "value": "python", "label": "Python" },
+            { "value": "go", "label": "Go" },
+            { "value": "rust", "label": "Rust" },
+            { "value": "java", "label": "Java" },
+            { "value": "cloud_native", "label": "Cloud-Native Only" }
+          ],
+          "default": ["javascript", "python"]
+        },
+        "costComparisonBaseline": {
+          "type": "dropdown",
+          "label": "Cost Comparison Baseline",
+          "options": [
+            { "value": "current_vendor", "label": "Current Vendor Costs" },
+            { "value": "industry_avg", "label": "Industry Average" },
+            { "value": "best_in_class", "label": "Best-in-Class Pricing" },
+            { "value": "custom", "label": "Custom Threshold" }
+          ],
+          "default": "industry_avg",
+          "conditionalField": {
+            "showWhen": "custom",
+            "field": {
+              "type": "number",
+              "label": "Custom Cost Threshold ($)",
+              "min": 0,
+              "placeholder": "Enter monthly cost"
+            }
+          }
+        },
+        "evidenceThreshold": {
+          "type": "slider",
+          "label": "Evidence Confidence Threshold",
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "labels": {
+            "1": "Speculative",
+            "2": "Low (1 source)",
+            "3": "Medium (2-3 sources)",
+            "4": "High (multiple sources)"
+          },
+          "default": 3
+        }
+      }
+    },
+    "white": {
+      "name": "White Team - Whitespace Opportunity Analysis",
+      "templateId": "whitespace_opportunity",
+      "baseFields": {
+        "companyName": {
+          "type": "text",
+          "label": "Target Company/Market",
+          "required": true,
+          "placeholder": "e.g., Slack, CRM market, etc."
+        }
+      },
+      "customizableFields": {
+        "opportunityType": {
+          "type": "multiselect",
+          "label": "Opportunity Types to Explore",
+          "required": true,
+          "options": [
+            { "value": "integration_gaps", "label": "Integration Gaps" },
+            { "value": "workflow_automation", "label": "Workflow Automation" },
+            { "value": "vertical_solutions", "label": "Vertical Solutions" },
+            { "value": "geographic_expansion", "label": "Geographic Expansion" },
+            { "value": "price_gaps", "label": "Price Point Gaps" },
+            { "value": "feature_gaps", "label": "Feature Gaps" },
+            { "value": "service_gaps", "label": "Service Gaps" }
+          ],
+          "default": ["integration_gaps", "workflow_automation"]
+        },
+        "targetCustomerSize": {
+          "type": "checkbox",
+          "label": "Target Customer Size",
+          "options": [
+            { "value": "enterprise", "label": "Enterprise (1000+ employees)" },
+            { "value": "midmarket", "label": "Mid-market (100-1000)" },
+            { "value": "smb", "label": "SMB (10-100)" },
+            { "value": "micro", "label": "Micro (<10)" },
+            { "value": "consumer", "label": "Consumer" }
+          ],
+          "default": ["midmarket", "smb"]
+        },
+        "businessModelPreference": {
+          "type": "multiselect",
+          "label": "Business Model Preference",
+          "options": [
+            { "value": "saas_subscription", "label": "SaaS Subscription" },
+            { "value": "usage_based", "label": "Usage-Based" },
+            { "value": "freemium", "label": "Freemium" },
+            { "value": "marketplace", "label": "Marketplace" },
+            { "value": "one_time", "label": "One-Time Purchase" },
+            { "value": "service", "label": "Service/Consulting" }
+          ],
+          "default": ["saas_subscription", "freemium"]
+        },
+        "technicalApproach": {
+          "type": "radio",
+          "label": "Technical Approach",
+          "options": [
+            { "value": "api_only", "label": "API/Integration Only" },
+            { "value": "standalone", "label": "Standalone Product" },
+            { "value": "plugin", "label": "Plugin/Extension" },
+            { "value": "platform", "label": "Full Platform" }
+          ],
+          "default": "standalone"
+        },
+        "marketEntrySpeed": {
+          "type": "dropdown",
+          "label": "Market Entry Speed",
+          "options": [
+            { "value": "30_days", "label": "MVP in 30 Days" },
+            { "value": "3_months", "label": "3-Month Launch" },
+            { "value": "6_months", "label": "6-Month Launch" },
+            { "value": "12_months", "label": "12+ Month Acceptable" }
+          ],
+          "default": "3_months"
+        },
+        "competitiveLandscape": {
+          "type": "radio",
+          "label": "Competitive Landscape Preference",
+          "options": [
+            { "value": "first_mover", "label": "First Mover Required" },
+            { "value": "low_competition", "label": "Low Competition Preferred" },
+            { "value": "competition_ok", "label": "Competition Acceptable" },
+            { "value": "crowded_ok", "label": "Crowded Market OK" }
+          ],
+          "default": "low_competition"
+        },
+        "successMetrics": {
+          "type": "multiselect",
+          "label": "Success Metrics Priority",
+          "options": [
+            { "value": "revenue", "label": "Revenue Potential" },
+            { "value": "users", "label": "User Acquisition" },
+            { "value": "strategic", "label": "Strategic Value" },
+            { "value": "market_share", "label": "Market Share" },
+            { "value": "innovation", "label": "Innovation Index" }
+          ],
+          "default": ["revenue", "users"]
+        },
+        "riskTolerance": {
+          "type": "slider",
+          "label": "Risk Tolerance",
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "labels": {
+            "1": "Conservative",
+            "2": "Moderate",
+            "3": "Aggressive",
+            "4": "Experimental"
+          },
+          "default": 2
+        }
+      }
+    }
+  },
+  "formDefaults": {
+    "submitButton": "Start Intelligence Analysis",
+    "resetButton": "Reset Form",
+    "validationRules": {
+      "companyName": {
+        "minLength": 2,
+        "maxLength": 100,
+        "pattern": "^[a-zA-Z0-9\\s\\-\\.]+$"
+      },
+      "customKeywords": {
+        "maxItems": 10,
+        "itemMinLength": 2,
+        "itemMaxLength": 50
+      }
+    }
+  }
+}

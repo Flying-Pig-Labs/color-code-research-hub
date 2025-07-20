@@ -375,12 +375,12 @@ describe('API Service', () => {
       expect(getCurrentEnvironment()).toBe('local');
     });
 
-    it('should detect EC2 environment', () => {
+    it('should detect non-local environment as unknown', () => {
       vi.stubEnv('VITE_API_BASE_URL', 'http://ec2-12-34-56-78.compute-1.amazonaws.com');
-      expect(getCurrentEnvironment()).toBe('ec2');
+      expect(getCurrentEnvironment()).toBe('unknown');
 
       vi.stubEnv('VITE_API_BASE_URL', 'http://192.168.1.100:3001');
-      expect(getCurrentEnvironment()).toBe('ec2');
+      expect(getCurrentEnvironment()).toBe('unknown');
     });
 
     it('should return unknown for unrecognized URLs', () => {

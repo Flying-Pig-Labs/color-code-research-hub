@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { apiService, getCurrentEnvironment } from '@/services/api';
 
 interface ApiEnvironmentStatus {
-  environment: 'local' | 'ec2' | 'unknown';
+  environment: 'local' | 'unknown';
   isHealthy: boolean;
   isChecking: boolean;
 }

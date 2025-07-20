@@ -4,53 +4,25 @@ import { spawn } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-// Build configuration based on environment
+// Build configuration - local only
 const buildConfig = {
-  development: {
-    mode: 'development',
-    sourcemap: true,
-    minify: false,
-  },
-  production: {
-    mode: 'production',
-    sourcemap: false,
-    minify: true,
-  },
-  ec2: {
-    mode: 'production',
-    sourcemap: false,
-    minify: true,
-    apiBaseUrl: process.env.VITE_API_BASE_URL || 'http://EC2_IP:3000',
-  }
+  mode: 'production',
+  sourcemap: false,
+  minify: true,
 };
 
-function getBuildMode() {
-  const args = process.argv.slice(2);
-  if (args.includes('--dev')) return 'development';
-  if (args.includes('--ec2')) return 'ec2';
-  return 'production';
-}
-
 async function build() {
-  const mode = getBuildMode();
-  const config = buildConfig[mode];
+  const config = buildConfig;
   
   console.log(`
 🏗️  Building Color Code Research Hub
-📦 Mode: ${mode}
+📦 Mode: production (local)
 🔧 Configuration:`, config);
-
-  // Set environment variables
-  if (config.apiBaseUrl) {
-    process.env.VITE_API_BASE_URL = config.apiBaseUrl;
-  }
 
   // Build command arguments
   const args = ['vite', 'build'];
   
-  if (config.mode !== 'production') {
-    args.push('--mode', config.mode);
-  }
+  // Always production mode for local builds
   
   if (config.sourcemap) {
     args.push('--sourcemap');

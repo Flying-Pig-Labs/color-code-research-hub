@@ -15,6 +15,8 @@ import { useApiEnvironment } from "@/hooks/useApiEnvironment";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
+import { githubService } from "@/services/githubService";
 
 interface WhiteResearchSwarmFormProps {
   children: React.ReactNode;
@@ -74,6 +76,8 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   };
 
   const handleLaunchSwarm = async () => {
+    // Generate unique repo ID that doesn't conflict with existing repos
+    const repoId = await generateUniqueRepoId('white', githubService.repoExists.bind(githubService));
     const researchData = {
       opportunityTypes,
       targetCustomerSize,
@@ -94,10 +98,56 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
     setPollProgress(0);
 
     try {
-      // Submit research request
-      const { jobId } = await apiService.submitResearch({
-        teamType: 'white',
-        fields: researchData,
+      // Check if EC2 webhook is configured
+      const ec2Url = import.meta.env.VITE_EC2_WEBHOOK_URL;
+      
+      if (ec2Url) {
+        // Submit to EC2 via proxy
+        const response = await fetch('/api/ec2/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teamType: 'white',
+            repoId,
+            formData: researchData
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'EC2 submission failed');
+        }
+        
+        const result = await response.json();
+        toast.success('White Team Research Swarm launched on EC2!', {
+          description: `${result.message} Tracking ID: ${repoId}`,
+        });
+        
+        // Store in localStorage with repoId for GitHub tracking
+        const researchTask = {
+          id: Date.now().toString(),
+          repoId,
+          team: 'white',
+          whitespaceType: opportunityTypes,
+          ...researchData,
+          createdAt: new Date().toISOString(),
+          status: 'submitted',
+          expectedRepoName: result.expectedRepoName,
+          estimatedTime: result.estimatedTime,
+        };
+        
+        const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+        existingTasks.push(researchTask);
+        localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
+        window.dispatchEvent(new CustomEvent('taskAdded'));
+        
+        handleReset();
+        setOpen(false);
+      } else {
+        // Original API flow
+        const { jobId } = await apiService.submitResearch({
+          teamType: 'white',
+          fields: researchData,
       });
 
       setJobId(jobId);
@@ -122,23 +172,25 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
         description: 'Your opportunity discovery results are ready.',
       });
       
-      // Store in localStorage for compatibility
-      const researchTask = {
-        id: jobId,
-        team: 'white',
-        ...researchData,
-        createdAt: new Date().toISOString(),
-        status: 'completed',
-        results: result,
-      };
-      
-      const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-      existingTasks.push(researchTask);
-      localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
-      window.dispatchEvent(new CustomEvent('taskAdded'));
+        // Store in localStorage for compatibility
+        const researchTask = {
+          id: jobId,
+          team: 'white',
+          whitespaceType: opportunityTypes,
+          ...researchData,
+          createdAt: new Date().toISOString(),
+          status: 'completed',
+          results: result,
+        };
+        
+        const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+        existingTasks.push(researchTask);
+        localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
+        window.dispatchEvent(new CustomEvent('taskAdded'));
 
-      handleReset();
-      setOpen(false);
+        handleReset();
+        setOpen(false);
+      }
     } catch (error) {
       if (error instanceof ApiError) {
         showApiError(error);
@@ -222,8 +274,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">Environment:</span>
           <Badge variant={apiEnvironment.isHealthy ? "default" : "destructive"}>
-            {apiEnvironment.environment === 'ec2' ? 'EC2' : 
-             apiEnvironment.environment === 'local' ? 'Local' : 'Unknown'}
+            {apiEnvironment.environment === 'local' ? 'Local' : 'Unknown'}
           </Badge>
           {apiEnvironment.isChecking && <Loader2 className="h-3 w-3 animate-spin" />}
           {!apiEnvironment.isHealthy && !apiEnvironment.isChecking && (

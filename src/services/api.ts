@@ -1,4 +1,4 @@
-// API Service Module for EC2 Backend Communication
+// API Service Module for Backend Communication
 import { toast } from "sonner";
 
 // Get configuration from environment variables
@@ -46,7 +46,7 @@ function handleApiError(error: any): never {
   if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
     throw new ApiError(
       ApiErrorType.NETWORK_ERROR,
-      'Unable to connect to the server. Please check if the EC2 instance is running and accessible.',
+      'Unable to connect to the server. Please check if the backend is running on port 3001.',
       { originalError: error }
     );
   }
@@ -279,12 +279,9 @@ export const apiService = {
 };
 
 // Export helper function to get current environment
-export function getCurrentEnvironment(): 'local' | 'ec2' | 'unknown' {
+export function getCurrentEnvironment(): 'local' | 'unknown' {
   if (API_BASE_URL.includes('localhost') || API_BASE_URL.includes('127.0.0.1')) {
     return 'local';
-  }
-  if (API_BASE_URL.includes('ec2') || API_BASE_URL.match(/\d+\.\d+\.\d+\.\d+/)) {
-    return 'ec2';
   }
   return 'unknown';
 }
@@ -296,7 +293,7 @@ export function showApiError(error: ApiError) {
       toast.error(
         'Connection failed',
         {
-          description: 'Unable to reach the server. Please ensure the EC2 instance is running and accessible.',
+          description: 'Unable to reach the server. Please ensure the backend is running on port 3001.',
           action: {
             label: 'Setup Help',
             onClick: () => window.open('/setup-help', '_blank'),
@@ -309,7 +306,7 @@ export function showApiError(error: ApiError) {
       toast.error(
         'CORS Error',
         {
-          description: 'Cross-origin requests are blocked. The EC2 server needs to allow requests from this domain.',
+          description: 'Cross-origin requests are blocked. The backend server needs to allow requests from this domain.',
         }
       );
       break;

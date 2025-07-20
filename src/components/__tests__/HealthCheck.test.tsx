@@ -34,7 +34,7 @@ describe('HealthCheck', () => {
 
   it('should show checking status initially', () => {
     (apiService.checkHealth as any).mockImplementation(() => new Promise(() => {})); // Never resolves
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
@@ -44,13 +44,13 @@ describe('HealthCheck', () => {
 
   it('should show healthy status when API is connected', async () => {
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
     await waitFor(() => {
       expect(screen.getByTestId('check-icon')).toBeInTheDocument();
-      expect(screen.getByText('Connected to EC2 (ec2)')).toBeInTheDocument();
+      expect(screen.getByText('Connected to backend')).toBeInTheDocument();
     });
   });
 
@@ -62,25 +62,25 @@ describe('HealthCheck', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('alert-icon')).toBeInTheDocument();
-      expect(screen.getByText('Running locally (no backend)')).toBeInTheDocument();
+      expect(screen.getByText('Connected to local backend')).toBeInTheDocument();
     });
   });
 
-  it('should show error status when EC2 connection fails', async () => {
+  it('should show error status when backend connection fails', async () => {
     (apiService.checkHealth as any).mockRejectedValue(new Error('Connection failed'));
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
     await waitFor(() => {
       expect(screen.getByTestId('x-icon')).toBeInTheDocument();
-      expect(screen.getByText('EC2 connection failed')).toBeInTheDocument();
+      expect(screen.getByText('Backend connection failed')).toBeInTheDocument();
     });
   });
 
   it('should show retry button on error', async () => {
     (apiService.checkHealth as any).mockRejectedValue(new Error('Connection failed'));
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
@@ -93,7 +93,7 @@ describe('HealthCheck', () => {
 
   it('should retry health check when retry button is clicked', async () => {
     (apiService.checkHealth as any).mockRejectedValue(new Error('Connection failed'));
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
@@ -109,13 +109,13 @@ describe('HealthCheck', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('check-icon')).toBeInTheDocument();
-      expect(screen.getByText('Connected to EC2 (ec2)')).toBeInTheDocument();
+      expect(screen.getByText('Connected to backend')).toBeInTheDocument();
     });
   });
 
   it('should disable retry button while checking', async () => {
     (apiService.checkHealth as any).mockRejectedValue(new Error('Connection failed'));
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
@@ -135,7 +135,7 @@ describe('HealthCheck', () => {
 
   it('should re-check health every 30 seconds', async () => {
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     render(<HealthCheck />);
 
@@ -162,7 +162,7 @@ describe('HealthCheck', () => {
 
   it('should clean up interval on unmount', async () => {
     (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
-    (getCurrentEnvironment as any).mockReturnValue('ec2');
+    (getCurrentEnvironment as any).mockReturnValue('local');
 
     const { unmount } = render(<HealthCheck />);
 
@@ -184,7 +184,7 @@ describe('HealthCheck', () => {
   describe('Tooltip Content', () => {
     it('should show healthy tooltip content', async () => {
       (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
-      (getCurrentEnvironment as any).mockReturnValue('ec2');
+      (getCurrentEnvironment as any).mockReturnValue('local');
 
       render(<HealthCheck />);
 
@@ -194,7 +194,7 @@ describe('HealthCheck', () => {
 
       // The tooltip content is rendered but hidden by default
       // We can check for the trigger element
-      const statusText = screen.getByText('Connected to EC2 (ec2)');
+      const statusText = screen.getByText('Connected to backend');
       expect(statusText).toBeInTheDocument();
     });
 
@@ -216,7 +216,7 @@ describe('HealthCheck', () => {
   describe('Icon Styling', () => {
     it('should apply correct styles to icons', async () => {
       (apiService.checkHealth as any).mockResolvedValue({ status: 'healthy', environment: 'production' });
-      (getCurrentEnvironment as any).mockReturnValue('ec2');
+      (getCurrentEnvironment as any).mockReturnValue('local');
 
       render(<HealthCheck />);
 
@@ -228,7 +228,7 @@ describe('HealthCheck', () => {
 
     it('should apply animation to refresh icon', async () => {
       (apiService.checkHealth as any).mockImplementation(() => new Promise(() => {})); // Never resolves
-      (getCurrentEnvironment as any).mockReturnValue('ec2');
+      (getCurrentEnvironment as any).mockReturnValue('local');
 
       render(<HealthCheck />);
 

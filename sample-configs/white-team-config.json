@@ -1,0 +1,12 @@
+{
+  "companyName": "Slack",
+  "teamType": "white",
+  "opportunityType": ["integration_gaps", "workflow_automation", "vertical_solutions"],
+  "targetCustomerSize": ["enterprise", "midmarket"],
+  "businessModelPreference": ["saas_subscription", "freemium"],
+  "technicalApproach": "api_only",
+  "marketEntrySpeed": "3_months",
+  "competitiveLandscape": "low_competition",
+  "successMetrics": ["revenue", "users", "strategic"],
+  "riskTolerance": 3
+}
