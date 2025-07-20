@@ -6,10 +6,14 @@
 # Help command
 help:
 	@echo "Available commands:"
+	@echo "  make all      - Install dependencies, start servers, and open browser"
 	@echo "  make start    - Start frontend, backend, and open browser"
 	@echo "  make test     - Run e2e tests"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make install  - Install dependencies"
+
+# All-in-one command: install and start
+all: install start
 
 # Start both servers and open browser
 start:
@@ -57,4 +61,4 @@ install:
 	@npx playwright install
 	@echo "✅ Dependencies installed"
 
-.PHONY: help start stop test install
+.PHONY: help all start stop test install
