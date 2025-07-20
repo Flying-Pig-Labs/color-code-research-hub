@@ -4,14 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Bug } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { TagsInput } from "@/components/ui/tags-input";
+import { Bug } from "lucide-react";
 
 interface BlackResearchSwarmFormProps {
   children: React.ReactNode;
@@ -19,16 +18,16 @@ interface BlackResearchSwarmFormProps {
 
 const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
   const [open, setOpen] = useState(false);
-  const [vendorName, setVendorName] = useState("");
-  const [researchWhy, setResearchWhy] = useState<string[]>([]);
-  const [focusArea, setFocusArea] = useState<string[]>([]);
-  const [deliverables, setDeliverables] = useState<string[]>([]);
-  const [teamSize, setTeamSize] = useState("");
-  const [roles, setRoles] = useState<string[]>([]);
-  const [timePerPerson, setTimePerPerson] = useState("");
-  const [deadline, setDeadline] = useState<Date>();
-  const [successSignal, setSuccessSignal] = useState("");
-  const [referenceMaterial, setReferenceMaterial] = useState("");
+  const [toolCategories, setToolCategories] = useState<string[]>([]);
+  const [informationSources, setInformationSources] = useState<Record<string, boolean>>({});
+  const [implementationComplexity, setImplementationComplexity] = useState("");
+  const [teamSizeConstraint, setTeamSizeConstraint] = useState("");
+  const [techStackPreference, setTechStackPreference] = useState<string[]>([]);
+  const [costComparisonBaseline, setCostComparisonBaseline] = useState("");
+  const [customCostThreshold, setCustomCostThreshold] = useState("");
+  const [evidenceThreshold, setEvidenceThreshold] = useState([3]);
+  const [existingTools, setExistingTools] = useState<string[]>([]);
+  const [timeToMarket, setTimeToMarket] = useState("");
 
   const handleCheckboxChange = (value: string, currentValues: string[], setter: (values: string[]) => void) => {
     if (currentValues.includes(value)) {
@@ -38,60 +37,87 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
     }
   };
 
+  const handleSwitchChange = (key: string, checked: boolean) => {
+    setInformationSources(prev => ({ ...prev, [key]: checked }));
+  };
+
   const handleReset = () => {
-    setVendorName("");
-    setResearchWhy([]);
-    setFocusArea([]);
-    setDeliverables([]);
-    setTeamSize("");
-    setRoles([]);
-    setTimePerPerson("");
-    setDeadline(undefined);
-    setSuccessSignal("");
-    setReferenceMaterial("");
+    setToolCategories([]);
+    setInformationSources({});
+    setImplementationComplexity("");
+    setTeamSizeConstraint("");
+    setTechStackPreference([]);
+    setCostComparisonBaseline("");
+    setCustomCostThreshold("");
+    setEvidenceThreshold([3]);
+    setExistingTools([]);
+    setTimeToMarket("");
   };
 
   const handleLaunchSwarm = () => {
-    // Create research task object
     const researchTask = {
       id: Date.now().toString(),
       team: 'black',
-      vendorName,
-      researchWhy,
-      focusArea,
-      deliverables,
-      teamSize,
-      roles,
-      timePerPerson,
-      deadline: deadline?.toISOString(),
-      successSignal,
-      referenceMaterial,
+      toolCategories,
+      informationSources,
+      implementationComplexity,
+      teamSizeConstraint,
+      techStackPreference,
+      costComparisonBaseline,
+      customCostThreshold: costComparisonBaseline === "custom_threshold" ? parseFloat(customCostThreshold) : undefined,
+      evidenceThreshold: evidenceThreshold[0],
+      existingTools,
+      timeToMarket,
       createdAt: new Date().toISOString(),
       status: 'launched'
     };
 
-    // Get existing tasks from localStorage
     const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-    
-    // Add new task
     existingTasks.push(researchTask);
-    
-    // Save back to localStorage
     localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
-    
-    // Dispatch custom event to update tables
     window.dispatchEvent(new CustomEvent('taskAdded'));
     
     console.log("Black Team Research Swarm Launched:", researchTask);
-    alert(`Research Swarm launched for ${vendorName || 'Unknown Tool'}!`);
+    alert(`Black Team Research Swarm launched!`);
     
     handleReset();
     setOpen(false);
   };
 
-  const handleSaveDraft = () => {
-    console.log("Saving draft...");
-  };
+  const toolCategoryOptions = [
+    "Analytics & Monitoring",
+    "Development Tools",
+    "Customer Support",
+    "Marketing Automation",
+    "Data Management",
+    "Security Tools",
+    "Communication",
+    "Project Management"
+  ];
+
+  const informationSourceOptions = [
+    "Public Documentation",
+    "User Reviews",
+    "Competitor Analysis",
+    "Technical Specs",
+    "Pricing Information",
+    "User Interviews",
+    "Market Research",
+    "Industry Reports"
+  ];
+
+  const techStackOptions = [
+    "React/Next.js",
+    "Vue.js",
+    "Angular",
+    "Node.js",
+    "Python",
+    "Java",
+    "C#/.NET",
+    "Go",
+    "Cloud Native",
+    "Microservices"
+  ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -110,192 +136,202 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* 1. What tool are we replacing? */}
+          {/* Tool Categories */}
           <Card className="bg-black-team-light border-white/20">
             <CardHeader>
-              <CardTitle className="text-lg text-white">1. What tool are we replacing?</CardTitle>
+              <CardTitle className="text-lg text-white">Tool Categories</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {toolCategoryOptions.map((option) => (
+                  <div key={option} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`tool-${option}`}
+                      checked={toolCategories.includes(option)}
+                      onCheckedChange={() => handleCheckboxChange(option, toolCategories, setToolCategories)}
+                      className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                    />
+                    <Label htmlFor={`tool-${option}`} className="text-sm text-white">{option}</Label>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Information Sources */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Information Sources</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {informationSourceOptions.map((option) => (
+                  <div key={option} className="flex items-center justify-between">
+                    <Label htmlFor={`source-${option}`} className="text-white">{option}</Label>
+                    <Switch
+                      id={`source-${option}`}
+                      checked={informationSources[option] || false}
+                      onCheckedChange={(checked) => handleSwitchChange(option, checked)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Implementation Complexity */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Implementation Complexity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Select value={implementationComplexity} onValueChange={setImplementationComplexity}>
+                <SelectTrigger className="bg-black-team border-white/20 text-white">
+                  <SelectValue placeholder="Select complexity level" />
+                </SelectTrigger>
+                <SelectContent className="bg-black-team-light border-white/20">
+                  <SelectItem value="low" className="text-white hover:bg-white/10">Low</SelectItem>
+                  <SelectItem value="medium" className="text-white hover:bg-white/10">Medium</SelectItem>
+                  <SelectItem value="high" className="text-white hover:bg-white/10">High</SelectItem>
+                  <SelectItem value="very-high" className="text-white hover:bg-white/10">Very High</SelectItem>
+                </SelectContent>
+              </Select>
+            </CardContent>
+          </Card>
+
+          {/* Team Size Constraint */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Team Size Constraint</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup value={teamSizeConstraint} onValueChange={setTeamSizeConstraint}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="small" id="team-small" className="border-white/20 text-white" />
+                  <Label htmlFor="team-small" className="text-white">Small (1-3 people)</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="medium" id="team-medium" className="border-white/20 text-white" />
+                  <Label htmlFor="team-medium" className="text-white">Medium (4-8 people)</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="large" id="team-large" className="border-white/20 text-white" />
+                  <Label htmlFor="team-large" className="text-white">Large (9+ people)</Label>
+                </div>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
+          {/* Tech Stack Preference (Optional) */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Tech Stack Preference (Optional)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {techStackOptions.map((option) => (
+                  <div key={option} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`tech-${option}`}
+                      checked={techStackPreference.includes(option)}
+                      onCheckedChange={() => handleCheckboxChange(option, techStackPreference, setTechStackPreference)}
+                      className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                    />
+                    <Label htmlFor={`tech-${option}`} className="text-sm text-white">{option}</Label>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Cost Comparison Baseline */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Cost Comparison Baseline</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="vendor-name" className="text-white">Vendor or Product Name</Label>
-                <Input
-                  id="vendor-name"
-                  value={vendorName}
-                  onChange={(e) => setVendorName(e.target.value)}
-                  placeholder="Enter vendor or product name"
-                  className="bg-black-team border-white/20 text-white placeholder:text-white/50"
+              <Select value={costComparisonBaseline} onValueChange={setCostComparisonBaseline}>
+                <SelectTrigger className="bg-black-team border-white/20 text-white">
+                  <SelectValue placeholder="Select baseline" />
+                </SelectTrigger>
+                <SelectContent className="bg-black-team-light border-white/20">
+                  <SelectItem value="current_tool" className="text-white hover:bg-white/10">Current Tool Cost</SelectItem>
+                  <SelectItem value="industry_average" className="text-white hover:bg-white/10">Industry Average</SelectItem>
+                  <SelectItem value="budget_limit" className="text-white hover:bg-white/10">Budget Limit</SelectItem>
+                  <SelectItem value="custom_threshold" className="text-white hover:bg-white/10">Custom Threshold</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {costComparisonBaseline === "custom_threshold" && (
+                <div>
+                  <Label className="text-white">Custom Cost Threshold ($)</Label>
+                  <Input
+                    type="number"
+                    value={customCostThreshold}
+                    onChange={(e) => setCustomCostThreshold(e.target.value)}
+                    placeholder="Enter amount"
+                    className="bg-black-team border-white/20 text-white placeholder:text-white/50"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Evidence Threshold */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Evidence Threshold</CardTitle>
+              <CardDescription className="text-white/70">Quality of evidence required (1-4)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Slider
+                  value={evidenceThreshold}
+                  onValueChange={setEvidenceThreshold}
+                  min={1}
+                  max={4}
+                  step={1}
+                  className="w-full"
                 />
-              </div>
-              <div>
-                <Label className="text-white">Why?</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  {["Too expensive", "Too rigid", "Poor integration", "We can build it better"].map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`why-${option}`}
-                        checked={researchWhy.includes(option)}
-                        onCheckedChange={() => handleCheckboxChange(option, researchWhy, setResearchWhy)}
-                        className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-black"
-                      />
-                      <Label htmlFor={`why-${option}`} className="text-sm text-white">{option}</Label>
-                    </div>
-                  ))}
+                <div className="text-center text-sm text-white/70">
+                  Level {evidenceThreshold[0]} - {evidenceThreshold[0] === 1 ? "Basic" : evidenceThreshold[0] === 2 ? "Good" : evidenceThreshold[0] === 3 ? "Strong" : "Comprehensive"}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* 2. Focus Area */}
+          {/* Existing Tools (Optional) */}
           <Card className="bg-black-team-light border-white/20">
             <CardHeader>
-              <CardTitle className="text-lg text-white">2. Focus Area</CardTitle>
-              <CardDescription className="text-white/70">What part of the tool should the swarm dig into?</CardDescription>
+              <CardTitle className="text-lg text-white">Existing Tools (Optional)</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                {["Core features", "Pricing / cost", "API / integrations", "User experience", "Open-source alternatives"].map((option) => (
-                  <div key={option} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`focus-${option}`}
-                      checked={focusArea.includes(option)}
-                      onCheckedChange={() => handleCheckboxChange(option, focusArea, setFocusArea)}
-                      className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-black"
-                    />
-                    <Label htmlFor={`focus-${option}`} className="text-sm text-white">{option}</Label>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 3. What do you want back? */}
-          <Card className="bg-black-team-light border-white/20">
-            <CardHeader>
-              <CardTitle className="text-lg text-white">3. What do you want back?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                {["Feature comparison", "MVP spec", "UX teardown", "Build feasibility", "Cost savings estimate"].map((option) => (
-                  <div key={option} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`deliverable-${option}`}
-                      checked={deliverables.includes(option)}
-                      onCheckedChange={() => handleCheckboxChange(option, deliverables, setDeliverables)}
-                      className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-black"
-                    />
-                    <Label htmlFor={`deliverable-${option}`} className="text-sm text-white">{option}</Label>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 4. Swarm Settings */}
-          <Card className="bg-black-team-light border-white/20">
-            <CardHeader>
-              <CardTitle className="text-lg text-white">4. Swarm Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="team-size" className="text-white">Team size</Label>
-                <Select value={teamSize} onValueChange={setTeamSize}>
-                  <SelectTrigger className="bg-black-team border-white/20 text-white">
-                    <SelectValue placeholder="Select team size (1-10)" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-black-team-light border-white/20">
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                      <SelectItem key={num} value={num.toString()} className="text-white hover:bg-white/10">{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-white">Needed roles</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  {["Research", "Engineering", "Design", "Product"].map((role) => (
-                    <div key={role} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`role-${role}`}
-                        checked={roles.includes(role)}
-                        onCheckedChange={() => handleCheckboxChange(role, roles, setRoles)}
-                        className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-black"
-                      />
-                      <Label htmlFor={`role-${role}`} className="text-sm text-white">{role}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="time-per-person" className="text-white">Time per person</Label>
-                <Select value={timePerPerson} onValueChange={setTimePerPerson}>
-                  <SelectTrigger className="bg-black-team border-white/20 text-white">
-                    <SelectValue placeholder="Select time per person" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-black-team-light border-white/20">
-                    <SelectItem value="2h" className="text-white hover:bg-white/10">2h</SelectItem>
-                    <SelectItem value="4h" className="text-white hover:bg-white/10">4h</SelectItem>
-                    <SelectItem value="8h" className="text-white hover:bg-white/10">8h</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-white">Deadline</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal bg-black-team border-white/20 text-white hover:bg-white/10",
-                        !deadline && "text-white/50"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {deadline ? format(deadline, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-black-team-light border-white/20" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={deadline}
-                      onSelect={setDeadline}
-                      initialFocus
-                      className="p-3 pointer-events-auto text-white"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 5. Success Signal */}
-          <Card className="bg-black-team-light border-white/20">
-            <CardHeader>
-              <CardTitle className="text-lg text-white">5. What's the success signal?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={successSignal}
-                onChange={(e) => setSuccessSignal(e.target.value)}
-                placeholder='e.g. "A lean plan to replace Zendesk with a cheaper internal tool."'
-                rows={3}
-                className="bg-black-team border-white/20 text-white placeholder:text-white/50"
+              <TagsInput
+                value={existingTools}
+                onChange={setExistingTools}
+                placeholder="Type tool name and press Enter"
+                className="bg-black-team border-white/20"
               />
             </CardContent>
           </Card>
 
-          {/* 6. Reference Material */}
+          {/* Time to Market */}
           <Card className="bg-black-team-light border-white/20">
             <CardHeader>
-              <CardTitle className="text-lg text-white">6. Reference Material (optional)</CardTitle>
+              <CardTitle className="text-lg text-white">Time to Market</CardTitle>
             </CardHeader>
             <CardContent>
-              <Textarea
-                value={referenceMaterial}
-                onChange={(e) => setReferenceMaterial(e.target.value)}
-                placeholder="Upload docs or notes, link to current tool"
-                rows={4}
-                className="bg-black-team border-white/20 text-white placeholder:text-white/50"
-              />
+              <Select value={timeToMarket} onValueChange={setTimeToMarket}>
+                <SelectTrigger className="bg-black-team border-white/20 text-white">
+                  <SelectValue placeholder="Select timeframe" />
+                </SelectTrigger>
+                <SelectContent className="bg-black-team-light border-white/20">
+                  <SelectItem value="immediate" className="text-white hover:bg-white/10">Immediate (0-1 month)</SelectItem>
+                  <SelectItem value="short" className="text-white hover:bg-white/10">Short (1-3 months)</SelectItem>
+                  <SelectItem value="medium" className="text-white hover:bg-white/10">Medium (3-6 months)</SelectItem>
+                  <SelectItem value="long" className="text-white hover:bg-white/10">Long (6+ months)</SelectItem>
+                </SelectContent>
+              </Select>
             </CardContent>
           </Card>
 
@@ -306,13 +342,6 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
               className="flex-1 bg-white text-black hover:bg-white/90"
             >
               🔘 Launch Swarm
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleSaveDraft}
-              className="flex-1 border-white/20 text-white hover:bg-white/10"
-            >
-              💾 Save Draft
             </Button>
             <Button 
               variant="outline" 

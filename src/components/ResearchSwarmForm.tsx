@@ -4,14 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Target } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
+import { TagsInput } from "@/components/ui/tags-input";
+import { Target } from "lucide-react";
 
 interface ResearchSwarmFormProps {
   children: React.ReactNode;
@@ -19,17 +17,17 @@ interface ResearchSwarmFormProps {
 
 const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   const [open, setOpen] = useState(false);
-  const [vendorName, setVendorName] = useState("");
-  const [researchWhy, setResearchWhy] = useState<string[]>([]);
-  const [focusArea, setFocusArea] = useState<string[]>([]);
-  const [deliverables, setDeliverables] = useState<string[]>([]);
-  const [teamSize, setTeamSize] = useState("");
-  const [roles, setRoles] = useState<string[]>([]);
-  const [deadline, setDeadline] = useState<Date>();
-  const [maxHours, setMaxHours] = useState("");
-  const [allowTesting, setAllowTesting] = useState(false);
-  const [successCriteria, setSuccessCriteria] = useState("");
-  const [referenceMaterials, setReferenceMaterials] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [analysisFocus, setAnalysisFocus] = useState<string[]>([]);
+  const [marketScope, setMarketScope] = useState("");
+  const [customCountries, setCustomCountries] = useState<string[]>([]);
+  const [disruptionTimeline, setDisruptionTimeline] = useState([12]);
+  const [investmentRange, setInvestmentRange] = useState([100000, 1000000]);
+  const [targetMarketSize, setTargetMarketSize] = useState<string[]>([]);
+  const [competitiveIntensity, setCompetitiveIntensity] = useState("");
+  const [customKeywords, setCustomKeywords] = useState<string[]>([]);
+  const [industryVerticals, setIndustryVerticals] = useState<string[]>([]);
+  const [disruptionStrategy, setDisruptionStrategy] = useState("");
 
   const handleCheckboxChange = (value: string, currentValues: string[], setter: (values: string[]) => void) => {
     if (currentValues.includes(value)) {
@@ -40,62 +38,78 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   };
 
   const handleReset = () => {
-    setVendorName("");
-    setResearchWhy([]);
-    setFocusArea([]);
-    setDeliverables([]);
-    setTeamSize("");
-    setRoles([]);
-    setDeadline(undefined);
-    setMaxHours("");
-    setAllowTesting(false);
-    setSuccessCriteria("");
-    setReferenceMaterials("");
+    setCompanyName("");
+    setAnalysisFocus([]);
+    setMarketScope("");
+    setCustomCountries([]);
+    setDisruptionTimeline([12]);
+    setInvestmentRange([100000, 1000000]);
+    setTargetMarketSize([]);
+    setCompetitiveIntensity("");
+    setCustomKeywords([]);
+    setIndustryVerticals([]);
+    setDisruptionStrategy("");
   };
 
   const handleLaunchSwarm = () => {
-    // Create research task object
     const researchTask = {
       id: Date.now().toString(),
       team: 'red',
-      vendorName,
-      researchWhy,
-      focusArea,
-      deliverables,
-      teamSize,
-      roles,
-      deadline: deadline?.toISOString(),
-      maxHours,
-      allowTesting,
-      successCriteria,
-      referenceMaterials,
+      companyName,
+      analysisFocus,
+      marketScope,
+      customCountries,
+      disruptionTimeline: disruptionTimeline[0],
+      investmentRange,
+      targetMarketSize,
+      competitiveIntensity,
+      customKeywords,
+      industryVerticals,
+      disruptionStrategy,
       createdAt: new Date().toISOString(),
       status: 'launched'
     };
 
-    // Get existing tasks from localStorage
     const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-    
-    // Add new task
     existingTasks.push(researchTask);
-    
-    // Save back to localStorage
     localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
-    
-    // Dispatch custom event to update tables
     window.dispatchEvent(new CustomEvent('taskAdded'));
     
     console.log("Research Swarm Launched:", researchTask);
-    alert(`Research Swarm launched for ${vendorName || 'Unknown Vendor'}!`);
+    alert(`Research Swarm launched for ${companyName || 'Unknown Company'}!`);
     
     handleReset();
     setOpen(false);
   };
 
-  const handleSaveDraft = () => {
-    // Handle saving draft
-    console.log("Saving draft...");
-  };
+  const analysisFocusOptions = [
+    "Market positioning analysis",
+    "Competitive intelligence",
+    "Technology assessment",
+    "Business model evaluation",
+    "Customer acquisition strategies",
+    "Pricing strategies",
+    "Partnership opportunities",
+    "Market entry barriers"
+  ];
+
+  const marketSizeOptions = [
+    "Small (<$100M)",
+    "Medium ($100M-$1B)",
+    "Large ($1B-$10B)",
+    "Very Large (>$10B)"
+  ];
+
+  const industryVerticalOptions = [
+    "Automotive",
+    "Technology",
+    "Financial Services",
+    "Healthcare",
+    "Retail",
+    "Manufacturing",
+    "Real Estate",
+    "Transportation"
+  ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -114,203 +128,222 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* 1. What are we researching? */}
+          {/* Company Name */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">1. What are we researching?</CardTitle>
+              <CardTitle className="text-lg">Company Name</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="vendor-name">Vendor Name</Label>
-                <Input
-                  id="vendor-name"
-                  value={vendorName}
-                  onChange={(e) => setVendorName(e.target.value)}
-                  placeholder="Enter vendor name"
-                />
-              </div>
-              <div>
-                <Label>Why?</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  {["Replace with internal tool", "Learn how it works", "Identify weak spots", "Find cheaper alternatives"].map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`why-${option}`}
-                        checked={researchWhy.includes(option)}
-                        onCheckedChange={() => handleCheckboxChange(option, researchWhy, setResearchWhy)}
-                      />
-                      <Label htmlFor={`why-${option}`} className="text-sm">{option}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <CardContent>
+              <Input
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Enter company name"
+                required
+              />
             </CardContent>
           </Card>
 
-          {/* 2. Focus Area */}
+          {/* Analysis Focus */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">2. Focus Area</CardTitle>
-              <CardDescription>Choose the part of the product to investigate:</CardDescription>
+              <CardTitle className="text-lg">Analysis Focus</CardTitle>
+              <CardDescription>Select areas of analysis to focus on</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
-                {["APIs / Integrations", "Pricing / Licensing", "Core Features", "UX / Onboarding", "Business Model"].map((option) => (
+                {analysisFocusOptions.map((option) => (
                   <div key={option} className="flex items-center space-x-2">
                     <Checkbox
-                      id={`focus-${option}`}
-                      checked={focusArea.includes(option)}
-                      onCheckedChange={() => handleCheckboxChange(option, focusArea, setFocusArea)}
+                      id={`analysis-${option}`}
+                      checked={analysisFocus.includes(option)}
+                      onCheckedChange={() => handleCheckboxChange(option, analysisFocus, setAnalysisFocus)}
                     />
-                    <Label htmlFor={`focus-${option}`} className="text-sm">{option}</Label>
+                    <Label htmlFor={`analysis-${option}`} className="text-sm">{option}</Label>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* 3. Deliverables */}
+          {/* Market Scope */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">3. Deliverables</CardTitle>
-              <CardDescription>What should the swarm come back with?</CardDescription>
+              <CardTitle className="text-lg">Market Scope</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Select value={marketScope} onValueChange={setMarketScope}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select market scope" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="global">Global</SelectItem>
+                  <SelectItem value="north-america">North America</SelectItem>
+                  <SelectItem value="europe">Europe</SelectItem>
+                  <SelectItem value="asia-pacific">Asia Pacific</SelectItem>
+                  <SelectItem value="custom">Custom Countries</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {marketScope === "custom" && (
+                <div>
+                  <Label>Custom Countries</Label>
+                  <TagsInput
+                    value={customCountries}
+                    onChange={setCustomCountries}
+                    placeholder="Type country and press Enter"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Disruption Timeline */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Disruption Timeline</CardTitle>
+              <CardDescription>Expected timeline for market disruption (0-24 months)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Slider
+                  value={disruptionTimeline}
+                  onValueChange={setDisruptionTimeline}
+                  max={24}
+                  step={1}
+                  className="w-full"
+                />
+                <div className="text-center text-sm text-muted-foreground">
+                  {disruptionTimeline[0]} months
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Investment Range */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Investment Range</CardTitle>
+              <CardDescription>Expected investment range ($)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Slider
+                  value={investmentRange}
+                  onValueChange={setInvestmentRange}
+                  min={10000}
+                  max={10000000}
+                  step={10000}
+                  className="w-full"
+                />
+                <div className="text-center text-sm text-muted-foreground">
+                  ${investmentRange[0].toLocaleString()} - ${investmentRange[1].toLocaleString()}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Target Market Size */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Target Market Size</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
-                {["Feature comparison table", "Code scaffold or prototype", "UX teardown slides", "Notes + SWOT summary", "Recommendation memo"].map((option) => (
+                {marketSizeOptions.map((option) => (
                   <div key={option} className="flex items-center space-x-2">
                     <Checkbox
-                      id={`deliverable-${option}`}
-                      checked={deliverables.includes(option)}
-                      onCheckedChange={() => handleCheckboxChange(option, deliverables, setDeliverables)}
+                      id={`market-size-${option}`}
+                      checked={targetMarketSize.includes(option)}
+                      onCheckedChange={() => handleCheckboxChange(option, targetMarketSize, setTargetMarketSize)}
                     />
-                    <Label htmlFor={`deliverable-${option}`} className="text-sm">{option}</Label>
+                    <Label htmlFor={`market-size-${option}`} className="text-sm">{option}</Label>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* 4. Team Setup */}
+          {/* Competitive Intensity */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">4. Team Setup</CardTitle>
+              <CardTitle className="text-lg">Competitive Intensity</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="team-size">Team Size</Label>
-                <Select value={teamSize} onValueChange={setTeamSize}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select team size (1-10)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Needed Roles</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  {["Research", "Engineering", "Design", "Data"].map((role) => (
-                    <div key={role} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`role-${role}`}
-                        checked={roles.includes(role)}
-                        onCheckedChange={() => handleCheckboxChange(role, roles, setRoles)}
-                      />
-                      <Label htmlFor={`role-${role}`} className="text-sm">{role}</Label>
-                    </div>
-                  ))}
+            <CardContent>
+              <RadioGroup value={competitiveIntensity} onValueChange={setCompetitiveIntensity}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="low" id="intensity-low" />
+                  <Label htmlFor="intensity-low">Low</Label>
                 </div>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="medium" id="intensity-medium" />
+                  <Label htmlFor="intensity-medium">Medium</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="high" id="intensity-high" />
+                  <Label htmlFor="intensity-high">High</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="very-high" id="intensity-very-high" />
+                  <Label htmlFor="intensity-very-high">Very High</Label>
+                </div>
+              </RadioGroup>
             </CardContent>
           </Card>
 
-          {/* 5. Constraints */}
+          {/* Custom Keywords (Optional) */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">5. Constraints</CardTitle>
+              <CardTitle className="text-lg">Custom Keywords (Optional)</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Deadline</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !deadline && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {deadline ? format(deadline, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={deadline}
-                      onSelect={setDeadline}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
+            <CardContent>
+              <TagsInput
+                value={customKeywords}
+                onChange={setCustomKeywords}
+                placeholder="Type keyword and press Enter"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Industry Verticals (Optional) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Industry Verticals (Optional)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {industryVerticalOptions.map((option) => (
+                  <div key={option} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`industry-${option}`}
+                      checked={industryVerticals.includes(option)}
+                      onCheckedChange={() => handleCheckboxChange(option, industryVerticals, setIndustryVerticals)}
                     />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div>
-                <Label htmlFor="max-hours">Max hours per person</Label>
-                <Select value={maxHours} onValueChange={setMaxHours}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select max hours" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2h">2h</SelectItem>
-                    <SelectItem value="4h">4h</SelectItem>
-                    <SelectItem value="8h">8h</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="allow-testing"
-                  checked={allowTesting}
-                  onCheckedChange={(checked) => setAllowTesting(checked === true)}
-                />
-                <Label htmlFor="allow-testing">Allow testing/prototyping?</Label>
+                    <Label htmlFor={`industry-${option}`} className="text-sm">{option}</Label>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* 6. Success Criteria */}
+          {/* Disruption Strategy */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">6. Success Criteria</CardTitle>
+              <CardTitle className="text-lg">Disruption Strategy</CardTitle>
             </CardHeader>
             <CardContent>
-              <Textarea
-                value={successCriteria}
-                onChange={(e) => setSuccessCriteria(e.target.value)}
-                placeholder="What would make this swarm a win? (1–2 sentences)"
-                rows={3}
-              />
-            </CardContent>
-          </Card>
-
-          {/* 7. Reference Materials */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">7. Reference Materials (optional)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={referenceMaterials}
-                onChange={(e) => setReferenceMaterials(e.target.value)}
-                placeholder="Free text to add contextual docs or notes from past efforts"
-                rows={4}
-              />
+              <Select value={disruptionStrategy} onValueChange={setDisruptionStrategy}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select disruption strategy" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="direct-competition">Direct Competition</SelectItem>
+                  <SelectItem value="market-differentiation">Market Differentiation</SelectItem>
+                  <SelectItem value="cost-leadership">Cost Leadership</SelectItem>
+                  <SelectItem value="innovation">Innovation</SelectItem>
+                  <SelectItem value="acquisition">Acquisition</SelectItem>
+                  <SelectItem value="partnership">Partnership</SelectItem>
+                </SelectContent>
+              </Select>
             </CardContent>
           </Card>
 
@@ -319,15 +352,9 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
             <Button 
               onClick={handleLaunchSwarm}
               className="flex-1 bg-red-team hover:bg-red-team/90 text-white"
+              disabled={!companyName}
             >
               🔘 Launch Swarm
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleSaveDraft}
-              className="flex-1"
-            >
-              💾 Save Draft
             </Button>
             <Button 
               variant="outline" 
