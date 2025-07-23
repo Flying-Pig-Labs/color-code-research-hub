@@ -19,6 +19,7 @@ This will install all dependencies and start both servers.
 
 - **Frontend**: Vite development server on port 3000
 - **Backend API**: Express server on port 3001
+- **Queue**: AWS SQS for asynchronous job processing
 - The frontend proxies API calls to the backend
 
 ### Starting the Application
@@ -33,6 +34,30 @@ make web      # Start only the web server
 **Important**: The `make` commands automatically kill any processes on the required ports before starting, preventing "port already in use" errors.
 
 To stop all servers, press `Ctrl+C` (this triggers `make stop` automatically).
+
+### Environment Configuration
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env.local
+```
+
+2. Update the AWS credentials in `.env.local`:
+```
+AWS_ACCESS_KEY_ID=your-aws-access-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+SQS_QUEUE_URL=your-sqs-queue-url
+```
+
+### AWS SQS Integration
+
+The system now uses AWS SQS for reliable message queuing instead of webhooks. Research requests are published to an SQS queue for asynchronous processing.
+
+**Benefits**:
+- Reliable message delivery with automatic retries
+- Decoupled architecture for better scalability
+- Built-in dead letter queue support
+- No need for webhook endpoints or ngrok tunnels
 
 ## Research Teams Overview
 

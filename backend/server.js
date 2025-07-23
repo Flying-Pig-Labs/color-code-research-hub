@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
-import { addEC2ProxyEndpoint } from './server-ec2-proxy.js';
+import { publishToSQS } from './sqs-publisher.js';
 import dotenv from 'dotenv';
 
 // Load environment variables
@@ -41,12 +41,12 @@ app.get('/health', (req, res) => {
 });
 
 // Get available teams
-app.get('/teams', validateApiKey, (req, res) => {
+app.get('/teams', (req, res) => {
   res.json(['red', 'black', 'white']);
 });
 
 // Get fields for a specific team
-app.get('/teams/:teamType/fields', validateApiKey, (req, res) => {
+app.get('/teams/:teamType/fields', (req, res) => {
   const { teamType } = req.params;
   
   const fields = {
@@ -89,8 +89,8 @@ app.get('/teams/:teamType/fields', validateApiKey, (req, res) => {
 });
 
 // Submit research request
-app.post('/research/submit', validateApiKey, (req, res) => {
-  const { teamType, fields, webhookUrl } = req.body;
+app.post('/research/submit', async (req, res) => {
+  const { teamType, fields } = req.body;
   
   if (!teamType || !fields) {
     return res.status(400).json({ message: 'Missing required fields' });
@@ -101,7 +101,6 @@ app.post('/research/submit', validateApiKey, (req, res) => {
     jobId,
     teamType,
     fields,
-    webhookUrl,
     status: 'pending',
     createdAt: new Date().toISOString(),
     completedAt: null,
@@ -111,35 +110,56 @@ app.post('/research/submit', validateApiKey, (req, res) => {
   
   jobs.set(jobId, job);
   
-  // Simulate async processing
-  setTimeout(() => {
-    const job = jobs.get(jobId);
-    if (job) {
-      job.status = 'processing';
-      
-      // Simulate processing time (2-5 seconds)
-      setTimeout(() => {
-        const job = jobs.get(jobId);
-        if (job) {
-          job.status = 'completed';
-          job.completedAt = new Date().toISOString();
-          job.results = generateMockResults(teamType, fields);
-          
-          // Trigger webhook if provided
-          if (webhookUrl) {
-            // In a real implementation, you would make an HTTP request to the webhook
-            console.log(`Would trigger webhook: ${webhookUrl}`);
-          }
+  // Publish to SQS queue
+  try {
+    const sqsPayload = {
+      jobId,
+      teamType,
+      fields,
+      repository: `${process.env.VITE_GITHUB_ORG || 'Flying-Pig-Labs'}/ci-${teamType}-${jobId}`,
+      researchConfig: {
+        teamType,
+        researchSpecs: fields,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          client: process.env.CLIENT_COMPANY_NAME || 'Unknown'
         }
-      }, 2000 + Math.random() * 3000);
-    }
-  }, 1000);
+      }
+    };
+    
+    const sqsResult = await publishToSQS(sqsPayload);
+    console.log(`Published job ${jobId} to SQS: ${sqsResult.messageId}`);
+    
+    // Update job status to processing
+    job.status = 'processing';
+    job.sqsMessageId = sqsResult.messageId;
+    
+    // Note: In production, you would have a separate process consuming from SQS
+    // and updating job status. For now, we'll simulate completion.
+    setTimeout(() => {
+      const job = jobs.get(jobId);
+      if (job) {
+        job.status = 'completed';
+        job.completedAt = new Date().toISOString();
+        job.results = generateMockResults(teamType, fields);
+      }
+    }, 5000 + Math.random() * 5000);
+    
+  } catch (error) {
+    console.error('Failed to publish to SQS:', error);
+    job.status = 'failed';
+    job.error = error.message;
+    return res.status(500).json({ 
+      message: 'Failed to submit research request',
+      error: error.message 
+    });
+  }
   
   res.json({ jobId });
 });
 
 // Get job status
-app.get('/research/status/:jobId', validateApiKey, (req, res) => {
+app.get('/research/status/:jobId', (req, res) => {
   const { jobId } = req.params;
   const job = jobs.get(jobId);
   
@@ -157,7 +177,7 @@ app.get('/research/status/:jobId', validateApiKey, (req, res) => {
 });
 
 // Get job results
-app.get('/research/results/:jobId', validateApiKey, (req, res) => {
+app.get('/research/results/:jobId', (req, res) => {
   const { jobId } = req.params;
   const job = jobs.get(jobId);
   
@@ -258,8 +278,59 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal server error' });
 });
 
-// Add EC2 proxy endpoint
-addEC2ProxyEndpoint(app);
+// SQS endpoint for direct submission (replaces EC2 proxy)
+app.post('/api/sqs/submit', async (req, res) => {
+  const { teamType, formData, repoId } = req.body;
+  
+  if (!teamType || !formData || !repoId) {
+    return res.status(400).json({ 
+      error: 'Missing required fields',
+      required: ['teamType', 'formData', 'repoId']
+    });
+  }
+  
+  try {
+    const repoName = `ci-${teamType}-${repoId}`;
+    const repository = `${process.env.VITE_GITHUB_ORG || 'Flying-Pig-Labs'}/${repoName}`;
+    
+    const sqsPayload = {
+      repository,
+      teamType,
+      formData,
+      repoId,
+      branch: 'main',
+      researchConfig: {
+        teamType,
+        researchSpecs: formData,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          client: process.env.CLIENT_COMPANY_NAME || 'Unknown',
+          source: 'research-hub-ui'
+        }
+      }
+    };
+    
+    const result = await publishToSQS(sqsPayload);
+    
+    res.json({ 
+      status: 'accepted',
+      message: 'Research request submitted to queue successfully',
+      repoId,
+      repository,
+      expectedRepoName: repoName,
+      githubUrl: `https://github.com/${repository}`,
+      sqsMessageId: result.messageId,
+      estimatedTime: '2-5 minutes'
+    });
+    
+  } catch (error) {
+    console.error('SQS submission error:', error);
+    res.status(500).json({ 
+      error: 'Failed to submit to queue',
+      message: error.message 
+    });
+  }
+});
 
 // Start server
 app.listen(PORT, () => {
@@ -268,7 +339,7 @@ app.listen(PORT, () => {
   console.log('  GET  /health');
   console.log('  GET  /teams');
   console.log('  GET  /teams/:teamType/fields');
-  console.log('  POST /api/ec2/analyze');
+  console.log('  POST /api/sqs/submit');
   console.log('  POST /research/submit');
   console.log('  GET  /research/status/:jobId');
   console.log('  GET  /research/results/:jobId');

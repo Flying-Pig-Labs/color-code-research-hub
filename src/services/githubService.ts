@@ -37,9 +37,14 @@ export const githubService = {
       const response = await fetch(
         `${GITHUB_API_BASE}/repos/${GITHUB_ORG}/${repoName}`,
         { headers }
-      );
+      ).catch((error) => {
+        console.debug(`GitHub API check for ${repoName}: Network error`, error);
+        throw error;
+      });
       
       if (response.status === 404) {
+        // This is expected when checking if a repo exists before creation
+        console.debug(`Repository ${repoName} not found (404) - this is expected for new repos`);
         return null;
       }
       

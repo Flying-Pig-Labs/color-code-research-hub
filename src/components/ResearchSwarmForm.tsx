@@ -91,99 +91,55 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
     setPollProgress(0);
 
     try {
-      // Check if EC2 webhook is configured
-      const ec2Url = import.meta.env.VITE_EC2_WEBHOOK_URL;
-      
-      if (ec2Url) {
-        // Submit to EC2 via proxy
-        const response = await fetch('/api/ec2/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            teamType: 'red',
-            repoId,
-            formData: researchData
-          })
-        });
-        
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || 'EC2 submission failed');
-        }
-        
-        const result = await response.json();
-        toast.success(`Research swarm launched for ${companyName || 'Unknown Company'} on EC2!`, {
-          description: `${result.message} Tracking ID: ${repoId}`,
-        });
-        
-        // Store in localStorage with repoId for GitHub tracking
-        const researchTask = {
-          id: Date.now().toString(),
-          repoId,
-          team: 'red',
-          vendorName: companyName,
-          ...researchData,
-          createdAt: new Date().toISOString(),
-          status: 'submitted',
-          expectedRepoName: result.expectedRepoName,
-          estimatedTime: result.estimatedTime,
-        };
-        
-        const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-        existingTasks.push(researchTask);
-        localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
-        window.dispatchEvent(new CustomEvent('taskAdded'));
-        
-        handleReset();
-        setOpen(false);
-      } else {
-        // Original API flow
-        const { jobId } = await apiService.submitResearch({
+      // Submit to SQS via backend (using Vite proxy)
+      const response = await fetch('/api/api/sqs/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           teamType: 'red',
-          fields: researchData,
-        });
-
-      setJobId(jobId);
-      toast.success(`Research swarm launched for ${companyName || 'Unknown Company'}!`, {
-        description: `Job ID: ${jobId}`,
-      });
-
-      // Start polling for job status
-      setIsPolling(true);
-      const result = await apiService.pollJobCompletion(jobId, (status) => {
-        setJobStatus(status);
-        // Update progress based on status
-        if (status.status === 'processing') {
-          setPollProgress(50);
-        } else if (status.status === 'completed') {
-          setPollProgress(100);
-        }
-      });
-
-      // Job completed successfully
-      toast.success('Research completed!', {
-        description: 'Your research results are ready.',
+          repoId,
+          formData: researchData
+        })
       });
       
-        // Store in localStorage for compatibility
-        const researchTask = {
-          id: jobId,
-          team: 'red',
-          vendorName: companyName,
-          ...researchData,
-          createdAt: new Date().toISOString(),
-          status: 'completed',
-          results: result,
-        };
-        
-        const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-        existingTasks.push(researchTask);
-        localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
-        window.dispatchEvent(new CustomEvent('taskAdded'));
-
-        handleReset();
-        setOpen(false);
+      if (!response.ok) {
+        let errorMessage = 'SQS submission failed';
+        try {
+          const error = await response.json();
+          errorMessage = error.message || errorMessage;
+        } catch (e) {
+          // Response might be HTML (DOCTYPE error), not JSON
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
+      
+      const result = await response.json();
+      toast.success(`Research swarm submitted for ${companyName || 'Unknown Company'}!`, {
+        description: `Request queued successfully. Tracking ID: ${repoId}`,
+      });
+      
+      // Store in localStorage with repoId for tracking
+      const researchTask = {
+        id: Date.now().toString(),
+        repoId,
+        team: 'red',
+        vendorName: companyName,
+        ...researchData,
+        createdAt: new Date().toISOString(),
+        status: 'submitted',
+        expectedRepoName: result.expectedRepoName,
+        estimatedTime: result.estimatedTime,
+        sqsMessageId: result.sqsMessageId,
+      };
+      
+      const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+      existingTasks.push(researchTask);
+      localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
+      window.dispatchEvent(new CustomEvent('taskAdded'));
+      
+      handleReset();
+      setOpen(false);
     } catch (error) {
       if (error instanceof ApiError) {
         showApiError(error);

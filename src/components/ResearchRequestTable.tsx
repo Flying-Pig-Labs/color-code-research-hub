@@ -39,8 +39,7 @@ const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
         if (health.status === 'healthy') {
           setIsUsingApi(true);
           // TODO: Implement API endpoint to fetch research tasks
-          // For now, we'll still use localStorage but show API is connected
-          toast.info('API is connected, but task fetching endpoint is not yet implemented');
+          // For now, we'll still use localStorage
         }
       } catch (error) {
         setIsUsingApi(false);

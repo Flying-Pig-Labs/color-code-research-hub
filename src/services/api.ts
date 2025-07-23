@@ -4,7 +4,7 @@ import { toast } from "sonner";
 // Get configuration from environment variables
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 const API_KEY = import.meta.env.VITE_API_KEY || '';
-const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL || '';
+// SQS integration - no webhook needed
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '300000'); // 5 minutes
 const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL || '2000'); // 2 seconds
 
@@ -145,7 +145,6 @@ export interface TeamField {
 export interface ResearchSubmission {
   teamType: 'red' | 'black' | 'white';
   fields: Record<string, any>;
-  webhookUrl?: string;
 }
 
 export interface ResearchJob {
@@ -194,16 +193,11 @@ export const apiService = {
 
   // Submit research request
   async submitResearch(submission: ResearchSubmission): Promise<{ jobId: string }> {
-    const payload = {
-      ...submission,
-      webhookUrl: submission.webhookUrl || WEBHOOK_URL || undefined,
-    };
-
     return fetchWithErrorHandling<{ jobId: string }>(
       `${API_BASE_URL}/research/submit`,
       {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(submission),
       }
     );
   },
