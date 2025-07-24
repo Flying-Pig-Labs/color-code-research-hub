@@ -1,4 +1,4 @@
-export const ISSUE_FORMATTER_PROMPT = `You are formatting a GitHub issue for a SPARC-enabled Claude agent to work on.
+const ISSUE_FORMATTER_PROMPT = `You are formatting a GitHub issue for a SPARC-enabled Claude agent to work on.
 
 Task Information:
 - Task Title: {taskTitle}
@@ -23,3 +23,5 @@ Return a JSON object with this structure:
   "title": "Issue title",
   "body": "Full issue body in markdown"
 }`;
+
+module.exports = { ISSUE_FORMATTER_PROMPT };

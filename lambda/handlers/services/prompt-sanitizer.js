@@ -8,7 +8,7 @@ const MAX_LENGTHS = {
   phase: 200
 };
 
-export class PromptSanitizer {
+class PromptSanitizer {
   /**
    * Sanitize user input for safe inclusion in prompts
    * Prevents prompt injection attacks
@@ -90,6 +90,11 @@ export class PromptSanitizer {
   }
 }
 
-export function buildSafePrompt(template, variables) {
+function buildSafePrompt(template, variables) {
   return PromptSanitizer.buildSafePrompt(template, variables);
 }
+
+module.exports = {
+  PromptSanitizer,
+  buildSafePrompt
+};

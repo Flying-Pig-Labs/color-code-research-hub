@@ -146,7 +146,12 @@ export class AIFormPopulator {
 }
 
 // Singleton function for easy access
-export async function populateFormWithAI(readmeContent, existingData) {
+async function populateFormWithAI(readmeContent, existingData) {
   const populator = new AIFormPopulator();
   return populator.populateFormFields(readmeContent, existingData);
 }
+
+module.exports = {
+  AIFormPopulator,
+  populateFormWithAI
+};

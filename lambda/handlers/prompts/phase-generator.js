@@ -1,4 +1,4 @@
-export const PHASE_GENERATOR_PROMPT = `You are an expert product manager working with a CEO and engineer to plan a digital product MVP.
+const PHASE_GENERATOR_PROMPT = `You are an expert product manager working with a CEO and engineer to plan a digital product MVP.
 
 Given a README.md file from a GitHub repository, analyze the product specification and generate a comprehensive project phase breakdown.
 
@@ -40,3 +40,5 @@ Return a JSON object with this structure:
     }
   ]
 }`;
+
+module.exports = { PHASE_GENERATOR_PROMPT };

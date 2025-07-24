@@ -1,8 +1,8 @@
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
-import { PHASE_GENERATOR_PROMPT } from '../prompts/phase-generator.js';
-import { EPIC_GENERATOR_PROMPT } from '../prompts/epic-generator.js';
-import { ISSUE_FORMATTER_PROMPT } from '../prompts/issue-formatter.js';
-import { buildSafePrompt } from './prompt-sanitizer.js';
+const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
+const { PHASE_GENERATOR_PROMPT } = require('../prompts/phase-generator.js');
+const { EPIC_GENERATOR_PROMPT } = require('../prompts/epic-generator.js');
+const { ISSUE_FORMATTER_PROMPT } = require('../prompts/issue-formatter.js');
+const { buildSafePrompt } = require('./prompt-sanitizer.js');
 
 const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
 
@@ -12,7 +12,7 @@ const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
 /**
  * Main orchestrator that follows the exact same 3-step process as the CLI
  */
-export class LLMOrchestrator {
+class LLMOrchestrator {
   /**
    * Generate project plan following the exact CLI sequence:
    * 1. Generate phases based on README
@@ -286,7 +286,12 @@ export class LLMOrchestrator {
 }
 
 // Export singleton function to match CLI pattern
-export async function generateProjectPlan(projectInfo, readmeContent) {
+async function generateProjectPlan(projectInfo, readmeContent) {
   const orchestrator = new LLMOrchestrator();
   return orchestrator.generateProjectPlan(projectInfo, readmeContent);
 }
+
+module.exports = {
+  LLMOrchestrator,
+  generateProjectPlan
+};

@@ -1,4 +1,4 @@
-export const FORM_POPULATION_PROMPT = `You are an AI assistant that analyzes project README content to intelligently suggest form field values for a project planning tool.
+const FORM_POPULATION_PROMPT = `You are an AI assistant that analyzes project README content to intelligently suggest form field values for a project planning tool.
 
 Given the README content below, analyze it and provide intelligent suggestions for the following fields:
 
@@ -43,3 +43,5 @@ Provide your analysis in the following JSON format:
   "domain": "domain_category",
   "complexity": "simple|moderate|complex"
 }`;
+
+module.exports = { FORM_POPULATION_PROMPT };

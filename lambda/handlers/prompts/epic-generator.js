@@ -1,4 +1,4 @@
-export const EPIC_GENERATOR_PROMPT = `You are an expert agile project manager working to break down a project phase into detailed epics and tasks.
+const EPIC_GENERATOR_PROMPT = `You are an expert agile project manager working to break down a project phase into detailed epics and tasks.
 
 Given a specific phase of a digital product development project, generate a comprehensive task breakdown with role assignments.
 
@@ -35,3 +35,5 @@ Return a JSON object with this structure:
     }
   ]
 }`;
+
+module.exports = { EPIC_GENERATOR_PROMPT };

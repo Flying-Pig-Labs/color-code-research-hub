@@ -1,5 +1,5 @@
-import { generateProjectPlan } from './services/llm-orchestrator-service.js';
-import { populateFormWithAI } from './services/form-populator-service.js';
+const { generateProjectPlan } = require('./services/llm-orchestrator-service.js');
+const { populateFormWithAI } = require('./services/form-populator-service.js');
 
 // CORS headers for all responses
 const corsHeaders = {
