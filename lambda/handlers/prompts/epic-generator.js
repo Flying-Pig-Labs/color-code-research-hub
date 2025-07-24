@@ -12,16 +12,20 @@ Common roles for the "{phaseTitle}" phase typically include:
 
 Your task:
 1. Analyze what specific tasks would be needed to complete this phase successfully
-2. Identify the optimal team composition (which roles are needed)
-3. For each task, assign the most appropriate role
-4. Ensure tasks are sequenced logically and dependencies are considered
+2. Generate a COMPREHENSIVE list of 8-15 tasks per phase (don't limit yourself - be thorough!)
+3. Identify the optimal team composition (which roles are needed)
+4. For each task, assign the most appropriate role
+5. Ensure tasks are sequenced logically and dependencies are considered
 
 Important guidelines:
+- Generate AT LEAST 8 tasks per phase - more complex phases may require 10-15 tasks
+- Be comprehensive and thorough - don't leave out important work
 - Use the suggested common roles but feel free to add specialized roles if needed
 - Each task should have a clear deliverable that adds value
 - Tasks should enable subsequent work to be completed successfully
 - Consider the specific product type and domain when defining tasks
 - Be specific and actionable in task descriptions
+- Think about all aspects: technical implementation, testing, documentation, security, performance, etc.
 
 Return a JSON object with this structure:
 {
