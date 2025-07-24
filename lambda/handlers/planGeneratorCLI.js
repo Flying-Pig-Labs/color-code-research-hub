@@ -123,7 +123,9 @@ exports.handler = async (event) => {
               id: `${phase.id}-issue-${index + 1}`,
               title: issue.title,
               description: issue.description,
-              role: issue.role
+              assignee: issue.role,  // Map role to assignee for frontend compatibility
+              priority: index === 0 ? 'high' : (index < 3 ? 'medium' : 'low'), // Prioritize first few issues
+              estimatedHours: 8 + (index % 3) * 4  // Vary between 8-16 hours
             }]
           }));
 

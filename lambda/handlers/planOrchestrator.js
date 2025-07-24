@@ -134,9 +134,33 @@ exports.handler = async (event) => {
         }
       });
       
-      // Store results
+      // Store results with proper field mapping for frontend compatibility
+      const mappedPhases = (generatedData.phases || generatedData).map(phase => {
+        return {
+          ...phase,
+          epics: phase.epics ? phase.epics.map(epic => ({
+            ...epic,
+            issues: epic.issues.map((issue, index) => ({
+              ...issue,
+              // Ensure proper field mapping for frontend
+              assignee: issue.assignee || issue.role,
+              priority: issue.priority || (index === 0 ? 'high' : (index < 3 ? 'medium' : 'low')),
+              estimatedHours: issue.estimatedHours || (8 + (index % 3) * 4)
+            }))
+          })) : undefined,
+          // Also map issues at phase level if they exist
+          issues: phase.issues ? phase.issues.map((issue, index) => ({
+            ...issue,
+            // Map role to assignee for frontend compatibility
+            assignee: issue.assignee || issue.role,
+            priority: issue.priority || (index === 0 ? 'high' : (index < 3 ? 'medium' : 'low')),
+            estimatedHours: issue.estimatedHours || (8 + (index % 3) * 4)
+          })) : undefined
+        };
+      });
+      
       job.results = {
-        phases: generatedData.phases || generatedData,
+        phases: mappedPhases,
         githubIssues: generatedData.issues || null,
         metadata: generatedData.metadata || null
       };
