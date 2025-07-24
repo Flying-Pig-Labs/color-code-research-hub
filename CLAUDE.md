@@ -2,7 +2,21 @@
 
 ## THE FUNDAMENTAL PROBLEM
 
-The web UI is NOT displaying epics correctly because PlanWorkflow.tsx is calling the WRONG endpoint. It's calling `/api/plan/v2/generate-full-plan` which returns placeholder data to avoid timeouts, instead of `/api/plan/generate-cli-plan` which actually works.
+The web UI is calling `/api/plan/generate-phases` which is getting 500 Internal Server Errors due to fragile error handling. The CORRECT solution is to call `/api/plan/generate-cli-plan` which actually works and generates complete project plans.
+
+### ROOT CAUSE OF 500 ERRORS
+The current UI calls `planGenerator.js` handler at `/api/plan/generate-phases` which:
+1. Expects `metadata.techStack.join()` and `metadata.features.join()` but these may be undefined
+2. Has fragile JSON parsing with poor error handling  
+3. Only generates basic phases, not complete epics and issues
+4. Uses a simple Claude API call instead of the robust orchestration system
+
+### THE WORKING SYSTEM
+The CLI system at `/api/plan/generate-cli-plan` (handler: `planGeneratorCLI.js`) works because:  
+1. Uses robust `llm-orchestrator-service.js` with proper error handling
+2. Follows the exact 3-step LLM orchestration process
+3. Generates 40-80 real epics across 8 phases (not just 2-3 placeholder ones)
+4. Has proper input validation and fallback responses
 
 ## HOW THE CLI ACTUALLY WORKS
 
@@ -60,28 +74,88 @@ The V2 endpoint (`/api/plan/v2/generate-full-plan`) was created to avoid Lambda 
 
 Result: The UI shows only 2 placeholder epics instead of 40-80 real ones.
 
-### 4. THE FIX
+### 4. TECHNICAL SPECIFICATIONS
 
-**Option 1: Use the Working CLI Endpoint**
+#### Working CLI API Contract
+**Endpoint**: `/api/plan/generate-cli-plan`  
+**Handler**: `lambda/handlers/planGeneratorCLI.js`  
+**Service**: `lambda/handlers/services/llm-orchestrator-service.js`
+
+**Input Format**:
 ```javascript
-// In PlanWorkflow.tsx, line 144:
+{
+  projectInfo: {
+    title: string,
+    description: string, 
+    domain: string,
+    features: string[],
+    techStack: string[],
+    complexity: 'simple' | 'moderate' | 'complex',
+    targetUsers: string[],
+    repository?: string,
+    branch?: string
+  },
+  readmeContent: string
+}
+```
+
+**Output Format**:
+```javascript
+{
+  summary: {
+    title, description, domain, repository, branch, 
+    targetUsers, techStack, features, complexity
+  },
+  phases: [
+    {
+      id: string,
+      title: string, 
+      description: string,
+      roles: string[],
+      issues: [
+        {
+          title: string,
+          description: string,
+          role: string
+        }
+      ],
+      approved: boolean
+    }
+  ]
+}
+```
+
+#### Three-Step LLM Orchestration Process
+1. **generatePhases()** - Uses `PHASE_GENERATOR_PROMPT` to create 8 standard phases
+2. **generateEpicsForPhases()** - Uses `EPIC_GENERATOR_PROMPT` in parallel for each phase  
+3. **formatIssuesForGitHub()** - Uses `ISSUE_FORMATTER_PROMPT` in batches of 3
+
+#### Deployed Infrastructure
+- **PlanGeneratorCLIFunction** - 15min timeout, handler: `planGeneratorCLI.handler`
+- **Route**: `/api/plan/generate-cli-plan` (POST)
+- **Current broken route**: `/api/plan/generate-phases` (500 errors from `planGenerator.js`)
+
+### 5. THE FIX
+
+**SOLUTION: Use the Working CLI Endpoint**  
+The fix is simple - change PlanWorkflow.tsx to call the working endpoint:
+
+```javascript
+// In PlanWorkflow.tsx generatePhases() function:
 const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/generate-cli-plan`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    projectInfo: projectSummary,  // Note: different field name
+    projectInfo: projectSummary,  // CLI expects 'projectInfo', not 'metadata'
     readmeContent: readmeContent
   })
 });
 ```
 
-**Option 2: Fix the V2 Endpoint**
-Make it actually generate epics instead of returning placeholders.
-
-**Option 3: Implement Progressive Loading**
-1. Call generate-phases first
-2. Then call generate-epics for each phase
-3. Update UI progressively as data arrives
+**Data Transformation Needed**:  
+The CLI returns a different data structure, so the UI needs to transform:
+- `phases[].issues[]` (CLI format) → `phases[].epics[].issues[]` (UI format)
+- Map CLI issues to UI epics and create proper issue structure
 
 ## CRITICAL NOTES
 
@@ -105,6 +179,16 @@ The frontend deploys automatically via AWS Amplify when you push to main branch.
 
 ### Backend Lambda Functions (Manual)
 
+#### ⚠️ CRITICAL: USE THE DEPLOYMENT SCRIPT
+```bash
+cd infrastructure
+./deploy.sh
+```
+
+This script enforces the correct parameters. DO NOT run sam deploy manually unless you're certain of the parameters.
+
+#### Manual Deployment (if script fails):
+
 1. **Install SAM CLI** (if not already installed):
 ```bash
 curl -L https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip -o sam.zip
@@ -121,9 +205,18 @@ sam build
 
 3. **Deploy to AWS**:
 ```bash
-# IMPORTANT: Use profile=personal, NOT default
+# ⚠️ CRITICAL PARAMETERS - DO NOT CHANGE:
+# - Stack name MUST BE: color-code-research-hub (NOT color-code-research-hub-production)
+# - Profile: Use personal if available, otherwise default
+# - Region MUST BE: us-east-1
+
 sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
 ```
+
+#### 🚫 COMMON MISTAKES TO AVOID:
+- ❌ DO NOT add "-production" to stack name
+- ❌ DO NOT change the region from us-east-1
+- ❌ DO NOT create new stacks - always update the existing one
 
 The deployment will:
 - Upload Lambda function code
