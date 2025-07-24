@@ -231,6 +231,40 @@ Resources:
             Path: /api/plan/v2/create-github-issues
             Method: POST
 
+  # Plan Generator CLI Function (Full working implementation)
+  PlanGeneratorCLIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: planGeneratorCLI.handler
+      Timeout: 900 # 15 minutes for full orchestration
+      MemorySize: 512
+      Environment:
+        Variables:
+          AWS_BEDROCK_REGION: us-east-1
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: 
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+      Events:
+        GenerateCLIPlan:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/generate-cli-plan
+            Method: POST
+
   SubmitToSQSFunction:
     Type: AWS::Serverless::Function
     Properties:

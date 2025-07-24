@@ -140,12 +140,12 @@ const PlanWorkflow = () => {
     
     setIsGeneratingPlan(true);
     try {
-      // Use CLI endpoint that actually generates real epics
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/generate-cli-plan`, {
+      // Use V2 endpoint for multi-step LLM orchestration
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-full-plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          projectInfo: projectSummary,  // CLI endpoint expects projectInfo, not metadata
+          metadata: projectSummary,
           readmeContent: readmeContent
         })
       });
@@ -155,27 +155,8 @@ const PlanWorkflow = () => {
       }
 
       const data = await response.json();
-      // CLI endpoint returns phases with issues that need to be transformed to epics
-      const phasesWithEpics = data.phases.map(phase => ({
-        id: phase.id,
-        name: phase.title,
-        description: phase.description,
-        duration: '2-4 weeks', // Default duration
-        epics: phase.issues.map((issue, index) => ({
-          id: `${phase.id}-epic-${index + 1}`,
-          title: issue.title.replace(/^\[[^\]]+\]\s*/, ''), // Remove [Role] prefix
-          description: issue.description,
-          issues: [{
-            id: `${phase.id}-issue-${index + 1}`,
-            title: issue.title,
-            description: issue.description,
-            assignee: issue.role,
-            priority: index === 0 ? 'high' : (index < 3 ? 'medium' : 'low'),
-            estimatedHours: 8 + (index % 3) * 4
-          }]
-        }))
-      }));
-      setPhases(phasesWithEpics);
+      // V2 returns phases with epics already populated
+      setPhases(data.phases || []);
     } catch (error) {
       console.error('Failed to generate phases:', error);
       toast({
