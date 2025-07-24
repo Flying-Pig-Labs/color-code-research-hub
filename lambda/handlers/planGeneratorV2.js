@@ -486,33 +486,65 @@ exports.handler = async (event) => {
       const allIssues = [];
       
       try {
+        // First, generate real epics for phases that need them
+        const updatedPhases = [];
+        let epicsGenerated = 0;
+        const maxEpicsToGenerate = 3; // Limit to avoid timeout
+        
         for (const phase of phases) {
-          for (const epic of phase.epics) {
-            if (epic.selected !== false) { // Include by default unless explicitly deselected
-              // Generate 2-4 issues per epic
-              const issueCount = Math.floor(Math.random() * 3) + 2;
+          if (phase.pending && phase.epics.length === 0 && epicsGenerated < maxEpicsToGenerate) {
+            // Generate epics for pending phases
+            console.log(`Generating epics for pending phase: ${phase.title}`);
+            try {
+              const epics = await generateEpics(phase, metadata, anthropicApiKey, openAIKey);
+              updatedPhases.push({
+                ...phase,
+                epics: epics.map((epic, index) => ({
+                  id: `${phase.id}-epic-${index + 1}`,
+                  title: epic.title,
+                  description: epic.description,
+                  suggestedRole: epic.suggestedRole,
+                  selected: true
+                }))
+              });
+              epicsGenerated++;
               
-              for (let i = 0; i < issueCount; i++) {
-                const issue = await formatIssue(
-                  {
-                    title: `${epic.title} - Task ${i + 1}`,
-                    description: epic.description,
-                    suggestedRole: epic.suggestedRole
-                  },
-                  phase,
-                  metadata,
-                  anthropicApiKey,
-                  openAIKey
-                );
-                
+              // Add delay between generations
+              if (epicsGenerated < maxEpicsToGenerate) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+              }
+            } catch (error) {
+              console.error(`Failed to generate epics for ${phase.title}:`, error);
+              updatedPhases.push(phase); // Keep original
+            }
+          } else {
+            updatedPhases.push(phase);
+          }
+        }
+        
+        // Now generate issues - but simplified to avoid timeout
+        let issueId = 1;
+        for (const phase of updatedPhases) {
+          for (const epic of phase.epics) {
+            if (epic.selected !== false) {
+              // Create 2 simple issues per epic
+              for (let i = 1; i <= 2; i++) {
                 allIssues.push({
-                  ...issue,
+                  id: `issue-${issueId++}`,
+                  title: `[${epic.suggestedRole}] ${epic.title} - Task ${i}`,
+                  body: `## Context\n${epic.description}\n\n## Role\n${epic.suggestedRole}\n\n## Phase\n${phase.title}\n\n## Tasks\n- [ ] Implement ${epic.title.toLowerCase()} requirements\n- [ ] Document approach\n- [ ] Test implementation\n- [ ] Get review and approval\n\n## Acceptance Criteria\n- Implementation complete\n- Tests passing\n- Documentation updated\n- Reviewed and approved`,
+                  labels: [
+                    `phase:${phase.id}`,
+                    `role:${epic.suggestedRole.toLowerCase().replace(/\s+/g, '-')}`,
+                    'sparc-enabled'
+                  ],
+                  assignee: epic.suggestedRole,
+                  phaseId: phase.id,
+                  phaseTitle: phase.title,
                   epicId: epic.id,
-                  epicTitle: epic.title
+                  epicTitle: epic.title,
+                  estimatedHours: 8 + Math.floor(Math.random() * 24) // 8-32 hours
                 });
-                
-                // Rate limiting
-                await new Promise(resolve => setTimeout(resolve, 500));
               }
             }
           }
