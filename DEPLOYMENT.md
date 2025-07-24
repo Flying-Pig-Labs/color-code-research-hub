@@ -1,54 +1,53 @@
 # Color Code Research Hub - Deployment Guide
 
-This guide provides step-by-step instructions for deploying the Color Code Research Hub application.
+This guide provides information about the automated deployment setup for the Color Code Research Hub application.
 
 ## Prerequisites
 
 - AWS CLI configured with `personal` profile
-- SAM CLI installed
+- SAM CLI installed (for infrastructure changes only)
 - Node.js 18.x or higher
 - Git configured with GitHub access
 
 ## Architecture Overview
 
 The application consists of:
-- **Frontend**: React application deployed to AWS Amplify
+- **Frontend**: React application deployed to AWS Amplify (auto-deploy on push)
 - **Backend**: Lambda functions deployed via SAM
 - **API**: API Gateway managed by SAM
 
-## Deployment Steps
+## 🚀 Automated Deployment
 
-### 1. Backend Deployment (Lambda Functions)
+### Frontend & Code Changes
 
-Deploy all Lambda functions and API Gateway:
+The application is configured with **automatic deployment**:
+
+1. Make your changes
+2. Commit with a descriptive message:
+   ```bash
+   git add .
+   git commit -m "Your descriptive commit message"
+   ```
+3. Push to main branch:
+   ```bash
+   git push origin main
+   ```
+
+**Amplify automatically**:
+- Detects the push to main branch
+- Builds the React application
+- Deploys to the configured domain
+- Process takes 3-5 minutes
+
+### Backend Infrastructure Changes
+
+Only needed when modifying Lambda functions or SAM template:
 
 ```bash
-cd /Users/williamprior/Development/GitHub/color-code-research-hub/infrastructure
+cd infrastructure
 sam build
 sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
 ```
-
-This deploys:
-- Health check endpoint
-- GitHub repository endpoints
-- Plan generation endpoints (v1 and v2)
-- SQS submission endpoint
-
-### 2. Frontend Deployment (Amplify)
-
-The frontend automatically deploys when changes are pushed to GitHub:
-
-```bash
-cd /Users/williamprior/Development/GitHub/color-code-research-hub
-git add .
-git commit -m "Your descriptive commit message"
-git push origin main
-```
-
-Amplify will:
-- Detect the push to main branch
-- Build the React application
-- Deploy to the configured domain
 
 ## Environment Configuration
 
