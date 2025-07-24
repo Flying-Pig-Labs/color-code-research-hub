@@ -98,6 +98,39 @@ npm run lint
 npm run typecheck
 ```
 
+## DEPLOYMENT INSTRUCTIONS
+
+### Frontend (Automatic)
+The frontend deploys automatically via AWS Amplify when you push to main branch.
+
+### Backend Lambda Functions (Manual)
+
+1. **Install SAM CLI** (if not already installed):
+```bash
+curl -L https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip -o sam.zip
+unzip -q sam.zip
+sudo ./install
+sam --version  # Should show SAM CLI version
+```
+
+2. **Build the SAM application**:
+```bash
+cd infrastructure
+sam build
+```
+
+3. **Deploy to AWS**:
+```bash
+# IMPORTANT: Use profile=personal, NOT default
+sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+```
+
+The deployment will:
+- Upload Lambda function code
+- Update API Gateway endpoints
+- Apply any infrastructure changes from template.yaml
+- Take 2-5 minutes to complete
+
 ## TESTING THE FIX
 
 1. Check that Epic View shows 40-80 epics (not 2)

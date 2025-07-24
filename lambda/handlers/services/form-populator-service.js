@@ -1,13 +1,13 @@
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
-import { FORM_POPULATION_PROMPT } from '../prompts/form-population.js';
-import { PromptSanitizer, buildSafePrompt } from './prompt-sanitizer.js';
+const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
+const { FORM_POPULATION_PROMPT } = require('../prompts/form-population.js');
+const { PromptSanitizer, buildSafePrompt } = require('./prompt-sanitizer.js');
 
 const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
 
 // Claude model configuration - using the exact same model as CLI
 const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
 
-export class AIFormPopulator {
+class AIFormPopulator {
   /**
    * Populate form fields based on README content
    * Follows the exact same process as the CLI
@@ -108,16 +108,21 @@ export class AIFormPopulator {
       contentType: 'application/json',
       accept: 'application/json',
       body: JSON.stringify({
-        prompt: `\n\nHuman: ${prompt}\n\nAssistant:`,
-        max_tokens_to_sample: 2048,
+        anthropic_version: "bedrock-2023-05-31",
+        max_tokens: 2048,
         temperature: 0.7,
-        stop_sequences: ["\n\nHuman:"]
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
       })
     });
 
     const response = await bedrock.send(command);
     const responseData = JSON.parse(new TextDecoder().decode(response.body));
-    return responseData.completion;
+    return responseData.content[0].text;
   }
 
   /**

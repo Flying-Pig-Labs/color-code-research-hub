@@ -201,9 +201,15 @@ Resources:
       Environment:
         Variables:
           ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+          AWS_BEDROCK_REGION: us-east-1
       Policies:
         - Version: '2012-10-17'
           Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: 
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
             - Effect: Allow
               Action:
                 - secretsmanager:GetSecretValue
@@ -394,9 +400,15 @@ Resources:
         Variables:
           JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
           ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+          AWS_BEDROCK_REGION: us-east-1
       Policies:
         - Version: '2012-10-17'
           Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: 
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
             - Effect: Allow
               Action:
                 - dynamodb:GetItem

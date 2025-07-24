@@ -120,8 +120,110 @@ const PlanWorkflow = () => {
   };
 
   const handleNext = async () => {
+    // When moving from phases to epics, generate epics for selected phases
+    if (currentStep === 1) {
+      const selectedPhasesWithoutEpics = phases.filter(p => p.selected && p.epics.length === 0);
+      if (selectedPhasesWithoutEpics.length > 0) {
+        await generateEpicsForSelectedPhases();
+      }
+    }
+    
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const generateEpicsForSelectedPhases = async () => {
+    setIsGeneratingPlan(true);
+    try {
+      const selectedPhases = phases.filter(p => p.selected);
+      
+      // Call the CLI endpoint which returns the full plan with epics
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/generate-cli-plan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectInfo: projectSummary,
+          readmeContent: readmeContent
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate epics');
+      }
+
+      const data = await response.json();
+      
+      // Update phases with generated epics
+      const updatedPhases = phases.map((phase, phaseIndex) => {
+        if (!phase.selected) return phase;
+        
+        // Find the corresponding phase in the response by index or title match
+        let generatedPhase = data.phases?.[phaseIndex];
+        if (!generatedPhase) {
+          // Try to find by title similarity
+          generatedPhase = data.phases?.find(p => 
+            p.title.toLowerCase().includes(phase.name.toLowerCase().split('&')[0].trim()) ||
+            phase.name.toLowerCase().includes(p.title.toLowerCase().split('&')[0].trim())
+          );
+        }
+        
+        if (generatedPhase) {
+          // Use the epics directly from the response
+          if (generatedPhase.epics && generatedPhase.epics.length > 0) {
+            return {
+              ...phase,
+              epics: generatedPhase.epics.map((epic, epicIndex) => ({
+                id: epic.id || `epic-${phase.id}-${epicIndex + 1}`,
+                title: epic.title,
+                description: epic.description,
+                issues: epic.issues || []
+              }))
+            };
+          }
+          // Fallback: Create epics from issues if no epics property
+          else if (generatedPhase.issues && generatedPhase.issues.length > 0) {
+            const epicsMap = new Map();
+            generatedPhase.issues.forEach((issue, index) => {
+              const epicTitle = issue.title.split(':')[0].trim();
+              if (!epicsMap.has(epicTitle)) {
+                epicsMap.set(epicTitle, {
+                  id: `epic-${phase.id}-${epicsMap.size + 1}`,
+                  title: epicTitle,
+                  description: `Tasks for ${epicTitle}`,
+                  issues: []
+                });
+              }
+              epicsMap.get(epicTitle).issues.push({
+                id: issue.id || `issue-${phase.id}-${index}`,
+                title: issue.title,
+                description: issue.description || issue.body || '',
+                assignee: issue.role || issue.assignee || 'Unassigned',
+                priority: issue.priority || 'medium',
+                estimatedHours: issue.estimatedHours || 8
+              });
+            });
+            
+            return {
+              ...phase,
+              epics: Array.from(epicsMap.values())
+            };
+          }
+        }
+        
+        return phase;
+      });
+      
+      setPhases(updatedPhases);
+    } catch (error) {
+      console.error('Failed to generate epics:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate epics. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingPlan(false);
     }
   };
 
@@ -140,12 +242,12 @@ const PlanWorkflow = () => {
     
     setIsGeneratingPlan(true);
     try {
-      // Use V2 endpoint for multi-step LLM orchestration
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-full-plan`, {
+      // Step 1: Generate only phases (no epics yet)
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/generate-phases`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          metadata: projectSummary,
+          domain: projectSummary.domain || 'software',
           readmeContent: readmeContent
         })
       });
@@ -155,8 +257,16 @@ const PlanWorkflow = () => {
       }
 
       const data = await response.json();
-      // V2 returns phases with epics already populated
-      setPhases(data.phases || []);
+      // Set phases without epics - they'll be generated later
+      const phasesWithoutEpics = (data.phases || []).map(phase => ({
+        id: phase.id,
+        name: phase.title,
+        description: phase.description,
+        duration: phase.duration || '2-4 weeks',
+        epics: [], // No epics yet
+        selected: true // Allow user to deselect phases they don't want
+      }));
+      setPhases(phasesWithoutEpics);
     } catch (error) {
       console.error('Failed to generate phases:', error);
       toast({
