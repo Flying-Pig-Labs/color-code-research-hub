@@ -1,0 +1,279 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Color Code Research Hub - AWS SAM Template for API Gateway and Lambda Functions
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+        GITHUB_ORG: !Ref GitHubOrg
+        CLIENT_COMPANY_NAME: !Ref ClientCompanyName
+        SECRETS_ARN: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - staging
+      - production
+    Description: Environment name
+  
+  GitHubOrg:
+    Type: String
+    Default: Flying-Pig-Labs
+    Description: GitHub organization name
+  
+  ClientCompanyName:
+    Type: String
+    Default: Your Company
+    Description: Client company name
+  
+  SQSQueueUrl:
+    Type: String
+    Description: SQS Queue URL for research requests
+    Default: https://sqs.us-east-1.amazonaws.com/418272766513/tempLocalToEc2-1753059239
+
+Resources:
+  # API Gateway
+  ResearchHubApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Api-Key'"
+        AllowOrigin: "'*'"
+      Auth:
+        ApiKeyRequired: false # Set to true if you want API key authentication
+
+  # Reference to existing Secrets Manager secret
+  # The secret is already created and contains the necessary configuration
+
+  # Lambda Functions
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: health.handler
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /health
+            Method: GET
+
+  TeamsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: teams.handler
+      Events:
+        GetTeams:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /teams
+            Method: GET
+        GetTeamFields:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /teams/{teamType}/fields
+            Method: GET
+
+  # GitHub Repository Function
+  GitHubReposFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: githubRepos.handler
+      Environment:
+        Variables:
+          SECRETS_ARN: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+      Events:
+        ListRepos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/github/repos
+            Method: GET
+        GetReadme:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/github/repos/{owner}/{repo}/readme
+            Method: GET
+
+  # Plan Generator Function (Original - kept for backward compatibility)
+  PlanGeneratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: planGenerator.handler
+      Timeout: 120
+      MemorySize: 256
+      Environment:
+        Variables:
+          ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+      Events:
+        ParseReadme:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/parse-readme
+            Method: POST
+        PopulateForm:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/populate-form
+            Method: POST
+        GeneratePhases:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/generate-phases
+            Method: POST
+        CreateGitHubIssues:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/create-github-issues
+            Method: POST
+
+  # Plan Generator V2 Function (Full orchestration)
+  PlanGeneratorV2Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: planGeneratorV2.handler
+      Timeout: 300 # 5 minutes for full orchestration
+      MemorySize: 512
+      Environment:
+        Variables:
+          ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+      Events:
+        GenerateFullPlan:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/v2/generate-full-plan
+            Method: POST
+        GenerateIssues:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/v2/generate-issues
+            Method: POST
+        CreateGitHubIssuesV2:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/v2/create-github-issues
+            Method: POST
+
+  SubmitToSQSFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: submitToSQS.handler
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !Ref SQSQueueUrl
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+                - sqs:GetQueueAttributes
+              Resource: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:tempLocalToEc2-1753059239'
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+      Events:
+        SubmitRequest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/sqs/submit
+            Method: POST
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: SQSAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:GetQueueAttributes
+                Resource: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:*
+        - PolicyName: SecretsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+
+Outputs:
+  ApiGatewayUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${ResearchHubApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiUrl
+  
+  SecretsArn:
+    Description: ARN of the secrets manager secret
+    Value: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+    Export:
+      Name: !Sub ${AWS::StackName}-SecretsArn

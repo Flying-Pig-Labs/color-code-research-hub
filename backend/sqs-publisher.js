@@ -4,11 +4,11 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config({ path: '../.env.local' });
 
-// Configure AWS SDK with provided credentials
+// Configure AWS SDK - will use IAM role in Lambda or environment variables
 AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'AKIAWCYX75IYXJ4ITU7G',
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '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',
-  region: 'us-east-1'
+  region: process.env.AWS_REGION || 'us-east-1'
+  // In Lambda, credentials are automatically provided via IAM role
+  // For local development, use AWS CLI credentials or environment variables
 });
 
 // Create SQS service object
