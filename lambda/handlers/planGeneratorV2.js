@@ -5,7 +5,7 @@ const {
   EPIC_GENERATOR_PROMPT, 
   ISSUE_FORMATTER_PROMPT,
   PHASE_ROLE_MAPPING 
-} = require('./prompts.js');
+} = require('./prompts');
 
 const secretsClient = new SecretsManagerClient({ region: process.env.AWS_REGION || 'us-east-1' });
 

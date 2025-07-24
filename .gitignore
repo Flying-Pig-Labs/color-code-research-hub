@@ -135,3 +135,4 @@ test-results/
 playwright-report/
 test-results.xml
 agent-team-composer/
+infrastructure/.aws-sam/

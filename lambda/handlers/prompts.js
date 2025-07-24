@@ -1,6 +1,6 @@
 // Prompt templates for multi-step LLM orchestration
 
-export const PHASE_GENERATOR_PROMPT = `You are an expert product manager working with a CEO and engineer to plan a digital product MVP.
+const PHASE_GENERATOR_PROMPT = `You are an expert product manager working with a CEO and engineer to plan a digital product MVP.
 
 Given a README.md file from a GitHub repository, analyze the product specification and generate a comprehensive project phase breakdown.
 
@@ -43,7 +43,7 @@ Return a JSON object with this structure:
   ]
 }`;
 
-export const EPIC_GENERATOR_PROMPT = `You are an expert agile project manager working to break down a project phase into detailed epics and tasks.
+const EPIC_GENERATOR_PROMPT = `You are an expert agile project manager working to break down a project phase into detailed epics and tasks.
 
 Given a specific phase of a digital product development project, generate a comprehensive task breakdown with role assignments.
 
@@ -81,7 +81,7 @@ Return a JSON object with this structure:
   ]
 }`;
 
-export const ISSUE_FORMATTER_PROMPT = `You are formatting a GitHub issue for a SPARC-enabled Claude agent to work on.
+const ISSUE_FORMATTER_PROMPT = `You are formatting a GitHub issue for a SPARC-enabled Claude agent to work on.
 
 Task Information:
 - Task Title: {taskTitle}
@@ -108,7 +108,7 @@ Return a JSON object with this structure:
 }`;
 
 // Role mapping for different phases
-export const PHASE_ROLE_MAPPING = {
+const PHASE_ROLE_MAPPING = {
   'discovery': ['Product Owner', 'UX Researcher', 'Business Analyst', 'Technical Lead'],
   'technical_planning': ['Software Architect', 'Technical Lead', 'DevOps Engineer', 'Security Engineer'],
   'design': ['UX Designer', 'UI Designer', 'Product Designer', 'Frontend Developer'],
@@ -117,4 +117,11 @@ export const PHASE_ROLE_MAPPING = {
   'quality_assurance': ['QA Engineer', 'Test Automation Engineer', 'Performance Engineer', 'Security Tester'],
   'deployment': ['DevOps Engineer', 'Release Manager', 'Infrastructure Engineer', 'SRE'],
   'launch': ['Product Manager', 'Technical Writer', 'Marketing Manager', 'Support Engineer']
+};
+
+module.exports = {
+  PHASE_GENERATOR_PROMPT,
+  EPIC_GENERATOR_PROMPT,
+  ISSUE_FORMATTER_PROMPT,
+  PHASE_ROLE_MAPPING
 };
