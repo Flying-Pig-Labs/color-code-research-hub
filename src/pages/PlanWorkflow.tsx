@@ -247,7 +247,7 @@ const PlanWorkflow = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          domain: projectSummary.domain || 'software',
+          metadata: projectSummary,
           readmeContent: readmeContent
         })
       });
