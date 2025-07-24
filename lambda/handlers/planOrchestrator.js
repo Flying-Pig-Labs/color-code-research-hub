@@ -1,9 +1,13 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
-const planGeneratorV2 = require('./planGeneratorV2');
+const planGeneratorCLI = require('./planGeneratorCLI');
 
 const dynamoClient = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(dynamoClient);
+const docClient = DynamoDBDocumentClient.from(dynamoClient, {
+  marshallOptions: {
+    removeUndefinedValues: true
+  }
+});
 
 const JOBS_TABLE_NAME = process.env.JOBS_TABLE_NAME;
 
@@ -88,12 +92,13 @@ exports.handler = async (event) => {
           selectedTeams: input.selectedTeams,
           teamFields: input.teamFields,
           githubConfig: input.githubConfig,
-          metadata: {
+          metadata: input.metadata || {
             projectDescription: input.projectDescription,
             ...input.teamFields
-          }
+          },
+          readmeContent: input.readmeContent || ''
         }),
-        path: '/api/plan/v2/generate-full-plan'
+        path: '/api/plan/generate-cli-plan'
       };
       
       // If GitHub issues should be created, set the appropriate path
@@ -101,8 +106,8 @@ exports.handler = async (event) => {
         generatorEvent.path = '/api/plan/v2/create-github-issues';
       }
       
-      console.log('Calling planGeneratorV2 handler...');
-      const result = await planGeneratorV2.handler(generatorEvent);
+      console.log('Calling planGeneratorCLI handler...');
+      const result = await planGeneratorCLI.handler(generatorEvent);
       
       if (result.statusCode !== 200) {
         throw new Error(JSON.parse(result.body).error || 'Plan generation failed');

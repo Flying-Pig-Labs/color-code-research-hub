@@ -6,7 +6,11 @@ const { LambdaClient, InvokeCommand } = require('@aws-sdk/client-lambda');
 const { v4: uuidv4 } = require('uuid');
 
 const dynamoClient = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(dynamoClient);
+const docClient = DynamoDBDocumentClient.from(dynamoClient, {
+  marshallOptions: {
+    removeUndefinedValues: true
+  }
+});
 const lambdaClient = new LambdaClient({});
 
 const JOBS_TABLE_NAME = process.env.JOBS_TABLE_NAME;
