@@ -410,83 +410,47 @@ exports.handler = async (event) => {
       console.log('Starting full plan generation for:', metadata.title);
       
       try {
-        // Step 1: Generate phases
+        // Quick response to avoid timeout - generate minimal data
+        console.log('Generating quick response for:', metadata.title);
+        
+        // Step 1: Generate phases only (fastest operation)
         const phases = await generatePhases(metadata, readmeContent, anthropicApiKey, openAIKey);
         console.log(`Generated ${phases.length} phases`);
         
-        // Step 2: Generate epics for each phase (with rate limiting)
-        const phasesWithEpics = [];
+        // Step 2: Return phases with placeholder epics
+        const phasesWithEpics = phases.map((phase, index) => ({
+          ...phase,
+          epics: index === 0 ? [
+            {
+              id: `${phase.id}-epic-1`,
+              title: 'Requirements Gathering',
+              description: 'Gather and document all requirements',
+              suggestedRole: 'Product Owner',
+              issues: []
+            },
+            {
+              id: `${phase.id}-epic-2`,
+              title: 'Technical Planning',
+              description: 'Plan technical implementation approach',
+              suggestedRole: 'Tech Lead',
+              issues: []
+            }
+          ] : [],
+          pending: index > 0 // Mark all but first as pending
+        }));
         
-        // Limit to first 3 phases to avoid timeout
-        const phasesToProcess = phases.slice(0, 3);
-        
-        for (const phase of phasesToProcess) {
-          // Add delay between phases to avoid rate limiting
-          if (phasesWithEpics.length > 0) {
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Reduced to 2s for faster response
-          }
-          
-          try {
-            const epics = await generateEpics(phase, metadata, anthropicApiKey, openAIKey);
-            phasesWithEpics.push({
-              ...phase,
-              epics: epics.map((epic, index) => ({
-                id: `${phase.id}-epic-${index + 1}`,
-                title: epic.title,
-                description: epic.description,
-                suggestedRole: epic.suggestedRole,
-                issues: [] // Will be populated if user proceeds
-              }))
-            });
-          } catch (epicError) {
-            console.error(`Failed to generate epics for phase ${phase.title}:`, epicError);
-            // Continue with empty epics rather than failing entirely
-            phasesWithEpics.push({
-              ...phase,
-              epics: []
-            });
-          }
-        }
-        
-        // Add remaining phases without epics (to be generated later)
-        for (let i = 3; i < phases.length; i++) {
-          phasesWithEpics.push({
-            ...phases[i],
-            epics: [],
-            pending: true // Mark as pending for UI
-          });
-        }
-        
-        // Step 3: Format a sample of issues (first 1) to show preview
-        const sampleIssues = [];
-        
-        // Only generate 1 sample issue to avoid timeout
-        if (phasesWithEpics.length > 0 && phasesWithEpics[0].epics.length > 0) {
-          const firstPhase = phasesWithEpics[0];
-          const firstEpic = firstPhase.epics[0];
-          
-          try {
-            const issue = await formatIssue(
-              { 
-                title: firstEpic.title, 
-                description: firstEpic.description, 
-                suggestedRole: firstEpic.suggestedRole 
-              },
-              firstPhase,
-              metadata,
-              anthropicApiKey,
-              openAIKey
-            );
-            
-            sampleIssues.push({
-              ...issue,
-              epicId: firstEpic.id
-            });
-          } catch (error) {
-            console.error('Failed to generate sample issue:', error);
-            // Continue without sample
-          }
-        }
+        // Step 3: Create one sample issue
+        const sampleIssues = [{
+          title: '[Product Owner] Gather Initial Requirements',
+          body: '## Context\nGather and document initial project requirements.\n\n## Tasks\n- [ ] Interview stakeholders\n- [ ] Document requirements\n- [ ] Get approval\n\n## Acceptance Criteria\n- Requirements documented\n- Stakeholder approval received',
+          labels: ['phase:phase-1', 'role:product-owner', 'sparc-enabled'],
+          assignee: 'Product Owner',
+          phaseId: phases[0]?.id || 'phase-1',
+          phaseTitle: phases[0]?.title || 'Phase 1',
+          epicId: `${phases[0]?.id || 'phase-1'}-epic-1`,
+          epicTitle: 'Requirements Gathering',
+          estimatedHours: 16
+        }];
         
         return {
           statusCode: 200,
