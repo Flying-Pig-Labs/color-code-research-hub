@@ -51,7 +51,7 @@ const ParseProduct = ({ readmeContent = '', initialData, onNext }: ParseProductP
 
     setIsLoadingAI(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/populate-form`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/populate-form`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

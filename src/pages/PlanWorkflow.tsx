@@ -77,7 +77,7 @@ const PlanWorkflow = () => {
   const fetchReadmeContent = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/github/repos/${owner}/${repo}/readme`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/${owner}/${repo}/readme`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch README');
@@ -87,7 +87,7 @@ const PlanWorkflow = () => {
       setReadmeContent(data.content);
       
       // Parse README to get initial metadata
-      const parseResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/parse-readme`, {
+      const parseResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/parse-readme`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: data.content })
@@ -141,7 +141,7 @@ const PlanWorkflow = () => {
     setIsGeneratingPlan(true);
     try {
       // Use V2 endpoint for multi-step LLM orchestration
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/generate-full-plan`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-full-plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -172,7 +172,7 @@ const PlanWorkflow = () => {
   const createGitHubIssues = async () => {
     try {
       // First generate all issues for the phases
-      const generateResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/generate-issues`, {
+      const generateResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-issues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -188,7 +188,7 @@ const PlanWorkflow = () => {
       const { issues } = await generateResponse.json();
 
       // Then create them on GitHub
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/create-github-issues`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/create-github-issues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

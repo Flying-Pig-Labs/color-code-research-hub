@@ -75,7 +75,7 @@ const PlanWorkflowV2 = () => {
 
   const generateFullPlan = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/generate-full-plan`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-full-plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -188,7 +188,7 @@ const PlanWorkflowV2 = () => {
     try {
       // First, generate all issues for selected epics
       const selectedPhases = phases.filter(p => p.selected !== false);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/generate-issues`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-issues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -211,7 +211,7 @@ const PlanWorkflowV2 = () => {
       for (let i = 0; i < issues.length; i += batchSize) {
         const batch = issues.slice(i, i + batchSize);
         
-        const createResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/create-github-issues`, {
+        const createResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/create-github-issues`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

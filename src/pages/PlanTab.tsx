@@ -33,7 +33,7 @@ const PlanTab = () => {
   const fetchGitHubRepos = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/github/repos`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos`);
       
       if (!response.ok) {
         throw new Error("Failed to fetch repositories");
