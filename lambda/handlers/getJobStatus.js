@@ -51,39 +51,70 @@ exports.handler = async (event) => {
       };
     }
 
-    // Calculate progress percentage
-    const stages = Object.values(job.stages || {});
-    const completedStages = stages.filter(s => s.status === 'completed' || s.status === 'skipped').length;
-    const totalStages = stages.length;
-    const progress = totalStages > 0 ? Math.round((completedStages / totalStages) * 100) : 0;
+    // Map backend stage names to frontend stage names
+    const stageNameMapping = {
+      'populateForm': 'Form Analysis',
+      'generatePhases': 'Phase Generation',
+      'epicGeneration': 'Epic Generation',
+      'issueFormatting': 'Issue Formatting',
+      'createGitHubIssues': 'GitHub Creation'
+    };
 
-    // Prepare response based on job status
+    // Calculate progress percentage and completed stages
+    const stages = Object.entries(job.stages || {});
+    const completedStagesList = stages
+      .filter(([_, stage]) => stage.status === 'completed' || stage.status === 'skipped')
+      .map(([stageName, _]) => stageNameMapping[stageName] || stageName);
+    
+    const totalStages = stages.length;
+    const progress = totalStages > 0 ? Math.round((completedStagesList.length / totalStages) * 100) : 0;
+
+    // Find current stage
+    let currentStageName = '';
+    const currentStageEntry = stages.find(([_, stage]) => stage.status === 'in_progress');
+    if (currentStageEntry) {
+      currentStageName = stageNameMapping[currentStageEntry[0]] || currentStageEntry[0];
+    }
+
+    // Prepare response based on job status - map to frontend expected format
     const response = {
       jobId: job.jobId,
-      status: job.status,
+      status: job.status.toLowerCase(), // Frontend expects lowercase
+      stage: currentStageName,
       progress,
+      completedStages: completedStagesList,
+      issuesCreated: 0, // Will be updated if we have this info
+      totalIssues: 0, // Will be updated if we have this info
       createdAt: job.createdAt,
       updatedAt: job.updatedAt,
-      stages: job.stages,
       errors: job.errors || []
     };
 
-    // Include results only if job is completed
-    if (job.status === 'COMPLETED') {
-      response.results = job.results;
+    // Include results only if job is completed - note: frontend expects 'result' not 'results'
+    if (job.status === 'COMPLETED' && job.results) {
+      response.result = job.results;
+      
+      // Count total issues if available
+      if (job.results.phases) {
+        let totalIssues = 0;
+        job.results.phases.forEach(phase => {
+          if (phase.epics) {
+            phase.epics.forEach(epic => {
+              if (epic.issues) {
+                totalIssues += epic.issues.length;
+              }
+            });
+          } else if (phase.issues) {
+            totalIssues += phase.issues.length;
+          }
+        });
+        response.totalIssues = totalIssues;
+      }
     }
 
-    // Include current stage information if processing
-    if (job.status === 'PROCESSING') {
-      const currentStage = Object.entries(job.stages || {})
-        .find(([_, stage]) => stage.status === 'in_progress');
-      
-      if (currentStage) {
-        response.currentStage = {
-          name: currentStage[0],
-          startedAt: currentStage[1].startedAt
-        };
-      }
+    // Add error message if failed
+    if (job.status === 'FAILED' && job.errors && job.errors.length > 0) {
+      response.error = job.errors[job.errors.length - 1].error || 'Plan generation failed';
     }
 
     return {
