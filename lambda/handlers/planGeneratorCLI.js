@@ -110,30 +110,33 @@ exports.handler = async (event) => {
         const projectPlan = await generateProjectPlan(projectInfo, readmeContent);
         
         // Transform to format expected by existing UI
-        const transformedPhases = projectPlan.phases.map(phase => ({
-          id: phase.id,
-          title: phase.title,
-          description: phase.description,
-          roles: phase.roles,
-          // Transform issues to epics format
-          epics: phase.issues.reduce((epics, issue, index) => {
-            const epicIndex = Math.floor(index / 3); // Group 3 issues per epic
-            if (!epics[epicIndex]) {
-              epics[epicIndex] = {
-                id: `${phase.id}-epic-${epicIndex + 1}`,
-                title: `Epic ${epicIndex + 1}`,
-                description: `Tasks for ${phase.title}`,
-                suggestedRole: issue.role,
-                selected: true,
-                issues: []
-              };
-            }
-            epics[epicIndex].issues.push(issue);
-            return epics;
-          }, []),
-          pending: false,
-          approved: phase.approved
-        }));
+        // The LLM generates tasks which should become epics, and each epic has its formatted issue
+        const transformedPhases = projectPlan.phases.map(phase => {
+          // Create epics from the formatted issues
+          const epics = phase.issues.map((issue, index) => ({
+            id: `${phase.id}-epic-${index + 1}`,
+            title: issue.title,
+            description: issue.description,
+            suggestedRole: issue.role,
+            selected: true,
+            issues: [{
+              id: `${phase.id}-issue-${index + 1}`,
+              title: issue.title,
+              description: issue.description,
+              role: issue.role
+            }]
+          }));
+
+          return {
+            id: phase.id,
+            title: phase.title,
+            description: phase.description,
+            roles: phase.roles,
+            epics: epics,
+            pending: false,
+            approved: phase.approved
+          };
+        });
         
         // Extract all issues for sample
         const allIssues = projectPlan.phases.flatMap(phase => 

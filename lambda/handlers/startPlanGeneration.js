@@ -65,14 +65,23 @@ exports.handler = async (event) => {
     }));
 
     // Invoke orchestrator function asynchronously
-    await lambdaClient.send(new InvokeCommand({
-      FunctionName: ORCHESTRATOR_FUNCTION_NAME,
-      InvocationType: 'Event', // Async invocation
-      Payload: JSON.stringify({
-        jobId,
-        input: jobRecord.input
-      })
-    }));
+    console.log(`Invoking orchestrator function: ${ORCHESTRATOR_FUNCTION_NAME}`);
+    console.log('Payload:', JSON.stringify({ jobId, input: jobRecord.input }));
+    
+    try {
+      const invokeResult = await lambdaClient.send(new InvokeCommand({
+        FunctionName: ORCHESTRATOR_FUNCTION_NAME,
+        InvocationType: 'Event', // Async invocation
+        Payload: JSON.stringify({
+          jobId,
+          input: jobRecord.input
+        })
+      }));
+      console.log('Orchestrator invoked successfully:', invokeResult);
+    } catch (invokeError) {
+      console.error('Failed to invoke orchestrator:', invokeError);
+      throw invokeError;
+    }
 
     // Return job ID immediately
     return {
