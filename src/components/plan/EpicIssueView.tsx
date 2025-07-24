@@ -39,7 +39,10 @@ interface EpicIssueViewProps {
 const EpicIssueView = ({ phases, setPhases, onNext, onPrevious, viewMode = 'epic' }: EpicIssueViewProps) => {
   const isEpicView = viewMode === 'epic';
   
-  // Sample data for demonstration
+  // Extract all epics from all phases
+  const allEpics: Epic[] = phases.flatMap(phase => phase.epics || []);
+  
+  // Sample data for demonstration (ONLY used if no real data)
   const sampleEpics: Epic[] = [
     {
       id: '1',
@@ -129,7 +132,10 @@ const EpicIssueView = ({ phases, setPhases, onNext, onPrevious, viewMode = 'epic
                 )}
               </CardTitle>
               <CardDescription className="text-blue-100">
-                {isEpicView ? 'Review and edit project epics' : 'Review all issues across epics'}
+                {isEpicView 
+                  ? `Review and edit project epics (${allEpics.length > 0 ? allEpics.length : 2} epics total)`
+                  : `Review all issues across epics (${allEpics.length > 0 ? allEpics.reduce((sum, epic) => sum + epic.issues.length, 0) : 4} issues total)`
+                }
               </CardDescription>
             </div>
           </div>
@@ -141,7 +147,7 @@ const EpicIssueView = ({ phases, setPhases, onNext, onPrevious, viewMode = 'epic
         <div className="space-y-4 pr-4">
           {isEpicView ? (
             // Epic View
-            sampleEpics.map((epic) => (
+            (allEpics.length > 0 ? allEpics : sampleEpics).map((epic) => (
               <Card key={epic.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -172,7 +178,7 @@ const EpicIssueView = ({ phases, setPhases, onNext, onPrevious, viewMode = 'epic
             ))
           ) : (
             // Issues View
-            sampleEpics.flatMap(epic => 
+            (allEpics.length > 0 ? allEpics : sampleEpics).flatMap(epic => 
               epic.issues.map(issue => (
                 <Card key={issue.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="pt-6">
