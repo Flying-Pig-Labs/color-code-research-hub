@@ -364,6 +364,14 @@ const formatIssue = async (task, phase, projectInfo, apiKey, openAIKey) => {
   };
 };
 
+// Wrap the main handler with timeout protection
+const executeWithTimeout = async (promise, timeoutMs) => {
+  const timeout = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs)
+  );
+  return Promise.race([promise, timeout]);
+};
+
 exports.handler = async (event) => {
   const corsHeaders = {
     'Content-Type': 'application/json',
@@ -409,10 +417,13 @@ exports.handler = async (event) => {
         // Step 2: Generate epics for each phase (with rate limiting)
         const phasesWithEpics = [];
         
-        for (const phase of phases) {
+        // Limit to first 3 phases to avoid timeout
+        const phasesToProcess = phases.slice(0, 3);
+        
+        for (const phase of phasesToProcess) {
           // Add delay between phases to avoid rate limiting
           if (phasesWithEpics.length > 0) {
-            await new Promise(resolve => setTimeout(resolve, 3000)); // Increased to 3s
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Reduced to 2s for faster response
           }
           
           try {
@@ -437,21 +448,31 @@ exports.handler = async (event) => {
           }
         }
         
-        // Step 3: Format a sample of issues (first 3) to show preview
-        const sampleIssues = [];
-        let issueCount = 0;
+        // Add remaining phases without epics (to be generated later)
+        for (let i = 3; i < phases.length; i++) {
+          phasesWithEpics.push({
+            ...phases[i],
+            epics: [],
+            pending: true // Mark as pending for UI
+          });
+        }
         
-        for (const phase of phasesWithEpics.slice(0, 2)) { // First 2 phases only
-          for (const epic of phase.epics.slice(0, 2)) { // First 2 epics only
-            if (issueCount >= 3) break;
-            
+        // Step 3: Format a sample of issues (first 1) to show preview
+        const sampleIssues = [];
+        
+        // Only generate 1 sample issue to avoid timeout
+        if (phasesWithEpics.length > 0 && phasesWithEpics[0].epics.length > 0) {
+          const firstPhase = phasesWithEpics[0];
+          const firstEpic = firstPhase.epics[0];
+          
+          try {
             const issue = await formatIssue(
               { 
-                title: epic.title, 
-                description: epic.description, 
-                suggestedRole: epic.suggestedRole 
+                title: firstEpic.title, 
+                description: firstEpic.description, 
+                suggestedRole: firstEpic.suggestedRole 
               },
-              phase,
+              firstPhase,
               metadata,
               anthropicApiKey,
               openAIKey
@@ -459,13 +480,11 @@ exports.handler = async (event) => {
             
             sampleIssues.push({
               ...issue,
-              epicId: epic.id
+              epicId: firstEpic.id
             });
-            
-            issueCount++;
-            
-            // Rate limiting
-            await new Promise(resolve => setTimeout(resolve, 500));
+          } catch (error) {
+            console.error('Failed to generate sample issue:', error);
+            // Continue without sample
           }
         }
         
