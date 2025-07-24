@@ -140,13 +140,13 @@ const PlanWorkflow = () => {
     
     setIsGeneratingPlan(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/generate-phases`, {
+      // Use V2 endpoint for multi-step LLM orchestration
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/generate-full-plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           metadata: projectSummary,
-          readmeContent: readmeContent,
-          repository: `${owner}/${repo}`
+          readmeContent: readmeContent
         })
       });
 
@@ -155,6 +155,7 @@ const PlanWorkflow = () => {
       }
 
       const data = await response.json();
+      // V2 returns phases with epics already populated
       setPhases(data.phases || []);
     } catch (error) {
       console.error('Failed to generate phases:', error);
@@ -170,13 +171,29 @@ const PlanWorkflow = () => {
 
   const createGitHubIssues = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/create-github-issues`, {
+      // First generate all issues for the phases
+      const generateResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/generate-issues`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phases: phases,
+          metadata: projectSummary
+        })
+      });
+
+      if (!generateResponse.ok) {
+        throw new Error('Failed to generate issues');
+      }
+
+      const { issues } = await generateResponse.json();
+
+      // Then create them on GitHub
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan/v2/create-github-issues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           repository: `${owner}/${repo}`,
-          summary: projectSummary,
-          phases: phases
+          issues: issues
         })
       });
 
