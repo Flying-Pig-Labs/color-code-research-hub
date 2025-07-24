@@ -105,6 +105,7 @@ Resources:
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
       Events:
         ListRepos:
           Type: Api
@@ -139,6 +140,7 @@ Resources:
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
       Events:
         ParseReadme:
           Type: Api
@@ -171,7 +173,7 @@ Resources:
     Properties:
       CodeUri: ../lambda/handlers/
       Handler: planGeneratorV2.handler
-      Timeout: 300 # 5 minutes for full orchestration
+      Timeout: 900 # 15 minutes for full orchestration
       MemorySize: 512
       Environment:
         Variables:
@@ -185,6 +187,7 @@ Resources:
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
       Events:
         GenerateFullPlan:
           Type: Api

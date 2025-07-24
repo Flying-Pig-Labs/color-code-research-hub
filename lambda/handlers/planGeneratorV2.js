@@ -12,6 +12,7 @@ const secretsClient = new SecretsManagerClient({ region: process.env.AWS_REGION 
 // Cache secrets to avoid repeated calls
 let cachedSecrets = null;
 let cachedGitHubToken = null;
+let cachedOpenAIKey = null;
 
 const getSecrets = async () => {
   if (cachedSecrets) {
@@ -57,8 +58,34 @@ const getGitHubToken = async () => {
   }
 };
 
-// Call Claude API
-const callClaude = async (prompt, apiKey) => {
+// Get OpenAI API key from Secrets Manager
+const getOpenAIKey = async () => {
+  if (cachedOpenAIKey) {
+    return cachedOpenAIKey;
+  }
+
+  try {
+    const command = new GetSecretValueCommand({
+      SecretId: 'arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv'
+    });
+    
+    const response = await secretsClient.send(command);
+    cachedOpenAIKey = response.SecretString;
+    
+    if (!cachedOpenAIKey) {
+      throw new Error('OpenAI key not found in secret');
+    }
+    
+    return cachedOpenAIKey;
+  } catch (error) {
+    console.error('Failed to retrieve OpenAI key:', error);
+    // Return null instead of throwing - OpenAI is optional fallback
+    return null;
+  }
+};
+
+// Call Claude API with retry logic
+const callClaude = async (prompt, apiKey, retries = 3) => {
   const data = JSON.stringify({
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 4000,
@@ -71,15 +98,87 @@ const callClaude = async (prompt, apiKey) => {
     ]
   });
 
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'api.anthropic.com',
+          path: '/v1/messages',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'Content-Length': Buffer.byteLength(data)
+          }
+        };
+
+        const req = https.request(options, (res) => {
+          let responseData = '';
+
+          res.on('data', (chunk) => {
+            responseData += chunk;
+          });
+
+          res.on('end', () => {
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              const response = JSON.parse(responseData);
+              resolve(response.content[0].text);
+            } else if (res.statusCode === 529) {
+              // Rate limit error - will retry
+              reject(new Error(`RATE_LIMIT: ${responseData}`));
+            } else {
+              reject(new Error(`Claude API error: ${res.statusCode} ${responseData}`));
+            }
+          });
+        });
+
+        req.on('error', reject);
+        req.write(data);
+        req.end();
+      });
+      
+      return response;
+    } catch (error) {
+      if (error.message.startsWith('RATE_LIMIT') && attempt < retries - 1) {
+        // Exponential backoff: 2s, 4s, 8s
+        const waitTime = Math.pow(2, attempt + 1) * 1000;
+        console.log(`Rate limited, waiting ${waitTime}ms before retry ${attempt + 1}/${retries}`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      } else {
+        throw error;
+      }
+    }
+  }
+};
+
+// Call OpenAI API as fallback
+const callOpenAI = async (prompt, apiKey) => {
+  const data = JSON.stringify({
+    model: 'gpt-4-turbo-preview',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a helpful assistant that always responds with valid JSON. Never include markdown formatting or code blocks in your response.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 4000,
+    response_format: { type: "json_object" }
+  });
+
   return new Promise((resolve, reject) => {
     const options = {
-      hostname: 'api.anthropic.com',
-      path: '/v1/messages',
+      hostname: 'api.openai.com',
+      path: '/v1/chat/completions',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Length': Buffer.byteLength(data)
       }
     };
@@ -93,10 +192,14 @@ const callClaude = async (prompt, apiKey) => {
 
       res.on('end', () => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          const response = JSON.parse(responseData);
-          resolve(response.content[0].text);
+          try {
+            const response = JSON.parse(responseData);
+            resolve(response.choices[0].message.content);
+          } catch (e) {
+            reject(new Error(`OpenAI parse error: ${e.message}`));
+          }
         } else {
-          reject(new Error(`Claude API error: ${res.statusCode} ${responseData}`));
+          reject(new Error(`OpenAI API error: ${res.statusCode} ${responseData}`));
         }
       });
     });
@@ -107,15 +210,61 @@ const callClaude = async (prompt, apiKey) => {
   });
 };
 
+// Call AI with automatic fallback to OpenAI
+const callAI = async (prompt, claudeKey, openAIKey = null) => {
+  try {
+    console.log('Attempting to call Claude API...');
+    return await callClaude(prompt, claudeKey);
+  } catch (error) {
+    if (error.message.includes('529') || error.message.includes('RATE_LIMIT') || error.message.includes('Overloaded')) {
+      console.log('Claude API overloaded, attempting OpenAI fallback...');
+      
+      if (!openAIKey) {
+        openAIKey = await getOpenAIKey();
+      }
+      
+      if (openAIKey) {
+        try {
+          const response = await callOpenAI(prompt, openAIKey);
+          console.log('OpenAI fallback successful');
+          return response;
+        } catch (openAIError) {
+          console.error('OpenAI fallback failed:', openAIError);
+          throw error; // Throw original Claude error
+        }
+      } else {
+        console.log('OpenAI key not available for fallback');
+        throw error;
+      }
+    } else {
+      throw error;
+    }
+  }
+};
+
 // Extract JSON from Claude response
 const extractJSON = (response) => {
-  // Try to find JSON in the response
+  // First, try to parse the entire response as JSON
+  try {
+    return JSON.parse(response);
+  } catch (e) {
+    // Not pure JSON, continue with extraction
+  }
+  
+  // Try to find JSON object in the response
   const jsonMatch = response.match(/\{[\s\S]*\}/);
   if (jsonMatch) {
     try {
-      return JSON.parse(jsonMatch[0]);
+      // Clean up common formatting issues
+      let cleanJson = jsonMatch[0]
+        .replace(/\n\s*\n/g, '\n') // Remove extra newlines
+        .replace(/,\s*}/, '}')     // Remove trailing commas
+        .replace(/,\s*]/, ']');    // Remove trailing commas in arrays
+      
+      return JSON.parse(cleanJson);
     } catch (e) {
-      console.error('Failed to parse JSON:', e);
+      console.error('Failed to parse JSON object:', e);
+      console.error('Raw match:', jsonMatch[0].substring(0, 200));
     }
   }
   
@@ -123,12 +272,21 @@ const extractJSON = (response) => {
   const arrayMatch = response.match(/\[[\s\S]*\]/);
   if (arrayMatch) {
     try {
-      return { phases: JSON.parse(arrayMatch[0]) };
+      let cleanArray = arrayMatch[0]
+        .replace(/\n\s*\n/g, '\n')
+        .replace(/,\s*]/, ']');
+      
+      const parsed = JSON.parse(cleanArray);
+      // If it's an array, wrap it in an object
+      return Array.isArray(parsed) ? { phases: parsed } : parsed;
     } catch (e) {
       console.error('Failed to parse array:', e);
+      console.error('Raw match:', arrayMatch[0].substring(0, 200));
     }
   }
   
+  // Try to extract structured data even if not perfect JSON
+  console.error('Could not parse response as JSON, raw response:', response.substring(0, 500));
   throw new Error('Could not extract valid JSON from response');
 };
 
@@ -142,7 +300,7 @@ const buildPrompt = (template, variables) => {
 };
 
 // Step 1: Generate phases based on README
-const generatePhases = async (projectInfo, readmeContent, apiKey) => {
+const generatePhases = async (projectInfo, readmeContent, apiKey, openAIKey) => {
   console.log('Step 1: Generating phases...');
   
   const prompt = buildPrompt(PHASE_GENERATOR_PROMPT, {
@@ -150,14 +308,14 @@ const generatePhases = async (projectInfo, readmeContent, apiKey) => {
     readmeContent: readmeContent.substring(0, 3000) // Limit README length
   });
   
-  const response = await callClaude(prompt, apiKey);
+  const response = await callAI(prompt, apiKey, openAIKey);
   const result = extractJSON(response);
   
   return result.phases;
 };
 
 // Step 2: Generate epics for each phase
-const generateEpics = async (phase, projectInfo, apiKey) => {
+const generateEpics = async (phase, projectInfo, apiKey, openAIKey) => {
   console.log(`Step 2: Generating epics for phase: ${phase.title}`);
   
   const commonRoles = PHASE_ROLE_MAPPING[phase.id] || 
@@ -171,14 +329,14 @@ const generateEpics = async (phase, projectInfo, apiKey) => {
     commonRoles: commonRoles.join(', ')
   });
   
-  const response = await callClaude(prompt, apiKey);
+  const response = await callAI(prompt, apiKey, openAIKey);
   const result = extractJSON(response);
   
   return result.tasks || [];
 };
 
 // Step 3: Format issues for GitHub
-const formatIssue = async (task, phase, projectInfo, apiKey) => {
+const formatIssue = async (task, phase, projectInfo, apiKey, openAIKey) => {
   const prompt = buildPrompt(ISSUE_FORMATTER_PROMPT, {
     taskTitle: task.title,
     taskDescription: task.description,
@@ -187,7 +345,7 @@ const formatIssue = async (task, phase, projectInfo, apiKey) => {
     productContext: projectInfo.title
   });
   
-  const response = await callClaude(prompt, apiKey);
+  const response = await callAI(prompt, apiKey, openAIKey);
   const result = extractJSON(response);
   
   return {
@@ -227,12 +385,15 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body);
     const pathSegments = event.path.split('/').filter(Boolean);
     
-    // Get API key
+    // Get API keys
     const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
     
     if (!anthropicApiKey) {
       throw new Error('Anthropic API key not configured');
     }
+    
+    // Get OpenAI key for fallback (optional)
+    const openAIKey = await getOpenAIKey();
 
     // Route: Generate full project plan
     if (pathSegments.includes('generate-full-plan')) {
@@ -242,7 +403,7 @@ exports.handler = async (event) => {
       
       try {
         // Step 1: Generate phases
-        const phases = await generatePhases(metadata, readmeContent, anthropicApiKey);
+        const phases = await generatePhases(metadata, readmeContent, anthropicApiKey, openAIKey);
         console.log(`Generated ${phases.length} phases`);
         
         // Step 2: Generate epics for each phase (with rate limiting)
@@ -251,20 +412,29 @@ exports.handler = async (event) => {
         for (const phase of phases) {
           // Add delay between phases to avoid rate limiting
           if (phasesWithEpics.length > 0) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 3000)); // Increased to 3s
           }
           
-          const epics = await generateEpics(phase, metadata, anthropicApiKey);
-          phasesWithEpics.push({
-            ...phase,
-            epics: epics.map((epic, index) => ({
-              id: `${phase.id}-epic-${index + 1}`,
-              title: epic.title,
-              description: epic.description,
-              suggestedRole: epic.suggestedRole,
-              issues: [] // Will be populated if user proceeds
-            }))
-          });
+          try {
+            const epics = await generateEpics(phase, metadata, anthropicApiKey, openAIKey);
+            phasesWithEpics.push({
+              ...phase,
+              epics: epics.map((epic, index) => ({
+                id: `${phase.id}-epic-${index + 1}`,
+                title: epic.title,
+                description: epic.description,
+                suggestedRole: epic.suggestedRole,
+                issues: [] // Will be populated if user proceeds
+              }))
+            });
+          } catch (epicError) {
+            console.error(`Failed to generate epics for phase ${phase.title}:`, epicError);
+            // Continue with empty epics rather than failing entirely
+            phasesWithEpics.push({
+              ...phase,
+              epics: []
+            });
+          }
         }
         
         // Step 3: Format a sample of issues (first 3) to show preview
@@ -283,7 +453,8 @@ exports.handler = async (event) => {
               },
               phase,
               metadata,
-              anthropicApiKey
+              anthropicApiKey,
+              openAIKey
             );
             
             sampleIssues.push({
@@ -347,7 +518,8 @@ exports.handler = async (event) => {
                   },
                   phase,
                   metadata,
-                  anthropicApiKey
+                  anthropicApiKey,
+                  openAIKey
                 );
                 
                 allIssues.push({
