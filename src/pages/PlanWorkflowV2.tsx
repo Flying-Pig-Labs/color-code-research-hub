@@ -21,6 +21,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PlanGenerationProgress } from '@/components/plan/PlanGenerationProgress';
 
 interface Phase {
   id: string;
@@ -65,6 +66,8 @@ const PlanWorkflowV2 = () => {
   const [createdIssues, setCreatedIssues] = useState<any[]>([]);
   const [creationProgress, setCreationProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [useAsyncGeneration, setUseAsyncGeneration] = useState(true);
 
   // Load project data from localStorage
   const projectData = JSON.parse(localStorage.getItem('projectSummary') || '{}');
@@ -75,39 +78,61 @@ const PlanWorkflowV2 = () => {
 
   const generateFullPlan = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-full-plan`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          metadata: projectData,
-          readmeContent: localStorage.getItem('readmeContent') || ''
-        })
-      });
+      if (useAsyncGeneration) {
+        // Start async generation
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/async/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            metadata: projectData,
+            readmeContent: localStorage.getItem('readmeContent') || '',
+            repository: `${owner}/${repo}`
+          })
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate plan');
-      }
+        if (!response.ok) {
+          throw new Error('Failed to start plan generation');
+        }
 
-      const data = await response.json();
-      
-      // Set all items as selected by default
-      const phasesWithSelection = data.phases.map((phase: Phase) => ({
-        ...phase,
-        selected: true,
-        epics: phase.epics.map((epic: Epic) => ({
-          ...epic,
-          selected: true
-        }))
-      }));
-      
-      setPhases(phasesWithSelection);
-      setSampleIssues(data.sampleIssues);
-      setTotalEstimatedIssues(data.totalEstimatedIssues);
-      setCurrentStep('preview');
-      
-      // Expand first phase by default
-      if (data.phases.length > 0) {
-        setExpandedPhases([data.phases[0].id]);
+        const data = await response.json();
+        setJobId(data.jobId);
+        // The PlanGenerationProgress component will handle the rest
+      } else {
+        // Use old synchronous method
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/v2/generate-full-plan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            metadata: projectData,
+            readmeContent: localStorage.getItem('readmeContent') || ''
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate plan');
+        }
+
+        const data = await response.json();
+        
+        // Set all items as selected by default
+        const phasesWithSelection = data.phases.map((phase: Phase) => ({
+          ...phase,
+          selected: true,
+          epics: phase.epics.map((epic: Epic) => ({
+            ...epic,
+            selected: true
+          }))
+        }));
+        
+        setPhases(phasesWithSelection);
+        setSampleIssues(data.sampleIssues);
+        setTotalEstimatedIssues(data.totalEstimatedIssues);
+        setCurrentStep('preview');
+        
+        // Expand first phase by default
+        if (data.phases.length > 0) {
+          setExpandedPhases([data.phases[0].id]);
+        }
       }
     } catch (error) {
       console.error('Failed to generate plan:', error);
@@ -503,9 +528,41 @@ const PlanWorkflowV2 = () => {
     );
   }
 
+  const handleAsyncComplete = (result: any) => {
+    if (result && result.phases) {
+      // Set all items as selected by default
+      const phasesWithSelection = result.phases.map((phase: Phase) => ({
+        ...phase,
+        selected: true,
+        epics: phase.epics.map((epic: Epic) => ({
+          ...epic,
+          selected: true
+        }))
+      }));
+      
+      setPhases(phasesWithSelection);
+      setCreatedIssues(result.createdIssues || []);
+      setTotalEstimatedIssues(result.phases.reduce((sum: number, phase: Phase) => 
+        sum + phase.epics.length * 3, 0));
+      setCurrentStep('complete');
+      toast.success(`Created ${result.createdIssues?.length || 0} GitHub issues!`);
+    }
+  };
+
+  const handleAsyncError = (error: string) => {
+    setError(error);
+    toast.error('Failed to generate plan');
+  };
+
   return (
     <div className="container mx-auto py-8 max-w-6xl">
-      {currentStep === 'loading' && (
+      {currentStep === 'loading' && jobId && useAsyncGeneration ? (
+        <PlanGenerationProgress 
+          jobId={jobId}
+          onComplete={handleAsyncComplete}
+          onError={handleAsyncError}
+        />
+      ) : currentStep === 'loading' && (
         <Card>
           <CardContent className="py-12">
             <div className="flex flex-col items-center justify-center space-y-4">

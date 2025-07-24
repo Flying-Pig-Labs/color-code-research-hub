@@ -268,6 +268,118 @@ Resources:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
 
+  # DynamoDB Table for Job Tracking
+  PlanGenerationJobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub PlanGenerationJobs-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: ColorCodeResearchHub
+
+  # Start Plan Generation Function (Async entry point)
+  StartPlanGenerationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: startPlanGeneration.handler
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+          ORCHESTRATOR_FUNCTION_NAME: !Ref PlanOrchestratorFunction
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+                - lambda:InvokeAsync
+              Resource: !GetAtt PlanOrchestratorFunction.Arn
+      Events:
+        StartJob:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/async/start
+            Method: POST
+
+  # Plan Orchestrator Function (Main processing)
+  PlanOrchestratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: planOrchestrator.handler
+      Timeout: 900 # 15 minutes
+      MemorySize: 3008
+      ReservedConcurrentExecutions: 5 # Limit concurrent executions
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+          ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:UpdateItem
+                - dynamodb:PutItem
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
+                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+
+  # Get Job Status Function
+  GetJobStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: getJobStatus.handler
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+      Events:
+        GetStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/async/status/{jobId}
+            Method: GET
+
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL
@@ -280,3 +392,27 @@ Outputs:
     Value: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
     Export:
       Name: !Sub ${AWS::StackName}-SecretsArn
+  
+  JobsTableName:
+    Description: Name of the DynamoDB table for job tracking
+    Value: !Ref PlanGenerationJobsTable
+    Export:
+      Name: !Sub ${AWS::StackName}-JobsTable
+  
+  StartPlanGenerationFunctionArn:
+    Description: ARN of the Start Plan Generation Lambda function
+    Value: !GetAtt StartPlanGenerationFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-StartPlanFunction
+  
+  PlanOrchestratorFunctionArn:
+    Description: ARN of the Plan Orchestrator Lambda function
+    Value: !GetAtt PlanOrchestratorFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-OrchestratorFunction
+  
+  GetJobStatusFunctionArn:
+    Description: ARN of the Get Job Status Lambda function
+    Value: !GetAtt GetJobStatusFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-GetStatusFunction

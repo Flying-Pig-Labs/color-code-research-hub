@@ -1,0 +1,292 @@
+import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
+import { PHASE_GENERATOR_PROMPT } from '../prompts/phase-generator.js';
+import { EPIC_GENERATOR_PROMPT } from '../prompts/epic-generator.js';
+import { ISSUE_FORMATTER_PROMPT } from '../prompts/issue-formatter.js';
+import { buildSafePrompt } from './prompt-sanitizer.js';
+
+const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
+
+// Claude model configuration - using the exact same model as CLI
+const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
+
+/**
+ * Main orchestrator that follows the exact same 3-step process as the CLI
+ */
+export class LLMOrchestrator {
+  /**
+   * Generate project plan following the exact CLI sequence:
+   * 1. Generate phases based on README
+   * 2. For each phase, generate epics/tasks with role assignments
+   * 3. Format issues for GitHub
+   */
+  async generateProjectPlan(projectInfo, readmeContent) {
+    console.log('🤖 Starting LLM orchestration...');
+    
+    // Step 1: Generate phases based on README
+    console.log('🤖 Step 1: Generating project phases...');
+    const phases = await this.generatePhases(projectInfo, readmeContent);
+    
+    // Step 2: For each phase, generate epics/tasks with role assignments
+    console.log('👥 Step 2: Generating epics and assigning roles...');
+    const phasesWithTasks = await this.generateEpicsForPhases(phases, projectInfo);
+    
+    // Step 3: Format issues for GitHub
+    console.log('📝 Step 3: Formatting issues for GitHub...');
+    const formattedPhases = await this.formatIssuesForGitHub(phasesWithTasks, projectInfo);
+    
+    return {
+      summary: {
+        title: projectInfo.title,
+        description: projectInfo.description,
+        domain: projectInfo.domain,
+        repository: projectInfo.repository || 'unknown/unknown',
+        branch: projectInfo.branch || 'main',
+        targetUsers: projectInfo.targetUsers,
+        techStack: projectInfo.techStack,
+        features: projectInfo.features,
+        complexity: projectInfo.complexity
+      },
+      phases: formattedPhases
+    };
+  }
+
+  /**
+   * Step 1: Generate phases using the exact same prompt as CLI
+   */
+  async generatePhases(projectInfo, readmeContent) {
+    const prompt = buildSafePrompt(PHASE_GENERATOR_PROMPT, {
+      domain: projectInfo.domain,
+      readmeContent: readmeContent
+    });
+
+    const response = await this.callClaude(prompt);
+    const phases = this.extractJSON(response);
+    
+    if (!phases || !phases.phases) {
+      throw new Error('Failed to generate phases');
+    }
+
+    return phases.phases;
+  }
+
+  /**
+   * Step 2: Generate epics for each phase with role assignments
+   */
+  async generateEpicsForPhases(phases, projectInfo) {
+    const results = await Promise.all(
+      phases.map(async (phase) => {
+        const commonRoles = this.getCommonRolesForPhase(phase.title);
+        
+        const prompt = buildSafePrompt(EPIC_GENERATOR_PROMPT, {
+          phaseTitle: phase.title,
+          phaseDescription: phase.description,
+          productContext: `${projectInfo.title}: ${projectInfo.description}`,
+          commonRoles: commonRoles.join('\n'),
+          phaseId: phase.id
+        });
+
+        const response = await this.callClaude(prompt);
+        const epicGeneration = this.extractJSON(response);
+
+        return {
+          id: phase.id,
+          title: phase.title,
+          description: phase.description,
+          roles: epicGeneration.roles,
+          tasks: epicGeneration.tasks,
+          issues: [],
+          approved: false
+        };
+      })
+    );
+
+    return results;
+  }
+
+  /**
+   * Step 3: Format issues for GitHub - process in batches like CLI
+   */
+  async formatIssuesForGitHub(phasesWithTasks, projectInfo) {
+    const formattedPhases = [];
+    const BATCH_SIZE = 3; // Same batch size as CLI
+
+    for (const phase of phasesWithTasks) {
+      const issues = [];
+      
+      console.log(`Processing ${phase.tasks.length} tasks for phase: ${phase.title}`);
+      
+      for (let i = 0; i < phase.tasks.length; i += BATCH_SIZE) {
+        const batch = phase.tasks.slice(i, i + BATCH_SIZE);
+        
+        const batchResults = await Promise.all(
+          batch.map(async (task) => {
+            const prompt = buildSafePrompt(ISSUE_FORMATTER_PROMPT, {
+              taskTitle: task.title,
+              taskDescription: task.description,
+              assignedRole: task.suggestedRole,
+              phaseTitle: phase.title,
+              productContext: projectInfo.title
+            });
+
+            try {
+              const response = await this.callClaude(prompt);
+              const formatted = this.extractJSON(response);
+
+              return {
+                title: formatted.title,
+                description: formatted.body,
+                role: task.suggestedRole
+              };
+            } catch (error) {
+              console.warn('Failed to format issue, using fallback:', error);
+              return {
+                title: task.title,
+                description: task.description,
+                role: task.suggestedRole
+              };
+            }
+          })
+        );
+        
+        issues.push(...batchResults);
+        
+        // Add delay between batches to respect rate limits
+        if (i + BATCH_SIZE < phase.tasks.length) {
+          console.log(`Processed batch ${Math.floor(i / BATCH_SIZE) + 1}, waiting before next batch...`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      formattedPhases.push({
+        id: phase.id,
+        title: phase.title,
+        description: phase.description,
+        roles: phase.roles,
+        issues,
+        approved: true
+      });
+      
+      // Add delay between phases
+      if (formattedPhases.length < phasesWithTasks.length) {
+        console.log(`Completed phase ${phase.title}, waiting before next phase...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+    
+    return formattedPhases;
+  }
+
+  /**
+   * Get common roles for phase - exact same mapping as CLI
+   */
+  getCommonRolesForPhase(phaseTitle) {
+    const rolesByPhase = {
+      'Discovery': [
+        'Market Research Analyst - Conducts market research and competitive analysis',
+        'User Research Specialist - Performs user interviews and creates personas',
+        'Product Owner - Defines vision and prioritizes features'
+      ],
+      'Specification': [
+        'Product Requirements Author - Creates comprehensive PRDs',
+        'UI/UX Designer - Designs wireframes and user interfaces',
+        'System Architect - Reviews technical feasibility'
+      ],
+      'Architecture': [
+        'System Architect - Designs scalable system architecture',
+        'Sprint Planner - Creates actionable sprint plans',
+        'Tech Lead - Reviews and approves technical decisions'
+      ],
+      'Implementation': [
+        'Frontend Developer - Implements UI components',
+        'Backend Developer - Builds APIs and services',
+        'Database Engineer - Designs data models',
+        'DevOps Engineer - Sets up CI/CD pipelines'
+      ],
+      'Testing': [
+        'Test Engineer - Creates test plans and automation',
+        'Security Auditor - Identifies vulnerabilities',
+        'Performance Tester - Validates system performance'
+      ],
+      'Deployment': [
+        'Release Manager - Coordinates deployments',
+        'DevOps Engineer - Manages infrastructure',
+        'Technical Writer - Creates documentation'
+      ],
+      'Monitoring': [
+        'Analytics Engineer - Implements tracking',
+        'Site Reliability Engineer - Ensures system reliability',
+        'Support Engineer - Handles user issues'
+      ],
+      'Enhancement': [
+        'Feature Developer - Implements new features',
+        'Refactoring Specialist - Improves code quality',
+        'Product Owner - Prioritizes enhancements'
+      ]
+    };
+
+    // Find matching phase
+    for (const [key, roles] of Object.entries(rolesByPhase)) {
+      if (phaseTitle.toLowerCase().includes(key.toLowerCase())) {
+        return roles;
+      }
+    }
+
+    // Default roles if no match
+    return [
+      'Product Owner - Defines requirements and priorities',
+      'Software Engineer - Implements features and fixes',
+      'QA Engineer - Ensures quality standards'
+    ];
+  }
+
+  /**
+   * Call Claude API using Bedrock
+   */
+  async callClaude(prompt) {
+    const command = new InvokeModelCommand({
+      modelId: CLAUDE_MODEL_ID,
+      contentType: 'application/json',
+      accept: 'application/json',
+      body: JSON.stringify({
+        prompt: `\n\nHuman: ${prompt}\n\nAssistant:`,
+        max_tokens_to_sample: 4096,
+        temperature: 0.7,
+        stop_sequences: ["\n\nHuman:"]
+      })
+    });
+
+    const response = await bedrock.send(command);
+    const responseData = JSON.parse(new TextDecoder().decode(response.body));
+    return responseData.completion;
+  }
+
+  /**
+   * Extract JSON from Claude's response - simplified version
+   */
+  extractJSON(content) {
+    try {
+      // Try to find JSON between code blocks
+      const codeBlockMatch = content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+      if (codeBlockMatch) {
+        return JSON.parse(codeBlockMatch[1]);
+      }
+
+      // Try to find raw JSON
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+
+      throw new Error('No JSON found in response');
+    } catch (error) {
+      console.error('Failed to extract JSON:', error);
+      throw error;
+    }
+  }
+}
+
+// Export singleton function to match CLI pattern
+export async function generateProjectPlan(projectInfo, readmeContent) {
+  const orchestrator = new LLMOrchestrator();
+  return orchestrator.generateProjectPlan(projectInfo, readmeContent);
+}

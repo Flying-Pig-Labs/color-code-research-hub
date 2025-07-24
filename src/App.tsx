@@ -11,6 +11,7 @@ import WhiteTeam from "./pages/WhiteTeam";
 import PlanTab from "./pages/PlanTab";
 import PlanWorkflow from "./pages/PlanWorkflow";
 import PlanWorkflowV2 from "./pages/PlanWorkflowV2";
+import EnhancedPlanWorkflow from "./pages/EnhancedPlanWorkflow";
 import BuildTab from "./pages/BuildTab";
 import NotFound from "./pages/NotFound";
 
@@ -32,7 +33,7 @@ const App = () => (
           {/* Plan Tab Routes */}
           <Route path="/plan" element={<AppLayout><PlanTab /></AppLayout>} />
           <Route path="/plan/:owner/:repo" element={<AppLayout><PlanWorkflow /></AppLayout>} />
-          <Route path="/plan/:owner/:repo/enhanced" element={<AppLayout><PlanWorkflowV2 /></AppLayout>} />
+          <Route path="/plan/:owner/:repo/enhanced" element={<AppLayout><EnhancedPlanWorkflow /></AppLayout>} />
           
           {/* Build Tab Routes */}
           <Route path="/build" element={<AppLayout><BuildTab /></AppLayout>} />

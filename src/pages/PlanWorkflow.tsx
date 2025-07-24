@@ -365,7 +365,7 @@ const PlanWorkflow = () => {
                 className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:from-purple-100 hover:to-blue-100"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Enhanced Plan (Beta)
+                Enhanced Async Plan
               </Button>
             </div>
           </div>
