@@ -1,3 +1,5 @@
+// Start Plan Generation Handler - Async Job Creation
+// Updated to support DynamoDB table for job tracking
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
 const { LambdaClient, InvokeCommand } = require('@aws-sdk/client-lambda');

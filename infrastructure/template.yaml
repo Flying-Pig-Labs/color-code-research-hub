@@ -39,6 +39,29 @@ Parameters:
     Default: https://sqs.us-east-1.amazonaws.com/418272766513/tempLocalToEc2-1753059239
 
 Resources:
+  # DynamoDB Table for Plan Generation Jobs
+  PlanGenerationJobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-PlanGenerationJobs-${Environment}
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: color-code-research-hub
+
   # API Gateway
   ResearchHubApi:
     Type: AWS::Serverless::Api
