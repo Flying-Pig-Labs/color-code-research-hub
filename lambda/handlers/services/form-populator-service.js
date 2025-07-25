@@ -108,16 +108,21 @@ class AIFormPopulator {
       contentType: 'application/json',
       accept: 'application/json',
       body: JSON.stringify({
-        prompt: `\n\nHuman: ${prompt}\n\nAssistant:`,
-        max_tokens_to_sample: 2048,
+        anthropic_version: "bedrock-2023-05-31",
+        max_tokens: 2048,
         temperature: 0.7,
-        stop_sequences: ["\n\nHuman:"]
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
       })
     });
 
     const response = await bedrock.send(command);
     const responseData = JSON.parse(new TextDecoder().decode(response.body));
-    return responseData.completion;
+    return responseData.content[0].text;
   }
 
   /**

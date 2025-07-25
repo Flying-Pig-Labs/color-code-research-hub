@@ -412,58 +412,21 @@ exports.handler = async (event) => {
       console.log('Starting full plan generation for:', metadata.title);
       
       try {
-        // Quick response to avoid timeout - generate minimal data
-        console.log('Generating quick response for:', metadata.title);
+        // Import the CLI handler
+        const planGeneratorCLI = require('./planGeneratorCLI');
         
-        // Step 1: Generate phases only (fastest operation)
-        const phases = await generatePhases(metadata, readmeContent, anthropicApiKey, openAIKey);
-        console.log(`Generated ${phases.length} phases`);
-        
-        // Step 2: Return phases with placeholder epics
-        const phasesWithEpics = phases.map((phase, index) => ({
-          ...phase,
-          epics: index === 0 ? [
-            {
-              id: `${phase.id}-epic-1`,
-              title: 'Requirements Gathering',
-              description: 'Gather and document all requirements',
-              suggestedRole: 'Product Owner',
-              issues: []
-            },
-            {
-              id: `${phase.id}-epic-2`,
-              title: 'Technical Planning',
-              description: 'Plan technical implementation approach',
-              suggestedRole: 'Tech Lead',
-              issues: []
-            }
-          ] : [],
-          pending: index > 0 // Mark all but first as pending
-        }));
-        
-        // Step 3: Create one sample issue
-        const sampleIssues = [{
-          title: '[Product Owner] Gather Initial Requirements',
-          body: '## Context\nGather and document initial project requirements.\n\n## Tasks\n- [ ] Interview stakeholders\n- [ ] Document requirements\n- [ ] Get approval\n\n## Acceptance Criteria\n- Requirements documented\n- Stakeholder approval received',
-          labels: ['phase:phase-1', 'role:product-owner', 'sparc-enabled'],
-          assignee: 'Product Owner',
-          phaseId: phases[0]?.id || 'phase-1',
-          phaseTitle: phases[0]?.title || 'Phase 1',
-          epicId: `${phases[0]?.id || 'phase-1'}-epic-1`,
-          epicTitle: 'Requirements Gathering',
-          estimatedHours: 16
-        }];
-        
-        return {
-          statusCode: 200,
-          headers: corsHeaders,
+        // Call the CLI handler directly
+        const cliResponse = await planGeneratorCLI.handler({
+          path: '/api/plan/generate-full-plan',
+          httpMethod: 'POST',
           body: JSON.stringify({
-            phases: phasesWithEpics,
-            sampleIssues: sampleIssues,
-            totalEstimatedIssues: phasesWithEpics.reduce((sum, phase) => 
-              sum + phase.epics.length * 3, 0) // Estimate 3 issues per epic
+            metadata,
+            readmeContent
           })
-        };
+        });
+        
+        // Return the CLI response directly
+        return cliResponse;
         
       } catch (error) {
         console.error('Error in full plan generation:', error);
