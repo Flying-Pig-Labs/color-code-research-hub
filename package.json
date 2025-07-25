@@ -10,7 +10,7 @@
     "dev:backend": "nodemon server-endpoint.js",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "jest",
+    "test": "vitest run",
     "execute:red": "./remote-swarm-executor.sh --team red --company",
     "execute:black": "./remote-swarm-executor.sh --team black --company",
     "execute:white": "./remote-swarm-executor.sh --team white --company"
@@ -55,13 +55,17 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^24.0.15",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.11.0",
+    "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "detect-port": "^2.1.0",
     "jest": "^29.7.0",
+    "jsdom": "^26.1.0",
     "nodemon": "^3.0.1",
     "postcss": "^8.5.6",
     "react": "^19.1.0",
@@ -69,7 +73,8 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3",
-    "vite": "^7.0.5"
+    "vite": "^7.0.5",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=16.0.0"

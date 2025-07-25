@@ -240,9 +240,9 @@ class LLMOrchestrator {
   }
 
   /**
-   * Call Claude API using Bedrock
+   * Call Claude API using Bedrock with retry and exponential backoff
    */
-  async callClaude(prompt) {
+  async callClaude(prompt, retries = 3) {
     const command = new InvokeModelCommand({
       modelId: CLAUDE_MODEL_ID,
       contentType: 'application/json',
@@ -255,31 +255,81 @@ class LLMOrchestrator {
       })
     });
 
-    const response = await bedrock.send(command);
-    const responseData = JSON.parse(new TextDecoder().decode(response.body));
-    return responseData.completion;
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const response = await bedrock.send(command);
+        const responseData = JSON.parse(new TextDecoder().decode(response.body));
+        return responseData.completion;
+      } catch (error) {
+        const isRateLimit = error.message?.includes('Too many requests') || 
+                           error.message?.includes('rate limit') ||
+                           error.$metadata?.httpStatusCode === 429;
+        
+        if (isRateLimit && attempt < retries - 1) {
+          // Exponential backoff: 2s, 4s, 8s
+          const waitTime = Math.pow(2, attempt + 1) * 1000;
+          console.log(`Rate limited, waiting ${waitTime}ms before retry ${attempt + 1}/${retries}`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        } else {
+          throw error;
+        }
+      }
+    }
   }
 
   /**
-   * Extract JSON from Claude's response - simplified version
+   * Extract JSON from Claude's response with better error handling
    */
   extractJSON(content) {
     try {
-      // Try to find JSON between code blocks
-      const codeBlockMatch = content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
-      if (codeBlockMatch) {
-        return JSON.parse(codeBlockMatch[1]);
+      // First, try to parse the entire response as JSON
+      try {
+        const parsed = JSON.parse(content);
+        // If it's a pure array, wrap it appropriately
+        return Array.isArray(parsed) ? { phases: parsed } : parsed;
+      } catch (e) {
+        // Not pure JSON, continue with extraction
       }
 
-      // Try to find raw JSON
+      // Try to find JSON between code blocks
+      const codeBlockMatch = content.match(/```(?:json)?\s*([\{\[][\s\S]*?[\}\]])\s*```/);
+      if (codeBlockMatch) {
+        // Clean up common formatting issues
+        let cleanJson = codeBlockMatch[1]
+          .replace(/\n\s*\n/g, '\n')  // Remove extra newlines
+          .replace(/,\s*}/g, '}')     // Remove trailing commas in objects
+          .replace(/,\s*]/g, ']');    // Remove trailing commas in arrays
+        
+        const parsed = JSON.parse(cleanJson);
+        return Array.isArray(parsed) ? { phases: parsed } : parsed;
+      }
+
+      // Try to find raw JSON object
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
+        let cleanJson = jsonMatch[0]
+          .replace(/\n\s*\n/g, '\n')
+          .replace(/,\s*}/g, '}')
+          .replace(/,\s*]/g, ']');
+        
+        return JSON.parse(cleanJson);
+      }
+
+      // Try to find array
+      const arrayMatch = content.match(/\[[\s\S]*\]/);
+      if (arrayMatch) {
+        let cleanArray = arrayMatch[0]
+          .replace(/\n\s*\n/g, '\n')
+          .replace(/,\s*]/g, ']');
+        
+        const parsed = JSON.parse(cleanArray);
+        return Array.isArray(parsed) ? { phases: parsed } : parsed;
       }
 
       throw new Error('No JSON found in response');
     } catch (error) {
       console.error('Failed to extract JSON:', error);
+      console.error('Content sample:', content.substring(0, 200));
       throw error;
     }
   }

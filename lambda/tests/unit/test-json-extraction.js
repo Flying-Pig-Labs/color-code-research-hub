@@ -7,7 +7,9 @@ test('JSON Extraction Tests', async (t) => {
   const extractJSON = (response) => {
     // First, try to parse the entire response as JSON
     try {
-      return JSON.parse(response);
+      const parsed = JSON.parse(response);
+      // If it's a pure array, wrap it in an object
+      return Array.isArray(parsed) ? { phases: parsed } : parsed;
     } catch (e) {
       // Not pure JSON, continue with extraction
     }
@@ -19,8 +21,8 @@ test('JSON Extraction Tests', async (t) => {
         // Clean up common formatting issues
         let cleanJson = jsonMatch[0]
           .replace(/\n\s*\n/g, '\n') // Remove extra newlines
-          .replace(/,\s*}/, '}')     // Remove trailing commas
-          .replace(/,\s*]/, ']');    // Remove trailing commas in arrays
+          .replace(/,\s*}/g, '}')    // Remove ALL trailing commas (added 'g' flag)
+          .replace(/,\s*]/g, ']');   // Remove ALL trailing commas in arrays (added 'g' flag)
         
         return JSON.parse(cleanJson);
       } catch (e) {
@@ -35,7 +37,7 @@ test('JSON Extraction Tests', async (t) => {
       try {
         let cleanArray = arrayMatch[0]
           .replace(/\n\s*\n/g, '\n')
-          .replace(/,\s*]/, ']');
+          .replace(/,\s*]/g, ']');  // Added 'g' flag for consistency
         
         const parsed = JSON.parse(cleanArray);
         // If it's an array, wrap it in an object

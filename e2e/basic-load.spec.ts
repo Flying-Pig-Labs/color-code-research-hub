@@ -12,7 +12,12 @@ test.describe('Headless Tests', () => {
     await expect(page.locator('body')).toContainText('Strategic Research');
     await expect(page.locator('body')).toContainText('Intelligence Labs');
     
-    // Verify the main heading exists
-    await expect(page.locator('h1')).toBeVisible();
+    // Verify the main headings exist (there are multiple h1 elements on the page)
+    const mainHeadings = page.locator('h1');
+    await expect(mainHeadings).toHaveCount(2);
+    
+    // Verify specific headings
+    await expect(page.locator('h1:has-text("Color Code Hub")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Strategic Research")')).toBeVisible();
   });
 });
