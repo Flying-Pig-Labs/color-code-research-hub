@@ -13,9 +13,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
   // Map routes to tab values
   useEffect(() => {
-    if (location.pathname.startsWith("/plan")) {
-      setActiveTab("plan");
-    } else if (location.pathname.startsWith("/build")) {
+    if (location.pathname.startsWith("/build")) {
       setActiveTab("build");
     } else {
       setActiveTab("research");
@@ -27,9 +25,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     switch (value) {
       case "research":
         navigate("/");
-        break;
-      case "plan":
-        navigate("/plan");
         break;
       case "build":
         navigate("/build");
@@ -50,12 +45,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </header>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden">
             <TabsTrigger value="research" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base">
               RESEARCH
-            </TabsTrigger>
-            <TabsTrigger value="plan" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base">
-              PLAN
             </TabsTrigger>
             <TabsTrigger value="build" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base" disabled>
               BUILD

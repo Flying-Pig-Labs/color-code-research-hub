@@ -8,10 +8,6 @@ import Index from "./pages/Index";
 import RedTeam from "./pages/RedTeam";
 import BlackTeam from "./pages/BlackTeam";
 import WhiteTeam from "./pages/WhiteTeam";
-import PlanTab from "./pages/PlanTab";
-import PlanWorkflow from "./pages/PlanWorkflow";
-import PlanWorkflowV2 from "./pages/PlanWorkflowV2";
-import EnhancedPlanWorkflow from "./pages/EnhancedPlanWorkflow";
 import BuildTab from "./pages/BuildTab";
 import NotFound from "./pages/NotFound";
 
@@ -30,16 +26,13 @@ const App = () => (
           <Route path="/black-team" element={<AppLayout><BlackTeam /></AppLayout>} />
           <Route path="/white-team" element={<AppLayout><WhiteTeam /></AppLayout>} />
           
-          {/* Plan Tab Routes */}
-          <Route path="/plan" element={<AppLayout><PlanTab /></AppLayout>} />
-          <Route path="/plan/:owner/:repo" element={<AppLayout><PlanWorkflow /></AppLayout>} />
-          <Route path="/plan/:owner/:repo/enhanced" element={<AppLayout><EnhancedPlanWorkflow /></AppLayout>} />
-          
           {/* Build Tab Routes */}
           <Route path="/build" element={<AppLayout><BuildTab /></AppLayout>} />
           
           {/* Redirects and 404 */}
           <Route path="/research" element={<Navigate to="/" replace />} />
+          <Route path="/plan" element={<Navigate to="/" replace />} />
+          <Route path="/plan/*" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

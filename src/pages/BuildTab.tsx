@@ -14,7 +14,7 @@ const BuildTab = () => {
             <div>
               <CardTitle>Build Phase</CardTitle>
               <CardDescription>
-                Execute your project plan with AI-powered development agents
+                Execute your project with AI-powered development agents
               </CardDescription>
             </div>
           </div>
@@ -26,9 +26,8 @@ const BuildTab = () => {
             </div>
             <h3 className="text-xl font-semibold">Coming Soon</h3>
             <p className="text-center text-muted-foreground max-w-md">
-              The BUILD phase will enable AI agents to automatically execute the project plan, 
-              implementing features, writing code, and creating pull requests based on the issues 
-              generated in the PLAN phase.
+              The BUILD phase will enable AI agents to automatically execute projects, 
+              implementing features, writing code, and creating pull requests.
             </p>
             <Badge variant="outline" className="mt-4">
               <Sparkles className="w-3 h-3 mr-1" />
@@ -45,9 +44,9 @@ const BuildTab = () => {
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                 <span className="text-xl font-bold text-blue-600">1</span>
               </div>
-              <h4 className="font-semibold">Issue Selection</h4>
+              <h4 className="font-semibold">Task Selection</h4>
               <p className="text-sm text-muted-foreground">
-                Select issues from your project plan for AI execution
+                Select tasks for AI execution
               </p>
             </div>
           </CardContent>
