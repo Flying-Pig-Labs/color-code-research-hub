@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import RedTeam from "./pages/RedTeam";
 import BlackTeam from "./pages/BlackTeam";
 import WhiteTeam from "./pages/WhiteTeam";
+import MilestonesTab from "./pages/MilestonesTab";
 import BuildTab from "./pages/BuildTab";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,9 @@ const App = () => (
           <Route path="/red-team" element={<AppLayout><RedTeam /></AppLayout>} />
           <Route path="/black-team" element={<AppLayout><BlackTeam /></AppLayout>} />
           <Route path="/white-team" element={<AppLayout><WhiteTeam /></AppLayout>} />
+          
+          {/* Milestones Tab Route */}
+          <Route path="/milestones" element={<AppLayout><MilestonesTab /></AppLayout>} />
           
           {/* Build Tab Routes */}
           <Route path="/build" element={<AppLayout><BuildTab /></AppLayout>} />
