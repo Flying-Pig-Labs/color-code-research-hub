@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Terminal, Loader2 } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 interface JobStatus {
   jobId: string;
@@ -150,17 +151,12 @@ const MilestonesJobRunner = () => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-8">
-            <div className="relative w-32 h-32">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 border-4 border-purple-200 rounded-full"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 border-4 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-purple-600 animate-pulse" />
-              </div>
-            </div>
+            <Player
+              autoplay
+              loop
+              src="https://lottie.host/9ddaa4a9-ca67-4b45-a1c2-1fcab08d2f34/IelF0Z8xJl.json"
+              style={{ height: '200px', width: '200px' }}
+            />
           </div>
         </CardContent>
       </Card>
