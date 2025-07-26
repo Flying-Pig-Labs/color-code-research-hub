@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MVP Backlog Generator - Minimal deployment for AWS account 984906149037
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        ENVIRONMENT: production
+
+Resources:
+  # API Gateway
+  ResearchHubApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: production
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+  # Submit Batch Job Function
+  SubmitBatchJobFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: submitBatchJob.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          S3_BUCKET: mvp-codegen-bucket
+          JOB_DEFINITION: mvp-backlog-generator:1
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - batch:SubmitJob
+                - batch:DescribeJobs
+                - batch:ListJobs
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:batch-job-queue-arn-a18jG3
+      Events:
+        SubmitJob:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/submit-job
+            Method: POST
+
+  # Stream Batch Logs Function
+  StreamBatchLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: streamBatchLogs.handler
+      Timeout: 30
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:FilterLogEvents
+                - logs:GetLogEvents
+              Resource: '*'
+      Events:
+        StreamLogs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/job/{jobId}/logs
+            Method: GET
+
+  # Get Batch Job Status Function
+  GetBatchJobStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: getBatchJobStatus.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          S3_BUCKET: mvp-codegen-bucket
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - batch:DescribeJobs
+                - batch:ListJobs
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource:
+                - arn:aws:s3:::mvp-codegen-bucket/*
+      Events:
+        GetJobStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/job/{jobId}/status
+            Method: GET
+
+  # GitHub Repository Function
+  GitHubReposFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: githubRepos.handler
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+      Events:
+        ListOrgRepos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/github/repos/{org}
+            Method: GET
+
+Outputs:
+  ApiGatewayUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${ResearchHubApi}.execute-api.${AWS::Region}.amazonaws.com/production
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiUrl

@@ -8,21 +8,10 @@ Globals:
     Runtime: nodejs18.x
     Environment:
       Variables:
-        ENVIRONMENT: !Ref Environment
         GITHUB_ORG: !Ref GitHubOrg
         CLIENT_COMPANY_NAME: !Ref ClientCompanyName
-        SECRETS_ARN: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
 
 Parameters:
-  Environment:
-    Type: String
-    Default: production
-    AllowedValues:
-      - development
-      - staging
-      - production
-    Description: Environment name
-  
   GitHubOrg:
     Type: String
     Default: Flying-Pig-Labs
@@ -36,14 +25,14 @@ Parameters:
   SQSQueueUrl:
     Type: String
     Description: SQS Queue URL for research requests
-    Default: https://sqs.us-east-1.amazonaws.com/984906149037/mvp-batch-job-queue
+    Default: ""  # Will be overridden by !Ref ResearchRequestQueue
 
 Resources:
   # DynamoDB Table for Plan Generation Jobs
   PlanGenerationJobsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${AWS::StackName}-PlanGenerationJobs-${Environment}
+      TableName: PlanGenerationJobs
       AttributeDefinitions:
         - AttributeName: jobId
           AttributeType: S
@@ -57,16 +46,22 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
       Tags:
-        - Key: Environment
-          Value: !Ref Environment
         - Key: Application
           Value: color-code-research-hub
+
+  # SQS Queue for Research Requests
+  ResearchRequestQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: research-requests-queue
+      VisibilityTimeout: 900
+      MessageRetentionPeriod: 1209600  # 14 days
 
   # API Gateway
   ResearchHubApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: !Ref Environment
+      StageName: production
       Cors:
         AllowMethods: "'GET,POST,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Api-Key'"
@@ -116,9 +111,6 @@ Resources:
     Properties:
       CodeUri: ../lambda/handlers/
       Handler: githubRepos.handler
-      Environment:
-        Variables:
-          SECRETS_ARN: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -126,9 +118,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-47iAE6
       Events:
         ListRepos:
           Type: Api
@@ -142,12 +134,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /api/github/repos/{org}
             Method: GET
-        GetReadme:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/github/repos/{owner}/{repo}/readme
-            Method: GET
 
   # Plan Generator Function (Original - kept for backward compatibility)
   PlanGeneratorFunction:
@@ -159,7 +145,7 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -167,9 +153,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-47iAE6
       Events:
         ParseReadme:
           Type: Api
@@ -206,7 +192,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
           AWS_BEDROCK_REGION: us-east-1
       Policies:
         - Version: '2012-10-17'
@@ -220,9 +206,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-47iAE6
       Events:
         GenerateFullPlan:
           Type: Api
@@ -266,9 +252,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-47iAE6
       Events:
         GenerateCLIPlan:
           Type: Api
@@ -284,7 +270,7 @@ Resources:
       Handler: submitToSQS.handler
       Environment:
         Variables:
-          SQS_QUEUE_URL: !Ref SQSQueueUrl
+          SQS_QUEUE_URL: !Ref ResearchRequestQueue
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -292,11 +278,7 @@ Resources:
               Action:
                 - sqs:SendMessage
                 - sqs:GetQueueAttributes
-              Resource: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:tempLocalToEc2-1753059239'
-            - Effect: Allow
-              Action:
-                - secretsmanager:GetSecretValue
-              Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
+              Resource: !GetAtt ResearchRequestQueue.Arn
       Events:
         SubmitRequest:
           Type: Api
@@ -335,30 +317,8 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-
-  # DynamoDB Table for Job Tracking
-  PlanGenerationJobsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub PlanGenerationJobs-${Environment}
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: jobId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: jobId
-          KeyType: HASH
-      TimeToLiveSpecification:
-        AttributeName: ttl
-        Enabled: true
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-      Tags:
-        - Key: Environment
-          Value: !Ref Environment
-        - Key: Application
-          Value: ColorCodeResearchHub
+                Resource: '*'
+  
 
   # Start Plan Generation Function (Async entry point)
   StartPlanGenerationFunction:
@@ -401,11 +361,10 @@ Resources:
       Handler: planOrchestrator.handler
       Timeout: 900 # 15 minutes
       MemorySize: 3008
-      ReservedConcurrentExecutions: 5 # Limit concurrent executions
       Environment:
         Variables:
           JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
-          ANTHROPIC_API_KEY: !Sub '{{resolve:secretsmanager:color-code-research-hub-secrets-${Environment}:SecretString:ANTHROPIC_API_KEY}}'
+          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
           AWS_BEDROCK_REGION: us-east-1
       Policies:
         - Version: '2012-10-17'
@@ -425,9 +384,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-47iAE6
 
   # Get Job Status Function
   GetJobStatusFunction:
@@ -545,15 +504,10 @@ Resources:
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL
-    Value: !Sub https://${ResearchHubApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}
+    Value: !Sub https://${ResearchHubApi}.execute-api.${AWS::Region}.amazonaws.com/production
     Export:
       Name: !Sub ${AWS::StackName}-ApiUrl
   
-  SecretsArn:
-    Description: ARN of the secrets manager secret
-    Value: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-    Export:
-      Name: !Sub ${AWS::StackName}-SecretsArn
   
   JobsTableName:
     Description: Name of the DynamoDB table for job tracking
@@ -578,3 +532,9 @@ Outputs:
     Value: !GetAtt GetJobStatusFunction.Arn
     Export:
       Name: !Sub ${AWS::StackName}-GetStatusFunction
+  
+  SQSQueueUrl:
+    Description: URL of the research requests SQS queue
+    Value: !Ref ResearchRequestQueue
+    Export:
+      Name: !Sub ${AWS::StackName}-QueueUrl
