@@ -87,8 +87,8 @@ const MilestonesTab = () => {
       }
       
       const data = await response.json();
-      // Navigate to job runner with custom job ID
-      navigate(`/milestones/${repo.full_name.split('/')[1]}/${data.customJobId || data.jobId}`);
+      // Navigate to job runner with the actual Batch job ID
+      navigate(`/milestones/${repo.full_name.split('/')[1]}/${data.jobId}`);
     } catch (error) {
       console.error('Error submitting job:', error);
       toast({
