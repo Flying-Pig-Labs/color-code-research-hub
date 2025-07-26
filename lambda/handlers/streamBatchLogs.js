@@ -1,6 +1,8 @@
 const { CloudWatchLogsClient, FilterLogEventsCommand } = require('@aws-sdk/client-cloudwatch-logs');
+const { BatchClient, DescribeJobsCommand } = require('@aws-sdk/client-batch');
 
 const logsClient = new CloudWatchLogsClient({ region: process.env.AWS_REGION || 'us-east-1' });
+const batchClient = new BatchClient({ region: process.env.AWS_REGION || 'us-east-1' });
 
 exports.handler = async (event) => {
   const corsHeaders = {
@@ -33,14 +35,51 @@ exports.handler = async (event) => {
     // Extract nextToken from query parameters
     const nextToken = event.queryStringParameters?.nextToken;
 
-    // CloudWatch log group and stream names
-    const logGroupName = `/aws/batch/job`;
-    const logStreamName = `mvp-backlog-generator/default/${jobId}`;
+    // First, get the actual log stream name from the Batch job
+    let logStreamName;
+    try {
+      const describeCommand = new DescribeJobsCommand({ jobs: [jobId] });
+      const jobResponse = await batchClient.send(describeCommand);
+      
+      if (!jobResponse.jobs || jobResponse.jobs.length === 0) {
+        throw new Error('Job not found');
+      }
+      
+      const job = jobResponse.jobs[0];
+      logStreamName = job.container?.logStreamName;
+      
+      if (!logStreamName) {
+        // Job might not have started yet
+        return {
+          statusCode: 200,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            logs: ['Waiting for job to start...'],
+            nextToken: null,
+            jobId
+          })
+        };
+      }
+    } catch (batchError) {
+      console.error('Error fetching job details:', batchError);
+      return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          logs: [],
+          nextToken: null,
+          jobId
+        })
+      };
+    }
+
+    // CloudWatch log group from the Batch configuration
+    const logGroupName = '/mvp-backlog';
 
     // Prepare parameters for CloudWatch Logs
     const params = {
       logGroupName,
-      logStreamNamePrefix: logStreamName,
+      logStreamNames: [logStreamName], // Use exact stream name instead of prefix
       startFromHead: true,
       limit: 100
     };

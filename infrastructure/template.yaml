@@ -469,6 +469,10 @@ Resources:
                 - logs:FilterLogEvents
                 - logs:GetLogEvents
               Resource: '*'
+            - Effect: Allow
+              Action:
+                - batch:DescribeJobs
+              Resource: '*'
       Events:
         StreamLogs:
           Type: Api
