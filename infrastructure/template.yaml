@@ -500,6 +500,11 @@ Resources:
                 - s3:GetObject
               Resource:
                 - arn:aws:s3:::mvp-builder-app-bucket/*
+            - Effect: Allow
+              Action:
+                - s3:ListBucket
+              Resource:
+                - arn:aws:s3:::mvp-builder-app-bucket
       Events:
         GetJobStatus:
           Type: Api

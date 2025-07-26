@@ -85,10 +85,10 @@ exports.handler = async (event) => {
       jobDefinition: process.env.JOB_DEFINITION || 'mvp-backlog-generator:1',
       containerOverrides: {
         environment: [
-          { name: 'GITHUB_REPO', value: repo },
+          { name: 'REPO', value: repo },  // Changed from GITHUB_REPO to REPO
           { name: 'MODE', value: 'run-all' },
           { name: 'JOB_ID', value: customJobId },
-          { name: 'S3_BUCKET', value: process.env.S3_BUCKET || 'mvp-codegen-bucket' }
+          { name: 'S3_BUCKET', value: process.env.S3_BUCKET || 'mvp-builder-app-bucket' }
         ]
       },
       tags: {
