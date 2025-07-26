@@ -15,7 +15,7 @@ AWS.config.update({
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 // SQS Queue URL
-const QUEUE_URL = process.env.SQS_QUEUE_URL || 'https://sqs.us-east-1.amazonaws.com/418272766513/tempLocalToEc2-1753059239';
+const QUEUE_URL = process.env.SQS_QUEUE_URL || 'https://sqs.us-east-1.amazonaws.com/984906149037/mvp-batch-job-queue';
 
 /**
  * Publish research request to SQS queue

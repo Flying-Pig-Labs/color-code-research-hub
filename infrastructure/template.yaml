@@ -36,7 +36,7 @@ Parameters:
   SQSQueueUrl:
     Type: String
     Description: SQS Queue URL for research requests
-    Default: https://sqs.us-east-1.amazonaws.com/418272766513/tempLocalToEc2-1753059239
+    Default: https://sqs.us-east-1.amazonaws.com/984906149037/mvp-batch-job-queue
 
 Resources:
   # DynamoDB Table for Plan Generation Jobs
@@ -127,8 +127,8 @@ Resources:
                 - secretsmanager:GetSecretValue
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
       Events:
         ListRepos:
           Type: Api
@@ -168,8 +168,8 @@ Resources:
                 - secretsmanager:GetSecretValue
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
       Events:
         ParseReadme:
           Type: Api
@@ -221,8 +221,8 @@ Resources:
                 - secretsmanager:GetSecretValue
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
       Events:
         GenerateFullPlan:
           Type: Api
@@ -267,8 +267,8 @@ Resources:
                 - secretsmanager:GetSecretValue
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
       Events:
         GenerateCLIPlan:
           Type: Api
@@ -426,8 +426,8 @@ Resources:
                 - secretsmanager:GetSecretValue
               Resource: 
                 - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:color-code-research-hub-secrets-${Environment}-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY
 
   # Get Job Status Function
   GetJobStatusFunction:
@@ -453,6 +453,93 @@ Resources:
           Properties:
             RestApiId: !Ref ResearchHubApi
             Path: /api/plan/async/status/{jobId}
+            Method: GET
+
+  # Submit Batch Job Function
+  SubmitBatchJobFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: submitBatchJob.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          S3_BUCKET: mvp-codegen-bucket
+          JOB_DEFINITION: mvp-backlog-generator:1
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - batch:SubmitJob
+                - batch:DescribeJobs
+                - batch:ListJobs
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:batch-job-queue-arn-a18jG3
+      Events:
+        SubmitJob:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/submit-job
+            Method: POST
+
+  # Stream Batch Logs Function
+  StreamBatchLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: streamBatchLogs.handler
+      Timeout: 30
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:FilterLogEvents
+                - logs:GetLogEvents
+              Resource: '*'
+      Events:
+        StreamLogs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/job/{jobId}/logs
+            Method: GET
+
+  # Get Batch Job Status Function
+  GetBatchJobStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: getBatchJobStatus.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          S3_BUCKET: mvp-codegen-bucket
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - batch:DescribeJobs
+                - batch:ListJobs
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource:
+                - arn:aws:s3:::mvp-codegen-bucket/*
+      Events:
+        GetJobStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/job/{jobId}/status
             Method: GET
 
 Outputs:

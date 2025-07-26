@@ -8,11 +8,11 @@ set -e  # Exit on error
 echo "🚀 Starting AWS Amplify Deployment..."
 
 # Use personal AWS profile
-export AWS_PROFILE=personal
+export AWS_PROFILE=mvp
 
 # Check if AWS CLI is configured
 echo "✅ Checking AWS CLI configuration..."
-aws sts get-caller-identity --profile personal
+aws sts get-caller-identity --profile mvp
 
 # Step 1: Deploy Lambda functions using SAM
 echo "📦 Deploying Lambda functions..."
@@ -23,10 +23,10 @@ sam build
 
 # Deploy with guided prompts on first run
 sam deploy --guided \
-  --profile personal \
+  --profile mvp \
   --stack-name color-code-research-hub-backend \
   --parameter-overrides \
-    SQSQueueURL=https://sqs.us-east-1.amazonaws.com/418272766513/tempLocalToEc2-1753059239 \
+    SQSQueueURL=https://sqs.us-east-1.amazonaws.com/984906149037/mvp-batch-job-queue \
   --capabilities CAPABILITY_IAM
 
 # Get the API Gateway URL from the stack outputs
@@ -62,7 +62,7 @@ echo "🌐 Creating Amplify App..."
 AMPLIFY_APP_ID=$(aws amplify create-app \
   --name color-code-research-hub \
   --platform WEB \
-  --profile personal \
+  --profile mvp \
   --query 'app.appId' \
   --output text)
 
@@ -102,7 +102,7 @@ BUILD_ID=$(aws amplify start-job \
   --app-id $AMPLIFY_APP_ID \
   --branch-name main \
   --job-type RELEASE \
-  --profile personal \
+  --profile mvp \
   --query 'jobSummary.jobId' \
   --output text)
 

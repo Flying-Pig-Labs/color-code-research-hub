@@ -44,7 +44,7 @@ const getGitHubToken = async () => {
 
   try {
     const command = new GetSecretValueCommand({
-      SecretId: 'arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4'
+      SecretId: 'arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy'
     });
     
     const response = await secretsClient.send(command);
@@ -69,7 +69,7 @@ const getOpenAIKey = async () => {
 
   try {
     const command = new GetSecretValueCommand({
-      SecretId: 'arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv'
+      SecretId: 'arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY'
     });
     
     const response = await secretsClient.send(command);

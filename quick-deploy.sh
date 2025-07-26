@@ -13,11 +13,11 @@ command -v aws >/dev/null 2>&1 || { echo "❌ AWS CLI not installed. Please inst
 command -v sam >/dev/null 2>&1 || { echo "❌ SAM CLI not installed. Please install it first."; exit 1; }
 
 # Use personal profile
-export AWS_PROFILE=personal
+export AWS_PROFILE=mvp
 
 # Verify AWS access
 echo "✅ Verifying AWS access..."
-aws sts get-caller-identity --profile personal || { echo "❌ AWS authentication failed. Please configure your personal profile."; exit 1; }
+aws sts get-caller-identity --profile mvp || { echo "❌ AWS authentication failed. Please configure your mvp profile."; exit 1; }
 
 # Build the frontend first
 echo "🏗️ Building frontend..."
