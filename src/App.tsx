@@ -9,6 +9,8 @@ import RedTeam from "./pages/RedTeam";
 import BlackTeam from "./pages/BlackTeam";
 import WhiteTeam from "./pages/WhiteTeam";
 import MilestonesTab from "./pages/MilestonesTab";
+import MilestonesJobRunner from "./pages/MilestonesJobRunner";
+import MilestonesJobComplete from "./pages/MilestonesJobComplete";
 import BuildTab from "./pages/BuildTab";
 import NotFound from "./pages/NotFound";
 
@@ -27,8 +29,10 @@ const App = () => (
           <Route path="/black-team" element={<AppLayout><BlackTeam /></AppLayout>} />
           <Route path="/white-team" element={<AppLayout><WhiteTeam /></AppLayout>} />
           
-          {/* Milestones Tab Route */}
+          {/* Milestones Tab Routes */}
           <Route path="/milestones" element={<AppLayout><MilestonesTab /></AppLayout>} />
+          <Route path="/milestones/:repo/:jobId" element={<AppLayout><MilestonesJobRunner /></AppLayout>} />
+          <Route path="/milestones/:repo/:jobId/complete" element={<AppLayout><MilestonesJobComplete /></AppLayout>} />
           
           {/* Build Tab Routes */}
           <Route path="/build" element={<AppLayout><BuildTab /></AppLayout>} />

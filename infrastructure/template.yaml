@@ -136,6 +136,12 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /api/github/repos
             Method: GET
+        ListOrgRepos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/github/repos/{org}
+            Method: GET
         GetReadme:
           Type: Api
           Properties:

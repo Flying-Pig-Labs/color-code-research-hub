@@ -122,6 +122,16 @@ exports.handler = async (event) => {
         headers: corsHeaders,
         body: JSON.stringify(repos)
       };
+    } else if (pathSegments.length === 4 && pathSegments[0] === 'api' && pathSegments[1] === 'github' && pathSegments[2] === 'repos') {
+      // List repositories for a specific organization
+      const org = pathSegments[3];
+      const repos = await makeGitHubRequest(`/orgs/${org}/repos?per_page=100&sort=updated`, githubToken);
+      
+      return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: JSON.stringify(repos)
+      };
     } else if (pathSegments.length === 6 && pathSegments[0] === 'api' && pathSegments[1] === 'github' && pathSegments[2] === 'repos' && pathSegments[5] === 'readme') {
       // Get repository README
       const owner = pathSegments[3];
