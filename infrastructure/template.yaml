@@ -64,7 +64,7 @@ Resources:
       StageName: production
       Cors:
         AllowMethods: "'GET,POST,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Api-Key'"
+        AllowHeaders: "'Content-Type,X-Api-Key,Authorization'"
         AllowOrigin: "'*'"
       Auth:
         ApiKeyRequired: false # Set to true if you want API key authentication
@@ -423,8 +423,8 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          S3_BUCKET: mvp-codegen-bucket
-          JOB_DEFINITION: mvp-backlog-generator:1
+          S3_BUCKET: mvp-builder-app-bucket
+          JOB_DEFINITION: MVPBacklogJob:15
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -433,12 +433,19 @@ Resources:
                 - batch:SubmitJob
                 - batch:DescribeJobs
                 - batch:ListJobs
+                - batch:TagResource
               Resource: '*'
             - Effect: Allow
               Action:
                 - secretsmanager:GetSecretValue
               Resource:
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:batch-job-queue-arn-a18jG3
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+              Resource:
+                - arn:aws:s3:::mvp-builder-app-bucket/*
       Events:
         SubmitJob:
           Type: Api
@@ -479,7 +486,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          S3_BUCKET: mvp-codegen-bucket
+          S3_BUCKET: mvp-builder-app-bucket
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -492,7 +499,7 @@ Resources:
               Action:
                 - s3:GetObject
               Resource:
-                - arn:aws:s3:::mvp-codegen-bucket/*
+                - arn:aws:s3:::mvp-builder-app-bucket/*
       Events:
         GetJobStatus:
           Type: Api

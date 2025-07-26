@@ -39,8 +39,9 @@ const getGitHubToken = async () => {
     
     const response = await secretsClient.send(command);
     
-    // The secret is stored as a plain string, not JSON
-    cachedGitHubToken = response.SecretString;
+    // Parse the secret - it's stored as JSON
+    const secretData = JSON.parse(response.SecretString);
+    cachedGitHubToken = secretData.github_token;
     
     if (!cachedGitHubToken) {
       throw new Error('GitHub token not found in secret');
@@ -92,7 +93,7 @@ exports.handler = async (event) => {
   const corsHeaders = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key',
+    'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key,Authorization',
     'Access-Control-Allow-Methods': 'GET,OPTIONS'
   };
 
