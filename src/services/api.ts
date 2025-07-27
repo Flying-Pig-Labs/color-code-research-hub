@@ -15,7 +15,6 @@ const apiClient = {
     'X-API-Key': API_KEY,
     'Accept': 'application/json',
   },
-  credentials: 'include' as RequestCredentials,
 };
 
 // Error types for better error handling
@@ -96,7 +95,6 @@ async function fetchWithErrorHandling<T>(
         ...apiClient.headers,
         ...options.headers,
       },
-      credentials: apiClient.credentials,
       signal: controller.signal,
     });
 
