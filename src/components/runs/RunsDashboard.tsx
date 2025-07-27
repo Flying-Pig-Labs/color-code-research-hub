@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, CheckCircle, XCircle, AlertCircle, Send } from "lucide-react";
 import { claudeFlowClient } from '@/services/claudeFlowClient';
 import { toast } from 'sonner';
@@ -11,6 +12,8 @@ const RunsDashboard = () => {
   const [healthStatus, setHealthStatus] = useState<'checking' | 'healthy' | 'error'>('checking');
   const [wsStatus, setWsStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'error'>('disconnected');
   const [objective, setObjective] = useState('Research the population of Richmond, VA');
+  const [strategy, setStrategy] = useState('research');
+  const [mode, setMode] = useState('centralized');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [executionId, setExecutionId] = useState<string | null>(null);
   const [wsMessages, setWsMessages] = useState<string[]>([]);
@@ -101,19 +104,12 @@ const RunsDashboard = () => {
     
     try {
       const response = await claudeFlowClient.executeTask({
-        taskType: 'hive-mind',
+        taskType: 'swarm',
         input: {
-          objective,
-          mode: 'centralized',
-          agents: {
-            coordinator: 1,
-            coder: 2,
-            tester: 1
-          }
-        },
-        metadata: {
-          priority: 'normal',
-          tags: ['research', 'mvp']
+          prompt: objective,  // This becomes the swarm command argument
+          strategy: strategy,  // User selected strategy
+          mode: mode,  // User selected mode
+          maxAgents: 5
         }
       });
       
@@ -200,21 +196,60 @@ const RunsDashboard = () => {
       {/* Task Submission */}
       <Card>
         <CardHeader>
-          <CardTitle>Submit Research Task</CardTitle>
+          <CardTitle>Submit Claude Flow Swarm Task</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="objective" className="text-sm font-medium">
-                Research Objective
+                Swarm Objective
               </label>
               <Input
                 id="objective"
                 value={objective}
                 onChange={(e) => setObjective(e.target.value)}
-                placeholder="Enter research objective..."
+                placeholder="Enter objective for the swarm..."
                 required
               />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="strategy" className="text-sm font-medium">
+                  Strategy
+                </label>
+                <Select value={strategy} onValueChange={setStrategy}>
+                  <SelectTrigger id="strategy">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="research">Research</SelectItem>
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="analysis">Analysis</SelectItem>
+                    <SelectItem value="testing">Testing</SelectItem>
+                    <SelectItem value="optimization">Optimization</SelectItem>
+                    <SelectItem value="maintenance">Maintenance</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="mode" className="text-sm font-medium">
+                  Mode
+                </label>
+                <Select value={mode} onValueChange={setMode}>
+                  <SelectTrigger id="mode">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="centralized">Centralized</SelectItem>
+                    <SelectItem value="distributed">Distributed</SelectItem>
+                    <SelectItem value="hierarchical">Hierarchical</SelectItem>
+                    <SelectItem value="mesh">Mesh</SelectItem>
+                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <Button 
               type="submit" 
