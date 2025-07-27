@@ -30,7 +30,7 @@ export const useMonitoringAPI = (
 
     try {
       setLoading(true);
-      const response = await fetch(`${apiUrl}/api/dashboard`, {
+      const response = await fetch(apiUrl, {
         headers: {
           'X-API-Key': apiKey,
           'Content-Type': 'application/json'
@@ -41,50 +41,7 @@ export const useMonitoringAPI = (
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const jsonData = await response.json();
-      
-      // Transform API response to MonitoringData format
-      const monitoringData: MonitoringData = {
-        metrics: jsonData.system ? {
-          cpu: {
-            name: 'CPU Usage',
-            value: jsonData.system.cpu || 0,
-            unit: '%',
-            trend: [],
-            threshold: 80
-          },
-          memory: {
-            name: 'Memory Usage',
-            value: jsonData.system.memory || 0,
-            unit: '%',
-            trend: [],
-            threshold: 85
-          },
-          activeAgents: {
-            name: 'Active Agents',
-            value: jsonData.agents?.active || 0,
-            unit: '',
-            trend: []
-          },
-          runningTasks: {
-            name: 'Running Tasks',
-            value: jsonData.tasks?.total - jsonData.tasks?.completed || 0,
-            unit: '',
-            trend: []
-          },
-          completedTasks: {
-            name: 'Completed Tasks',
-            value: jsonData.tasks?.completed || 0,
-            unit: '',
-            trend: []
-          },
-          timestamp: jsonData.timestamp || new Date().toISOString()
-        } : undefined,
-        agents: [], // Will be populated by separate agents endpoint
-        tasks: [], // Will be populated by separate tasks endpoint
-        alerts: [], // Will be populated by separate alerts endpoint
-        timestamp: jsonData.timestamp || new Date().toISOString()
-      };
+      const monitoringData = await response.json();
       
       setData(monitoringData);
       setError(null);
