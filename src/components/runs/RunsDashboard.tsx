@@ -15,6 +15,8 @@ const RunsDashboard = () => {
   const [executionId, setExecutionId] = useState<string | null>(null);
   const [wsMessages, setWsMessages] = useState<string[]>([]);
   const [ws, setWs] = useState<WebSocket | null>(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const [swarmStatus, setSwarmStatus] = useState<any>(null);
 
   // Check backend health
   useEffect(() => {
@@ -34,18 +36,64 @@ const RunsDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // WebSocket connection - disabled for MVP
+  // Polling for swarm status
   useEffect(() => {
-    const wsUrl = claudeFlowClient.getWebSocketUrl();
+    let pollInterval: NodeJS.Timeout;
     
-    if (!wsUrl) {
-      setWsStatus('disconnected');
-      setWsMessages(['⚠️ WebSocket not configured - using REST API only']);
-      return;
+    const pollSwarmStatus = async () => {
+      try {
+        const status = await claudeFlowClient.getSwarmStatus();
+        setSwarmStatus(status);
+        
+        const timestamp = new Date().toLocaleTimeString();
+        const message = `[${timestamp}] Active swarms: ${status.activeSwarms}`;
+        
+        setWsMessages(prev => {
+          // Keep only last 10 messages
+          const newMessages = [...prev, message].slice(-10);
+          return newMessages;
+        });
+        
+        if (status.swarms && status.swarms.length > 0) {
+          status.swarms.forEach((swarm: any) => {
+            const swarmMessage = `[${timestamp}] Swarm ${swarm.id}: ${swarm.status} (${swarm.agents} agents)`;
+            setWsMessages(prev => [...prev, swarmMessage].slice(-10));
+          });
+        }
+      } catch (error) {
+        console.error('Failed to poll swarm status:', error);
+      }
+    };
+    
+    if (isPolling) {
+      setWsMessages(['🔄 Starting swarm monitoring...']);
+      pollSwarmStatus(); // Initial poll
+      pollInterval = setInterval(pollSwarmStatus, 3000); // Poll every 3 seconds
+    } else {
+      setWsMessages(['⚠️ WebSocket not configured - using REST API polling when tasks are running']);
     }
     
-    // Original WebSocket code would go here when WebSocket API Gateway is set up
-  }, []);
+    return () => {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
+    };
+  }, [isPolling]);
+
+  // Start polling when a task is submitted
+  useEffect(() => {
+    if (executionId && !isPolling) {
+      setIsPolling(true);
+      
+      // Stop polling after 2 minutes (adjust as needed)
+      const stopTimeout = setTimeout(() => {
+        setIsPolling(false);
+        setWsMessages(prev => [...prev, '⏹️ Stopped monitoring (timeout)']);
+      }, 120000);
+      
+      return () => clearTimeout(stopTimeout);
+    }
+  }, [executionId, isPolling]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +119,7 @@ const RunsDashboard = () => {
       
       setExecutionId(response.executionId);
       toast.success(`Task submitted: ${response.executionId}`);
-      setWsMessages(prev => [...prev, `📤 Submitted task: ${response.executionId}`]);
+      setWsMessages([`📤 Submitted task: ${response.executionId}`, '🔄 Starting swarm monitoring...']);
     } catch (error: any) {
       console.error('Task submission failed:', error);
       toast.error(`Failed to submit task: ${error.message}`);
@@ -111,10 +159,40 @@ const RunsDashboard = () => {
               <span>API: {healthStatus}</span>
             </div>
             <div className="flex items-center gap-2">
-              {getWsIcon()}
-              <span>WebSocket: {wsStatus}</span>
+              {isPolling ? (
+                <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+              ) : (
+                getWsIcon()
+              )}
+              <span>Monitoring: {isPolling ? 'polling' : wsStatus}</span>
             </div>
             <Badge variant="outline">Backend: API Gateway Proxy</Badge>
+            {swarmStatus && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm">
+                  {swarmStatus.activeSwarms} active swarms
+                </span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex gap-2 mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsPolling(!isPolling)}
+              disabled={healthStatus !== 'healthy'}
+            >
+              {isPolling ? 'Stop Monitoring' : 'Start Monitoring'}
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setWsMessages([])}
+            >
+              Clear Log
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -167,10 +245,13 @@ const RunsDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* WebSocket Log */}
+      {/* Swarm Monitor Log */}
       <Card>
         <CardHeader>
-          <CardTitle>Swarm Monitor Log</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Swarm Monitor Log
+            {isPolling && <Badge variant="secondary">Live Polling</Badge>}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="bg-gray-900 p-4 rounded-lg h-64 overflow-y-auto font-mono text-xs">
