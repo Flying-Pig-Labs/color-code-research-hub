@@ -1,0 +1,42 @@
+[Unit]
+Description=Claude Flow Monitoring API
+Documentation=https://github.com/your-org/claude-flow-monitoring
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/claude-flow-monitoring
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=10
+
+# Environment
+Environment=NODE_ENV=production
+Environment=NODE_OPTIONS="--max-old-space-size=2048"
+EnvironmentFile=/home/ubuntu/claude-flow-monitoring/.env
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/ubuntu/claude-flow-monitoring/data
+ReadWritePaths=/home/ubuntu/claude-flow-monitoring/logs
+
+# Resource Limits
+LimitNOFILE=65535
+LimitCORE=0
+MemoryLimit=2G
+CPUQuota=80%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=claude-flow-monitoring
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,389 @@
+/* Monitoring Dashboard Styles */
+
+.monitoring-dashboard {
+  --monitoring-primary: #2563eb;
+  --monitoring-background: #ffffff;
+  --monitoring-surface: #f3f4f6;
+  --monitoring-text: #111827;
+  --monitoring-text-secondary: #6b7280;
+  --monitoring-border: #e5e7eb;
+  --monitoring-success: #10b981;
+  --monitoring-warning: #f59e0b;
+  --monitoring-error: #ef4444;
+  --monitoring-info: #3b82f6;
+  
+  padding: 20px;
+  background-color: var(--monitoring-background);
+  color: var(--monitoring-text);
+  min-height: 100vh;
+}
+
+/* Dark theme support */
+.monitoring-dashboard.dark {
+  --monitoring-background: #111827;
+  --monitoring-surface: #1f2937;
+  --monitoring-text: #f9fafb;
+  --monitoring-text-secondary: #9ca3af;
+  --monitoring-border: #374151;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--monitoring-border);
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--monitoring-text-secondary);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--monitoring-error);
+}
+
+.status-indicator.connected {
+  background-color: var(--monitoring-success);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Common Panel Styles */
+.metrics-panel,
+.agent-grid,
+.task-timeline,
+.alerts-panel {
+  background-color: var(--monitoring-surface);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-panel h3,
+.agent-grid h3,
+.task-timeline h3,
+.alerts-panel h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Metrics Panel */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  background-color: var(--monitoring-background);
+  border: 1px solid var(--monitoring-border);
+  border-radius: 6px;
+  padding: 12px;
+  transition: all 0.2s;
+}
+
+.metric-card.warning {
+  border-color: var(--monitoring-warning);
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.metric-name {
+  font-size: 12px;
+  color: var(--monitoring-text-secondary);
+  text-transform: uppercase;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.metric-chart {
+  height: 50px;
+  margin: 0 -12px -12px;
+}
+
+/* Agent Grid */
+.agents-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.agent-card {
+  background-color: var(--monitoring-background);
+  border: 1px solid var(--monitoring-border);
+  border-radius: 6px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.agent-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.agent-icon {
+  font-size: 24px;
+}
+
+.agent-name {
+  font-weight: 500;
+  flex: 1;
+}
+
+.agent-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.agent-status-indicator.active {
+  background-color: var(--monitoring-success);
+}
+
+.agent-status-indicator.idle {
+  background-color: var(--monitoring-warning);
+}
+
+.agent-status-indicator.error {
+  background-color: var(--monitoring-error);
+}
+
+.agent-status-indicator.offline {
+  background-color: var(--monitoring-text-secondary);
+}
+
+/* Task Timeline */
+.task-summary {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--monitoring-border);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary-count {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.summary-label {
+  font-size: 12px;
+  color: var(--monitoring-text-secondary);
+}
+
+.task-item {
+  margin-bottom: 12px;
+  padding: 12px;
+  background-color: var(--monitoring-background);
+  border: 1px solid var(--monitoring-border);
+  border-radius: 6px;
+}
+
+.task-item.level-1 {
+  margin-left: 20px;
+  font-size: 14px;
+}
+
+.task-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: var(--monitoring-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--monitoring-primary);
+  transition: width 0.3s ease;
+}
+
+/* Alerts Panel */
+.alert-count {
+  background-color: var(--monitoring-error);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.alert-item {
+  margin-bottom: 12px;
+  padding: 12px;
+  background-color: var(--monitoring-background);
+  border: 1px solid var(--monitoring-border);
+  border-radius: 6px;
+}
+
+.alert-item.type-error {
+  border-color: var(--monitoring-error);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.alert-item.type-warning {
+  border-color: var(--monitoring-warning);
+  background-color: rgba(245, 158, 11, 0.05);
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.alert-icon {
+  font-size: 18px;
+}
+
+.alert-title {
+  flex: 1;
+  font-weight: 500;
+}
+
+.alert-time {
+  font-size: 12px;
+  color: var(--monitoring-text-secondary);
+}
+
+.acknowledge-btn {
+  padding: 4px 12px;
+  background-color: var(--monitoring-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.acknowledge-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Loading & Error States */
+.monitoring-dashboard.loading,
+.monitoring-dashboard.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--monitoring-border);
+  border-top-color: var(--monitoring-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  text-align: center;
+  color: var(--monitoring-error);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .agents-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .monitoring-dashboard {
+    padding: 12px;
+  }
+  
+  .metrics-panel,
+  .agent-grid,
+  .task-timeline,
+  .alerts-panel {
+    padding: 16px;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
