@@ -41,7 +41,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       <div className="container mx-auto p-4">
         <header className="mb-8 bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6 overflow-x-auto">
-          <pre className="text-blue-400 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-mono text-center mx-auto whitespace-pre">
+          <pre className="text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-mono text-center mx-auto whitespace-pre">
 {`███╗   ███╗██╗   ██╗██████╗      █████╗ ██╗   ██╗████████╗ ██████╗     ███████╗ ██████╗ ██╗   ██╗███╗   ██╗██████╗ ██████╗ ██╗   ██╗
 ████╗ ████║██║   ██║██╔══██╗    ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗    ██╔════╝██╔═══██╗██║   ██║████╗  ██║██╔══██╗██╔══██╗╚██╗ ██╔╝
 ██╔████╔██║██║   ██║██████╔╝    ███████║██║   ██║   ██║   ██║   ██║    █████╗  ██║   ██║██║   ██║██╔██╗ ██║██║  ██║██████╔╝ ╚████╔╝ 
