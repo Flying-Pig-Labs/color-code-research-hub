@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Terminal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 interface JobStatus {
   jobId: string;
@@ -150,10 +151,11 @@ const MilestonesJobRunner = () => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-8">
-            <img 
-              src="/animations/fluid-loading.gif" 
-              alt="Loading animation"
-              className="w-48 h-48 object-contain"
+            <Player
+              autoplay
+              loop
+              src="/animations/spinner.json"
+              style={{ height: '200px', width: '200px' }}
             />
           </div>
         </CardContent>
