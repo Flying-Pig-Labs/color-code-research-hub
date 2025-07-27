@@ -50,14 +50,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </header>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden">
-            <TabsTrigger value="research" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base">
+          <TabsList className="flex justify-center gap-2 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden p-2">
+            <TabsTrigger value="research" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
               RESEARCH
             </TabsTrigger>
-            <TabsTrigger value="milestones" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base">
+            <TabsTrigger value="milestones" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
               MILESTONES
             </TabsTrigger>
-            <TabsTrigger value="build" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base" disabled>
+            <TabsTrigger value="build" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6" disabled>
               BUILD
             </TabsTrigger>
           </TabsList>
