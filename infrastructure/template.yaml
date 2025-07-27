@@ -697,6 +697,232 @@ Resources:
             Path: /api/claude-flow/execution/{id}/activity
             Method: OPTIONS
 
+  # ===========================================
+  # MONITORING DASHBOARD LAMBDA FUNCTIONS
+  # ===========================================
+
+  # Monitoring Dashboard Data Proxy
+  MonitoringDashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: monitoringProxy.dashboardHandler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_MONITORING_HOST: 18.209.36.58
+          EC2_MONITORING_PORT: 3001
+          MONITORING_API_KEY: '{{resolve:secretsmanager:monitoring-api-key:SecretString:key}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:monitoring-api-key-*
+      Events:
+        GetDashboard:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/dashboard
+            Method: GET
+        OptionsReq:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/dashboard
+            Method: OPTIONS
+
+  # Monitoring Metrics Proxy
+  MonitoringMetricsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: monitoringProxy.metricsHandler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_MONITORING_HOST: 18.209.36.58
+          EC2_MONITORING_PORT: 3001
+          MONITORING_API_KEY: '{{resolve:secretsmanager:monitoring-api-key:SecretString:key}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:monitoring-api-key-*
+      Events:
+        GetMetrics:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/metrics
+            Method: GET
+        OptionsReq:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/metrics
+            Method: OPTIONS
+
+  # Monitoring Agents Proxy
+  MonitoringAgentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: monitoringProxy.agentsHandler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_MONITORING_HOST: 18.209.36.58
+          EC2_MONITORING_PORT: 3001
+          MONITORING_API_KEY: '{{resolve:secretsmanager:monitoring-api-key:SecretString:key}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:monitoring-api-key-*
+      Events:
+        GetAgents:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/agents
+            Method: GET
+        OptionsReq:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/agents
+            Method: OPTIONS
+
+  # Monitoring Tasks Proxy
+  MonitoringTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: monitoringProxy.tasksHandler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_MONITORING_HOST: 18.209.36.58
+          EC2_MONITORING_PORT: 3001
+          MONITORING_API_KEY: '{{resolve:secretsmanager:monitoring-api-key:SecretString:key}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:monitoring-api-key-*
+      Events:
+        GetTasks:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/tasks
+            Method: GET
+        OptionsReq:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/tasks
+            Method: OPTIONS
+
+  # Monitoring Alerts Proxy
+  MonitoringAlertsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: monitoringProxy.alertsHandler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_MONITORING_HOST: 18.209.36.58
+          EC2_MONITORING_PORT: 3001
+          MONITORING_API_KEY: '{{resolve:secretsmanager:monitoring-api-key:SecretString:key}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:monitoring-api-key-*
+      Events:
+        GetAlerts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/alerts
+            Method: GET
+        PostAlerts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/alerts/{alertId}/acknowledge
+            Method: POST
+        OptionsReq:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/alerts
+            Method: OPTIONS
+        OptionsAck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/alerts/{alertId}/acknowledge
+            Method: OPTIONS
+
+  # SSE Monitoring Stream Proxy (with long-polling fallback)
+  MonitoringStreamFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: monitoringProxy.streamHandler
+      Timeout: 60  # 1 minute for long-polling
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_MONITORING_HOST: 18.209.36.58
+          EC2_MONITORING_PORT: 3001
+          MONITORING_API_KEY: '{{resolve:secretsmanager:monitoring-api-key:SecretString:key}}'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:monitoring-api-key-*
+      Events:
+        GetStream:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/stream
+            Method: GET
+        OptionsReq:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/monitoring/stream
+            Method: OPTIONS
+
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL
