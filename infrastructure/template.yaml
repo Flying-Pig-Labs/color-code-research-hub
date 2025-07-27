@@ -622,6 +622,81 @@ Resources:
             Path: /api/claude-flow/execution/{id}
             Method: OPTIONS
 
+  # Claude Flow Execution Logs Function
+  ClaudeFlowExecutionLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowExecutionLogs.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          EC2_HOST: 18.209.36.58
+          EC2_PORT: 8080
+      Events:
+        GetLogs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}/logs
+            Method: GET
+        OptionsLogs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}/logs
+            Method: OPTIONS
+
+  # Claude Flow Execution Metadata Function
+  ClaudeFlowExecutionMetadataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowExecutionMetadata.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          EC2_HOST: 18.209.36.58
+          EC2_PORT: 8080
+      Events:
+        GetMetadata:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}/metadata
+            Method: GET
+        OptionsMetadata:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}/metadata
+            Method: OPTIONS
+
+  # Claude Flow Execution Activity Function
+  ClaudeFlowExecutionActivityFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowExecutionActivity.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          EC2_HOST: 18.209.36.58
+          EC2_PORT: 8080
+      Events:
+        GetActivity:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}/activity
+            Method: GET
+        OptionsActivity:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}/activity
+            Method: OPTIONS
+
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL
