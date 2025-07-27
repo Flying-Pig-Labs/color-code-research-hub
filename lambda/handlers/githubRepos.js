@@ -93,7 +93,7 @@ exports.handler = async (event) => {
   const corsHeaders = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key,Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key',
     'Access-Control-Allow-Methods': 'GET,OPTIONS'
   };
 

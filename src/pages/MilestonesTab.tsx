@@ -37,7 +37,9 @@ const MilestonesTab = () => {
     try {
       setLoading(true);
       // Fetch mvp-builder-app repos
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/mvp-builder-app`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/mvp-builder-app`, {
+        credentials: 'omit'
+      });
       
       if (!response.ok) {
         throw new Error("Failed to fetch repositories");

@@ -95,6 +95,7 @@ async function fetchWithErrorHandling<T>(
         ...apiClient.headers,
         ...options.headers,
       },
+      credentials: 'omit',
       signal: controller.signal,
     });
 
