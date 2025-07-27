@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { MonitoringData, UseMonitoringAPIReturn } from '../types';
 
 interface UseMonitoringAPIOptions {
-  pollingInterval?: number;
+  interval?: number;
   retryAttempts?: number;
   retryDelay?: number;
   enabled?: boolean;
@@ -14,7 +14,7 @@ export const useMonitoringAPI = (
   options: UseMonitoringAPIOptions = {}
 ): UseMonitoringAPIReturn => {
   const {
-    pollingInterval = 5000,
+    interval = 5000,
     retryAttempts = 3,
     retryDelay = 1000,
     enabled = true
@@ -22,14 +22,14 @@ export const useMonitoringAPI = (
 
   const [data, setData] = useState<MonitoringData | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
 
   const fetchData = useCallback(async () => {
     if (!enabled) return;
 
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetch(apiUrl, {
         headers: {
           'X-API-Key': apiKey,
@@ -56,107 +56,34 @@ export const useMonitoringAPI = (
         setTimeout(fetchData, retryDelay * Math.pow(2, retryCount));
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [apiUrl, apiKey, enabled, retryCount, retryAttempts, retryDelay]);
 
-  // Fetch individual endpoints for detailed data
-  const fetchDetailedData = useCallback(async () => {
-    if (!enabled || !data) return;
-
-    try {
-      const [agentsRes, tasksRes, alertsRes, metricsRes] = await Promise.all([
-        fetch(`${apiUrl}/api/agents`, {
-          headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' }
-        }).catch(() => null),
-        fetch(`${apiUrl}/api/tasks`, {
-          headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' }
-        }).catch(() => null),
-        fetch(`${apiUrl}/api/alerts`, {
-          headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' }
-        }).catch(() => null),
-        fetch(`${apiUrl}/api/metrics`, {
-          headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' }
-        }).catch(() => null)
-      ]);
-
-      const updates: Partial<MonitoringData> = {};
-
-      // Process agents data
-      if (agentsRes?.ok) {
-        const agentsData = await agentsRes.json();
-        if (agentsData.agents) {
-          updates.agents = agentsData.agents;
-        }
-      }
-
-      // Process tasks data
-      if (tasksRes?.ok) {
-        const tasksData = await tasksRes.json();
-        // Transform tasks data if needed
-        updates.tasks = [];
-      }
-
-      // Process alerts data
-      if (alertsRes?.ok) {
-        const alertsData = await alertsRes.json();
-        if (alertsData.alerts) {
-          updates.alerts = alertsData.alerts;
-        }
-      }
-
-      // Process detailed metrics
-      if (metricsRes?.ok) {
-        const metricsData = await metricsRes.json();
-        if (metricsData.system && data.metrics) {
-          // Update trend data
-          const updatedMetrics = { ...data.metrics };
-          
-          Object.keys(updatedMetrics).forEach(key => {
-            if (key !== 'timestamp' && metricsData.system[key] !== undefined) {
-              const metric = updatedMetrics[key as keyof typeof updatedMetrics];
-              if (metric && typeof metric === 'object' && 'trend' in metric) {
-                metric.trend = [...metric.trend.slice(-9), metricsData.system[key]];
-                metric.value = metricsData.system[key];
-              }
-            }
-          });
-          
-          updates.metrics = updatedMetrics;
-        }
-      }
-
-      // Update state with new data
-      if (Object.keys(updates).length > 0) {
-        setData(prev => prev ? { ...prev, ...updates } : null);
-      }
-    } catch (err) {
-      console.error('Error fetching detailed monitoring data:', err);
-    }
-  }, [apiUrl, apiKey, enabled, data]);
-
+  // Initial fetch
   useEffect(() => {
-    if (!enabled) return;
-
     fetchData();
-    const interval = setInterval(fetchData, pollingInterval);
-    return () => clearInterval(interval);
-  }, [fetchData, pollingInterval, enabled]);
+  }, [fetchData]);
 
-  // Fetch detailed data less frequently
+  // Polling
   useEffect(() => {
-    if (!enabled || !data) return;
+    if (!enabled || interval <= 0) return;
 
-    fetchDetailedData();
-    const detailedInterval = setInterval(fetchDetailedData, pollingInterval * 2);
-    return () => clearInterval(detailedInterval);
-  }, [fetchDetailedData, pollingInterval, enabled, data]);
+    const intervalId = setInterval(fetchData, interval);
 
-  const refetch = useCallback(async () => {
-    setRetryCount(0);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [fetchData, interval, enabled]);
+
+  const refresh = useCallback(async () => {
     await fetchData();
-    await fetchDetailedData();
-  }, [fetchData, fetchDetailedData]);
+  }, [fetchData]);
 
-  return { data, error, loading, refetch };
+  return {
+    data,
+    error,
+    isLoading,
+    refresh
+  };
 };
