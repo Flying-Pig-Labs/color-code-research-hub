@@ -4,9 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, CheckCircle, XCircle, AlertCircle, Send } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, AlertCircle, Send, LineChart, Activity } from "lucide-react";
 import { claudeFlowClient } from '@/services/claudeFlowClient';
 import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MetricsPanel } from '@/components/monitoring/MetricsPanel';
+import { AgentGrid } from '@/components/monitoring/AgentGrid';
+import { TaskTimeline } from '@/components/monitoring/TaskTimeline';
+import { AlertsPanel } from '@/components/monitoring/AlertsPanel';
+import { useMonitoringAPI } from '@/components/monitoring/hooks/useMonitoringAPI';
 
 const RunsDashboard = () => {
   const [healthStatus, setHealthStatus] = useState<'checking' | 'healthy' | 'error'>('checking');
@@ -20,6 +26,16 @@ const RunsDashboard = () => {
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   const [swarmStatus, setSwarmStatus] = useState<any>(null);
+  
+  // Use monitoring API hook
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+  const { 
+    data: monitoringData, 
+    error: monitoringError, 
+    isLoading: monitoringLoading 
+  } = useMonitoringAPI(`${apiUrl}/api/monitoring/dashboard`, 'test', {
+    interval: 3000 // Poll every 3 seconds
+  });
 
   // Check backend health
   useEffect(() => {
@@ -279,26 +295,74 @@ const RunsDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Swarm Monitor Log */}
+      {/* Monitoring Dashboard */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Swarm Monitor Log
-            {isPolling && <Badge variant="secondary">Live Polling</Badge>}
+            <Activity className="w-5 h-5" />
+            Swarm Monitoring Dashboard
+            {monitoringData && <Badge variant="secondary">Live</Badge>}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="bg-gray-900 p-4 rounded-lg h-64 overflow-y-auto font-mono text-xs">
-            {wsMessages.length === 0 ? (
-              <p className="text-gray-500">Waiting for messages...</p>
-            ) : (
-              wsMessages.map((msg, idx) => (
-                <div key={idx} className="text-gray-300">
-                  {msg}
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="agents">Agents</TabsTrigger>
+              <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="logs">Logs</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="space-y-4">
+              {monitoringLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
-              ))
-            )}
-          </div>
+              ) : monitoringError ? (
+                <div className="text-center text-red-500 p-8">
+                  Failed to load monitoring data
+                </div>
+              ) : monitoringData ? (
+                <>
+                  <MetricsPanel metrics={monitoringData.metrics} />
+                  {monitoringData.alerts && monitoringData.alerts.length > 0 && (
+                    <AlertsPanel 
+                      alerts={monitoringData.alerts} 
+                      onAcknowledge={(alertId) => {
+                        console.log('Acknowledge alert:', alertId);
+                      }}
+                    />
+                  )}
+                </>
+              ) : null}
+            </TabsContent>
+            
+            <TabsContent value="agents" className="space-y-4">
+              {monitoringData && monitoringData.agents && (
+                <AgentGrid agents={monitoringData.agents} />
+              )}
+            </TabsContent>
+            
+            <TabsContent value="tasks" className="space-y-4">
+              {monitoringData && monitoringData.tasks && (
+                <TaskTimeline tasks={monitoringData.tasks} />
+              )}
+            </TabsContent>
+            
+            <TabsContent value="logs" className="space-y-4">
+              <div className="bg-gray-900 p-4 rounded-lg h-64 overflow-y-auto font-mono text-xs">
+                {wsMessages.length === 0 ? (
+                  <p className="text-gray-500">Waiting for messages...</p>
+                ) : (
+                  wsMessages.map((msg, idx) => (
+                    <div key={idx} className="text-gray-300">
+                      {msg}
+                    </div>
+                  ))
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
