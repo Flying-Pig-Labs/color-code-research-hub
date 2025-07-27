@@ -60,7 +60,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               RESEARCH
             </TabsTrigger>
             <TabsTrigger value="milestones" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              MILESTONES
+              PLAN
             </TabsTrigger>
             <TabsTrigger value="build" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6" disabled>
               BUILD
