@@ -580,6 +580,48 @@ Resources:
             Path: /api/claude-flow/swarm-status
             Method: OPTIONS
 
+  # Claude Flow Executions List Proxy
+  ClaudeFlowExecutionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowProxy.executionsHandler
+      Timeout: 30
+      Events:
+        Executions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/executions
+            Method: GET
+        ExecutionsOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/executions
+            Method: OPTIONS
+
+  # Claude Flow Execution Details Proxy
+  ClaudeFlowExecutionDetailsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowProxy.executionDetailsHandler
+      Timeout: 30
+      Events:
+        ExecutionDetails:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}
+            Method: GET
+        ExecutionDetailsOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execution/{id}
+            Method: OPTIONS
+
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL

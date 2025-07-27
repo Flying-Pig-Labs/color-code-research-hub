@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const CLAUDE_FLOW_BASE_URL = 'http://18.209.36.58';
+const CLAUDE_FLOW_BASE_URL = 'http://18.209.36.58:8080';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -142,4 +142,49 @@ exports.sqsHealthHandler = async (event) => {
   }
   
   return proxyRequest('/sqs-health', 'GET');
+};
+
+/**
+ * Executions list proxy
+ */
+exports.executionsHandler = async (event) => {
+  console.log('Executions list proxy request');
+  
+  // Handle OPTIONS for CORS
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({ message: 'OK' })
+    };
+  }
+  
+  return proxyRequest('/executions', 'GET');
+};
+
+/**
+ * Execution details proxy
+ */
+exports.executionDetailsHandler = async (event) => {
+  console.log('Execution details proxy request');
+  
+  // Handle OPTIONS for CORS
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({ message: 'OK' })
+    };
+  }
+  
+  const executionId = event.pathParameters?.id;
+  if (!executionId) {
+    return {
+      statusCode: 400,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({ error: 'Execution ID is required' })
+    };
+  }
+  
+  return proxyRequest(`/execution/${executionId}`, 'GET');
 };
