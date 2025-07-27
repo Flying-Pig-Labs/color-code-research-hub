@@ -1,5 +1,7 @@
 // Simple Claude Flow API client for MVP
-const CLAUDE_FLOW_BASE_URL = 'http://18.209.36.58';
+// Using API Gateway proxy to avoid mixed content issues
+const API_GATEWAY_URL = import.meta.env.VITE_API_BASE_URL || 'https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production';
+const CLAUDE_FLOW_BASE_URL = `${API_GATEWAY_URL}/api/claude-flow`;
 
 export interface TaskSubmission {
   taskType: string;
@@ -97,7 +99,10 @@ class ClaudeFlowClient {
   }
 
   getWebSocketUrl(): string {
-    return `ws://${this.baseUrl.replace('http://', '')}/swarm-monitor`;
+    // WebSocket requires a separate WebSocket API Gateway setup
+    // For MVP, we'll disable WebSocket and use polling instead
+    console.warn('WebSocket not yet configured - requires WebSocket API Gateway');
+    return '';
   }
 }
 

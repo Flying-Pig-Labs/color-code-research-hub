@@ -34,56 +34,17 @@ const RunsDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // WebSocket connection
+  // WebSocket connection - disabled for MVP
   useEffect(() => {
-    let reconnectTimeout: NodeJS.Timeout;
+    const wsUrl = claudeFlowClient.getWebSocketUrl();
     
-    const connectWebSocket = () => {
-      setWsStatus('connecting');
-      const wsUrl = claudeFlowClient.getWebSocketUrl();
-      console.log('Connecting to WebSocket:', wsUrl);
-      
-      const websocket = new WebSocket(wsUrl);
-      
-      websocket.onopen = () => {
-        console.log('WebSocket connected');
-        setWsStatus('connected');
-        setWsMessages(prev => [...prev, '✅ Connected to swarm monitor']);
-      };
-      
-      websocket.onmessage = (event) => {
-        const timestamp = new Date().toLocaleTimeString();
-        setWsMessages(prev => [...prev, `[${timestamp}] ${event.data}`]);
-      };
-      
-      websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setWsStatus('error');
-        setWsMessages(prev => [...prev, '❌ WebSocket error']);
-      };
-      
-      websocket.onclose = () => {
-        console.log('WebSocket disconnected');
-        setWsStatus('disconnected');
-        setWsMessages(prev => [...prev, '🔌 Disconnected - reconnecting in 5s...']);
-        
-        // Reconnect after 5 seconds
-        reconnectTimeout = setTimeout(() => {
-          connectWebSocket();
-        }, 5000);
-      };
-      
-      setWs(websocket);
-    };
+    if (!wsUrl) {
+      setWsStatus('disconnected');
+      setWsMessages(['⚠️ WebSocket not configured - using REST API only']);
+      return;
+    }
     
-    connectWebSocket();
-    
-    return () => {
-      clearTimeout(reconnectTimeout);
-      if (ws?.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-    };
+    // Original WebSocket code would go here when WebSocket API Gateway is set up
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,7 +114,7 @@ const RunsDashboard = () => {
               {getWsIcon()}
               <span>WebSocket: {wsStatus}</span>
             </div>
-            <Badge variant="outline">Backend: 18.209.36.58</Badge>
+            <Badge variant="outline">Backend: API Gateway Proxy</Badge>
           </div>
         </CardContent>
       </Card>

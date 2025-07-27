@@ -517,6 +517,69 @@ Resources:
             Path: /api/job/{jobId}/status
             Method: GET
 
+  # Claude Flow Health Proxy
+  ClaudeFlowHealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowProxy.healthHandler
+      Timeout: 30
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/health
+            Method: GET
+        HealthOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/health
+            Method: OPTIONS
+
+  # Claude Flow Execute Proxy
+  ClaudeFlowExecuteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowProxy.executeHandler
+      Timeout: 30
+      Events:
+        Execute:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execute
+            Method: POST
+        ExecuteOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/execute
+            Method: OPTIONS
+
+  # Claude Flow Swarm Status Proxy
+  ClaudeFlowSwarmStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: claudeFlowProxy.swarmStatusHandler
+      Timeout: 30
+      Events:
+        SwarmStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarm-status
+            Method: GET
+        SwarmStatusOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarm-status
+            Method: OPTIONS
+
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL
