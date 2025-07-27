@@ -2,14 +2,14 @@ import Header from "@/components/Header";
 
 import SectionWrapper from "@/components/SectionWrapper";
 import TeamCard from "@/components/TeamCard";
+import ResearchSubTabs from "@/components/ResearchSubTabs";
+import RunsDashboard from "@/components/runs/RunsDashboard";
 import { Button } from "@/components/ui/button";
 import { Target, Bug, Lightbulb, Shield, Zap, Search } from "lucide-react";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
-      <Header />
-      
+  const teamsContent = (
+    <>
       {/* Hero Section with CarMax Fading */}
       <SectionWrapper className="pt-20 pb-16 bg-gradient-carmax-hero relative overflow-hidden">
         {/* Decorative fading elements */}
@@ -82,8 +82,17 @@ const Index = () => {
           />
         </div>
       </SectionWrapper>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+      <Header />
       
-      
+      <ResearchSubTabs 
+        teamsContent={teamsContent}
+        runsContent={<RunsDashboard />}
+      />
     </div>
   );
 };
