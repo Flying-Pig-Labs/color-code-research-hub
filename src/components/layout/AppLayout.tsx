@@ -42,10 +42,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       <div className="container mx-auto p-4">
         <header className="mb-8 bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6">
           <h1 className="text-4xl font-bold text-white text-center mb-2">
-            Color Code Hub
+            MVP AutoFoundry
           </h1>
           <p className="text-gray-400 text-center">
-            AI-Powered Development Workflow
+            AI-Powered Proof-of-Concept Engine
           </p>
         </header>
 
