@@ -26,8 +26,13 @@ const Index = () => {
           
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
             Strategic Research
-            <span className="block text-primary bg-gradient-to-r from-carmax-blue to-carmax-blue-dark bg-clip-text text-transparent">Intelligence Labs</span>
           </h1>
+          <pre className="text-primary font-mono text-xs sm:text-sm md:text-base lg:text-lg mx-auto whitespace-pre mb-6">
+{`▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖   ▗▖   ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖    ▗▖    ▗▄▖ ▗▄▄▖ 
+  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌   ▐▌     █  ▐▌   ▐▌   ▐▛▚▖▐▌▐▌   ▐▌       ▐▌   ▐▌ ▐▌▐▌ ▐▌
+  █  ▐▌ ▝▜▌  █  ▐▛▀▀▘▐▌   ▐▌     █  ▐▌▝▜▌▐▛▀▀▘▐▌ ▝▜▌▐▌   ▐▛▀▀▘    ▐▌   ▐▛▀▜▌▐▛▀▚▖
+▗▄█▄▖▐▌  ▐▌  █  ▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖▗▄█▄▖▝▚▄▞▘▐▙▄▄▖▐▌  ▐▌▝▚▄▄▖▐▙▄▄▖    ▐▙▄▄▖▐▌ ▐▌▐▙▄▞▘`}
+          </pre>
           
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
             Advanced competitive intelligence across three specialized domains. Our teams provide strategic insights for marketplace disruption, vendor replacement, and white space opportunities.
