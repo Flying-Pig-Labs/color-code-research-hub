@@ -1,355 +1,403 @@
-# Color Code Research Hub
+# 🧬 Color Code Research Hub
 
-A strategic intelligence platform featuring three specialized research teams for comprehensive competitive analysis and market insights.
+<div align="center">
 
-## Quick Start
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)
+![React](https://img.shields.io/badge/react-19.1.0-61dafb.svg)
+![TypeScript](https://img.shields.io/badge/typescript-5.8.3-3178c6.svg)
+![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20SQS%20%7C%20DynamoDB-ff9900.svg)
+
+**Strategic Competitive Intelligence Platform**  
+*Three specialized AI research teams for market disruption, tool replacement, and whitespace discovery*
+
+[Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Teams](#research-teams) • [API](#api-reference) • [Deployment](#deployment)
+
+</div>
+
+---
+
+## 🚀 Overview
+
+Color Code Research Hub is a sophisticated competitive intelligence platform that leverages Claude AI to conduct deep market research through three specialized research teams. Each team has unique capabilities and customization options tailored to specific strategic objectives.
+
+### Key Capabilities
+
+- **🔴 Red Team**: Analyze competitors and identify market disruption opportunities
+- **⚫ Black Team**: Research third-party tools for internal replacement strategies  
+- **⚪ White Team**: Discover untapped market opportunities and whitespace
+
+### Powered by Advanced AI
+
+- **LLM Orchestration**: 3-step process generating 40-80 actionable insights per research
+- **SPARC Methodology**: Autonomous agent execution framework
+- **Claude Integration**: Direct integration with Anthropic's Claude API
+- **GitHub Automation**: Automatic repository creation and issue management
+
+---
+
+## 🏗️ Architecture
+
+### System Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Frontend (React)                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │  Red Team   │  │ Black Team  │  │ White Team  │            │
+│  │    Form     │  │    Form     │  │    Form     │            │
+│  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘            │
+│        └─────────────────┴─────────────────┘                    │
+│                           │                                      │
+│                    Vite Dev Server                               │
+│                      (Port 3000)                                 │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │ Proxy /api
+┌───────────────────────────┴─────────────────────────────────────┐
+│                    Express Backend API                           │
+│                      (Port 3001)                                 │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+┌───────────────────────────┴─────────────────────────────────────┐
+│                    AWS Infrastructure                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │   Lambda    │  │     SQS     │  │  DynamoDB   │            │
+│  │  Functions  │  │    Queue    │  │   Tables    │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+│                                                                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │   Secrets   │  │     API     │  │    AWS      │            │
+│  │   Manager   │  │   Gateway   │  │    Batch    │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Technology Stack
+
+#### Frontend
+- **Framework**: React 19.1.0 with TypeScript
+- **Build Tool**: Vite 7.0.5
+- **UI Components**: shadcn/ui + Tailwind CSS
+- **State Management**: Tanstack Query
+- **Forms**: React Hook Form with Zod validation
+- **Routing**: React Router v7
+
+#### Backend
+- **API Server**: Express.js on Node.js
+- **Cloud Functions**: AWS Lambda (Node.js 18.x)
+- **Queue Service**: AWS SQS for async processing
+- **Database**: DynamoDB for job tracking
+- **Infrastructure**: AWS SAM (Serverless Application Model)
+
+#### External Integrations
+- **AI Provider**: Anthropic Claude API (Sonnet model)
+- **Version Control**: GitHub API for repo/issue creation
+- **Cloud Services**: AWS Bedrock, Secrets Manager
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js >= 16.0.0
+- AWS CLI configured with credentials
+- GitHub personal access token
+- Anthropic Claude API key
+
+### Installation
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd color-code-research-hub
 
-# Install and start everything
+# Install all dependencies and start servers
 make all
 ```
 
-This will install all dependencies and start both servers.
-
-### Server Architecture
-
-- **Frontend**: Vite development server on port 3000
-- **Backend API**: Express server on port 3001
-- **Queue**: AWS SQS for asynchronous job processing
-- The frontend proxies API calls to the backend
-
-### Starting the Application
-
-```bash
-make all      # Install dependencies and start both servers
-make start    # Start both servers (if already installed)
-make api      # Start only the API server
-make web      # Start only the web server
-```
-
-**Important**: The `make` commands automatically kill any processes on the required ports before starting, preventing "port already in use" errors.
-
-To stop all servers, press `Ctrl+C` (this triggers `make stop` automatically).
+This single command will:
+1. Install all dependencies
+2. Start the frontend on port 3000
+3. Start the backend API on port 3001
 
 ### Environment Configuration
 
-1. Copy the example environment file:
+1. **Copy the example environment file:**
 ```bash
 cp .env.example .env.local
 ```
 
-2. Update the AWS credentials in `.env.local`:
-```
+2. **Configure your `.env.local`:**
+```env
+# Frontend Configuration
+VITE_API_BASE_URL=http://localhost:3001
+VITE_API_KEY=your-api-key-here
+VITE_PORT=3000
+
+# AWS Configuration
 AWS_ACCESS_KEY_ID=your-aws-access-key
 AWS_SECRET_ACCESS_KEY=your-aws-secret-key
-SQS_QUEUE_URL=your-sqs-queue-url
+AWS_REGION=us-east-1
+
+# External Services
+ANTHROPIC_API_KEY=your-claude-api-key
+GITHUB_TOKEN=your-github-token
+GITHUB_ORG=your-github-org
 ```
 
-### AWS SQS Integration
+### Available Commands
 
-The system now uses AWS SQS for reliable message queuing instead of webhooks. Research requests are published to an SQS queue for asynchronous processing.
+```bash
+make all        # Install deps & start all servers
+make start      # Start both frontend and backend
+make api        # Start only API server
+make web        # Start only web server
+make stop       # Stop all servers
+make clean      # Force kill all processes
+make test       # Run E2E tests
+make install    # Install all dependencies
+```
 
-**Benefits**:
-- Reliable message delivery with automatic retries
-- Decoupled architecture for better scalability
-- Built-in dead letter queue support
-- No need for webhook endpoints or ngrok tunnels
+---
 
-## Research Teams Overview
-
-The Color Code Research Hub provides three specialized research teams, each with unique customization options:
+## 🎯 Research Teams
 
 ### 🔴 Red Team - Market Disruption Analysis
-**Purpose**: Analyze competitor vulnerabilities and develop offensive market disruption strategies
 
-**How Red Team Research Works**:
+**Purpose**: Analyze competitor vulnerabilities and develop offensive market disruption strategies.
 
-Red Team research follows an **offensive strategy** where you analyze competitors or third-party vendors to identify opportunities for market disruption. This is not about defending your company - it's about finding ways to attack competitors' market positions.
+**How It Works**: 
+- You specify a **target company** to disrupt (e.g., "Carvana")
+- The AI analyzes market vulnerabilities and opportunities
+- Generates actionable strategies for market attack
 
-When launching a Red Team research swarm, you specify a **target company name** - this is the competitor or vendor you want to disrupt, not your own company. For example, if CarMax launches Red Team research against "Carvana", the analysis will focus on finding Carvana's market vulnerabilities and opportunities for CarMax to exploit.
-
-The research systematically analyzes the target company's market position to identify strategic disruption opportunities.
-
-The research process then branches into multiple analytical dimensions. Users select their analysis focus areas, choosing from options like market positioning analysis, competitive intelligence, technology assessment, business model evaluation, customer acquisition strategies, pricing strategies, partnership opportunities, and market entry barriers. This multi-faceted approach ensures comprehensive coverage of potential disruption vectors.
-
-Geographic scope plays a crucial role in the analysis. Users can target global markets, specific regions like North America or Europe, or define custom countries for focused regional analysis. This geographic lens helps identify market-specific vulnerabilities and opportunities that might not be apparent in a global view.
-
-The temporal dimension is captured through the disruption timeline - users specify their expected timeframe for market disruption, ranging from immediate action (0 months) to longer-term strategic planning (24 months). This timeline influences the urgency and nature of recommendations, with shorter timelines focusing on rapid market entry tactics and longer timelines allowing for more fundamental disruption strategies.
-
-Financial parameters are established through investment range specifications, allowing users to define their capital deployment capacity from $10,000 for lean startup approaches up to $10 million for well-funded disruption attempts. This financial framework ensures recommendations align with available resources.
-
-Target market size categories help focus the analysis on markets that match strategic objectives - from small niche markets under $100M to very large markets exceeding $10B. The competitive intensity assessment (low, medium, high, very high) provides context for the difficulty and approach required for successful market entry.
-
-Industry vertical selection and custom keywords allow for domain-specific research, ensuring the analysis considers industry-specific dynamics, regulations, and competitive factors. Finally, users select their preferred disruption strategy - whether through direct competition, market differentiation, cost leadership, innovation, acquisition, or strategic partnerships.
-
-This comprehensive input framework enables the Claude Flow swarm to conduct targeted research that produces actionable intelligence for market disruption opportunities specific to the user's strategic context and constraints.
-
-**Custom Form Fields**:
-- `companyName` - **Target competitor/vendor to disrupt** (e.g., "Carvana", "AutoTrader")
-- `analysisFocus` - Focus areas (Market positioning, Competitive intelligence, etc.)
-- `marketScope` - Geographic scope (Global, North America, Europe, Asia Pacific, Custom)
-- `disruptionTimeline` - Expected timeline for market attack (0-24 months)
-- `investmentRange` - Investment range for disruption strategy ($10K - $10M)
-- `targetMarketSize` - Market size categories
-- `competitiveIntensity` - Competition level assessment
-- `customKeywords` - Custom search terms
-- `industryVerticals` - Target industries
-- `disruptionStrategy` - Attack approach (Direct competition, differentiation, cost leadership, etc.)
-
-**Example Scenario**: CarMax enters "Carvana" as the target company, selects "competitive intelligence" and "pricing strategies" as focus areas, sets a 12-month disruption timeline with $2M investment range, and chooses "cost leadership" as the disruption strategy. The Red Team research will analyze Carvana's weaknesses and provide actionable strategies for CarMax to undercut Carvana's market position.
+**Custom Fields**:
+- `companyName` - Target competitor to disrupt
+- `analysisFocus` - Areas like pricing, technology, customer acquisition
+- `marketScope` - Geographic focus (Global, Regional, Custom)
+- `disruptionTimeline` - Expected timeline (0-24 months)
+- `investmentRange` - Capital deployment ($10K - $10M)
+- `disruptionStrategy` - Direct competition, differentiation, cost leadership
 
 ### ⚫ Black Team - Internal Tool Replacement
-**Purpose**: Explore replacing third-party tools with internal solutions
 
-**Custom Form Fields**:
-- `toolCategories` - Tool types (Analytics, Development, Security, etc.)
-- `informationSources` - Research sources with boolean toggles
-- `implementationComplexity` - Development complexity level
-- `teamSizeConstraint` - Available team size
+**Purpose**: Explore replacing expensive third-party tools with internal solutions.
+
+**Custom Fields**:
+- `toolCategories` - Analytics, Development, Security, etc.
+- `informationSources` - Documentation, reviews, specs, pricing
+- `implementationComplexity` - Low, Medium, High
+- `teamSizeConstraint` - Available development resources
 - `techStackPreference` - Preferred technologies
-- `costComparisonBaseline` - Cost comparison method
-- `customCostThreshold` - Custom budget threshold
-- `evidenceThreshold` - Quality of evidence required (1-4 scale)
-- `existingTools` - Current tool inventory
 - `timeToMarket` - Implementation timeline
 
 ### ⚪ White Team - Whitespace Discovery
-**Purpose**: Discover untapped market opportunities and new product spaces
 
-**Custom Form Fields**:
-- `opportunityTypes` - Opportunity categories (Market gaps, Technology disruptions, etc.)
-- `targetCustomerSize` - Customer segments
-- `businessModelPreference` - Preferred business models
-- `technicalApproach` - Implementation approach
-- `marketEntrySpeed` - Speed to market preference
-- `competitiveLandscape` - Competition assessment
-- `successMetrics` - Key success indicators (max 4)
-- `riskTolerance` - Risk acceptance level (1-5 scale)
-- `minimumOpportunitySize` - Minimum revenue potential
-- `ecosystemIntegration` - Integration preferences
-- `customSearchAreas` - Custom research areas
+**Purpose**: Discover untapped market opportunities and new product spaces.
 
-## EC2 Integration & Research Payload
+**Custom Fields**:
+- `opportunityTypes` - Market gaps, technology disruptions
+- `targetCustomerSize` - Customer segments to target
+- `businessModelPreference` - SaaS, Marketplace, etc.
+- `technicalApproach` - Build vs. buy vs. partner
+- `riskTolerance` - Risk acceptance level (1-5)
+- `minimumOpportunitySize` - Revenue potential threshold
 
-### Webhook Payload Structure
+---
 
-When a research request is submitted, the backend sends a structured payload to the EC2 webhook:
+## 📡 API Reference
+
+### Core Endpoints
+
+#### Health Check
+```http
+GET /health
+```
+
+#### Submit Research Request
+```http
+POST /api/sqs/submit
+Content-Type: application/json
+
+{
+  "teamType": "red|black|white",
+  "repoId": "unique-identifier",
+  "formData": {
+    // Team-specific fields
+  }
+}
+```
+
+#### GitHub Repository Management
+```http
+GET /api/github/repos/{org}
+GET /api/github/repos/{org}/{repo}/readme
+```
+
+#### Plan Generation (CLI - Working)
+```http
+POST /api/plan/generate-cli-plan
+Content-Type: application/json
+
+{
+  "projectInfo": {
+    "title": "Project Title",
+    "description": "Description",
+    "domain": "Domain",
+    "features": ["feature1", "feature2"],
+    "techStack": ["tech1", "tech2"],
+    "complexity": "simple|moderate|complex"
+  },
+  "readmeContent": "README content here"
+}
+```
+
+### Research Payload Structure
 
 ```json
 {
-  "repository": "Flying-Pig-Labs/ci-{teamType}-{repoId}",
+  "repository": "org/ci-{teamType}-{repoId}",
   "branch": "main",
   "researchConfig": {
     "teamType": "red|black|white",
     "researchSpecs": {
-      // All custom form fields specific to the team type
-      // Red Team: companyName, analysisFocus, marketScope, etc.
-      // Black Team: toolCategories, implementationComplexity, etc.
-      // White Team: opportunityTypes, targetCustomerSize, etc.
+      // Team-specific configuration
     },
     "metadata": {
       "timestamp": "2024-01-20T15:30:00.000Z",
-      "client": "CarMax"
+      "client": "ClientName"
     }
   }
 }
 ```
 
-### Repository Naming Convention
+---
 
-- **Pattern**: `ci-{teamType}-{repoId}`
-- **Examples**: 
-  - `ci-red-a3x9k` (Red Team analysis)
-  - `ci-black-7h2j9` (Black Team tool research)
-  - `ci-white-mx4p1` (White Team opportunity discovery)
+## 🚀 Deployment
 
-### Integration Flow
+### Frontend (Automatic via AWS Amplify)
 
-1. **Frontend** → User fills team-specific form with custom fields
-2. **Backend** → Generates unique `repoId` and sends research payload to EC2
-3. **EC2** → Processes research specs and creates GitHub repository
-4. **Frontend** → Polls GitHub for repository creation to show results
+The frontend automatically deploys when you push to the main branch.
 
-## Payload Examples
+### Backend Lambda Functions (Manual)
 
-### 🔴 Red Team Example - CarMax vs Carvana
+#### Using the Deployment Script (Recommended)
 
-```json
-{
-  "repository": "Flying-Pig-Labs/ci-red-m8k4x",
-  "branch": "main",
-  "researchConfig": {
-    "teamType": "red",
-    "researchSpecs": {
-      "companyName": "Carvana",
-      "analysisFocus": [
-        "Market positioning analysis",
-        "Competitive intelligence", 
-        "Pricing strategies",
-        "Customer acquisition strategies"
-      ],
-      "marketScope": "north-america",
-      "disruptionTimeline": 18,
-      "investmentRange": [500000, 2000000],
-      "targetMarketSize": ["Large ($1B-$10B)", "Very Large (>$10B)"],
-      "competitiveIntensity": "high",
-      "customKeywords": ["online car sales", "vehicle financing"],
-      "industryVerticals": ["Automotive", "Financial Services"],
-      "disruptionStrategy": "cost-leadership"
-    },
-    "metadata": {
-      "timestamp": "2024-01-20T15:30:00.000Z",
-      "client": "CarMax"
-    }
-  }
-}
+```bash
+cd infrastructure
+./deploy.sh
 ```
 
-### ⚫ Black Team Example - Tool Replacement Analysis
+#### Manual Deployment
 
-```json
-{
-  "repository": "Flying-Pig-Labs/ci-black-p7j2n",
-  "branch": "main",
-  "researchConfig": {
-    "teamType": "black",
-    "researchSpecs": {
-      "toolCategories": ["Analytics & Monitoring", "Customer Support"],
-      "informationSources": {
-        "Public Documentation": true,
-        "User Reviews": true,
-        "Technical Specs": true,
-        "Pricing Information": true
-      },
-      "implementationComplexity": "medium",
-      "teamSizeConstraint": "medium",
-      "techStackPreference": ["React/Next.js", "Node.js", "Python"],
-      "costComparisonBaseline": "current_tool",
-      "evidenceThreshold": 3,
-      "existingTools": ["Salesforce Analytics", "Zendesk"],
-      "timeToMarket": "medium"
-    },
-    "metadata": {
-      "timestamp": "2024-01-20T15:30:00.000Z",
-      "client": "CarMax"
-    }
-  }
-}
+1. **Install SAM CLI**:
+```bash
+curl -L https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip -o sam.zip
+unzip -q sam.zip
+sudo ./install
 ```
 
-### ⚪ White Team Example - Market Opportunity Discovery
-
-```json
-{
-  "repository": "Flying-Pig-Labs/ci-white-z9a3q",
-  "branch": "main",
-  "researchConfig": {
-    "teamType": "white",
-    "researchSpecs": {
-      "opportunityTypes": ["Market gaps", "Technology disruptions"],
-      "targetCustomerSize": ["Small businesses (1-50 employees)"],
-      "businessModelPreference": ["SaaS/Subscription", "Marketplace"],
-      "technicalApproach": "hybrid-approach",
-      "marketEntrySpeed": "fast",
-      "competitiveLandscape": "emerging",
-      "successMetrics": ["Revenue potential", "User adoption rate"],
-      "riskTolerance": 4,
-      "minimumOpportunitySize": "medium",
-      "ecosystemIntegration": ["CarMax ecosystem", "Third-party APIs"],
-      "customSearchAreas": ["vehicle inspection services"]
-    },
-    "metadata": {
-      "timestamp": "2024-01-20T15:30:00.000Z",
-      "client": "CarMax"
-    }
-  }
-}
+2. **Build and Deploy**:
+```bash
+cd infrastructure
+sam build
+sam deploy \
+  --stack-name color-code-research-hub \
+  --capabilities CAPABILITY_IAM \
+  --resolve-s3 \
+  --no-confirm-changeset \
+  --region us-east-1
 ```
 
-## Technology Stack
+⚠️ **Important**: 
+- Stack name MUST be `color-code-research-hub` (no "-production" suffix)
+- Region MUST be `us-east-1`
+- Never create new stacks - always update the existing one
 
-- **Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
-- **Backend**: Express.js, Node.js
-- **Testing**: Vitest (unit), Playwright (E2E)
-- **Forms**: React Hook Form with Zod validation
-- **State Management**: Tanstack Query
+---
 
-## Available Commands
+## 🧬 SPARC Methodology
 
-### Primary Commands
-- `make all` - Install dependencies and start both servers
-- `make start` - Start both frontend and backend servers
-- `make api` - Start only the API server
-- `make web` - Start only the web server
-- `make stop` - Stop all servers (automatically called on Ctrl+C)
-- `make clean` - Force kill all processes if something is stuck
-- `make test` - Run e2e tests
-- `make install` - Install all dependencies
+The platform implements SPARC (Specialized Planning and Autonomous Research Coordination) methodology for AI agent execution:
 
-### Build Scripts
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
+1. **Phase Generation**: 8 standard phases for any project
+2. **Epic Creation**: 5-10 epics per phase with role assignments
+3. **Issue Formatting**: GitHub issues with SPARC directives for autonomous execution
 
-## Documentation
+Each research generates 40-80 actionable items across:
+- Discovery & Requirements
+- Technical Planning & Architecture
+- UI/UX Design & Prototyping
+- Core Development
+- System Integration & Testing
+- Quality Assurance
+- Deployment & Distribution
+- Launch & Documentation
 
-The project documentation has been organized into the following categories:
+---
 
-### 📁 Setup & Configuration
-- [Local Setup Guide](./docs/setup/LOCAL_SETUP_GUIDE.md) - Comprehensive local development setup
-- [Remote Execution Guide](./docs/setup/REMOTE_EXECUTION_GUIDE.md) - Remote deployment and execution instructions
+## 📊 Data Flow
 
-### 🔗 Integration & API
-- [Integration Guide](./docs/integration/INTEGRATION_GUIDE.md) - System integration documentation
-- [API Integration Test Results](./docs/integration/test-api-integration.md) - API testing and validation
+1. **User Input** → Custom research form submission
+2. **API Gateway** → Express backend validates and processes
+3. **SQS Queue** → Asynchronous job submission
+4. **Lambda Functions** → LLM orchestration and processing
+5. **Claude API** → Multi-step AI analysis
+6. **GitHub API** → Repository and issue creation
+7. **DynamoDB** → Job status tracking
+8. **Frontend Polling** → Real-time status updates
 
-### ☁️ AWS EC2 Deployment
-- [EC2 Agent Briefing](./docs/ec2/EC2_AGENT_BRIEFING.md) - EC2 agent configuration and setup
-- [EC2 Backend Confirmation](./docs/ec2/EC2_BACKEND_CONFIRMATION.md) - Backend deployment verification
-- [EC2 Forms Implementation](./docs/ec2/EC2_FORMS_IMPLEMENTATION_GUIDE.md) - Form integration guide
-- [EC2 Forms Integration Analysis](./docs/ec2/EC2_FORMS_INTEGRATION_ANALYSIS.md) - Integration analysis
-- [EC2 Implementation Guide](./docs/ec2/EC2_IMPLEMENTATION_GUIDE.md) - Main implementation documentation
-- [EC2 Infrastructure Setup](./docs/ec2/EC2_INFRASTRUCTURE_SETUP.md) - Infrastructure configuration
-- [EC2 Integration Checklist](./docs/ec2/EC2_INTEGRATION_CHECKLIST.md) - Step-by-step integration checklist
-- [EC2 Integration Flow Diagram](./docs/ec2/EC2_INTEGRATION_FLOW_DIAGRAM.md) - Visual integration workflow
-- [EC2 Integration Summary](./docs/ec2/EC2_INTEGRATION_SUMMARY.md) - Integration overview
-- [EC2 Script Update](./docs/ec2/EC2_SCRIPT_UPDATE.md) - Script update procedures
-- [EC2 Smart Integration Guide](./docs/ec2/EC2_SMART_INTEGRATION_GUIDE.md) - Advanced integration strategies
-- [Async Job Tracking Specification](./docs/ec2/ASYNC_JOB_TRACKING_SPEC.md) - Asynchronous job handling
-- [Simple EC2 Integration Spec](./docs/ec2/SIMPLE_EC2_INTEGRATION_SPEC.md) - Simplified integration approach
+---
 
-### 🏗️ Implementation & Development
-- [Implementation Summary](./docs/implementation/IMPLEMENTATION_SUMMARY.md) - Overall implementation overview
-- [Form Update Example](./docs/implementation/FORM_UPDATE_EXAMPLE.md) - Form customization examples
-- [N8N Refactoring Proposal](./docs/implementation/N8N_REFACTORING_PROPOSAL.md) - N8N workflow refactoring
-- [N8N Refactor Proposal](./docs/implementation/N8N_REFACTOR_PROPOSAL.md) - Alternative N8N refactoring approach
+## 🧪 Testing
 
-### 🧪 Testing & Quality Assurance
-- [Test Guide](./docs/testing/TEST_GUIDE.md) - Comprehensive testing documentation
+```bash
+# Run unit tests
+npm test
 
-## Environment Variables
+# Run E2E tests
+make test
 
-Create a `.env.local` file based on `.env.example`:
-
-```env
-VITE_API_BASE_URL=http://localhost:3001
-VITE_API_KEY=local-dev-key
-VITE_PORT=3000
+# Quick Lambda test
+cd lambda
+npm run quick-test
 ```
 
-## Project Structure
+---
 
-```
-├── backend/          # Express.js API server
-├── src/             # React frontend source
-├── e2e/             # Playwright E2E tests
-├── scripts/         # Build and start scripts
-└── public/          # Static assets
-```
+## 📚 Documentation
 
-## License
+Comprehensive documentation is available in the `/docs` directory:
 
-This project is configured for local development and testing purposes.
+- **Setup & Configuration**: Local setup, remote execution guides
+- **Integration & API**: System integration, API documentation
+- **AWS EC2 Deployment**: Infrastructure setup, integration flows
+- **Implementation**: Development guides, form customization
+- **Testing**: Test guides and quality assurance
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the Claude Flow Team**
+
+[Report Bug](https://github.com/your-org/color-code-research-hub/issues) • [Request Feature](https://github.com/your-org/color-code-research-hub/issues)
+
+</div>
