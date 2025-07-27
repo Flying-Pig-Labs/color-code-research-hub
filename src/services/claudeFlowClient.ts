@@ -6,13 +6,10 @@ const CLAUDE_FLOW_BASE_URL = `${API_GATEWAY_URL}/api/claude-flow`;
 export interface TaskSubmission {
   taskType: string;
   input: {
-    objective: string;
+    prompt: string;
+    strategy: string;
     mode: string;
-    agents: {
-      coordinator: number;
-      coder: number;
-      tester: number;
-    };
+    maxAgents: number;
   };
   metadata?: {
     executionId?: string;
@@ -35,13 +32,17 @@ export interface HealthResponse {
 }
 
 export interface SwarmStatus {
-  activeSwarms: number;
-  swarms: Array<{
-    id: string;
-    status: string;
-    agents: number;
+  status: string;
+  activeExecutions: number;
+  totalExecutions: number;
+  currentExecution?: {
+    executionId: string;
+    taskType: string;
     startTime: string;
-  }>;
+    status: string;
+    outputDir: string;
+  };
+  timestamp: string;
 }
 
 class ClaudeFlowClient {

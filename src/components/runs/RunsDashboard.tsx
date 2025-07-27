@@ -49,7 +49,7 @@ const RunsDashboard = () => {
         setSwarmStatus(status);
         
         const timestamp = new Date().toLocaleTimeString();
-        const message = `[${timestamp}] Active swarms: ${status.activeSwarms}`;
+        const message = `[${timestamp}] Active executions: ${status.activeExecutions} | Status: ${status.status}`;
         
         setWsMessages(prev => {
           // Keep only last 10 messages
@@ -57,11 +57,10 @@ const RunsDashboard = () => {
           return newMessages;
         });
         
-        if (status.swarms && status.swarms.length > 0) {
-          status.swarms.forEach((swarm: any) => {
-            const swarmMessage = `[${timestamp}] Swarm ${swarm.id}: ${swarm.status} (${swarm.agents} agents)`;
-            setWsMessages(prev => [...prev, swarmMessage].slice(-10));
-          });
+        if (status.currentExecution) {
+          const exec = status.currentExecution;
+          const swarmMessage = `[${timestamp}] Execution ${exec.executionId}: ${exec.status} (started ${new Date(exec.startTime).toLocaleTimeString()})`;
+          setWsMessages(prev => [...prev, swarmMessage].slice(-10));
         }
       } catch (error) {
         console.error('Failed to poll swarm status:', error);
@@ -166,7 +165,7 @@ const RunsDashboard = () => {
             {swarmStatus && (
               <div className="flex items-center gap-2">
                 <span className="text-sm">
-                  {swarmStatus.activeSwarms} active swarms
+                  {swarmStatus.activeExecutions} active executions | Total: {swarmStatus.totalExecutions}
                 </span>
               </div>
             )}
