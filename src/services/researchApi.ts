@@ -15,7 +15,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function submitResearch(request: ResearchRequest): Promise<ResearchResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/research/submit`, {
+    const response = await fetch(`${API_BASE_URL}/api/claude-flow/research`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
 
 export async function checkResearchStatus(requestId: string): Promise<ResearchResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/research/status/${requestId}`);
+    const response = await fetch(`${API_BASE_URL}/api/claude-flow/execution/${requestId}`);
     
     if (!response.ok) {
       throw new Error(`Status check failed: ${response.statusText}`);

@@ -899,30 +899,50 @@ Resources:
       Environment:
         Variables:
           EC2_ENDPOINT: http://18.209.36.58:8080
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:claude-flow-research-api-key-*
       Events:
-        SubmitResearch:
+        ResearchEndpoint:
           Type: Api
           Properties:
             RestApiId: !Ref ResearchHubApi
-            Path: /api/research/submit
+            Path: /api/claude-flow/research
             Method: POST
-        CheckStatus:
+        ExecutionEndpoint:
           Type: Api
           Properties:
             RestApiId: !Ref ResearchHubApi
-            Path: /api/research/status/{proxy+}
+            Path: /api/claude-flow/execution/{proxy+}
             Method: GET
-        OptionsSubmit:
+        ExecutionsEndpoint:
           Type: Api
           Properties:
             RestApiId: !Ref ResearchHubApi
-            Path: /api/research/submit
+            Path: /api/claude-flow/executions
+            Method: GET
+        OptionsResearch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/research
             Method: OPTIONS
-        OptionsStatus:
+        OptionsExecution:
           Type: Api
           Properties:
             RestApiId: !Ref ResearchHubApi
-            Path: /api/research/status/{proxy+}
+            Path: /api/claude-flow/execution/{proxy+}
+            Method: OPTIONS
+        OptionsExecutions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/executions
             Method: OPTIONS
 
   # SSE Monitoring Stream Proxy (with long-polling fallback)
