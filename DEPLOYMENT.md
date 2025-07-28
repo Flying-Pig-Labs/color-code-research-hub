@@ -128,3 +128,28 @@ Use Amplify console to redeploy a previous build.
 - Use AWS Secrets Manager for all sensitive data
 - Ensure proper IAM roles and permissions
 - Review CORS settings for production use
+
+## Claude Flow Research Integration
+
+### New Lambda Function
+The deployment now includes a Research Proxy Lambda function that:
+- Routes requests to EC2 Claude Flow service (18.209.36.58:8080)
+- Retrieves API key from AWS Secrets Manager
+- Handles CORS and private network access issues
+
+### API Gateway Routes
+New routes added for Claude Flow integration:
+- `POST /api/claude-flow/research` - Submit research requests
+- `GET /api/claude-flow/execution/{request_id}` - Check execution status
+- `GET /api/claude-flow/executions` - List all executions
+
+### Secrets Manager
+- **Secret Name**: `claude-flow-research-api-key`
+- **Purpose**: API key for authenticating with EC2 Claude Flow service
+- **Access**: ResearchProxyFunction has permission to retrieve this secret
+
+### Deployment Profile
+**Important**: Always use the `mvp` profile for deployments:
+```bash
+sam deploy --profile mvp --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+```

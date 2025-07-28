@@ -278,6 +278,39 @@ Content-Type: application/json
 
 ---
 
+## 🔗 Claude Flow Research Integration
+
+### Overview
+The Color Code Research Hub integrates with Claude Flow running on EC2 to provide AI-powered research capabilities for all three research teams (Red, White, and Black).
+
+### Architecture
+```
+Frontend (Amplify) → API Gateway → Lambda Proxy → EC2 Claude Flow (18.209.36.58:8080)
+```
+
+### API Endpoints
+- **Submit Research**: `POST /api/claude-flow/research`
+- **Check Status**: `GET /api/claude-flow/execution/{request_id}`
+- **List Executions**: `GET /api/claude-flow/executions`
+
+### Security
+- API key stored in AWS Secrets Manager: `claude-flow-research-api-key`
+- Lambda automatically retrieves and adds the API key to all EC2 requests
+- Frontend doesn't need to handle API keys
+
+### Research Teams
+1. **Red Team** - Competitive Disruption Analysis
+2. **White Team** - Market Opportunity Discovery
+3. **Black Team** - Vendor Replacement Engineering
+
+### Testing the Integration
+1. Navigate to any research team page (e.g., `/red-team`)
+2. Fill out the research form
+3. Submit to see real-time progress updates
+4. Results appear in the Research Requests table
+
+---
+
 ## 🚀 Deployment
 
 ### Frontend (Automatic via AWS Amplify)
