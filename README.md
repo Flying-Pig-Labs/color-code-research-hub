@@ -135,6 +135,10 @@ VITE_API_BASE_URL=http://localhost:3001
 VITE_API_KEY=your-api-key-here
 VITE_PORT=3000
 
+# EC2 Claude Flow Integration (Optional)
+# If you have Claude Flow running on EC2, configure this endpoint
+VITE_EC2_ENDPOINT=http://your-ec2-ip:8080
+
 # AWS Configuration
 AWS_ACCESS_KEY_ID=your-aws-access-key
 AWS_SECRET_ACCESS_KEY=your-aws-secret-key

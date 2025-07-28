@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { apiService } from "@/services/api";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { checkResearchStatus } from "@/services/researchApi";
 
 interface ResearchTask {
   id: string;
@@ -18,6 +19,8 @@ interface ResearchTask {
   status: string;
   teamSize?: string;
   roles?: string[];
+  requestId?: string;
+  result?: any;
 }
 
 interface ResearchRequestTableProps {
@@ -69,11 +72,61 @@ const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
     
     window.addEventListener('taskAdded', handleTaskAdded);
     
+    // Also listen for task updates
+    const handleTaskUpdated = () => {
+      loadTasks();
+    };
+    
+    window.addEventListener('taskUpdated', handleTaskUpdated);
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('taskAdded', handleTaskAdded);
+      window.removeEventListener('taskUpdated', handleTaskUpdated);
     };
   }, [teamType]);
+
+  // Poll for status updates of processing tasks
+  useEffect(() => {
+    const processingTasks = tasks.filter(task => task.status === 'processing' && task.requestId);
+    if (processingTasks.length === 0) return;
+
+    const pollInterval = setInterval(async () => {
+      let hasUpdates = false;
+      
+      for (const task of processingTasks) {
+        if (!task.requestId) continue;
+        
+        try {
+          const status = await checkResearchStatus(task.requestId);
+          
+          if (status.status !== task.status) {
+            hasUpdates = true;
+            
+            // Update task in localStorage
+            const allTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+            const updatedTasks = allTasks.map((t: ResearchTask) => 
+              t.requestId === task.requestId 
+                ? { ...t, status: status.status, result: status.result }
+                : t
+            );
+            localStorage.setItem('researchTasks', JSON.stringify(updatedTasks));
+          }
+        } catch (error) {
+          console.error(`Error checking status for ${task.requestId}:`, error);
+        }
+      }
+      
+      if (hasUpdates) {
+        // Reload tasks
+        const updatedTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+        const teamTasks = updatedTasks.filter((task: ResearchTask) => task.team === teamType);
+        setTasks(teamTasks.reverse());
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [tasks, teamType]);
 
   const getTeamColor = (team: string) => {
     switch (team) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -18,6 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
+import { submitResearch, formatRedTeamPrompt, checkResearchStatus } from "@/services/researchApi";
 
 interface ResearchSwarmFormProps {
   children: React.ReactNode;
@@ -46,6 +47,52 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   
   const apiEnvironment = useApiEnvironment();
 
+  // Polling effect for status updates
+  useEffect(() => {
+    if (!jobId || !isPolling) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const status = await checkResearchStatus(jobId);
+        setJobStatus(status);
+        
+        // Update progress (simulate based on time elapsed)
+        setPollProgress(prev => Math.min(prev + 10, 90));
+        
+        if (status.status === 'completed' || status.status === 'failed') {
+          setIsPolling(false);
+          setPollProgress(100);
+          
+          if (status.status === 'completed') {
+            toast.success('Research completed successfully!', {
+              description: 'Results are now available in the Research Requests table.',
+            });
+            handleReset();
+            setOpen(false);
+          } else {
+            toast.error('Research failed', {
+              description: status.error || 'Unknown error occurred',
+            });
+          }
+          
+          // Update the stored task status
+          const tasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+          const updatedTasks = tasks.map((task: any) => 
+            task.requestId === jobId 
+              ? { ...task, status: status.status, result: status.result }
+              : task
+          );
+          localStorage.setItem('researchTasks', JSON.stringify(updatedTasks));
+          window.dispatchEvent(new CustomEvent('taskUpdated'));
+        }
+      } catch (error) {
+        console.error('Error polling status:', error);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [jobId, isPolling]);
+
   const handleCheckboxChange = (value: string, currentValues: string[], setter: (values: string[]) => void) => {
     if (currentValues.includes(value)) {
       setter(currentValues.filter(v => v !== value));
@@ -69,10 +116,8 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   };
 
   const handleLaunchSwarm = async () => {
-    // Generate unique repo ID that doesn't conflict with existing repos
-    const repoId = await generateUniqueRepoId('red', githubService.repoExists.bind(githubService));
     const researchData = {
-      companyName,
+      targetCompany: companyName,
       analysisFocus,
       marketScope,
       customCountries,
@@ -83,6 +128,9 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
       customKeywords,
       industryVerticals,
       disruptionStrategy,
+      analysisType: analysisFocus.join(', '),
+      industry: industryVerticals.join(', '),
+      specificRequirements: `Market: ${marketScope}, Timeline: ${disruptionTimeline[0]} months, Strategy: ${disruptionStrategy}`
     };
 
     setIsSubmitting(true);
@@ -91,46 +139,31 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
     setPollProgress(0);
 
     try {
-      // Submit to SQS via backend (using Vite proxy)
-      const response = await fetch('/api/api/sqs/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          teamType: 'red',
-          repoId,
-          formData: researchData
-        })
+      // Format the research prompt for Red Team
+      const researchPrompt = formatRedTeamPrompt(researchData);
+      
+      // Submit to EC2 research endpoint
+      const response = await submitResearch({
+        task: researchPrompt,
+        teamType: 'red'
       });
       
-      if (!response.ok) {
-        let errorMessage = 'SQS submission failed';
-        try {
-          const error = await response.json();
-          errorMessage = error.message || errorMessage;
-        } catch (e) {
-          // Response might be HTML (DOCTYPE error), not JSON
-          errorMessage = `Server error: ${response.status} ${response.statusText}`;
-        }
-        throw new Error(errorMessage);
-      }
+      // Store the request ID for tracking
+      setJobId(response.request_id);
       
-      const result = await response.json();
-      toast.success(`Research swarm submitted for ${companyName || 'Unknown Company'}!`, {
-        description: `Request queued successfully. Tracking ID: ${repoId}`,
+      toast.success(`Research swarm launched for ${companyName || 'Unknown Company'}!`, {
+        description: `Request ID: ${response.request_id}`,
       });
       
-      // Store in localStorage with repoId for tracking
+      // Store in localStorage for tracking
       const researchTask = {
         id: Date.now().toString(),
-        repoId,
+        requestId: response.request_id,
         team: 'red',
         vendorName: companyName,
         ...researchData,
         createdAt: new Date().toISOString(),
-        status: 'submitted',
-        expectedRepoName: result.expectedRepoName,
-        estimatedTime: result.estimatedTime,
-        sqsMessageId: result.sqsMessageId,
+        status: response.status,
       };
       
       const existingTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
@@ -138,8 +171,10 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
       localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
       window.dispatchEvent(new CustomEvent('taskAdded'));
       
-      handleReset();
-      setOpen(false);
+      // Start polling for status updates
+      setIsPolling(true);
+      
+      // Don't close dialog immediately - keep it open to show status
     } catch (error) {
       if (error instanceof ApiError) {
         showApiError(error);
@@ -150,7 +185,6 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
       }
     } finally {
       setIsSubmitting(false);
-      setIsPolling(false);
     }
   };
 

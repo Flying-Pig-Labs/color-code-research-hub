@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const CLAUDE_FLOW_BASE_URL = 'http://18.209.36.58';
+const CLAUDE_FLOW_BASE_URL = 'http://18.209.36.58:8080';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
