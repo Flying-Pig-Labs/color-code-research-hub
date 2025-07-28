@@ -888,6 +888,43 @@ Resources:
             Path: /api/monitoring/alerts/{alertId}/acknowledge
             Method: OPTIONS
 
+  # Research Proxy for EC2 Claude Flow
+  ResearchProxyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: researchProxy.handler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          EC2_ENDPOINT: http://18.209.36.58:8080
+      Events:
+        SubmitResearch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/submit
+            Method: POST
+        CheckStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/status/{proxy+}
+            Method: GET
+        OptionsSubmit:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/submit
+            Method: OPTIONS
+        OptionsStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/status/{proxy+}
+            Method: OPTIONS
+
   # SSE Monitoring Stream Proxy (with long-polling fallback)
   MonitoringStreamFunction:
     Type: AWS::Serverless::Function

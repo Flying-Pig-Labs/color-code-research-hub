@@ -10,11 +10,12 @@ interface ResearchResponse {
   error?: string;
 }
 
-const EC2_ENDPOINT = import.meta.env.VITE_EC2_ENDPOINT || 'http://localhost:8080';
+// Use API Gateway proxy to avoid CORS/private network issues
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function submitResearch(request: ResearchRequest): Promise<ResearchResponse> {
   try {
-    const response = await fetch(`${EC2_ENDPOINT}/research`, {
+    const response = await fetch(`${API_BASE_URL}/api/research/submit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
 
 export async function checkResearchStatus(requestId: string): Promise<ResearchResponse> {
   try {
-    const response = await fetch(`${EC2_ENDPOINT}/execution/${requestId}`);
+    const response = await fetch(`${API_BASE_URL}/api/research/status/${requestId}`);
     
     if (!response.ok) {
       throw new Error(`Status check failed: ${response.statusText}`);
