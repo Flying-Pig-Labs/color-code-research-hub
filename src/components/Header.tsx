@@ -17,17 +17,6 @@ const Header = () => {
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-2">
-          {/* ASCII Art Title */}
-          <pre className="text-primary text-[0.4rem] sm:text-[0.5rem] md:text-[0.6rem] lg:text-xs xl:text-sm font-mono text-center mx-auto whitespace-pre">
-{`██╗  ██╗██╗██╗   ██╗███████╗███████╗██╗    ██╗ █████╗ ██████╗ ███╗   ███╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ 
-██║  ██║██║██║   ██║██╔════╝██╔════╝██║    ██║██╔══██╗██╔══██╗████╗ ████║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗
-███████║██║██║   ██║█████╗  ███████╗██║ █╗ ██║███████║██████╔╝██╔████╔██║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║
-██╔══██║██║╚██╗ ██╔╝██╔══╝  ╚════██║██║███╗██║██╔══██║██╔══██╗██║╚██╔╝██║    ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║
-██║  ██║██║ ╚████╔╝ ███████╗███████║╚███╔███╔╝██║  ██║██║  ██║██║ ╚═╝ ██║    ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝
-╚═╝  ╚═╝╚═╝  ╚═══╝  ╚══════╝╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝`}
-          </pre>
-        </div>
         <div className="flex items-center justify-between h-16">
           <div 
             className="flex items-center gap-3 cursor-pointer transition-transform hover:scale-105"
