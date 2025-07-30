@@ -8,7 +8,6 @@ const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: "/", label: "Home", icon: Shield, variant: "corporate" as const },
     { path: "/red-team", label: "Red Team", icon: Target, variant: "red-team" as const },
     { path: "/black-team", label: "Black Team", icon: Bug, variant: "black-team" as const },
     { path: "/white-team", label: "White Team", icon: Lightbulb, variant: "white-team" as const },
@@ -22,8 +21,8 @@ const Header = () => {
             className="flex items-center gap-3 cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate("/")}
           >
-            <Shield className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">Research Labs</span>
+            <span className="text-2xl mr-2">🪸</span>
+            <span className="text-xl font-bold text-foreground">Idea Reef</span>
           </div>
           
           <nav className="hidden md:flex items-center gap-4">

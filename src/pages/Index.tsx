@@ -1,17 +1,15 @@
 import Header from "@/components/Header";
-
 import SectionWrapper from "@/components/SectionWrapper";
 import TeamCard from "@/components/TeamCard";
-import ResearchSubTabs from "@/components/ResearchSubTabs";
-import RunsDashboard from "@/components/runs/RunsDashboard";
-import { Button } from "@/components/ui/button";
-import { Target, Bug, Lightbulb, Shield, Zap, Search } from "lucide-react";
+import { Target, Bug, Lightbulb } from "lucide-react";
 
 const Index = () => {
-  const teamsContent = (
-    <>
+  return (
+    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+      <Header />
+      
       {/* Hero Section with CarMax Fading */}
-      <SectionWrapper className="pt-20 pb-16 bg-gradient-carmax-hero relative overflow-hidden">
+      <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
         {/* Decorative fading elements */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-0 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
@@ -24,32 +22,25 @@ const Index = () => {
             <span className="text-8xl">🧬</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Strategic Research
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
+            Idea Reef
           </h1>
-          <pre className="text-primary font-mono text-xs sm:text-sm md:text-base lg:text-lg mx-auto whitespace-pre mb-6">
-{`▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖   ▗▖   ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖    ▗▖    ▗▄▖ ▗▄▄▖ 
-  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌   ▐▌     █  ▐▌   ▐▌   ▐▛▚▖▐▌▐▌   ▐▌       ▐▌   ▐▌ ▐▌▐▌ ▐▌
-  █  ▐▌ ▝▜▌  █  ▐▛▀▀▘▐▌   ▐▌     █  ▐▌▝▜▌▐▛▀▀▘▐▌ ▝▜▌▐▌   ▐▛▀▀▘    ▐▌   ▐▛▀▜▌▐▛▀▚▖
-▗▄█▄▖▐▌  ▐▌  █  ▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖▗▄█▄▖▝▚▄▞▘▐▙▄▄▖▐▌  ▐▌▝▚▄▄▖▐▙▄▄▖    ▐▙▄▄▖▐▌ ▐▌▐▙▄▞▘`}
-          </pre>
           
-          <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
-            Advanced competitive intelligence across three specialized domains. Our teams provide strategic insights for marketplace disruption, vendor replacement, and white space opportunities.
+          <p className="text-xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto">
+            Advanced competitive intelligence across three specialized domains.
           </p>
           
         </div>
       </SectionWrapper>
 
       {/* Teams Overview */}
-      <SectionWrapper className="bg-gradient-carmax-fade relative">
+      <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">
         {/* Subtle fading background elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
           <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
         </div>
         
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
           <TeamCard
             title="Red Team"
@@ -82,17 +73,6 @@ const Index = () => {
           />
         </div>
       </SectionWrapper>
-    </>
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
-      <Header />
-      
-      <ResearchSubTabs 
-        teamsContent={teamsContent}
-        runsContent={<RunsDashboard />}
-      />
     </div>
   );
 };
