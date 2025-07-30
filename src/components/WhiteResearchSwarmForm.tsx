@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,6 +27,7 @@ interface WhiteResearchSwarmFormProps {
 
 const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   const [open, setOpen] = useState(false);
+  const [companyName, setCompanyName] = useState("");
   const [opportunityTypes, setOpportunityTypes] = useState<string[]>([]);
   const [targetCustomerSize, setTargetCustomerSize] = useState<string[]>([]);
   const [businessModelPreference, setBusinessModelPreference] = useState<string[]>([]);
@@ -111,6 +113,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   };
 
   const handleReset = () => {
+    setCompanyName("");
     setOpportunityTypes([]);
     setTargetCustomerSize([]);
     setBusinessModelPreference([]);
@@ -139,6 +142,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
 
   const handleLaunchSwarm = async () => {
     const researchData = {
+      companyName: companyName || 'Not specified',
       marketSegment: opportunityTypes.join(', '),
       targetUsers: targetCustomerSize.join(', '),
       discoveryFocus: `${marketEntrySpeed} market entry, ${competitiveLandscape} competition`,
@@ -260,7 +264,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   ];
 
   const ecosystemOptions = [
-    "CarMax ecosystem",
+    "Company ecosystem",
     "Third-party APIs",
     "Partner platforms",
     "Industry standards",
@@ -280,7 +284,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
             ⚪ Launch Research Swarm
           </DialogTitle>
           <DialogDescription>
-            Find untapped opportunities near CarMax's market.
+            Find untapped opportunities near your company's market.
           </DialogDescription>
         </DialogHeader>
 
@@ -348,6 +352,22 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
         )}
 
         <div className="space-y-6">
+          {/* Company Name */}
+          <Card className="border-white-team-accent/30">
+            <CardHeader>
+              <CardTitle className="text-lg text-white-team-dark">Company Name</CardTitle>
+              <CardDescription>Enter the company name for this research</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Input
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="e.g., CarMax, Tesla, Amazon"
+                className="border-white-team-accent/30"
+              />
+            </CardContent>
+          </Card>
+
           {/* Opportunity Types */}
           <Card className="border-white-team-accent/30">
             <CardHeader>

@@ -28,6 +28,7 @@ interface BlackResearchSwarmFormProps {
 
 const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
   const [open, setOpen] = useState(false);
+  const [companyName, setCompanyName] = useState("");
   const [toolCategories, setToolCategories] = useState<string[]>([]);
   const [informationSources, setInformationSources] = useState<Record<string, boolean>>({});
   const [implementationComplexity, setImplementationComplexity] = useState("");
@@ -108,6 +109,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
   };
 
   const handleReset = () => {
+    setCompanyName("");
     setToolCategories([]);
     setInformationSources({});
     setImplementationComplexity("");
@@ -138,6 +140,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
     const targetVendor = existingTools.length > 0 ? existingTools[0] : 'Vendor tool';
     
     const researchData = {
+      companyName: companyName || 'Not specified',
       targetVendor,
       productService: toolCategories.join(', '),
       engineeringFocus: `${implementationComplexity} complexity, ${teamSizeConstraint} team`,
@@ -325,6 +328,22 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
         )}
 
         <div className="space-y-6">
+          {/* Company Name */}
+          <Card className="bg-black-team-light border-white/20">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Company Name</CardTitle>
+              <CardDescription className="text-white/70">Enter the company name for this research</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Input
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="e.g., CarMax, Tesla, Amazon"
+                className="bg-black-team border-white/20 text-white placeholder:text-white/50"
+              />
+            </CardContent>
+          </Card>
+
           {/* Tool Categories */}
           <Card className="bg-black-team-light border-white/20">
             <CardHeader>

@@ -190,6 +190,8 @@ COLLABORATION PROTOCOL:
 • Map ALL interconnections between opportunities
 • Record minority opinions and wild ideas
 
+COMPANY NAME: ${formData.companyName || 'Not specified'}
+
 OPPORTUNITY TYPES TARGETED:
 ${formData.opportunityTypes?.map((type: string) => `• ${type}`).join('\n') || '• All opportunity types'}
 
@@ -311,6 +313,7 @@ COLLABORATION PROTOCOL:
 • Capture ALL performance characteristics
 • Document EVERY integration scenario
 
+COMPANY NAME: ${formData.companyName || 'Not specified'}
 TARGET VENDOR: ${formData.targetVendor || 'Not specified'}
 EXISTING TOOLS IN USE: ${formData.existingTools?.join(', ') || 'No specific tools identified'}
 
