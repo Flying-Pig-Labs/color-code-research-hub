@@ -64,7 +64,7 @@ Resources:
       StageName: production
       Cors:
         AllowMethods: "'GET,POST,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Api-Key'"
+        AllowHeaders: "'Content-Type,X-Api-Key,Authorization'"
         AllowOrigin: "'*'"
       Auth:
         ApiKeyRequired: false # Set to true if you want API key authentication

@@ -1,6 +1,6 @@
 const https = require('https');
 const http = require('http');
-const AWS = require('aws-sdk');
+const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 
 // EC2 Claude Flow endpoint - Updated to new port
 const EC2_ENDPOINT = process.env.EC2_ENDPOINT || 'http://18.209.36.58:3456';
@@ -10,7 +10,7 @@ const endpointUrl = new URL(EC2_ENDPOINT);
 const httpModule = endpointUrl.protocol === 'https:' ? https : http;
 
 // Secrets Manager client
-const secretsManager = new AWS.SecretsManager({ region: 'us-east-1' });
+const secretsManager = new SecretsManagerClient({ region: 'us-east-1' });
 
 // Cache the API key
 let cachedApiKey = null;
@@ -19,9 +19,10 @@ async function getApiKey() {
     if (cachedApiKey) return cachedApiKey;
     
     try {
-        const secret = await secretsManager.getSecretValue({ 
+        const command = new GetSecretValueCommand({ 
             SecretId: 'claude-flow-research-api-key' 
-        }).promise();
+        });
+        const secret = await secretsManager.send(command);
         
         const secretData = JSON.parse(secret.SecretString);
         cachedApiKey = secretData.api_key;
