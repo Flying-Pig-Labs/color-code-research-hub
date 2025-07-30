@@ -273,7 +273,12 @@ sam --version  # Should show SAM CLI version
 2. **Build the SAM application**:
 ```bash
 cd infrastructure
-sam build
+# ⚠️ IMPORTANT: SAM build requires a LONG timeout (5-10 minutes) for 10+ Lambda functions
+# Use these optimization flags to speed up the build:
+sam build --parallel --cached
+
+# If you're using Claude Code, set a higher timeout:
+# Bash timeout=600000  # 10 minutes
 ```
 
 3. **Deploy to AWS**:
@@ -284,6 +289,9 @@ sam build
 # - Region MUST BE: us-east-1
 
 sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+
+# Note: Deploy also benefits from increased timeout (10 minutes recommended)
+# Bash timeout=600000  # if using Claude Code
 ```
 
 #### 🚫 COMMON MISTAKES TO AVOID:
