@@ -22,7 +22,10 @@ const Header = () => {
             onClick={() => navigate("/")}
           >
             <span className="text-2xl mr-2">🪸</span>
-            <span className="text-xl font-bold text-foreground">Idea Reef</span>
+            <div className="flex flex-col items-start">
+              <span className="text-xl font-bold text-foreground">Idea Reef</span>
+              <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground">Cross-Discipline Intelligence</span>
+            </div>
           </div>
           
           <nav className="hidden md:flex items-center gap-4">
