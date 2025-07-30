@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Bug, Loader2, AlertCircle } from "lucide-react";
+import { Bug, Loader2, AlertCircle, RefreshCw, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -20,6 +20,7 @@ import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
 import { submitResearch, formatBlackTeamPrompt, checkResearchStatus } from "@/services/researchApi";
+import SwarmLogsViewer from "@/components/SwarmLogsViewer";
 
 interface BlackResearchSwarmFormProps {
   children: React.ReactNode;
@@ -44,6 +45,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
   const [jobStatus, setJobStatus] = useState<ResearchJob | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   const [pollProgress, setPollProgress] = useState(0);
+  const [showLogs, setShowLogs] = useState(false);
   
   const apiEnvironment = useApiEnvironment();
 
@@ -118,6 +120,19 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
     setTimeToMarket("");
   };
 
+  const handleManualRefresh = async () => {
+    if (!jobId) return;
+    
+    try {
+      const status = await checkResearchStatus(jobId);
+      setJobStatus(status);
+      toast.info('Status refreshed');
+    } catch (error) {
+      console.error('Error refreshing status:', error);
+      toast.error('Failed to refresh status');
+    }
+  };
+
   const handleLaunchSwarm = async () => {
     // Find the selected vendor from existing tools
     const targetVendor = existingTools.length > 0 ? existingTools[0] : 'Vendor tool';
@@ -150,8 +165,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
       
       // Submit to EC2 research endpoint
       const response = await submitResearch({
-        task: researchPrompt,
-        teamType: 'black'
+        task: researchPrompt
       });
       
       // Store the request ID for tracking
@@ -263,16 +277,41 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
             <AlertCircle className="h-4 w-4 text-white" />
             <AlertDescription className="text-white">
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">Job Status:</span>
-                  <Badge variant={
-                    jobStatus?.status === 'completed' ? 'default' :
-                    jobStatus?.status === 'failed' ? 'destructive' :
-                    jobStatus?.status === 'processing' ? 'secondary' : 'outline'
-                  } className="bg-white/20">
-                    {jobStatus?.status || 'pending'}
-                  </Badge>
-                  {jobId && <span className="text-xs text-white/70">ID: {jobId}</span>}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Job Status:</span>
+                    <Badge variant={
+                      jobStatus?.status === 'completed' ? 'default' :
+                      jobStatus?.status === 'failed' ? 'destructive' :
+                      jobStatus?.status === 'processing' ? 'secondary' : 'outline'
+                    } className="bg-white/20">
+                      {jobStatus?.status || 'pending'}
+                    </Badge>
+                    {jobId && <span className="text-xs text-white/70">ID: {jobId}</span>}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleManualRefresh}
+                      disabled={isPolling}
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                    >
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Refresh
+                    </Button>
+                    {jobId && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowLogs(true)}
+                        className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                      >
+                        <Terminal className="h-3 w-3 mr-1" />
+                        View Logs
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 {isPolling && (
                   <div className="space-y-1">
@@ -511,6 +550,28 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
           </div>
         </div>
       </DialogContent>
+      
+      {/* Logs Viewer Dialog */}
+      {showLogs && jobId && (
+        <Dialog open={showLogs} onOpenChange={setShowLogs}>
+          <DialogContent className="max-w-6xl max-h-[90vh] h-[80vh] flex flex-col bg-black-team-light border-white/20">
+            <DialogHeader>
+              <DialogTitle className="text-white">Swarm Execution Logs</DialogTitle>
+              <DialogDescription className="text-white/70">
+                Real-time logs from the research swarm execution
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex-grow overflow-hidden">
+              <SwarmLogsViewer 
+                swarmId={jobId} 
+                onClose={() => setShowLogs(false)}
+                autoRefresh={true}
+                refreshInterval={3000}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 };

@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Lightbulb, Loader2, AlertCircle } from "lucide-react";
+import { Lightbulb, Loader2, AlertCircle, RefreshCw, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -18,6 +18,7 @@ import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
 import { submitResearch, formatWhiteTeamPrompt, checkResearchStatus } from "@/services/researchApi";
+import SwarmLogsViewer from "@/components/SwarmLogsViewer";
 
 interface WhiteResearchSwarmFormProps {
   children: React.ReactNode;
@@ -43,6 +44,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   const [jobStatus, setJobStatus] = useState<ResearchJob | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   const [pollProgress, setPollProgress] = useState(0);
+  const [showLogs, setShowLogs] = useState(false);
   
   const apiEnvironment = useApiEnvironment();
 
@@ -122,6 +124,19 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
     setCustomSearchAreas([]);
   };
 
+  const handleManualRefresh = async () => {
+    if (!jobId) return;
+    
+    try {
+      const status = await checkResearchStatus(jobId);
+      setJobStatus(status);
+      toast.info('Status refreshed');
+    } catch (error) {
+      console.error('Error refreshing status:', error);
+      toast.error('Failed to refresh status');
+    }
+  };
+
   const handleLaunchSwarm = async () => {
     const researchData = {
       marketSegment: opportunityTypes.join(', '),
@@ -152,8 +167,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
       
       // Submit to EC2 research endpoint
       const response = await submitResearch({
-        task: researchPrompt,
-        teamType: 'white'
+        task: researchPrompt
       });
       
       // Store the request ID for tracking
@@ -288,16 +302,39 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">Job Status:</span>
-                  <Badge variant={
-                    jobStatus?.status === 'completed' ? 'default' :
-                    jobStatus?.status === 'failed' ? 'destructive' :
-                    jobStatus?.status === 'processing' ? 'secondary' : 'outline'
-                  }>
-                    {jobStatus?.status || 'pending'}
-                  </Badge>
-                  {jobId && <span className="text-xs text-muted-foreground">ID: {jobId}</span>}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Job Status:</span>
+                    <Badge variant={
+                      jobStatus?.status === 'completed' ? 'default' :
+                      jobStatus?.status === 'failed' ? 'destructive' :
+                      jobStatus?.status === 'processing' ? 'secondary' : 'outline'
+                    }>
+                      {jobStatus?.status || 'pending'}
+                    </Badge>
+                    {jobId && <span className="text-xs text-muted-foreground">ID: {jobId}</span>}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleManualRefresh}
+                      disabled={isPolling}
+                    >
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Refresh
+                    </Button>
+                    {jobId && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowLogs(true)}
+                      >
+                        <Terminal className="h-3 w-3 mr-1" />
+                        View Logs
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 {isPolling && (
                   <div className="space-y-1">
@@ -578,6 +615,28 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
           </div>
         </div>
       </DialogContent>
+      
+      {/* Logs Viewer Dialog */}
+      {showLogs && jobId && (
+        <Dialog open={showLogs} onOpenChange={setShowLogs}>
+          <DialogContent className="max-w-6xl max-h-[90vh] h-[80vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Swarm Execution Logs</DialogTitle>
+              <DialogDescription>
+                Real-time logs from the research swarm execution
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex-grow overflow-hidden">
+              <SwarmLogsViewer 
+                swarmId={jobId} 
+                onClose={() => setShowLogs(false)}
+                autoRefresh={true}
+                refreshInterval={3000}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 };

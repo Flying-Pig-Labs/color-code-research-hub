@@ -2,8 +2,8 @@ const https = require('https');
 const http = require('http');
 const AWS = require('aws-sdk');
 
-// EC2 Claude Flow endpoint
-const EC2_ENDPOINT = process.env.EC2_ENDPOINT || 'http://18.209.36.58:8080';
+// EC2 Claude Flow endpoint - Updated to new port
+const EC2_ENDPOINT = process.env.EC2_ENDPOINT || 'http://18.209.36.58:3456';
 
 // Parse the EC2 endpoint
 const endpointUrl = new URL(EC2_ENDPOINT);
@@ -56,9 +56,38 @@ exports.handler = async (event) => {
         const fullPath = event.path || '';
         console.log('Incoming request path:', fullPath);
         
-        // The path comes as /api/claude-flow/research, etc.
-        // We need to proxy it as-is to EC2
-        const targetPath = fullPath.replace('/production', ''); // Remove stage if present
+        // Route mapping from frontend paths to backend paths
+        let targetPath = fullPath.replace('/production', ''); // Remove stage if present
+        let requestBody = event.body;
+        
+        // Handle different routes
+        if (targetPath === '/api/claude-flow/research' && event.httpMethod === 'POST') {
+            // Map submission route
+            targetPath = '/api/swarms';
+            
+            // Transform the request body
+            const bodyData = JSON.parse(event.body || '{}');
+            requestBody = JSON.stringify({
+                objective: bodyData.task || '',
+                flags: {
+                    executor: true,
+                    "output-format": "json"
+                }
+            });
+            console.log('Transformed request body:', requestBody);
+            
+        } else if (targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)$/)) {
+            // Map status check route to get specific swarm
+            const matches = targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)$/);
+            const swarmId = matches[1];
+            targetPath = `/api/swarms/${swarmId}`;
+            
+        } else if (targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)\/logs$/)) {
+            // For logs, we'll need to get the swarm details and extract logs from there
+            const matches = targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)\/logs$/);
+            const swarmId = matches[1];
+            targetPath = `/api/swarms/${swarmId}`;
+        }
         
         console.log(`Proxying to EC2: ${EC2_ENDPOINT}${targetPath}`);
         
@@ -108,8 +137,8 @@ exports.handler = async (event) => {
             });
             
             // Write request body if present
-            if (event.body) {
-                req.write(event.body);
+            if (requestBody) {
+                req.write(requestBody);
             }
             
             req.end();
@@ -119,6 +148,23 @@ exports.handler = async (event) => {
         let responseBody = response.body;
         try {
             responseBody = JSON.parse(response.body);
+            
+            // Transform response for frontend compatibility
+            if (targetPath === '/api/swarms' && responseBody.id) {
+                // Map id to request_id for frontend
+                responseBody.request_id = responseBody.id;
+                // Ensure status field exists
+                if (!responseBody.status) {
+                    responseBody.status = 'processing';
+                }
+            } else if (targetPath.startsWith('/api/swarms/') && responseBody.id) {
+                // For status checks, transform the response
+                responseBody.request_id = responseBody.id;
+                // If this was a logs request, extract logs if available
+                if (event.path.includes('/logs') && responseBody.logs) {
+                    responseBody = { logs: responseBody.logs };
+                }
+            }
         } catch (e) {
             // Not JSON, keep as string
         }
