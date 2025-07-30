@@ -38,7 +38,7 @@ exports.handler = async (event) => {
     // CORS headers
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Api-Key',
         'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
     };
     
@@ -183,7 +183,12 @@ exports.handler = async (event) => {
         
         return {
             statusCode: 500,
-            headers: corsHeaders,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Api-Key',
+                'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
                 error: 'Research proxy failed',
                 message: error.message,
