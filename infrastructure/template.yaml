@@ -472,6 +472,92 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /api/claude-flow/executions
             Method: OPTIONS
+        # New Bridge API endpoints
+        SwarmsGetEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarms
+            Method: GET
+        SwarmsPostEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarms
+            Method: POST
+        SwarmDetailsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarms/{id}
+            Method: GET
+        SwarmDeleteEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarms/{id}
+            Method: DELETE
+        LogsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/logs
+            Method: GET
+        MetricsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/metrics
+            Method: GET
+        SystemStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/system/status
+            Method: GET
+        HealthEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/health
+            Method: GET
+        # OPTIONS methods for new endpoints
+        OptionsSwarmsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarms
+            Method: OPTIONS
+        OptionsSwarmDetailsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/swarms/{id}
+            Method: OPTIONS
+        OptionsLogsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/logs
+            Method: OPTIONS
+        OptionsMetricsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/metrics
+            Method: OPTIONS
+        OptionsSystemStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/system/status
+            Method: OPTIONS
+        OptionsHealthEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/claude-flow/health
+            Method: OPTIONS
 
 
 Outputs:

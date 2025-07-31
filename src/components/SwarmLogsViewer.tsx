@@ -3,8 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Terminal, RefreshCw, Download, Maximize2, Loader2 } from "lucide-react";
+import { Terminal, RefreshCw, Download, Maximize2, Loader2, Wifi, WifiOff } from "lucide-react";
 import { toast } from "sonner";
+import { useSwarmWebSocket, SWARM_EVENTS } from "@/hooks/useSwarmWebSocket";
 
 interface LogEntry {
   timestamp: string;
@@ -35,6 +36,38 @@ const SwarmLogsViewer = ({
   const [offset, setOffset] = useState(0);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const shouldAutoScroll = useRef(true);
+  
+  // WebSocket connection for real-time logs
+  const { 
+    isConnected, 
+    events, 
+    getEventsBySwarm 
+  } = useSwarmWebSocket({
+    onEvent: (event) => {
+      // Convert WebSocket events to log entries
+      if (event.swarmId === swarmId && (event.type === SWARM_EVENTS.LOG_ENTRY || event.message)) {
+        const logEntry: LogEntry = {
+          timestamp: event.timestamp,
+          level: event.level || 'info',
+          message: event.message || `${event.type}: ${JSON.stringify(event.metadata || {})}`,
+          agentId: event.agentId,
+          metadata: event.metadata
+        };
+        
+        setLogs(prev => [...prev, logEntry]);
+        
+        // Auto-scroll if enabled
+        if (shouldAutoScroll.current && scrollAreaRef.current) {
+          setTimeout(() => {
+            const scrollContainer = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+            if (scrollContainer) {
+              scrollContainer.scrollTop = scrollContainer.scrollHeight;
+            }
+          }, 100);
+        }
+      }
+    }
+  });
 
   const fetchLogs = async (showLoader = true) => {
     if (showLoader) {
@@ -166,6 +199,13 @@ const SwarmLogsViewer = ({
                 Auto-refresh: {refreshInterval / 1000}s
               </Badge>
             )}
+            <Badge 
+              variant={isConnected ? "default" : "destructive"} 
+              className="text-xs flex items-center gap-1"
+            >
+              {isConnected ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+              {isConnected ? 'Live' : 'Offline'}
+            </Badge>
           </div>
         </div>
         <CardDescription>

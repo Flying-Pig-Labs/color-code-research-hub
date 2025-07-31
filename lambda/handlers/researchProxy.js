@@ -61,7 +61,7 @@ exports.handler = async (event) => {
         let targetPath = fullPath.replace('/production', ''); // Remove stage if present
         let requestBody = event.body;
         
-        // Handle different routes
+        // Enhanced route mapping for all Bridge API endpoints
         if (targetPath === '/api/claude-flow/research' && event.httpMethod === 'POST') {
             // Map submission route
             targetPath = '/api/swarms';
@@ -77,20 +77,71 @@ exports.handler = async (event) => {
             });
             console.log('Transformed request body:', requestBody);
             
+        } else if (targetPath === '/api/claude-flow/swarms' && event.httpMethod === 'GET') {
+            // List all swarms
+            targetPath = '/api/swarms';
+            
+        } else if (targetPath === '/api/claude-flow/swarms' && event.httpMethod === 'POST') {
+            // Create new swarm (direct Bridge API call)
+            targetPath = '/api/swarms';
+            
+        } else if (targetPath.match(/^\/api\/claude-flow\/swarms\/([^\/]+)$/) && event.httpMethod === 'GET') {
+            // Get specific swarm details
+            const matches = targetPath.match(/^\/api\/claude-flow\/swarms\/([^\/]+)$/);
+            const swarmId = matches[1];
+            targetPath = `/api/swarms/${swarmId}`;
+            
+        } else if (targetPath.match(/^\/api\/claude-flow\/swarms\/([^\/]+)$/) && event.httpMethod === 'DELETE') {
+            // Stop specific swarm
+            const matches = targetPath.match(/^\/api\/claude-flow\/swarms\/([^\/]+)$/);
+            const swarmId = matches[1];
+            targetPath = `/api/swarms/${swarmId}`;
+            
+        } else if (targetPath === '/api/claude-flow/logs' && event.httpMethod === 'GET') {
+            // Aggregate logs from system status executions
+            // Since the Bridge API doesn't have a dedicated logs endpoint,
+            // we'll provide execution-level information
+            const swarmId = queryParams.swarmId;
+            
+            if (swarmId) {
+                // Get specific swarm logs by fetching swarm details
+                targetPath = `/api/swarms/${swarmId}`;
+            } else {
+                // Get system-wide execution info as logs
+                targetPath = '/api/system/status';
+            }
+            
+        } else if (targetPath === '/api/claude-flow/metrics' && event.httpMethod === 'GET') {
+            // Generate metrics from system status
+            targetPath = '/api/system/status';
+            
+        } else if (targetPath === '/api/claude-flow/system/status' && event.httpMethod === 'GET') {
+            // System status
+            targetPath = '/api/system/status';
+            
+        } else if (targetPath === '/api/claude-flow/health' && event.httpMethod === 'GET') {
+            // Health check
+            targetPath = '/health';
+            
         } else if (targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)$/)) {
-            // Map status check route to get specific swarm
+            // Legacy: Map status check route to get specific swarm
             const matches = targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)$/);
             const swarmId = matches[1];
             targetPath = `/api/swarms/${swarmId}`;
             
         } else if (targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)\/logs$/)) {
-            // For logs, we'll need to get the swarm details and extract logs from there
+            // Legacy: For logs, we'll need to get the swarm details and extract logs from there
             const matches = targetPath.match(/^\/api\/claude-flow\/execution\/([^\/]+)\/logs$/);
             const swarmId = matches[1];
             targetPath = `/api/swarms/${swarmId}`;
         }
         
-        console.log(`Proxying to EC2: ${EC2_ENDPOINT}${targetPath}`);
+        // Forward query parameters for endpoints that support them
+        const queryParams = event.queryStringParameters || {};
+        const queryString = new URLSearchParams(queryParams).toString();
+        const fullTargetPath = queryString ? `${targetPath}?${queryString}` : targetPath;
+        
+        console.log(`Proxying to EC2: ${EC2_ENDPOINT}${fullTargetPath}`);
         
         // Get the API key from Secrets Manager
         const apiKey = await getApiKey();
@@ -99,7 +150,7 @@ exports.handler = async (event) => {
         const options = {
             hostname: endpointUrl.hostname,
             port: endpointUrl.port || (endpointUrl.protocol === 'https:' ? 443 : 80),
-            path: targetPath,
+            path: fullTargetPath,
             method: event.httpMethod,
             headers: {
                 'Content-Type': 'application/json',
@@ -151,19 +202,110 @@ exports.handler = async (event) => {
             responseBody = JSON.parse(response.body);
             
             // Transform response for frontend compatibility
-            if (targetPath === '/api/swarms' && responseBody.id) {
-                // Map id to request_id for frontend
+            if (targetPath === '/api/swarms' && event.httpMethod === 'POST' && responseBody.id) {
+                // Map swarm creation response: id to request_id for frontend compatibility
                 responseBody.request_id = responseBody.id;
+                responseBody.swarmId = responseBody.id;
                 // Ensure status field exists
                 if (!responseBody.status) {
                     responseBody.status = 'processing';
                 }
+            } else if (targetPath === '/api/swarms' && event.httpMethod === 'GET') {
+                // List swarms response - ensure each swarm has request_id for frontend compatibility
+                if (responseBody.swarms && Array.isArray(responseBody.swarms)) {
+                    responseBody.swarms = responseBody.swarms.map(swarm => ({
+                        ...swarm,
+                        request_id: swarm.id,
+                        swarmId: swarm.id
+                    }));
+                }
             } else if (targetPath.startsWith('/api/swarms/') && responseBody.id) {
-                // For status checks, transform the response
+                // For individual swarm operations
                 responseBody.request_id = responseBody.id;
-                // If this was a logs request, extract logs if available
-                if (event.path.includes('/logs') && responseBody.logs) {
-                    responseBody = { logs: responseBody.logs };
+                responseBody.swarmId = responseBody.id;
+                
+                // If this was a legacy logs request, extract logs if available
+                if (event.path.includes('/execution/') && event.path.includes('/logs') && responseBody.logs) {
+                    responseBody = { 
+                        logs: responseBody.logs,
+                        swarmId: responseBody.id || responseBody.swarmId
+                    };
+                }
+            } else if (event.path.includes('/logs')) {
+                // Transform system status or swarm details into logs format
+                if (targetPath === '/api/system/status' && responseBody.executions) {
+                    // Transform executions into log entries
+                    const logs = responseBody.executions.map(exec => ({
+                        timestamp: new Date(exec.startTime).toISOString(),
+                        level: 'info',
+                        message: `Swarm execution started: ${exec.objective}`,
+                        swarmId: exec.id,
+                        metadata: {
+                            duration: exec.duration,
+                            strategy: exec.strategy,
+                            mode: exec.mode,
+                            agents: exec.agents
+                        }
+                    }));
+                    
+                    responseBody = {
+                        success: true,
+                        logs: logs,
+                        total: logs.length
+                    };
+                } else if (responseBody.swarm) {
+                    // Transform single swarm into log entry
+                    const swarm = responseBody.swarm;
+                    responseBody = {
+                        success: true,
+                        logs: [{
+                            timestamp: new Date(swarm.startTime).toISOString(),
+                            level: 'info',
+                            message: `Swarm ${swarm.status}: ${swarm.objective}`,
+                            swarmId: swarm.id,
+                            metadata: {
+                                duration: swarm.duration,
+                                status: swarm.status
+                            }
+                        }],
+                        total: 1
+                    };
+                }
+            } else if (event.path.includes('/metrics')) {
+                // Transform system status into metrics format
+                if (responseBody.system && responseBody.executions) {
+                    const now = Date.now();
+                    const metrics = {
+                        success: true,
+                        timeRange: '1h',
+                        metrics: {
+                            executionTimes: responseBody.executions.map(exec => ({
+                                timestamp: new Date(exec.startTime).toISOString(),
+                                avgExecutionTime: exec.duration || (now - exec.startTime),
+                                totalExecutions: 1
+                            })),
+                            resourceUsage: [{
+                                timestamp: new Date().toISOString(),
+                                memoryUsage: responseBody.system.memory.heapUsed,
+                                cpuUsage: 0 // Not available in current API
+                            }],
+                            successRates: [{
+                                timestamp: new Date().toISOString(),
+                                successRate: responseBody.service.activeSwarms / (responseBody.service.totalExecutions || 1),
+                                totalAttempts: responseBody.service.totalExecutions
+                            }]
+                        }
+                    };
+                    responseBody = metrics;
+                }
+            } else if (targetPath === '/api/system/status' || targetPath === '/health') {
+                // System status/health - pass through, ensure success flag
+                if (!responseBody.hasOwnProperty('success')) {
+                    responseBody.success = response.statusCode >= 200 && response.statusCode < 300;
+                }
+                // Add timestamp if not present
+                if (!responseBody.timestamp) {
+                    responseBody.timestamp = new Date().toISOString();
                 }
             }
         } catch (e) {
