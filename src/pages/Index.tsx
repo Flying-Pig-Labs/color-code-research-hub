@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import SectionWrapper from "@/components/SectionWrapper";
 import TeamCard from "@/components/TeamCard";
-import { Target, Bug, Lightbulb } from "lucide-react";
+import { Target, Bug, Lightbulb, Terminal } from "lucide-react";
 
 const Index = () => {
   return (
@@ -19,7 +19,7 @@ const Index = () => {
         
         <div className="text-center max-w-4xl mx-auto relative z-10">
           <div className="flex justify-center mb-6">
-            <span className="text-8xl">🧬</span>
+            <span className="text-8xl">🪸</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
@@ -41,7 +41,7 @@ const Index = () => {
           <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
           <TeamCard
             title="Red Team"
             description="Competitive Disruption Specialists"
@@ -70,6 +70,16 @@ const Index = () => {
             icon={Lightbulb}
             variant="white-team"
             theme="white"
+          />
+          
+          <TeamCard
+            title="Terminal"
+            description="Swarm Monitoring Console"
+            focus="Real-time monitoring and management of Claude-Flow swarms, system metrics, and orchestration logs for all research operations."
+            path="/monitoring"
+            icon={Terminal}
+            variant="terminal"
+            theme="blue"
           />
         </div>
       </SectionWrapper>

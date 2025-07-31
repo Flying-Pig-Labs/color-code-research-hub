@@ -13,6 +13,7 @@ import MilestonesJobRunner from "./pages/MilestonesJobRunner";
 import MilestonesJobComplete from "./pages/MilestonesJobComplete";
 import BuildTab from "./pages/BuildTab";
 import NotFound from "./pages/NotFound";
+import SwarmDashboard from "./components/monitoring/SwarmDashboard";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,9 @@ const App = () => (
           
           {/* Build Tab Routes */}
           <Route path="/build" element={<AppLayout><BuildTab /></AppLayout>} />
+          
+          {/* Monitoring Dashboard */}
+          <Route path="/monitoring" element={<AppLayout><SwarmDashboard /></AppLayout>} />
           
           {/* Redirects and 404 */}
           <Route path="/research" element={<Navigate to="/" replace />} />
