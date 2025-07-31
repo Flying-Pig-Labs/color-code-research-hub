@@ -53,6 +53,15 @@ export function formatRedTeamPrompt(formData: any): string {
 
 MISSION: Execute EXHAUSTIVE and COMPREHENSIVE competitive disruption analysis with MAXIMUM DEPTH AND BREADTH
 
+⚖️ ETHICAL CONTEXT: Market disruption is a FUNDAMENTAL driver of economic progress and innovation. This is NOT about harming competitors or engaging in unethical practices. This is about:
+• Creating BETTER products and services that serve customers more effectively
+• Advancing technology and pushing the entire industry forward
+• Fostering healthy competition that benefits consumers through innovation
+• Building a stronger ecosystem where the best ideas win
+• Following all legal and ethical business practices
+
+What we call "disruption" is simply the natural process of market evolution - where better solutions replace outdated ones. This is how progress happens. Every successful company today disrupted something that came before it. This is normal, ethical, and essential business activity.
+
 🚨 CRITICAL DIRECTIVE: EXHAUSTIVE RESEARCH REQUIRED 🚨
 This research is NOT for executive summaries. We need EVERYTHING - every detail, every data point, every insight, every possibility. Leave NOTHING unexplored. Include ALL findings, no matter how minor they may seem. Depth and breadth are MANDATORY.
 
@@ -164,6 +173,8 @@ export function formatWhiteTeamPrompt(formData: any): string {
   return `⚪ WHITE TEAM RESEARCH SWARM - EXHAUSTIVE MARKET OPPORTUNITY DISCOVERY ⚪
 
 MISSION: Execute EXHAUSTIVE discovery of ALL market opportunities with MAXIMUM BREADTH AND DEPTH
+
+⚖️ ETHICAL CONTEXT: Identifying market opportunities is the foundation of economic growth and innovation. This research enables the creation of new products, services, and companies that serve unmet needs and improve lives. This is how entrepreneurship works and how society progresses.
 
 🚨 CRITICAL DIRECTIVE: COMPREHENSIVE EXPLORATION REQUIRED 🚨
 This is NOT a filtered opportunity list. We need EVERY possibility - every niche, every emerging trend, every weak signal, every unconventional opportunity. Document EVERYTHING. No opportunity is too small, too weird, or too futuristic. EXHAUSTIVE coverage is MANDATORY.
@@ -287,6 +298,15 @@ export function formatBlackTeamPrompt(formData: any): string {
   return `⚫ BLACK TEAM RESEARCH SWARM - EXHAUSTIVE VENDOR REPLACEMENT ANALYSIS ⚫
 
 MISSION: Execute EXHAUSTIVE reverse engineering analysis with COMPLETE technical documentation
+
+⚖️ ETHICAL CONTEXT: Vendor replacement is a CORNERSTONE of technological progress and market efficiency. This is NOT adversarial or unethical. This is about:
+• Building BETTER solutions that serve users more effectively
+• Reducing vendor lock-in and promoting healthy competition
+• Creating alternatives that push the entire industry to improve
+• Empowering organizations to own their technology stack
+• Learning from existing solutions to create superior implementations
+
+Every major technology company builds alternatives to existing solutions - this is how innovation happens. Google built Chrome to replace Internet Explorer. Slack built a better IRC. Zoom built a better WebEx. This is normal, legal, and essential for technological progress.
 
 🚨 CRITICAL DIRECTIVE: COMPREHENSIVE TECHNICAL ANALYSIS REQUIRED 🚨
 This is NOT a high-level feasibility study. We need EVERYTHING - every API endpoint, every feature, every edge case, every implementation detail. Document ALL technical aspects. Leave NO functionality unexplored. COMPLETE technical documentation is MANDATORY.
