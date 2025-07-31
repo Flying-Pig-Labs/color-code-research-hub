@@ -23,6 +23,7 @@ import {
   Trash2
 } from "lucide-react";
 import { toast } from "sonner";
+import Header from "@/components/Header";
 
 interface Swarm {
   id: string;
@@ -200,13 +201,16 @@ const SwarmDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header with controls */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Swarm Command Center</h1>
-          <p className="text-muted-foreground">Monitor and control all AI agent swarms</p>
-        </div>
+    <div className="min-h-screen bg-black flex flex-col">
+      <Header />
+      
+      <div className="container mx-auto p-6 space-y-6 dark">
+        {/* Header with controls */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-green-400 font-mono">$ swarm --monitor</h1>
+            <p className="text-gray-500 font-mono text-sm">Monitor and control all AI agent swarms</p>
+          </div>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -229,50 +233,50 @@ const SwarmDashboard = () => {
 
       {/* System Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-gray-950 border-gray-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Active Swarms</p>
-                <p className="text-2xl font-bold">{systemMetrics?.activeSwarms || swarms.filter(s => s.status === 'running').length}</p>
+                <p className="text-sm text-gray-500 font-mono">Active Swarms</p>
+                <p className="text-2xl font-bold text-green-400 font-mono">{systemMetrics?.activeSwarms || swarms.filter(s => s.status === 'running').length}</p>
               </div>
-              <Activity className="h-8 w-8 text-blue-500" />
+              <Activity className="h-8 w-8 text-green-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gray-950 border-gray-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Executions</p>
-                <p className="text-2xl font-bold">{systemMetrics?.totalExecutions || swarms.length}</p>
+                <p className="text-sm text-gray-500 font-mono">Total Executions</p>
+                <p className="text-2xl font-bold text-cyan-400 font-mono">{systemMetrics?.totalExecutions || swarms.length}</p>
               </div>
-              <Server className="h-8 w-8 text-green-500" />
+              <Server className="h-8 w-8 text-cyan-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gray-950 border-gray-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Memory Usage</p>
-                <p className="text-2xl font-bold">{systemMetrics ? formatBytes(systemMetrics.memory.heapUsed) : 'N/A'}</p>
+                <p className="text-sm text-gray-500 font-mono">Memory Usage</p>
+                <p className="text-2xl font-bold text-yellow-400 font-mono">{systemMetrics ? formatBytes(systemMetrics.memory.heapUsed) : 'N/A'}</p>
               </div>
-              <Zap className="h-8 w-8 text-orange-500" />
+              <Zap className="h-8 w-8 text-yellow-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gray-950 border-gray-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Uptime</p>
-                <p className="text-2xl font-bold">{systemMetrics ? formatDuration(systemMetrics.uptime * 1000) : 'N/A'}</p>
+                <p className="text-sm text-gray-500 font-mono">Uptime</p>
+                <p className="text-2xl font-bold text-purple-400 font-mono">{systemMetrics ? formatDuration(systemMetrics.uptime * 1000) : 'N/A'}</p>
               </div>
-              <Clock className="h-8 w-8 text-purple-500" />
+              <Clock className="h-8 w-8 text-purple-400" />
             </div>
           </CardContent>
         </Card>
@@ -280,33 +284,33 @@ const SwarmDashboard = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="swarms" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="swarms">Active Swarms</TabsTrigger>
-          <TabsTrigger value="logs">System Logs</TabsTrigger>
-          <TabsTrigger value="metrics">Performance</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-gray-950 border-gray-800">
+          <TabsTrigger value="swarms" className="font-mono data-[state=active]:bg-gray-800 data-[state=active]:text-green-400">Active Swarms</TabsTrigger>
+          <TabsTrigger value="logs" className="font-mono data-[state=active]:bg-gray-800 data-[state=active]:text-green-400">System Logs</TabsTrigger>
+          <TabsTrigger value="metrics" className="font-mono data-[state=active]:bg-gray-800 data-[state=active]:text-green-400">Performance</TabsTrigger>
         </TabsList>
 
         {/* Swarms Tab */}
         <TabsContent value="swarms" className="space-y-4">
-          <Card>
+          <Card className="bg-gray-950 border-gray-800">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-green-400 font-mono">
                 <Users className="h-5 w-5" />
                 Swarm Status Overview
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-500 font-mono text-sm">
                 Monitor and control all AI agent swarms
               </CardDescription>
             </CardHeader>
             <CardContent>
               {swarms.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No swarms are currently active
+                <div className="text-center py-8 text-gray-600 font-mono">
+                  $ No swarms are currently active
                 </div>
               ) : (
                 <div className="space-y-4">
                   {swarms.map((swarm) => (
-                    <Card key={swarm.id} className="border-l-4 border-l-blue-500">
+                    <Card key={swarm.id} className="bg-black border-gray-800 border-l-4 border-l-green-400">
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
@@ -386,47 +390,43 @@ const SwarmDashboard = () => {
 
         {/* Logs Tab */}
         <TabsContent value="logs" className="space-y-4">
-          <Card>
+          <Card className="bg-gray-950 border-gray-800">
             <CardHeader>
-              <CardTitle>System Logs</CardTitle>
-              <CardDescription>Recent activity across all swarms</CardDescription>
+              <CardTitle className="text-green-400 font-mono">System Logs</CardTitle>
+              <CardDescription className="text-gray-500">Recent activity across all swarms</CardDescription>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-96">
-                {recentLogs.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No recent logs available
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {recentLogs.map((log, index) => (
-                      <div key={index} className="flex items-start gap-2 p-2 rounded hover:bg-muted/50">
-                        <Badge variant="outline" className={`text-xs ${getStatusColor(log.level)}`}>
-                          {log.level.toUpperCase()}
-                        </Badge>
-                        <div className="flex-1 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(log.timestamp).toLocaleTimeString()}
-                            </span>
-                            {log.swarmId && (
-                              <Badge variant="outline" className="text-xs">
-                                {log.swarmId}
-                              </Badge>
-                            )}
-                            {log.agentId && (
-                              <Badge variant="secondary" className="text-xs">
-                                {log.agentId}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="mt-1">{log.message}</p>
+              <div className="bg-black rounded-lg p-4 border border-gray-800">
+                <ScrollArea className="h-96">
+                  {recentLogs.length === 0 ? (
+                    <div className="text-center py-8 text-gray-600 font-mono">
+                      $ No recent logs available
+                    </div>
+                  ) : (
+                    <div className="space-y-1 font-mono text-sm">
+                      {recentLogs.map((log, index) => (
+                        <div key={index} className="text-gray-300 hover:bg-gray-900/50 px-2 py-1 rounded">
+                          <span className={`${
+                            log.level === 'error' ? 'text-red-400' :
+                            log.level === 'warn' ? 'text-yellow-400' :
+                            log.level === 'info' ? 'text-blue-400' :
+                            'text-green-400'
+                          }`}>
+                            [{new Date(log.timestamp).toLocaleTimeString()}]
+                          </span>
+                          {log.swarmId && (
+                            <span className="text-cyan-400 ml-2">[{log.swarmId.slice(0, 8)}]</span>
+                          )}
+                          {log.agentId && (
+                            <span className="text-purple-400 ml-2">[{log.agentId}]</span>
+                          )}
+                          <span className="text-gray-300 ml-2">{log.message}</span>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </ScrollArea>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -491,6 +491,7 @@ const SwarmDashboard = () => {
           </div>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };

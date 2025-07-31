@@ -70,9 +70,10 @@ exports.handler = async (event) => {
             const bodyData = JSON.parse(event.body || '{}');
             requestBody = JSON.stringify({
                 objective: bodyData.task || '',
-                flags: {
-                    executor: true,
-                    "output-format": "json"
+                strategy: bodyData.strategy || 'auto',
+                config: {
+                    maxAgents: bodyData.maxAgents || 5,
+                    timeout: bodyData.timeout || 300000
                 }
             });
             console.log('Transformed request body:', requestBody);
