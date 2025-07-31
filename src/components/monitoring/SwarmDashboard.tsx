@@ -201,10 +201,11 @@ const SwarmDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
       <Header />
       
-      <div className="container mx-auto p-6 space-y-6 dark">
+      <div className="min-h-screen bg-black pt-16">
+        <div className="container mx-auto p-6 space-y-6 dark">
         {/* Header with controls */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -491,6 +492,7 @@ const SwarmDashboard = () => {
           </div>
         </TabsContent>
       </Tabs>
+        </div>
       </div>
     </div>
   );
