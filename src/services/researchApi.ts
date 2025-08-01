@@ -14,12 +14,17 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function submitResearch(request: ResearchRequest): Promise<ResearchResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/claude-flow/research`, {
+    const response = await fetch(`${API_BASE_URL}/api/research`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify({
+        content: request.task,
+        title: 'Research Request',
+        model: 'sonar-deep-research',
+        reasoning_effort: 'low'
+      }),
     });
 
     if (!response.ok) {

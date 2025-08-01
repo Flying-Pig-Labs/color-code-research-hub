@@ -57,6 +57,31 @@ Resources:
       VisibilityTimeout: 900
       MessageRetentionPeriod: 1209600  # 14 days
 
+  # S3 Bucket for Research Results
+  ResearchResultsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'color-code-research-results-${AWS::AccountId}'
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldResearchResults
+            Status: Enabled
+            ExpirationInDays: 90
+      Tags:
+        - Key: Application
+          Value: color-code-research-hub
+
   # API Gateway
   ResearchHubApi:
     Type: AWS::Serverless::Api
@@ -414,19 +439,18 @@ Resources:
             Path: /api/plan/async/status/{jobId}
             Method: GET
 
-  # Research Proxy for EC2 Claude Flow
-
-  # Research Proxy for EC2 Claude Flow
-  ResearchProxyFunction:
+  # Research API Function - Perplexity Integration
+  ResearchApiFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../lambda/handlers/
-      Handler: researchProxy.handler
-      Timeout: 30
-      MemorySize: 256
+      Handler: researchApi.handler
+      Runtime: python3.11
+      Timeout: 60
+      MemorySize: 512
       Environment:
         Variables:
-          EC2_ENDPOINT: http://18.209.36.58:3456
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -434,69 +458,25 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:claude-flow-research-api-key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:perplexity-key-*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
       Events:
         ResearchEndpoint:
           Type: Api
           Properties:
             RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/research
+            Path: /api/research
             Method: POST
-        ExecutionEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/execution/{proxy+}
-            Method: GET
-        ExecutionsEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/executions
-            Method: GET
         OptionsResearch:
           Type: Api
           Properties:
             RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/research
+            Path: /api/research
             Method: OPTIONS
-        OptionsExecution:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/execution/{proxy+}
-            Method: OPTIONS
-        OptionsExecutions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/executions
-            Method: OPTIONS
-        # New Bridge API endpoints
-        SwarmsGetEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/swarms
-            Method: GET
-        SwarmsPostEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/swarms
-            Method: POST
-        SwarmDetailsEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/swarms/{id}
-            Method: GET
-        SwarmDeleteEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/claude-flow/swarms/{id}
-            Method: DELETE
         LogsEndpoint:
           Type: Api
           Properties:
@@ -597,3 +577,9 @@ Outputs:
     Value: !Ref ResearchRequestQueue
     Export:
       Name: !Sub ${AWS::StackName}-QueueUrl
+  
+  ResearchResultsBucketName:
+    Description: Name of the S3 bucket for research results
+    Value: !Ref ResearchResultsBucket
+    Export:
+      Name: !Sub ${AWS::StackName}-ResearchBucket
