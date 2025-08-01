@@ -85,18 +85,19 @@ def upload_to_s3(content: str, metadata: Dict[str, Any]) -> str:
         return None
 
 
-def create_async_research_job(user_content: str, model: str = "sonar-deep-research", 
-                             reasoning_effort: str = "low") -> Dict[str, Any]:
+def create_async_research_job(user_content: str, model: str = "sonar-deep-research") -> Dict[str, Any]:
     """Create an async research job with Perplexity API."""
     try:
         api_key = get_perplexity_api_key()
         
+        # Async endpoint expects the request wrapped in a "request" object
         payload = {
-            "model": model,
-            "messages": [
-                {"role": "user", "content": user_content}
-            ],
-            "reasoning_effort": reasoning_effort
+            "request": {
+                "model": model,
+                "messages": [
+                    {"role": "user", "content": user_content}
+                ]
+            }
         }
         
         headers = {
@@ -105,6 +106,8 @@ def create_async_research_job(user_content: str, model: str = "sonar-deep-resear
         }
         
         print(f"Creating async research job with model: {model}")
+        print(f"Request payload: {json.dumps(payload, indent=2)}")
+        
         response = requests.post(
             PERPLEXITY_ASYNC_URL, 
             json=payload, 
@@ -112,11 +115,18 @@ def create_async_research_job(user_content: str, model: str = "sonar-deep-resear
             timeout=30
         )
         
+        # Log response details for debugging
+        if response.status_code != 200:
+            print(f"Error response status: {response.status_code}")
+            print(f"Error response body: {response.text}")
+        
         response.raise_for_status()
         return response.json()
         
     except requests.exceptions.RequestException as e:
         print(f"Error creating async job: {str(e)}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Response body: {e.response.text}")
         raise
 
 
@@ -200,15 +210,14 @@ def handler(event, context):
             # Create async job
             job_response = create_async_research_job(
                 user_content=user_content,
-                model=model,
-                reasoning_effort=reasoning_effort
+                model=model
             )
             
-            # Extract request_id from response
-            request_id = job_response.get('request_id')
+            # Extract id from response (Perplexity uses 'id' not 'request_id')
+            request_id = job_response.get('id')
             
             if not request_id:
-                raise ValueError("No request_id returned from Perplexity API")
+                raise ValueError("No id returned from Perplexity API")
             
             # Return job creation response
             response_data = {
@@ -244,36 +253,45 @@ def handler(event, context):
             status_response = check_job_status(request_id)
             
             # Extract status and data
-            status = status_response.get('status', 'unknown')
+            status = status_response.get('status', 'UNKNOWN')
             
             response_data = {
                 'success': True,
                 'request_id': request_id,
-                'status': status,
+                'status': status.lower(),  # Convert to lowercase for frontend compatibility
                 'timestamp': datetime.now().isoformat()
             }
             
             # If completed, include the result
-            if status == 'completed':
-                # Extract the research content from response
+            if status == 'COMPLETED':
+                # Extract the research content from nested response
                 research_content = ''
-                if 'choices' in status_response and len(status_response['choices']) > 0:
-                    research_content = status_response['choices'][0].get('message', {}).get('content', '')
+                response_obj = status_response.get('response', {})
+                if response_obj and 'choices' in response_obj and len(response_obj['choices']) > 0:
+                    research_content = response_obj['choices'][0].get('message', {}).get('content', '')
                 
                 # Upload to S3
                 metadata = {
                     'request_id': request_id,
-                    'model': status_response.get('model', 'sonar-deep-research')
+                    'model': response_obj.get('model', 'sonar-deep-research')
                 }
                 s3_key = upload_to_s3(research_content, metadata)
                 
                 response_data['content'] = research_content
                 response_data['s3_location'] = f"s3://{S3_BUCKET}/{s3_key}" if s3_key else None
-                response_data['model_used'] = status_response.get('model')
+                response_data['model_used'] = response_obj.get('model')
+                response_data['status'] = 'completed'  # lowercase for frontend
             
             # If failed, include error info
-            elif status == 'failed':
-                response_data['error'] = status_response.get('error', 'Unknown error')
+            elif status == 'FAILED':
+                response_data['error'] = status_response.get('error_message', 'Unknown error')
+                response_data['status'] = 'failed'  # lowercase for frontend
+            
+            # Handle other statuses
+            elif status == 'IN_PROGRESS':
+                response_data['status'] = 'processing'  # Map to frontend expected status
+            elif status == 'CREATED':
+                response_data['status'] = 'pending'  # Map to frontend expected status
             
             return {
                 'statusCode': 200,
