@@ -9,6 +9,22 @@ interface ResearchResponse {
   error?: string;
 }
 
+interface PerplexityResponse {
+  success: boolean;
+  research_id: string;
+  content: string;
+  metadata: {
+    title: string;
+    requester: string;
+    tags: string[];
+    model: string;
+    reasoning_effort: string;
+  };
+  s3_location?: string;
+  model_used: string;
+  timestamp: string;
+}
+
 // Use API Gateway proxy to avoid CORS/private network issues
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -31,7 +47,19 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
       throw new Error(`Research submission failed: ${response.statusText}`);
     }
 
-    return await response.json();
+    const data: PerplexityResponse = await response.json();
+    
+    // Transform the new API response to match expected format
+    return {
+      request_id: data.research_id,
+      status: 'completed' as const,
+      result: {
+        content: data.content,
+        metadata: data.metadata,
+        s3_location: data.s3_location,
+        timestamp: data.timestamp
+      }
+    };
   } catch (error) {
     console.error('Error submitting research:', error);
     throw error;
