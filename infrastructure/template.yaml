@@ -446,7 +446,7 @@ Resources:
       CodeUri: ../lambda/handlers/
       Handler: researchApi.handler
       Runtime: python3.11
-      Timeout: 60
+      Timeout: 900
       MemorySize: 512
       Environment:
         Variables:
@@ -476,6 +476,18 @@ Resources:
           Properties:
             RestApiId: !Ref ResearchHubApi
             Path: /api/research
+            Method: OPTIONS
+        ResearchStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/status/{requestId}
+            Method: GET
+        OptionsResearchStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/status/{requestId}
             Method: OPTIONS
         LogsEndpoint:
           Type: Api

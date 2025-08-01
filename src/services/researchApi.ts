@@ -4,25 +4,34 @@ interface ResearchRequest {
 
 interface ResearchResponse {
   request_id: string;
-  status: 'processing' | 'completed' | 'failed';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
   result?: any;
   error?: string;
 }
 
-interface PerplexityResponse {
+interface AsyncJobResponse {
   success: boolean;
-  research_id: string;
-  content: string;
-  metadata: {
+  request_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  metadata?: {
     title: string;
     requester: string;
     tags: string[];
     model: string;
     reasoning_effort: string;
   };
-  s3_location?: string;
-  model_used: string;
   timestamp: string;
+}
+
+interface StatusCheckResponse {
+  success: boolean;
+  request_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  content?: string;
+  s3_location?: string;
+  model_used?: string;
+  timestamp: string;
+  error?: string;
 }
 
 // Use API Gateway proxy to avoid CORS/private network issues
@@ -47,18 +56,16 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
       throw new Error(`Research submission failed: ${response.statusText}`);
     }
 
-    const data: PerplexityResponse = await response.json();
+    const data: AsyncJobResponse = await response.json();
     
-    // Transform the new API response to match expected format
+    // Return the async job response
     return {
-      request_id: data.research_id,
-      status: 'completed' as const,
-      result: {
-        content: data.content,
+      request_id: data.request_id,
+      status: data.status,
+      result: data.metadata ? {
         metadata: data.metadata,
-        s3_location: data.s3_location,
         timestamp: data.timestamp
-      }
+      } : undefined
     };
   } catch (error) {
     console.error('Error submitting research:', error);
@@ -68,13 +75,26 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
 
 export async function checkResearchStatus(requestId: string): Promise<ResearchResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/claude-flow/execution/${requestId}`);
+    const response = await fetch(`${API_BASE_URL}/api/research/status/${requestId}`);
     
     if (!response.ok) {
       throw new Error(`Status check failed: ${response.statusText}`);
     }
 
-    return await response.json();
+    const data: StatusCheckResponse = await response.json();
+    
+    // Transform the status check response to match expected format
+    return {
+      request_id: data.request_id,
+      status: data.status,
+      result: data.status === 'completed' ? {
+        content: data.content,
+        s3_location: data.s3_location,
+        model_used: data.model_used,
+        timestamp: data.timestamp
+      } : undefined,
+      error: data.error
+    };
   } catch (error) {
     console.error('Error checking research status:', error);
     throw error;
