@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 
 import SectionWrapper from "@/components/SectionWrapper";
-import ResearchRequestTable from "@/components/ResearchRequestTable";
+import ResearchRequestTableActive from "@/components/ResearchRequestTableActive";
 import ResearchSwarmForm from "@/components/ResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,7 +41,7 @@ const RedTeam = () => {
 
       {/* Research Requests Table */}
       <SectionWrapper>
-        <ResearchRequestTable teamType="red" />
+        <ResearchRequestTableActive teamType="red" />
       </SectionWrapper>
 
 

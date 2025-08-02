@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Bug, Loader2, AlertCircle, RefreshCw, Terminal } from "lucide-react";
+import { Bug, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -19,8 +19,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
-import { submitResearch, formatBlackTeamPrompt, checkResearchStatus } from "@/services/researchApi";
-import SwarmLogsViewer from "@/components/SwarmLogsViewer";
+import { submitResearch, formatBlackTeamPrompt } from "@/services/researchApi";
 
 interface BlackResearchSwarmFormProps {
   children: React.ReactNode;
@@ -91,7 +90,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
       } catch (error) {
         console.error('Error polling status:', error);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 10000); // Poll every 10 seconds
 
     return () => clearInterval(pollInterval);
   }, [jobId, isPolling]);
@@ -194,10 +193,9 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
       localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
       window.dispatchEvent(new CustomEvent('taskAdded'));
       
-      // Start polling for status updates
-      setIsPolling(true);
-      
-      // Don't close dialog immediately - keep it open to show status
+      // Close dialog and let the main page handle polling
+      handleReset();
+      setOpen(false);
     } catch (error) {
       if (error instanceof ApiError) {
         showApiError(error);

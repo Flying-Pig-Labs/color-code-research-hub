@@ -9,17 +9,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Target, Loader2, AlertCircle, RefreshCw, Terminal } from "lucide-react";
+import { Target, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
+import { apiService, showApiError, ApiError } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
-import { submitResearch, formatRedTeamPrompt, checkResearchStatus } from "@/services/researchApi";
-import SwarmLogsViewer from "@/components/SwarmLogsViewer";
+import { submitResearch, formatRedTeamPrompt } from "@/services/researchApi";
 
 interface ResearchSwarmFormProps {
   children: React.ReactNode;
@@ -41,59 +38,10 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   
   // API state
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [jobStatus, setJobStatus] = useState<ResearchJob | null>(null);
-  const [isPolling, setIsPolling] = useState(false);
-  const [pollProgress, setPollProgress] = useState(0);
-  const [showLogs, setShowLogs] = useState(false);
   
   const apiEnvironment = useApiEnvironment();
 
-  // Polling effect for status updates
-  useEffect(() => {
-    if (!jobId || !isPolling) return;
-
-    const pollInterval = setInterval(async () => {
-      try {
-        const status = await checkResearchStatus(jobId);
-        setJobStatus(status);
-        
-        // Update progress (simulate based on time elapsed)
-        setPollProgress(prev => Math.min(prev + 10, 90));
-        
-        if (status.status === 'completed' || status.status === 'failed') {
-          setIsPolling(false);
-          setPollProgress(100);
-          
-          if (status.status === 'completed') {
-            toast.success('Research completed successfully!', {
-              description: 'Results are now available in the Research Requests table.',
-            });
-            handleReset();
-            setOpen(false);
-          } else {
-            toast.error('Research failed', {
-              description: status.error || 'Unknown error occurred',
-            });
-          }
-          
-          // Update the stored task status
-          const tasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-          const updatedTasks = tasks.map((task: any) => 
-            task.requestId === jobId 
-              ? { ...task, status: status.status, result: status.result }
-              : task
-          );
-          localStorage.setItem('researchTasks', JSON.stringify(updatedTasks));
-          window.dispatchEvent(new CustomEvent('taskUpdated'));
-        }
-      } catch (error) {
-        console.error('Error polling status:', error);
-      }
-    }, 5000); // Poll every 5 seconds
-
-    return () => clearInterval(pollInterval);
-  }, [jobId, isPolling]);
+  // Remove polling - let the main table handle it
 
   const handleCheckboxChange = (value: string, currentValues: string[], setter: (values: string[]) => void) => {
     if (currentValues.includes(value)) {
@@ -117,18 +65,6 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
     setDisruptionStrategy("");
   };
 
-  const handleManualRefresh = async () => {
-    if (!jobId) return;
-    
-    try {
-      const status = await checkResearchStatus(jobId);
-      setJobStatus(status);
-      toast.info('Status refreshed');
-    } catch (error) {
-      console.error('Error refreshing status:', error);
-      toast.error('Failed to refresh status');
-    }
-  };
 
   const handleLaunchSwarm = async () => {
     const researchData = {
@@ -149,9 +85,6 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
     };
 
     setIsSubmitting(true);
-    setJobId(null);
-    setJobStatus(null);
-    setPollProgress(0);
 
     try {
       // Format the research prompt for Red Team
@@ -161,9 +94,6 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
       const response = await submitResearch({
         task: researchPrompt
       });
-      
-      // Store the request ID for tracking
-      setJobId(response.request_id);
       
       toast.success(`Research swarm launched for ${companyName || 'Unknown Company'}!`, {
         description: `Request ID: ${response.request_id}`,
@@ -185,10 +115,9 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
       localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
       window.dispatchEvent(new CustomEvent('taskAdded'));
       
-      // Start polling for status updates
-      setIsPolling(true);
-      
-      // Don't close dialog immediately - keep it open to show status
+      // Close dialog and let the main page handle polling
+      handleReset();
+      setOpen(false);
     } catch (error) {
       if (error instanceof ApiError) {
         showApiError(error);
@@ -259,56 +188,6 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
           )}
         </div>
 
-        {/* Job Status */}
-        {(isPolling || jobStatus) && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Job Status:</span>
-                    <Badge variant={
-                      jobStatus?.status === 'completed' ? 'default' :
-                      jobStatus?.status === 'failed' ? 'destructive' :
-                      jobStatus?.status === 'processing' ? 'secondary' : 'outline'
-                    }>
-                      {jobStatus?.status || 'pending'}
-                    </Badge>
-                    {jobId && <span className="text-xs text-muted-foreground">ID: {jobId}</span>}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleManualRefresh}
-                      disabled={isPolling}
-                    >
-                      <RefreshCw className="h-3 w-3 mr-1" />
-                      Refresh
-                    </Button>
-                    {jobId && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setShowLogs(true)}
-                      >
-                        <Terminal className="h-3 w-3 mr-1" />
-                        View Logs
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                {isPolling && (
-                  <div className="space-y-1">
-                    <Progress value={pollProgress} className="h-2" />
-                    <p className="text-xs text-muted-foreground">Processing research request...</p>
-                  </div>
-                )}
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
 
         <div className="space-y-6">
           {/* Company Name */}
@@ -535,12 +414,12 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
             <Button 
               onClick={handleLaunchSwarm}
               className="flex-1 bg-red-team hover:bg-red-team/90 text-white"
-              disabled={!companyName || isSubmitting || isPolling}
+              disabled={!companyName || isSubmitting}
             >
-              {isSubmitting || isPolling ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isPolling ? 'Processing...' : 'Launching...'}
+                  Launching...
                 </>
               ) : (
                 '🔘 Launch Swarm'
@@ -556,28 +435,6 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
           </div>
         </div>
       </DialogContent>
-      
-      {/* Logs Viewer Dialog */}
-      {showLogs && jobId && (
-        <Dialog open={showLogs} onOpenChange={setShowLogs}>
-          <DialogContent className="max-w-6xl max-h-[90vh] h-[80vh] flex flex-col">
-            <DialogHeader>
-              <DialogTitle>Swarm Execution Logs</DialogTitle>
-              <DialogDescription>
-                Real-time logs from the research swarm execution
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex-grow overflow-hidden">
-              <SwarmLogsViewer 
-                swarmId={jobId} 
-                onClose={() => setShowLogs(false)}
-                autoRefresh={true}
-                refreshInterval={3000}
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </Dialog>
   );
 };

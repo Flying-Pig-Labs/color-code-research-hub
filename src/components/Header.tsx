@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Shield, Target, Bug, Lightbulb, Terminal } from "lucide-react";
+import { Shield, Target, Bug, Lightbulb } from "lucide-react";
 import { HealthCheck } from "@/components/HealthCheck";
 
 const Header = () => {
@@ -11,7 +11,6 @@ const Header = () => {
     { path: "/red-team", label: "Red Team", icon: Target, variant: "red-team" as const },
     { path: "/black-team", label: "Black Team", icon: Bug, variant: "black-team" as const },
     { path: "/white-team", label: "White Team", icon: Lightbulb, variant: "white-team" as const },
-    { path: "/monitoring", label: "Terminal", icon: Terminal, variant: "ghost" as const },
   ];
 
   return (

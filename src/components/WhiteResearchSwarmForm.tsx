@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Lightbulb, Loader2, AlertCircle, RefreshCw, Terminal } from "lucide-react";
+import { Lightbulb, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -18,8 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
-import { submitResearch, formatWhiteTeamPrompt, checkResearchStatus } from "@/services/researchApi";
-import SwarmLogsViewer from "@/components/SwarmLogsViewer";
+import { submitResearch, formatWhiteTeamPrompt } from "@/services/researchApi";
 
 interface WhiteResearchSwarmFormProps {
   children: React.ReactNode;
@@ -91,7 +90,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
       } catch (error) {
         console.error('Error polling status:', error);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 10000); // Poll every 10 seconds
 
     return () => clearInterval(pollInterval);
   }, [jobId, isPolling]);
@@ -197,10 +196,9 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
       localStorage.setItem('researchTasks', JSON.stringify(existingTasks));
       window.dispatchEvent(new CustomEvent('taskAdded'));
       
-      // Start polling for status updates
-      setIsPolling(true);
-      
-      // Don't close dialog immediately - keep it open to show status
+      // Close dialog and let the main page handle polling
+      handleReset();
+      setOpen(false);
       
       // Alternative: Use the standard API flow if SQS endpoint is not available
       /* Commented out - use SQS instead
