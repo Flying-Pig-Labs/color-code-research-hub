@@ -463,6 +463,7 @@ Resources:
               Action:
                 - s3:PutObject
                 - s3:PutObjectAcl
+                - s3:GetObject
               Resource: !Sub '${ResearchResultsBucket.Arn}/*'
       Events:
         ResearchEndpoint:
@@ -488,6 +489,18 @@ Resources:
           Properties:
             RestApiId: !Ref ResearchHubApi
             Path: /api/research/status/{requestId}
+            Method: OPTIONS
+        ResearchDownloadEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/download/{s3Key}
+            Method: GET
+        OptionsResearchDownload:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/download/{s3Key}
             Method: OPTIONS
         LogsEndpoint:
           Type: Api

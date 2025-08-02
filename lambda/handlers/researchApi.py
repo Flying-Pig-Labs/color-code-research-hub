@@ -156,6 +156,20 @@ def check_job_status(request_id: str) -> Dict[str, Any]:
         raise
 
 
+def generate_presigned_url(s3_key: str, expiration: int = 3600) -> str:
+    """Generate a presigned URL for S3 object download."""
+    try:
+        url = s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': S3_BUCKET, 'Key': s3_key},
+            ExpiresIn=expiration
+        )
+        return url
+    except Exception as e:
+        print(f"Error generating presigned URL: {str(e)}")
+        return None
+
+
 def handler(event, context):
     """Lambda handler for research API requests."""
     print(f"Research API request: {json.dumps(event, indent=2)}")
@@ -234,6 +248,57 @@ def handler(event, context):
                 'body': json.dumps(response_data)
             }
         
+        # Handle download URL generation
+        elif path.startswith('/api/research/download/') and event.get('httpMethod') == 'GET':
+            # Extract s3_key from path (expects base64 encoded key)
+            try:
+                import base64
+                encoded_key = path.split('/')[-1]
+                s3_key = base64.b64decode(encoded_key).decode('utf-8')
+                
+                if not s3_key:
+                    return {
+                        'statusCode': 400,
+                        'headers': {**cors_headers, 'Content-Type': 'application/json'},
+                        'body': json.dumps({
+                            'error': 'Bad Request',
+                            'message': 'Missing S3 key'
+                        })
+                    }
+                
+                # Generate presigned URL
+                download_url = generate_presigned_url(s3_key, expiration=3600)  # 1 hour expiration
+                
+                if download_url:
+                    return {
+                        'statusCode': 200,
+                        'headers': {**cors_headers, 'Content-Type': 'application/json'},
+                        'body': json.dumps({
+                            'success': True,
+                            'download_url': download_url,
+                            's3_key': s3_key
+                        })
+                    }
+                else:
+                    return {
+                        'statusCode': 500,
+                        'headers': {**cors_headers, 'Content-Type': 'application/json'},
+                        'body': json.dumps({
+                            'error': 'Internal Server Error',
+                            'message': 'Failed to generate download URL'
+                        })
+                    }
+                    
+            except Exception as e:
+                return {
+                    'statusCode': 400,
+                    'headers': {**cors_headers, 'Content-Type': 'application/json'},
+                    'body': json.dumps({
+                        'error': 'Bad Request',
+                        'message': f'Invalid S3 key: {str(e)}'
+                    })
+                }
+        
         # Handle status check
         elif path.startswith('/api/research/status/') and event.get('httpMethod') == 'GET':
             # Extract request_id from path
@@ -279,6 +344,14 @@ def handler(event, context):
                 
                 response_data['content'] = research_content
                 response_data['s3_location'] = f"s3://{S3_BUCKET}/{s3_key}" if s3_key else None
+                response_data['s3_key'] = s3_key  # Store the key for later download
+                
+                # Generate presigned URL for download
+                if s3_key:
+                    download_url = generate_presigned_url(s3_key)
+                    if download_url:
+                        response_data['download_url'] = download_url
+                
                 response_data['model_used'] = response_obj.get('model')
                 response_data['status'] = 'completed'  # lowercase for frontend
             

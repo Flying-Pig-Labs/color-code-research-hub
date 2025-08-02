@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { apiService } from "@/services/api";
-import { Loader2, Trash2, RefreshCw, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Trash2, RefreshCw, CheckCircle2, XCircle, Download } from "lucide-react";
 import { toast } from "sonner";
 import { checkResearchStatus } from "@/services/researchApi";
 
@@ -24,6 +24,8 @@ interface ResearchTask {
   roles?: string[];
   requestId?: string;
   result?: any;
+  s3_key?: string;
+  download_url?: string;
 }
 
 interface ResearchRequestTableActiveProps {
@@ -35,6 +37,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
   const [isLoading, setIsLoading] = useState(false);
   const [isUsingApi, setIsUsingApi] = useState(false);
   const [pollingTasks, setPollingTasks] = useState<Set<string>>(new Set());
+  const [downloadingTasks, setDownloadingTasks] = useState<Set<string>>(new Set());
 
   const loadTasks = async () => {
     setIsLoading(true);
@@ -101,7 +104,13 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
             const allTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
             const updatedTasks = allTasks.map((t: ResearchTask) => 
               t.requestId === task.requestId 
-                ? { ...t, status: status.status, result: status.result }
+                ? { 
+                    ...t, 
+                    status: status.status, 
+                    result: status.result,
+                    s3_key: status.s3_key,
+                    download_url: status.download_url
+                  }
                 : t
             );
             localStorage.setItem('researchTasks', JSON.stringify(updatedTasks));
@@ -132,6 +141,58 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
     localStorage.setItem('researchTasks', JSON.stringify(otherTeamTasks));
     setTasks([]);
     toast.success(`Cleared all ${teamType} team research jobs`);
+  };
+
+  const handleDownload = async (task: ResearchTask) => {
+    if (!task.s3_key) {
+      toast.error('No download available for this research');
+      return;
+    }
+
+    setDownloadingTasks(prev => new Set(prev).add(task.id));
+
+    try {
+      // If we have a fresh download URL, use it
+      if (task.download_url) {
+        const link = document.createElement('a');
+        link.href = task.download_url;
+        link.download = `research_${task.requestId || task.id}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success('Download started');
+      } else {
+        // Otherwise, fetch a new presigned URL
+        const encodedKey = btoa(task.s3_key);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/research/download/${encodedKey}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to get download URL');
+        }
+        
+        const data = await response.json();
+        if (data.download_url) {
+          const link = document.createElement('a');
+          link.href = data.download_url;
+          link.download = `research_${task.requestId || task.id}.json`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          toast.success('Download started');
+        } else {
+          throw new Error('No download URL received');
+        }
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Failed to download research report');
+    } finally {
+      setDownloadingTasks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(task.id);
+        return newSet;
+      });
+    }
   };
 
   const getTeamColor = (team: string) => {
@@ -309,6 +370,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                   <TableHead className={teamType === 'black' ? 'text-white' : ''}>Request</TableHead>
                   <TableHead className={teamType === 'black' ? 'text-white' : ''}>Status</TableHead>
                   <TableHead className={teamType === 'black' ? 'text-white' : ''}>Completed</TableHead>
+                  <TableHead className={teamType === 'black' ? 'text-white' : ''}>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -327,6 +389,24 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                     </TableCell>
                     <TableCell className={teamType === 'black' ? 'text-white' : ''}>
                       {format(new Date(task.createdAt), 'MMM dd, HH:mm')}
+                    </TableCell>
+                    <TableCell>
+                      {task.status === 'completed' && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDownload(task)}
+                          disabled={downloadingTasks.has(task.id)}
+                          className={`gap-2 ${teamType === 'black' ? 'text-white hover:bg-white/10' : ''}`}
+                        >
+                          {downloadingTasks.has(task.id) ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Download className="h-3 w-3" />
+                          )}
+                          Download
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
