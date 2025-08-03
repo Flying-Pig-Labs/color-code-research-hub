@@ -75,7 +75,7 @@ Create a comprehensive GitHub issue with:
 1. **Title**: "[Role] Component: Specific deliverable" (e.g., "[Backend] API: User authentication endpoint")
 
 2. **Body Structure**:
-```markdown
+\`\`\`markdown
 ## 🎯 Objective
 Brief description of what this issue delivers and why it's important.
 
@@ -139,7 +139,7 @@ Add a comment to this issue with:
 - Any architectural patterns you'll follow from completed work
 
 This courtesy check will save time and prevent integration bugs later.
-```
+\`\`\`
 
 Return a JSON object with this structure:
 {
