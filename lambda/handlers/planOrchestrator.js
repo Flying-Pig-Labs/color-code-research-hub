@@ -41,7 +41,7 @@ async function updateJobStatus(jobId, updates) {
 }
 
 exports.handler = async (event) => {
-  console.log('Orchestrator Event:', JSON.stringify(event, null, 2));
+  console.log('Orchestrator Event v2:', JSON.stringify(event, null, 2));
   
   try {
     const { jobId, input } = event;
