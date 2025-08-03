@@ -69,8 +69,8 @@ const MilestonesTab = () => {
     setSubmitting(true);
     
     try {
-      // Submit job to Batch via the mvp-backlog-generator API
-      const response = await fetch(`https://6kiu2wkbwg.execute-api.us-east-1.amazonaws.com/Stage/api/submit-job`, {
+      // Submit job to Batch via proxy endpoint
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/submit-job`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
