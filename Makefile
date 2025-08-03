@@ -10,7 +10,9 @@ help:
 	@echo "  make start    - Start frontend, backend, and open browser"
 	@echo "  make api      - Start only the API server"
 	@echo "  make web      - Start only the web server"
-	@echo "  make test     - Run e2e tests"
+	@echo "  make test     - Run unit tests (vitest)"
+	@echo "  make e2e      - Run e2e tests (playwright)"
+	@echo "  make lambda   - Deploy Lambda functions to AWS"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make clean    - Kill all related processes"
 	@echo "  make install  - Install dependencies"
@@ -80,10 +82,20 @@ clean:
 	@rm -f .frontend.pid .backend.pid 2>/dev/null || true
 	@echo "✅ All processes cleaned up"
 
-# Run tests
+# Run unit tests
 test:
+	@echo "🧪 Running unit tests..."
+	@npm test
+
+# Run e2e tests  
+e2e:
 	@echo "🧪 Running e2e tests..."
 	@npx playwright test
+
+# Deploy Lambda functions
+lambda:
+	@echo "🚀 Deploying Lambda functions to AWS..."
+	@cd infrastructure && ./deploy.sh
 
 # Install dependencies
 install:
@@ -93,4 +105,4 @@ install:
 	@npx playwright install
 	@echo "✅ Dependencies installed"
 
-.PHONY: help all start api web stop clean test install
+.PHONY: help all start api web stop clean test e2e lambda install
