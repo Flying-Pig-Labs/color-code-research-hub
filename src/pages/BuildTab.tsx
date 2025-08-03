@@ -1,24 +1,32 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Hammer, Clock, Sparkles } from "lucide-react";
+import { Hammer, Clock, Sparkles, Volcano } from "lucide-react";
+import SectionWrapper from "@/components/SectionWrapper";
 
 const BuildTab = () => {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
-              <Hammer className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <CardTitle>Build Phase</CardTitle>
-              <CardDescription>
-                Execute your project with AI-powered development agents
-              </CardDescription>
+      {/* Hero Section */}
+      <SectionWrapper className="pt-16 bg-gradient-to-br from-orange-900/20 via-red-900/20 to-orange-900/20">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="flex justify-center mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 shadow-smooth-lg">
+              <Volcano className="h-12 w-12 text-white" />
             </div>
           </div>
-        </CardHeader>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Archipelago
+            <span className="block text-white/90">AI-Powered Build Execution</span>
+          </h1>
+          
+          <p className="text-xl text-white/80 mb-8 leading-relaxed">
+            Transform your project plan into reality with autonomous AI agents that implement features, write code, and create pull requests based on your specifications.
+          </p>
+        </div>
+      </SectionWrapper>
+
+      <Card>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center">

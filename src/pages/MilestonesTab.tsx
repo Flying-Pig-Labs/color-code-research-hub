@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Milestone, Github, ChevronRight, Sparkles, Search, Globe, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import SectionWrapper from "@/components/SectionWrapper";
 
 interface GitHubRepo {
   id: number;
@@ -115,22 +116,25 @@ const MilestonesTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <CardTitle>MVP Backlog Generator</CardTitle>
-              <CardDescription>
-                Select a repository from mvp-builder-app to generate a comprehensive backlog with milestones, epics, and issues
-              </CardDescription>
+      {/* Hero Section */}
+      <SectionWrapper className="pt-16 bg-gradient-to-br from-purple-900/20 via-pink-900/20 to-purple-900/20">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="flex justify-center mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 shadow-smooth-lg">
+              <Milestone className="h-12 w-12 text-white" />
             </div>
           </div>
-        </CardHeader>
-      </Card>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Reef Builder
+            <span className="block text-white/90">MVP Backlog Generator</span>
+          </h1>
+          
+          <p className="text-xl text-white/80 mb-8 leading-relaxed">
+            Transform your repository into a comprehensive project plan with AI-generated milestones, epics, and issues tailored to your codebase and vision.
+          </p>
+        </div>
+      </SectionWrapper>
 
       {/* Repository Selection */}
       <Card>

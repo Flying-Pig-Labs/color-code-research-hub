@@ -1,25 +1,29 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Fish, Users, Target, Trophy, AlertCircle } from 'lucide-react';
+import SectionWrapper from "@/components/SectionWrapper";
 
 const SharkSwarmer = () => {
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-              <Fish className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl">🦈 Shark Swarmer</CardTitle>
-              <CardDescription className="text-gray-400">
-                Vet ideas using agent personas to score and select the best one
-              </CardDescription>
+      {/* Hero Section */}
+      <SectionWrapper className="pt-16 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-blue-900/20">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="flex justify-center mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 shadow-smooth-lg">
+              <Fish className="h-12 w-12 text-white" />
             </div>
           </div>
-        </CardHeader>
-      </Card>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Shark Swarmer
+            <span className="block text-white/90">Agent-Driven Idea Vetting</span>
+          </h1>
+          
+          <p className="text-xl text-white/80 mb-8 leading-relaxed">
+            Harness the power of diverse AI agent personas to systematically evaluate, score, and select the most promising ideas through multi-perspective analysis.
+          </p>
+        </div>
+      </SectionWrapper>
 
       {/* Coming Soon Card */}
       <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
