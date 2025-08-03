@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shark, Users, Target, Trophy, AlertCircle } from 'lucide-react';
+import { Fish, Users, Target, Trophy, AlertCircle } from 'lucide-react';
 
 const SharkSwarmer = () => {
   return (
@@ -9,7 +9,7 @@ const SharkSwarmer = () => {
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-              <Shark className="w-6 h-6 text-white" />
+              <Fish className="w-6 h-6 text-white" />
             </div>
             <div>
               <CardTitle className="text-2xl">🦈 Shark Swarmer</CardTitle>
