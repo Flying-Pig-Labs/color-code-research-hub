@@ -21,9 +21,9 @@ const Header = () => {
             className="flex items-center gap-3 cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate("/")}
           >
-            <span className="text-2xl mr-2">🪸</span>
+            <span className="text-2xl mr-2">🌌</span>
             <div className="flex flex-col items-start">
-              <span className="text-xl font-bold text-foreground">Idea Reef</span>
+              <span className="text-xl font-bold text-foreground">Wayfinder</span>
               <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground">Cross-Discipline Intelligence</span>
             </div>
           </div>

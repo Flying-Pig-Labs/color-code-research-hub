@@ -62,7 +62,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="flex justify-center gap-2 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden p-2">
             <TabsTrigger value="wayfinder" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              ✨ Wayfinder
+              🌌 Wayfinder
             </TabsTrigger>
             <TabsTrigger value="shark-swarmer" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
               🦈 Shark Swarmer

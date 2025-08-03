@@ -19,7 +19,8 @@ exports.handler = async (event) => {
 
   try {
     // Forward the request to the mvp-backlog-generator API
-    const mvpApiUrl = 'https://6kiu2wkbwg.execute-api.us-east-1.amazonaws.com/Stage/api/submit-job';
+    // Note: Using /production/ path where the working deployment exists
+    const mvpApiUrl = 'https://6kiu2wkbwg.execute-api.us-east-1.amazonaws.com/production/api/submit-job';
     
     const requestBody = event.body;
     

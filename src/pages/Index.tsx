@@ -19,11 +19,11 @@ const Index = () => {
         
         <div className="text-center max-w-4xl mx-auto relative z-10">
           <div className="flex justify-center mb-6">
-            <span className="text-8xl">🪸</span>
+            <span className="text-8xl">🌌</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
-            Idea Reef
+            Wayfinder
           </h1>
           
           <p className="text-xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto">
