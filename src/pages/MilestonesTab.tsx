@@ -70,10 +70,9 @@ const MilestonesTab = () => {
     setSubmitting(true);
     
     try {
-      // Submit job directly to working mvp-backlog-generator API
-      const response = await fetch(`https://6kiu2wkbwg.execute-api.us-east-1.amazonaws.com/production/api/submit-job`, {
+      // Submit job through our CORS-enabled proxy
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/batch/submit-job`, {
         method: 'POST',
-        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
         },
