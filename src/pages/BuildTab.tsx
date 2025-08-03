@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Hammer, Clock, Sparkles, Volcano } from "lucide-react";
+import { Hammer, Clock, Sparkles, Mountain } from "lucide-react";
 import SectionWrapper from "@/components/SectionWrapper";
 
 const BuildTab = () => {
@@ -11,7 +11,7 @@ const BuildTab = () => {
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 shadow-smooth-lg">
-              <Volcano className="h-12 w-12 text-white" />
+              <Mountain className="h-12 w-12 text-white" />
             </div>
           </div>
           
