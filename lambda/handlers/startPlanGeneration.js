@@ -28,7 +28,7 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    const { projectDescription, selectedTeams, teamFields, githubConfig } = body;
+    const { projectDescription, selectedTeams, teamFields, githubConfig, metadata, readmeContent } = body;
 
     // Generate unique job ID
     const jobId = uuidv4();
@@ -43,10 +43,12 @@ exports.handler = async (event) => {
       updatedAt: timestamp,
       ttl,
       input: {
-        projectDescription,
+        projectDescription: projectDescription || metadata?.description,
         selectedTeams,
         teamFields,
-        githubConfig
+        githubConfig,
+        metadata,
+        readmeContent
       },
       stages: {
         parseReadme: { status: 'pending', startedAt: null, completedAt: null },
