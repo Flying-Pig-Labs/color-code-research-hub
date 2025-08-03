@@ -12,6 +12,7 @@ import MilestonesTab from "./pages/MilestonesTab";
 import MilestonesJobRunner from "./pages/MilestonesJobRunner";
 import MilestonesJobComplete from "./pages/MilestonesJobComplete";
 import BuildTab from "./pages/BuildTab";
+import SharkSwarmer from "./pages/SharkSwarmer";
 import NotFound from "./pages/NotFound";
 import SwarmDashboard from "./components/monitoring/SwarmDashboard";
 
@@ -24,18 +25,21 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Research Tab Routes */}
+          {/* Wayfinder Tab Routes (formerly Research) */}
           <Route path="/" element={<AppLayout><Index /></AppLayout>} />
           <Route path="/red-team" element={<AppLayout><RedTeam /></AppLayout>} />
           <Route path="/black-team" element={<AppLayout><BlackTeam /></AppLayout>} />
           <Route path="/white-team" element={<AppLayout><WhiteTeam /></AppLayout>} />
           
-          {/* Milestones Tab Routes */}
+          {/* Shark Swarmer Tab Route */}
+          <Route path="/shark-swarmer" element={<AppLayout><SharkSwarmer /></AppLayout>} />
+          
+          {/* Reef Builder Tab Routes (formerly Milestones/Plan) */}
           <Route path="/milestones" element={<AppLayout><MilestonesTab /></AppLayout>} />
           <Route path="/milestones/:repo/:jobId" element={<AppLayout><MilestonesJobRunner /></AppLayout>} />
           <Route path="/milestones/:repo/:jobId/complete" element={<AppLayout><MilestonesJobComplete /></AppLayout>} />
           
-          {/* Build Tab Routes */}
+          {/* Archipelago Tab Routes (formerly Build) */}
           <Route path="/build" element={<AppLayout><BuildTab /></AppLayout>} />
           
           {/* Monitoring Dashboard */}

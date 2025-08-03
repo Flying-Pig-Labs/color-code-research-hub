@@ -4,6 +4,125 @@ const { EPIC_GENERATOR_PROMPT } = require('../prompts/epic-generator.js');
 const { ISSUE_FORMATTER_PROMPT } = require('../prompts/issue-formatter.js');
 const { buildSafePrompt } = require('./prompt-sanitizer.js');
 
+// Detailed SplashPage Pre-Phase Requirements
+const SPLASHPAGE_PHASE_CONTEXT = `
+🧭 DIRECTIVE: Build SplashPage Pre-Phase for MVP
+🪜 Phase 1 – SplashPage (Foundational Pre-Phase)
+
+⚠️ CRITICAL: THIS PHASE MUST BE COMPLETED EXACTLY TO SPEC USING THE TECHNOLOGIES IDENTIFIED. NO SUBSTITUTIONS.
+
+OBJECTIVE: Build a public-facing landing experience that:
+- Presents the product vision
+- Captures interest and early support
+- Lays a modular, production-ready scaffold for all future application architecture
+
+✅ INFRASTRUCTURE & DEPLOYMENT SPEC
+
+🌐 Frontend Hosting
+- React frontend
+- Hosted on AWS Amplify
+- Responsive, modern UI; optimized for conversion
+
+⚙️ CI/CD via GitHub Actions
+Two environments:
+- dev ← dev branch
+- production ← main branch
+
+Define GitHub Actions workflows:
+- .github/workflows/deploy-dev.yml
+- .github/workflows/deploy-prod.yml
+- Store required secrets in GitHub Actions (AMPLIFY_APP_ID, AWS_ACCESS_KEY_ID, etc.)
+- Use Amplify CLI or API to push correct environment per branch
+- Display CI status badges in the README
+
+🏗 CORE ARCHITECTURAL PRINCIPLES
+This SplashPage is not disposable. It is the initial scaffold for the MVP's future architecture.
+
+🧱 Treat this as the root monolith for expansion:
+- Modularize code and infrastructure from the start:
+  - Use separated concerns in the React app (components, services, views)
+  - Structure CDK stacks cleanly:
+    - FrontendStack
+    - AuthStack
+    - DataStack
+    - ChatbotStack
+    - PaymentsStack (if required)
+- Use AWS foundational best practices:
+  - IAM least privilege
+  - Secure secret storage (Secrets Manager)
+  - Environment separation
+  - Observable deployments (CloudWatch)
+
+🧬 Establish reusable patterns:
+- Use environment variables for runtime config
+- Use parameterized CDK stacks to allow per-project tailoring
+- Ensure naming conventions are clean and consistent (e.g. project-name-service-env)
+
+📢 Tailoring for Each Product
+While structure is consistent, content should be dynamically generated based on:
+- Product type
+- Target market
+- Research insights
+- Persona pain points
+
+Use these to:
+- Shape the language in CTAs and headers
+- Tailor the RAG corpus for the chatbot
+- Inform whitepaper topic and funding pitch language
+
+🎯 Agent Build Checklist
+⚠️ CRITICAL: USE ONLY THE SPECIFIED TECHNOLOGIES. NO SUBSTITUTIONS.
+1. Create a scaffolded Amplify app with foundational components
+2. Deploy CI/CD pipelines via GitHub Actions for dev and prod
+3. Structure CDK into reusable stacks for future extensibility
+4. Ensure all features are:
+   - Modular
+   - Easily extensible
+   - Observable via CloudWatch
+5. Use Paddle for payments (keys in AWS Secrets Manager)
+6. Include clear README instructions on:
+   - How to update content
+   - How to deploy new features
+   - Branch-to-env mapping
+7. Leave comments in code for downstream agents about where to add future integrations
+
+🧱 TECHNICAL COMPONENTS:
+
+🧠 AI-Powered Product Chatbot
+- RAG-based implementation
+- Product knowledge corpus embedded via Bedrock/OpenAI
+- Vector search for retrieval
+- Claude/GPT-4 for responses
+- Lambda + API Gateway backend
+
+🗂 Data Storage
+DynamoDB tables:
+- newsletter_signups
+- demo_bookings
+- whitepaper_requests
+- blog_posts
+- funding_transactions
+S3 for static assets
+
+🔐 Authentication
+- Amazon Cognito User Pool
+- Admin user for blog management
+
+💳 Payments (MUST USE PADDLE)
+- Paddle integration ONLY (keys provided in AWS Secrets Manager)
+- Configure product tiers ($25 "Backer", $99 "Founding Member")
+- Webhook handlers for transaction processing
+- Transaction logging to funding_transactions table
+
+✉️ Email Notifications
+- Amazon SES
+- Automated confirmations and alerts
+
+📚 Admin Features
+- Protected /admin route
+- Blog management interface
+`;
+
 const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
 
 // Claude model configuration - using the exact same model as CLI
@@ -66,6 +185,23 @@ class LLMOrchestrator {
       throw new Error('Failed to generate phases');
     }
 
+    // INJECT SPLASHPAGE PRE-PHASE AT THE BEGINNING
+    const splashPagePhase = {
+      id: 'splashpage-pre-mvp',
+      title: '🪜 Phase 1 – SplashPage (Foundational Pre-Phase)',
+      description: 'Build a public-facing landing experience that presents the product vision, captures interest and early support, and lays a modular, production-ready scaffold for all future application architecture. This is NOT a disposable landing page—it\'s the foundational architecture for the entire MVP, with modular CDK stacks, CI/CD via GitHub Actions, and extensible patterns for all future features.',
+      suggestedRoles: [
+        'Frontend Developer - React & AWS Amplify specialist',
+        'Backend Developer - Lambda & API Gateway expert',
+        'AI Engineer - RAG chatbot implementation',
+        'DevOps Engineer - AWS CDK & GitHub Actions',
+        'UI/UX Designer - Conversion-optimized responsive design'
+      ]
+    };
+
+    // Insert at the beginning
+    phases.phases.unshift(splashPagePhase);
+
     return phases.phases;
   }
 
@@ -74,12 +210,18 @@ class LLMOrchestrator {
    */
   async generateEpicsForPhases(phases, projectInfo) {
     const results = await Promise.all(
-      phases.map(async (phase) => {
+      phases.map(async (phase, index) => {
+        if (index !== 0) return { id: phase.id, title: phase.title, description: phase.description, roles: phase.suggestedRoles || [], tasks: [], issues: [], approved: false }; // DEMO: Only generate epics for Phase 1
         const commonRoles = this.getCommonRolesForPhase(phase.title);
+        
+        // For SplashPage phase, include detailed requirements in context
+        const phaseDescription = phase.id === 'splashpage-pre-mvp' 
+          ? `${phase.description}\n\nDETAILED REQUIREMENTS:\n${SPLASHPAGE_PHASE_CONTEXT}`
+          : phase.description;
         
         const prompt = buildSafePrompt(EPIC_GENERATOR_PROMPT, {
           phaseTitle: phase.title,
-          phaseDescription: phase.description,
+          phaseDescription: phaseDescription,
           productContext: `${projectInfo.title}: ${projectInfo.description}`,
           commonRoles: commonRoles.join('\n'),
           phaseId: phase.id
@@ -93,7 +235,7 @@ class LLMOrchestrator {
           title: phase.title,
           description: phase.description,
           roles: epicGeneration.roles,
-          tasks: epicGeneration.tasks,
+          tasks: epicGeneration.epics || epicGeneration.tasks, // Support both for backwards compatibility
           issues: [],
           approved: false
         };

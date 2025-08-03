@@ -9,29 +9,34 @@ interface AppLayoutProps {
 const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState("research");
+  const [activeTab, setActiveTab] = useState("wayfinder");
 
   // Map routes to tab values
   useEffect(() => {
-    if (location.pathname.startsWith("/milestones")) {
-      setActiveTab("milestones");
-    } else if (location.pathname.startsWith("/build")) {
-      setActiveTab("build");
+    if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/reef-builder")) {
+      setActiveTab("reef-builder");
+    } else if (location.pathname.startsWith("/build") || location.pathname.startsWith("/archipelago")) {
+      setActiveTab("archipelago");
+    } else if (location.pathname.startsWith("/shark-swarmer")) {
+      setActiveTab("shark-swarmer");
     } else {
-      setActiveTab("research");
+      setActiveTab("wayfinder");
     }
   }, [location.pathname]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     switch (value) {
-      case "research":
+      case "wayfinder":
         navigate("/");
         break;
-      case "milestones":
+      case "shark-swarmer":
+        navigate("/shark-swarmer");
+        break;
+      case "reef-builder":
         navigate("/milestones");
         break;
-      case "build":
+      case "archipelago":
         navigate("/build");
         break;
     }
@@ -56,14 +61,17 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="flex justify-center gap-2 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden p-2">
-            <TabsTrigger value="research" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              RESEARCH
+            <TabsTrigger value="wayfinder" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
+              ✨ Wayfinder
             </TabsTrigger>
-            <TabsTrigger value="milestones" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              PLAN
+            <TabsTrigger value="shark-swarmer" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
+              🦈 Shark Swarmer
             </TabsTrigger>
-            <TabsTrigger value="build" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6" disabled>
-              BUILD
+            <TabsTrigger value="reef-builder" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
+              🪸 Reef Builder
+            </TabsTrigger>
+            <TabsTrigger value="archipelago" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6" disabled>
+              🌋 Archipelago
             </TabsTrigger>
           </TabsList>
 
