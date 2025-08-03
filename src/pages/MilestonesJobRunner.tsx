@@ -9,13 +9,13 @@ import { Player } from '@lottiefiles/react-lottie-player';
 
 interface JobStatus {
   jobId: string;
-  jobName: string;
-  status: 'SUBMITTED' | 'PENDING' | 'RUNNABLE' | 'STARTING' | 'RUNNING' | 'SUCCEEDED' | 'FAILED';
+  jobName?: string;
+  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
   createdAt?: number;
   startedAt?: number;
-  stoppedAt?: number;
-  failureReason?: string;
-  results?: any;
+  completedAt?: number;
+  error?: string;
+  result?: any;
 }
 
 const MilestonesJobRunner = () => {
@@ -25,33 +25,34 @@ const MilestonesJobRunner = () => {
   
   const [logs, setLogs] = useState<string[]>([]);
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
-  const [nextToken, setNextToken] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(true);
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const pollIntervalRef = useRef<NodeJS.Timer | null>(null);
-  const logPollIntervalRef = useRef<NodeJS.Timer | null>(null);
 
   // Poll job status
   const fetchJobStatus = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/job/${jobId}/status`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/async/status/${jobId}`);
       if (!response.ok) throw new Error('Failed to fetch job status');
       
       const data = await response.json();
       setJobStatus(data);
       
+      // Update logs based on status
+      updateStatusLogs(data.status);
+      
       // If job succeeded, navigate to complete screen
-      if (data.status === 'SUCCEEDED') {
+      if (data.status === 'COMPLETED') {
         setIsPolling(false);
         navigate(`/milestones/${repo}/${jobId}/complete`, { 
-          state: { results: data.results } 
+          state: { results: data.result } 
         });
       } else if (data.status === 'FAILED') {
         setIsPolling(false);
         toast({
           title: "Job Failed",
-          description: data.failureReason || "The job failed to complete.",
+          description: data.error || "The job failed to complete.",
           variant: "destructive",
         });
       }
@@ -60,36 +61,23 @@ const MilestonesJobRunner = () => {
     }
   };
 
-  // Poll logs
-  const fetchLogs = async () => {
-    try {
-      const url = new URL(`${import.meta.env.VITE_API_BASE_URL}/api/job/${jobId}/logs`);
-      if (nextToken) {
-        url.searchParams.append('nextToken', nextToken);
-      }
-      
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch logs');
-      
-      const data = await response.json();
-      
-      if (data.logs && data.logs.length > 0) {
-        setLogs(prev => [...prev, ...data.logs]);
-        setNextToken(data.nextToken);
-        
-        // Auto-scroll to bottom
-        setTimeout(() => {
-          if (scrollAreaRef.current) {
-            const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-            if (scrollContainer) {
-              scrollContainer.scrollTop = scrollContainer.scrollHeight;
-            }
-          }
-        }, 100);
-      }
-    } catch (error) {
-      console.error('Error fetching logs:', error);
-    }
+  // Add status-based log messages
+  const updateStatusLogs = (status: string) => {
+    const statusMessages = {
+      'PENDING': 'Job submitted successfully. Waiting to start...',
+      'RUNNING': 'Processing request. Generating comprehensive project plan...',
+      'COMPLETED': 'Plan generation completed successfully!',
+      'FAILED': 'Job failed. Please check the error details above.'
+    };
+    
+    const message = statusMessages[status as keyof typeof statusMessages] || `Status: ${status}`;
+    const timestamp = new Date().toLocaleTimeString();
+    
+    setLogs(prev => {
+      const lastLog = prev[prev.length - 1];
+      if (lastLog && lastLog.includes(message)) return prev; // Avoid duplicates
+      return [...prev, `[${timestamp}] ${message}`];
+    });
   };
 
   // Start polling on mount
@@ -98,16 +86,13 @@ const MilestonesJobRunner = () => {
 
     // Initial fetch
     fetchJobStatus();
-    fetchLogs();
 
-    // Set up polling intervals
+    // Set up polling interval
     pollIntervalRef.current = setInterval(fetchJobStatus, 5000); // Every 5 seconds
-    logPollIntervalRef.current = setInterval(fetchLogs, 2000); // Every 2 seconds
 
     // Cleanup
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-      if (logPollIntervalRef.current) clearInterval(logPollIntervalRef.current);
     };
   }, [jobId]);
 
@@ -115,7 +100,6 @@ const MilestonesJobRunner = () => {
   useEffect(() => {
     if (!isPolling) {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-      if (logPollIntervalRef.current) clearInterval(logPollIntervalRef.current);
     }
   }, [isPolling]);
 
@@ -123,7 +107,7 @@ const MilestonesJobRunner = () => {
     switch (status) {
       case 'RUNNING':
         return 'bg-blue-500';
-      case 'SUCCEEDED':
+      case 'COMPLETED':
         return 'bg-green-500';
       case 'FAILED':
         return 'bg-red-500';

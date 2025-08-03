@@ -312,26 +312,6 @@ Resources:
             Path: /api/sqs/submit
             Method: POST
 
-  SubmitBatchJobProxyFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambda/handlers/
-      Handler: submitBatchJobProxy.handler
-      Description: Proxy endpoint to forward requests to mvp-backlog-generator Batch API
-      Timeout: 30
-      Events:
-        SubmitBatchJob:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/submit-job
-            Method: POST
-        SubmitBatchJobOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/submit-job
-            Method: OPTIONS
 
   # Lambda Execution Role
   LambdaExecutionRole:

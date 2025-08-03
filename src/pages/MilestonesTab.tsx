@@ -70,14 +70,21 @@ const MilestonesTab = () => {
     setSubmitting(true);
     
     try {
-      // Submit job through our CORS-enabled proxy
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/batch/submit-job`, {
+      // Submit job to our async plan generation endpoint
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/plan/async/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          repo: repo.full_name
+          metadata: {
+            title: repo.name,
+            description: repo.description || `${repo.name} repository`,
+            domain: 'general',
+            repository: repo.html_url,
+            branch: 'main'
+          },
+          readmeContent: `# ${repo.name}\n\n${repo.description || 'No description available'}`
         })
       });
       
@@ -86,7 +93,7 @@ const MilestonesTab = () => {
       }
       
       const data = await response.json();
-      // Navigate to job runner with the actual Batch job ID
+      // Navigate to job runner with our async job ID
       navigate(`/milestones/${repo.full_name.split('/')[1]}/${data.jobId}`);
     } catch (error) {
       console.error('Error submitting job:', error);

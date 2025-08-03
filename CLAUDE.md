@@ -199,7 +199,7 @@ Result: The UI shows only 2 placeholder epics instead of 40-80 real ones.
 ```
 
 #### Three-Step LLM Orchestration Process
-1. **generatePhases()** - Uses `PHASE_GENERATOR_PROMPT` to create 8 standard phases
+1. **generatePhases()** - Uses `PHASE_GENERATOR_PROMPT` to create 10 phases (including SplashPage pre-phase)
 2. **generateEpicsForPhases()** - Uses `EPIC_GENERATOR_PROMPT` in parallel for each phase  
 3. **formatIssuesForGitHub()** - Uses `ISSUE_FORMATTER_PROMPT` in batches of 3
 

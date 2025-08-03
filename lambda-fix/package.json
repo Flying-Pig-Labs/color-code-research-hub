@@ -1,9 +1,0 @@
-{
-  "name": "mvp-backlog-generator-fix",
-  "version": "1.0.0",
-  "description": "Fix for missing uuid dependency",
-  "main": "submitBatchJob.js",
-  "dependencies": {
-    "uuid": "^9.0.0"
-  }
-}
