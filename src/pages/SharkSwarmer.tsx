@@ -1,12 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Fish, Users, Target, Trophy, AlertCircle } from 'lucide-react';
+import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, UtensilsCrossed } from 'lucide-react';
 import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
 
 const SharkSwarmer = () => {
+  const navItems = [
+    { path: "#", label: "Leaderboard", icon: Table, variant: "ghost" as const },
+    { path: "#", label: "Ideas", icon: Lightbulb, variant: "ghost" as const },
+    { path: "#", label: "Sharks", icon: UtensilsCrossed, variant: "ghost" as const },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
-      <Header />
+      <Header 
+        title="Shark Swarmer"
+        subtitle="Multi-Persona Refinement"
+        icon="🦈"
+        navItems={navItems}
+        showHealthCheck={false}
+      />
       
       {/* Hero Section with CarMax Fading */}
       <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">

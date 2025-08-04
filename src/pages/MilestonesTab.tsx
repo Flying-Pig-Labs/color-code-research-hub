@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Milestone, Github, ChevronRight, Sparkles, Search, Globe, Lock, AlertCircle } from 'lucide-react';
+import { Loader2, Milestone, Github, ChevronRight, Sparkles, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
@@ -30,6 +30,12 @@ const MilestonesTab = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  
+  const navItems = [
+    { path: "#", label: "Reefs", icon: ShipWheel, variant: "ghost" as const },
+    { path: "#", label: "Repos", icon: Github, variant: "ghost" as const },
+    { path: "#", label: "How", icon: CircleHelp, variant: "ghost" as const },
+  ];
 
   useEffect(() => {
     fetchMvpBuilderRepos();
@@ -110,7 +116,13 @@ const MilestonesTab = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
-        <Header />
+        <Header 
+          title="Reef Builder"
+          subtitle="Dynamic Backlog Generation"
+          icon="🩸"
+          navItems={navItems}
+          showHealthCheck={false}
+        />
         <div className="flex-1 flex items-center justify-center">
           <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20">
             <CardContent className="pt-8 pb-8">
@@ -127,7 +139,13 @@ const MilestonesTab = () => {
 
   return (
     <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
-      <Header />
+      <Header 
+        title="Reef Builder"
+        subtitle="Dynamic Backlog Generation"
+        icon="🩸"
+        navItems={navItems}
+        showHealthCheck={false}
+      />
       
       {/* Hero Section with CarMax Fading */}
       <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
