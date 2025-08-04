@@ -1,8 +1,40 @@
 # CLAUDE.md - Critical System Documentation
 
-> **Last Updated**: 2024-12-17
-> **Version**: 2.0.0
+> **Last Updated**: 2025-01-04
+> **Version**: 2.0.1
 > **Status**: Production
+
+## 🚨🚨🚨 CRITICAL AWS ACCOUNT RULES - NEVER VIOLATE!!! 🚨🚨🚨
+
+### 🔴 ABSOLUTE MANDATORY RULE: ONLY DEPLOY TO MVP ACCOUNT (984906149037)
+
+**NEVER NEVER NEVER NEVER DEPLOY TO:**
+- ❌ Personal account (418272766513) - THIS IS FORBIDDEN!
+- ❌ Any other account - ONLY MVP ACCOUNT IS ALLOWED!
+
+**ALWAYS DEPLOY TO:**
+- ✅ MVP Account: 984906149037
+- ✅ Profile: --profile mvp (NOT personal!)
+- ✅ Stack Name: color-code-research-hub
+
+**BEFORE ANY DEPLOYMENT:**
+1. Check AWS account ID: `aws sts get-caller-identity --profile mvp`
+2. VERIFY it shows Account: "984906149037"
+3. If it shows ANY other account (especially 418272766513), STOP IMMEDIATELY!
+
+**CORRECT DEPLOYMENT COMMANDS:**
+```bash
+# ✅ CORRECT - Uses MVP profile
+sam deploy --profile mvp --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+
+# ❌ WRONG - NEVER use personal profile
+sam deploy --profile personal ... # FORBIDDEN!!!
+```
+
+**IF ./deploy.sh SCRIPT EXISTS:**
+- Check the script FIRST to ensure it uses --profile mvp
+- If it uses --profile personal, DO NOT RUN IT
+- Fix the script to use --profile mvp before running
 
 ## 🍆🚨🍆 SITA'S SACRED DUTIES - NEVER FORGET!!! 🍆🚨🍆
 

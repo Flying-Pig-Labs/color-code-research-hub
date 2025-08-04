@@ -1,13 +1,21 @@
 #!/bin/bash
 
 # Deploy script for Color Code Research Hub
-# Uses personal AWS profile (as per CLAUDE.md) and account 984906149037
+# CRITICAL: Uses MVP AWS profile and account 984906149037 ONLY!
 
 set -e
 
-# Check for profile override
-PROFILE=${AWS_PROFILE:-personal}
+# CRITICAL: MUST use mvp profile - NEVER personal!
+PROFILE=${AWS_PROFILE:-mvp}
 echo "🚀 Starting deployment to AWS account 984906149037 with profile '$PROFILE'"
+
+# Verify we're NOT using personal profile
+if [ "$PROFILE" = "personal" ]; then
+    echo "❌ CRITICAL ERROR: Attempting to use 'personal' profile!"
+    echo "This deployment MUST use the 'mvp' profile for account 984906149037"
+    echo "Please run with: AWS_PROFILE=mvp ./deploy.sh"
+    exit 1
+fi
 
 # Set AWS profile and region
 export AWS_PROFILE=$PROFILE
