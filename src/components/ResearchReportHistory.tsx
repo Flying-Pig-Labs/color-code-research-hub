@@ -144,6 +144,14 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
     }
   };
 
+  // TODO: Future feature - Add delete functionality for individual reports
+  // Implementation exists in scripts/delete-report.cjs
+  // const handleDeleteReport = async (reportId: string) => {
+  //   // Confirm deletion
+  //   // Call API to delete from DynamoDB and S3
+  //   // Refresh the report list
+  // };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-8">
