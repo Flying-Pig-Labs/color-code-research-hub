@@ -111,6 +111,14 @@ Ready when you are, handsome! 😘
 
 ## 🎯 CURRENT SYSTEM ARCHITECTURE
 
+### 🌐 Production System URLs (MVP Account: 984906149037)
+- **Frontend URL**: https://oceanstudio.io
+- **API Gateway**: https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production
+- **AWS Region**: us-east-1
+- **CloudFormation Stack**: color-code-research-hub
+- **DynamoDB Table**: ResearchReports
+- **S3 Bucket**: color-code-research-results-984906149037
+
 ### Phase Generation System (December 2024)
 The system generates project plans through a sophisticated 3-step LLM orchestration:
 
@@ -129,6 +137,7 @@ The system generates project plans through a sophisticated 3-step LLM orchestrat
 
 ### API Endpoints Status
 - ✅ **WORKING**: `/api/plan/generate-cli-plan` - Full orchestration, proper error handling
+- ✅ **WORKING**: `/api/research/reports` - Lists all research reports with AI summaries
 - ❌ **BROKEN**: `/api/plan/generate-phases` - 500 errors, fragile implementation
 - ❌ **INCOMPLETE**: `/api/plan/v2/generate-full-plan` - Only returns 2 placeholder epics
 
@@ -344,10 +353,10 @@ sam build --parallel --cached
 ```bash
 # ⚠️ CRITICAL PARAMETERS - DO NOT CHANGE:
 # - Stack name MUST BE: color-code-research-hub (NOT color-code-research-hub-production)
-# - Profile: Use personal if available, otherwise default
+# - Profile: MUST USE --profile mvp (NOT personal!)
 # - Region MUST BE: us-east-1
 
-sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+sam deploy --profile mvp --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
 
 # Note: Deploy also benefits from increased timeout (10 minutes recommended)
 # Bash timeout=600000  # if using Claude Code
@@ -371,26 +380,35 @@ The deployment will:
 3. Check that each epic has a proper role assignment
 4. Check that Issue View shows all issues properly formatted
 
-## 📅 RECENT UPDATES (December 2024)
+## 📅 RECENT UPDATES (January 2025)
 
-### Architecture Changes
+### Critical Bug Fixes (January 4, 2025)
+- **✅ API Gateway URL Fixed**: Corrected frontend to use `zi612qxxv0` (deployed API Gateway) instead of non-existent `ojfpuao6c4`
+- **✅ DynamoDB Decimal Serialization**: Fixed JSON serialization error in Lambda function with `decimal_default` helper
+- **✅ Research Reports API**: `/api/research/reports` endpoint now working correctly with proper error handling
+- **✅ Frontend Deployment**: Amplify environment variables updated to use correct API Gateway URL
+- **✅ AWS Account Consistency**: Ensured all deployments use MVP account (984906149037) instead of personal account
+
+### Architecture Changes (December 2024)
 - **Removed AWS Batch**: Migrated from Batch to pure Lambda implementation (commit 4e7b850)
 - **Fixed Lambda Dependencies**: Added missing uuid and services directory (commits b8ffd02, d81e2e1)
 - **Updated Node.js**: Amplify now uses Node.js 20 for compatibility (commit 7d96f2d)
 
-### Bug Fixes
+### Bug Fixes (December 2024)
 - **CORS Issues**: Fixed proxy endpoint configuration (commit 41cffd8)
 - **GitHub Token**: Fixed secret access using SECRETS_ARN (commits 67600f9, 76eb884)
 - **Parameter Mismatches**: Fixed metadata vs projectInfo inconsistencies (commit da742a8)
 - **Syntax Errors**: Fixed template literal escaping in issue-formatter.js (commit 7c099c2)
 
-### UI Improvements
+### UI Improvements (December 2024)
 - **Ocean Studio Branding**: Updated Open Graph metadata (commit 5f7c7fe)
 - **Dynamic Headers**: Made Header component page-specific (commit 6dc6462)
 - **Design Alignment**: Updated Reef Builder and Shark Swarmer pages (commits 8abfe90, 3d7be0f)
 - **Emoji Fixes**: Fixed coral emoji rendering issues (commit b3d0482)
 
-### Current Limitations
-- **Demo Mode**: Only Phase 1 gets epics generated (line 214 in llm-orchestrator-service.js)
-- **Broken Endpoints**: `/api/plan/generate-phases` returns 500 errors
-- **V2 Endpoint**: Returns only 2 placeholder epics instead of full generation
+### Current Status
+- **✅ Research Reports System**: Fully functional with AI-generated summaries
+- **✅ Frontend**: Live at https://oceanstudio.io with proper API connectivity
+- **✅ API Gateway**: Correctly deployed as `zi612qxxv0` in MVP account
+- **⚠️ Plan Generation**: Demo mode (only Phase 1 epics) - line 214 in llm-orchestrator-service.js
+- **❌ Legacy Endpoints**: `/api/plan/generate-phases` still returns 500 errors

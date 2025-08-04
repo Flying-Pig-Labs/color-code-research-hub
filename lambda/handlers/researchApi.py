@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
+from decimal import Decimal
 
 # Initialize AWS clients
 secrets_manager = boto3.client("secretsmanager", region_name="us-east-1")
@@ -21,6 +22,13 @@ PERPLEXITY_SECRET_NAME = "perplexity-key"
 
 # Cache for the API key
 _cached_api_key: Optional[str] = None
+
+
+def decimal_default(obj):
+    """Helper function to serialize Decimal objects to JSON."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 
 def get_perplexity_api_key() -> str:
@@ -607,7 +615,7 @@ def handler(event, context):
                         "reports": items,
                         "count": len(items),
                         "hasMore": response.get("LastEvaluatedKey") is not None
-                    }),
+                    }, default=decimal_default),
                 }
                 
             except Exception as e:

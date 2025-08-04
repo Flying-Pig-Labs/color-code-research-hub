@@ -4,19 +4,47 @@
  */
 
 const AWS = require('aws-sdk');
-const { ReportProcessingService } = require('../lambda/handlers/services/report-processing-service');
+const https = require('https');
 
-// Configure AWS
+// Configure AWS - Use environment variables or shared credentials
 AWS.config.update({ 
-  region: 'us-east-1',
-  profile: 'mvp' // Force MVP profile
+  region: 'us-east-1'
 });
+
+// Use the MVP profile if running locally
+const credentials = new AWS.SharedIniFileCredentials({ profile: 'mvp' });
+AWS.config.credentials = credentials;
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
+const secretsManager = new AWS.SecretsManager();
 
 const RESEARCH_REPORTS_TABLE = 'ResearchReports';
 const S3_BUCKET = 'color-code-research-results-984906149037';
+const OPENAI_SECRET_ARN = 'arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-PkoBXY';
+
+let OPENAI_API_KEY = null;
+
+async function loadSecrets() {
+  console.log('🔑 Loading OpenAI API key from AWS Secrets Manager...');
+  
+  try {
+    const result = await secretsManager.getSecretValue({ SecretId: OPENAI_SECRET_ARN }).promise();
+    const secrets = JSON.parse(result.SecretString);
+    
+    OPENAI_API_KEY = secrets.openai_key;
+    
+    if (!OPENAI_API_KEY) {
+      throw new Error('openai_key not found in secrets');
+    }
+    
+    console.log('✅ OpenAI API key loaded successfully');
+    return secrets;
+  } catch (error) {
+    console.error('❌ Failed to load OpenAI API key:', error.message);
+    throw error;
+  }
+}
 
 async function getAllReportsWithoutSummaries() {
   console.log('🔍 Scanning DynamoDB for reports without summaries...');
@@ -56,6 +84,73 @@ async function downloadReportFromS3(s3Key) {
   }
 }
 
+async function generateSummaryWithOpenAI(content) {
+  console.log('  🤖 Generating 120-word summary with OpenAI GPT-4...');
+  
+  const prompt = `Please create a concise, professional 120-word executive summary of the following research report. Focus on key findings, opportunities, and actionable insights. Make it engaging and informative:
+
+${content.substring(0, 15000)}`; // Limit content to avoid token limits
+
+  const payload = JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "user",
+        content: prompt
+      }
+    ],
+    max_tokens: 200,
+    temperature: 0.3
+  });
+
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.openai.com',
+      port: 443,
+      path: '/v1/chat/completions',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (response.error) {
+            reject(new Error(`OpenAI API error: ${response.error.message}`));
+          } else {
+            const summary = response.choices[0].message.content.trim();
+            const wordCount = summary.split(/\s+/).length; 
+        resolve({
+              summary: summary,
+              wordCount: wordCount
+            });
+          }
+        } catch (error) {
+          reject(new Error(`Failed to parse OpenAI response: ${error.message}`));
+        }
+      });
+    });
+
+    req.on('error', (error) => {
+      reject(new Error(`OpenAI API request failed: ${error.message}`));
+    });
+
+    req.write(payload);
+    req.end();
+  });
+}
+
 async function processReport(report) {
   console.log(`\n🔄 Processing report ${report.reportId}`);
   console.log(`  📅 Created: ${report.createdAt}`);
@@ -78,42 +173,25 @@ async function processReport(report) {
   console.log(`  📏 Raw content length: ${rawContent.length} characters`);
   
   try {
-    // Use the report processing service
-    const reportService = new ReportProcessingService();
-    
-    console.log('  🤖 Generating summary with Claude 3.5 Sonnet...');
     const startTime = Date.now();
     
-    const result = await reportService.processReport({
-      reportId: report.reportId,
-      rawContent: rawContent,
-      team: report.team || 'unknown',
-      objective: report.title || report.vendorName || report.companyName || 'Research analysis',
-      metadata: {
-        vendorName: report.vendorName,
-        companyName: report.companyName,
-        createdAt: report.createdAt
-      },
-      secrets: {}, // Will use environment variables
-      timeoutMs: 60000 // 60 second timeout
-    });
+    // Generate summary with OpenAI
+    const result = await generateSummaryWithOpenAI(rawContent);
     
     const processingTime = Date.now() - startTime;
     
     console.log(`  ✅ Summary generated in ${(processingTime / 1000).toFixed(2)}s`);
     console.log(`  📝 Word count: ${result.wordCount}`);
-    console.log(`  💾 Saved to S3: ${result.s3Key}`);
     
     // Update DynamoDB with the processed summary
     const updateParams = {
       TableName: RESEARCH_REPORTS_TABLE,
       Key: { reportId: report.reportId },
-      UpdateExpression: 'SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, processedS3Key = :s3key',
+      UpdateExpression: 'SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa',
       ExpressionAttributeValues: {
         ':summary': result.summary,
         ':wc': result.wordCount,
-        ':pa': new Date().toISOString(),
-        ':s3key': result.s3Key
+        ':pa': new Date().toISOString()
       }
     };
     
@@ -128,9 +206,17 @@ async function processReport(report) {
 }
 
 async function main() {
-  console.log('🚀 Starting summary backfill process...\n');
+  const isDryRun = process.argv.includes('--dry-run');
+  const batchSizeArg = process.argv.find(arg => arg.startsWith('--batch='));
+  const batchSize = batchSizeArg ? parseInt(batchSizeArg.split('=')[1]) : 10;
+  
+  console.log(`🚀 Starting summary backfill process${isDryRun ? ' (DRY RUN)' : ''}...\n`);
   
   try {
+    // Load secrets if not dry run
+    if (!isDryRun) {
+      await loadSecrets();
+    }
     // Get all reports without summaries
     const reports = await getAllReportsWithoutSummaries();
     
@@ -139,11 +225,32 @@ async function main() {
       return;
     }
     
+    if (isDryRun) {
+      console.log('\n📋 DRY RUN - Reports that would be processed:');
+      reports.forEach((report, index) => {
+        console.log(`  ${index + 1}. ${report.reportId} (${report.team}) - ${report.createdAt}`);
+      });
+      console.log(`\n📊 Total reports to process: ${reports.length}`);
+      console.log(`⏱️  Estimated time: ${Math.ceil(reports.length * 30 / 60)} minutes`);
+      console.log(`\n💡 Options:`);
+      console.log(`   • Run without --dry-run to process all reports`);
+      console.log(`   • Use --batch=N to process only N reports (default: 10)`);
+      console.log(`   • Example: node scripts/backfill-summaries.cjs --batch=5`);
+      return;
+    }
+    
+    // Limit batch size if specified
+    const reportsToProcess = batchSize ? reports.slice(0, batchSize) : reports;
+    
+    if (batchSize && reports.length > batchSize) {
+      console.log(`📦 Processing first ${batchSize} reports (out of ${reports.length} total)\n`);
+    }
+    
     // Process each report
     let successCount = 0;
     let failureCount = 0;
     
-    for (const report of reports) {
+    for (const report of reportsToProcess) {
       const success = await processReport(report);
       if (success) {
         successCount++;
@@ -151,14 +258,24 @@ async function main() {
         failureCount++;
       }
       
-      // Add a longer delay to avoid rate limiting (10 seconds between reports)
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      // Add delay to avoid rate limiting (5 seconds between reports - OpenAI has better limits)
+      if (report !== reportsToProcess[reportsToProcess.length - 1]) { // Skip delay after last report
+        console.log('  ⏳ Waiting 5 seconds before next report...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
     }
     
     console.log('\n📊 Backfill Summary:');
     console.log(`  ✅ Successfully processed: ${successCount}`);
     console.log(`  ❌ Failed: ${failureCount}`);
-    console.log(`  📋 Total: ${reports.length}`);
+    console.log(`  📋 Total processed: ${reportsToProcess.length}`);
+    
+    if (batchSize && reports.length > batchSize) {
+      const remaining = reports.length - batchSize;
+      console.log(`  ⏸️  Remaining: ${remaining} reports`);
+      console.log(`\n💡 To process more reports, run:`);
+      console.log(`   AWS_PROFILE=mvp node scripts/backfill-summaries.cjs --batch=${batchSize}`);
+    }
     
   } catch (error) {
     console.error('💥 Fatal error:', error);

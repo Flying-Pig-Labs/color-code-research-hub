@@ -505,14 +505,14 @@ Environment:
 aws secretsmanager create-secret \
   --name anthropic_key \
   --secret-string '{"anthropic_key":"your-key-here"}' \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 
 # Update secret
 aws secretsmanager update-secret \
   --secret-id anthropic_key \
   --secret-string '{"anthropic_key":"new-key-here"}' \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 ```
 
@@ -538,7 +538,7 @@ The script enforces:
 - Correct stack name: `color-code-research-hub`
 - Required capabilities: `CAPABILITY_IAM`
 - Correct region: `us-east-1`
-- Profile: `personal` (or configure)
+- Profile: `mvp` (MVP account only)
 
 ### Manual Deployment Steps
 
@@ -561,7 +561,7 @@ sam deploy \
   --resolve-s3 \
   --no-confirm-changeset \
   --region us-east-1 \
-  --profile personal
+  --profile mvp
 ```
 
 #### 3. First-Time Deployment
@@ -606,13 +606,13 @@ sam deploy --no-confirm-changeset
 # View stack history
 aws cloudformation describe-stack-events \
   --stack-name color-code-research-hub \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 
 # Rollback to previous version
 aws cloudformation cancel-update-stack \
   --stack-name color-code-research-hub \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 ```
 
@@ -694,7 +694,7 @@ Each Lambda function creates a log group:
 ```bash
 # Tail logs for specific function
 aws logs tail /aws/lambda/color-code-research-hub-PlanOrchestratorFunction-ABC123 \
-  --profile personal \
+  --profile mvp \
   --region us-east-1 \
   --follow
 
@@ -702,7 +702,7 @@ aws logs tail /aws/lambda/color-code-research-hub-PlanOrchestratorFunction-ABC12
 aws logs filter-log-events \
   --log-group-name /aws/lambda/color-code-research-hub-PlanOrchestratorFunction-ABC123 \
   --filter-pattern '"ERROR"' \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 ```
 
@@ -756,7 +756,7 @@ Create custom dashboard:
 aws cloudwatch put-dashboard \
   --dashboard-name ColorCodeResearchHub \
   --dashboard-body file://dashboard.json \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 ```
 
@@ -819,7 +819,7 @@ aws ce get-cost-forecast \
   --time-period Start=2025-01-01,End=2025-01-31 \
   --metric UNBLENDED_COST \
   --granularity MONTHLY \
-  --profile personal
+  --profile mvp
 
 # Set up billing alarm
 aws cloudwatch put-metric-alarm \
@@ -831,7 +831,7 @@ aws cloudwatch put-metric-alarm \
   --period 86400 \
   --threshold 100 \
   --comparison-operator GreaterThanThreshold \
-  --profile personal
+  --profile mvp
 ```
 
 ## Troubleshooting
@@ -847,7 +847,7 @@ aws cloudwatch put-metric-alarm \
 # Delete existing function
 aws lambda delete-function \
   --function-name FunctionName \
-  --profile personal \
+  --profile mvp \
   --region us-east-1
 
 # Or use unique names in template
@@ -909,23 +909,23 @@ Policies:
 # Describe stack
 aws cloudformation describe-stacks \
   --stack-name color-code-research-hub \
-  --profile personal
+  --profile mvp
 
 # List stack resources
 aws cloudformation list-stack-resources \
   --stack-name color-code-research-hub \
-  --profile personal
+  --profile mvp
 
 # Get specific resource
 aws cloudformation describe-stack-resource \
   --stack-name color-code-research-hub \
   --logical-resource-id PlanOrchestratorFunction \
-  --profile personal
+  --profile mvp
 
 # View stack events (for errors)
 aws cloudformation describe-stack-events \
   --stack-name color-code-research-hub \
-  --profile personal \
+  --profile mvp \
   --max-items 20
 ```
 
