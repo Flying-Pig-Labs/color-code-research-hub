@@ -27,12 +27,36 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
     try {
       setLoading(true);
       setError(null);
+      // Always fetch from API to get all reports including those with summaries
       const data = await listResearchReports(team, limit);
       setReports(data);
     } catch (err) {
       console.error('Failed to load reports:', err);
       setError('Failed to load research history');
-      toast.error('Failed to load research history');
+      // Fall back to localStorage if API fails
+      try {
+        const localReports = JSON.parse(localStorage.getItem('researchTasks') || '[]')
+          .filter((task: any) => task.status === 'completed' && (!team || task.team === team))
+          .slice(0, limit)
+          .map((task: any) => ({
+            reportId: task.requestId || task.id,
+            team: task.team || 'unknown',
+            createdAt: task.createdAt,
+            requestId: task.requestId,
+            s3Key: task.s3_key,
+            vendorName: task.vendorName,
+            companyName: task.companyName,
+            title: task.vendorName || task.companyName || 'Research Report',
+            contentSummary: task.summary,
+            processedSummary: task.summary,
+            summaryWordCount: task.summaryWordCount,
+            downloadUrl: task.download_url
+          }));
+        setReports(localReports);
+        toast.warning('Using offline data - API unavailable');
+      } catch (localErr) {
+        toast.error('Failed to load research history');
+      }
     } finally {
       setLoading(false);
     }

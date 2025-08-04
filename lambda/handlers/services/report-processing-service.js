@@ -32,7 +32,7 @@ const s3 = new S3Client({ region: 'us-east-1' });
 const dynamodb = new DynamoDBClient({ region: 'us-east-1' });
 
 // Configuration constants
-const CLAUDE_MODEL_ID = 'anthropic.claude-3-5-sonnet-20241022-v2:0';
+const CLAUDE_MODEL_ID = 'anthropic.claude-3-5-sonnet-20240620-v1:0';
 const SUMMARY_WORD_TARGET = 120;
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 2000; // 2 seconds
@@ -135,7 +135,7 @@ CRITICAL: Return only valid JSON. Do not include any text before or after the JS
  */
 class ReportProcessingService {
     constructor() {
-        this.bucketName = process.env.REPORT_BUCKET || 'color-code-research-results-default';
+        this.bucketName = process.env.REPORT_BUCKET || 'color-code-research-results-984906149037';
         this.tableName = process.env.RESEARCH_REPORTS_TABLE || 'ResearchReports';
     }
 
