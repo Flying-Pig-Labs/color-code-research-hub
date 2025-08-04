@@ -1,73 +1,127 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Fish, Users, Target, Trophy, AlertCircle } from 'lucide-react';
 import SectionWrapper from "@/components/SectionWrapper";
+import Header from "@/components/Header";
 
 const SharkSwarmer = () => {
   return (
-    <div className="space-y-6">
-      {/* Hero Section */}
-      <SectionWrapper className="pt-16 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-blue-900/20">
-        <div className="text-center max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+      <Header />
+      
+      {/* Hero Section with CarMax Fading */}
+      <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
+        {/* Decorative fading elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
+        </div>
+        
+        <div className="text-center max-w-4xl mx-auto relative z-10">
           <div className="flex justify-center mb-6">
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 shadow-smooth-lg">
-              <Fish className="h-12 w-12 text-white" />
-            </div>
+            <span className="text-8xl">🦈</span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
             Shark Swarmer
-            <span className="block text-white/90">Agent-Driven Idea Vetting</span>
           </h1>
           
-          <p className="text-xl text-white/80 mb-8 leading-relaxed">
+          <p className="text-xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto">
             Harness the power of diverse AI agent personas to systematically evaluate, score, and select the most promising ideas through multi-perspective analysis.
           </p>
         </div>
       </SectionWrapper>
 
-      {/* Coming Soon Card */}
-      <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-        <CardContent className="pt-6">
-          <div className="text-center py-12">
-            <div className="w-20 h-20 rounded-full bg-blue-600/10 flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="w-10 h-10 text-blue-400" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Coming Soon</h3>
-            <p className="text-gray-400 max-w-md mx-auto">
-              The Shark Swarmer feature is currently under development. This will allow you to:
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 max-w-3xl mx-auto">
-              <Card className="bg-gray-800/50 border-gray-700/50">
-                <CardContent className="pt-4">
-                  <Users className="w-8 h-8 text-blue-400 mb-2" />
-                  <h4 className="font-medium mb-1">Agent Personas</h4>
-                  <p className="text-sm text-gray-400">
-                    Multiple AI agents with different perspectives
+      {/* Features Overview */}
+      <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">
+        {/* Subtle fading background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
+          <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
+        </div>
+        
+        {/* Coming Soon Notice */}
+        <div className="max-w-4xl mx-auto mb-8 relative z-10">
+          <Card className="bg-carmax-yellow/10 border-carmax-yellow/30">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <AlertCircle className="w-6 h-6 text-carmax-yellow flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-foreground mb-1">Coming Soon</h3>
+                  <p className="text-sm text-muted-foreground">
+                    The Shark Swarmer feature is currently under development and will be available in the next release.
                   </p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gray-800/50 border-gray-700/50">
-                <CardContent className="pt-4">
-                  <Target className="w-8 h-8 text-purple-400 mb-2" />
-                  <h4 className="font-medium mb-1">Idea Scoring</h4>
-                  <p className="text-sm text-gray-400">
-                    Systematic evaluation of each idea
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gray-800/50 border-gray-700/50">
-                <CardContent className="pt-4">
-                  <Trophy className="w-8 h-8 text-yellow-400 mb-2" />
-                  <h4 className="font-medium mb-1">Best Selection</h4>
-                  <p className="text-sm text-gray-400">
-                    Data-driven selection of winning ideas
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+          <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 rounded-lg bg-carmax-blue/10">
+                  <Users className="h-6 w-6 text-carmax-blue" />
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  Agent Personas
+                </CardTitle>
+              </div>
+              <CardDescription className="text-sm text-muted-foreground">
+                Diverse AI Perspectives
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                Multiple AI agents with different viewpoints and expertise to evaluate your ideas from every angle.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-yellow/20 hover:border-carmax-yellow/40 hover:bg-carmax-yellow/5">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 rounded-lg bg-carmax-yellow/10">
+                  <Target className="h-6 w-6 text-foreground" />
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  Idea Scoring
+                </CardTitle>
+              </div>
+              <CardDescription className="text-sm text-muted-foreground">
+                Systematic Evaluation
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                Data-driven scoring framework that evaluates ideas based on feasibility, impact, and innovation potential.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 rounded-lg bg-carmax-blue/10">
+                  <Trophy className="h-6 w-6 text-carmax-blue" />
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  Best Selection
+                </CardTitle>
+              </div>
+              <CardDescription className="text-sm text-muted-foreground">
+                Smart Recommendations
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                AI-powered selection process that identifies the most promising ideas for implementation.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </SectionWrapper>
     </div>
   );
 };
