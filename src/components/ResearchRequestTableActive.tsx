@@ -84,7 +84,8 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
   // Poll for status updates of processing tasks
   useEffect(() => {
     const processingTasks = tasks.filter(task => 
-      (task.status === 'processing' || task.status === 'pending') && task.requestId
+      ((task.status === 'processing' || task.status === 'pending') || 
+       (task.status === 'completed' && !task.summary)) && task.requestId
     );
     
     if (processingTasks.length === 0) return;
@@ -224,7 +225,20 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
   const getStatusBadge = (task: ResearchTask) => {
     const isPolling = pollingTasks.has(task.requestId || '');
     
-    if (task.status === 'completed') {
+    // Show as processing if status is completed but summary is not yet available
+    if (task.status === 'completed' && !task.summary) {
+      return (
+        <div className="flex items-center gap-2">
+          <Badge className="bg-blue-600 text-white">
+            <Loader2 className={`h-3 w-3 mr-1 ${isPolling ? 'animate-spin' : ''}`} />
+            Processing Summary
+          </Badge>
+          {isPolling && (
+            <RefreshCw className="h-3 w-3 text-muted-foreground animate-pulse" />
+          )}
+        </div>
+      );
+    } else if (task.status === 'completed') {
       return (
         <div className="flex items-center gap-2">
           <Badge className="bg-green-600 text-white">
@@ -348,10 +362,18 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                     </div>
                   )}
                   <div className="w-full">
-                    <Progress value={task.reportProcessed ? 100 : 30} className="h-2" />
+                    <Progress 
+                      value={
+                        task.summary ? 100 : 
+                        task.status === 'completed' ? 70 : 
+                        30
+                      } 
+                      className="h-2" 
+                    />
                     <p className={`text-xs mt-1 ${teamType === 'black' ? 'text-white/60' : 'text-muted-foreground'}`}>
                       Started {format(new Date(task.createdAt), 'MMM dd, HH:mm')}
-                      {task.reportProcessed && ' • Report processed'}
+                      {task.status === 'completed' && !task.summary && ' • Generating summary...'}
+                      {task.summary && ' • Summary ready'}
                     </p>
                   </div>
                 </div>
