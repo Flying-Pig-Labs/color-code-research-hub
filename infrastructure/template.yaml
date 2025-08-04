@@ -128,7 +128,7 @@ Resources:
       Handler: githubRepos.handler
       Environment:
         Variables:
-          SECRETS_ARN: arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
+          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -136,10 +136,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
       Events:
         ListRepos:
           Type: Api
@@ -165,7 +164,7 @@ Resources:
       Environment:
         Variables:
           ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
-          SECRETS_ARN: arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
+          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -173,10 +172,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
       Events:
         ParseReadme:
           Type: Api
@@ -214,7 +212,7 @@ Resources:
       Environment:
         Variables:
           ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
-          SECRETS_ARN: arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
+          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
           AWS_BEDROCK_REGION: us-east-1
       Policies:
         - Version: '2012-10-17'
@@ -228,10 +226,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
       Events:
         GenerateFullPlan:
           Type: Api
@@ -275,10 +272,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
       Events:
         GenerateCLIPlan:
           Type: Api
@@ -375,10 +371,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: 
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:color-code-research-hub-secrets-production-jZ06C1
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:418272766513:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
 
   # Get Job Status Function
   GetJobStatusFunction:

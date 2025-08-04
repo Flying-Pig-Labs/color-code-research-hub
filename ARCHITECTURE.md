@@ -125,10 +125,10 @@ The system implements a fully async plan generation that mirrors the agent-team-
 1. **Anthropic API Key**: `color-code-research-hub-secrets-production`
    - Used for Claude API calls (primary LLM)
    
-2. **OpenAI API Key**: `arn:aws:secretsmanager:us-east-1:418272766513:secret:feel-forward/openai-api-key-zezdyv`
+2. **OpenAI API Key**: `arn:aws:secretsmanager:us-east-1:984906149037:secret:feel-forward/openai-api-key-zezdyv`
    - Used as fallback when Claude returns 529 (overloaded)
 
-3. **GitHub PAT**: `arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4`
+3. **GitHub PAT**: `arn:aws:secretsmanager:us-east-1:984906149037:secret:github/personal_token-7lbje4`
    - Used for GitHub API operations
 
 ## 🚀 Deployment

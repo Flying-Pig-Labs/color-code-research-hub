@@ -64,7 +64,7 @@ VITE_API_URL=https://[api-id].execute-api.us-east-1.amazonaws.com/production
 
 ### Secrets Configuration
 The application uses AWS Secrets Manager for:
-- GitHub Personal Access Token: `arn:aws:secretsmanager:us-east-1:418272766513:secret:github/personal_token-7lbje4`
+- GitHub Personal Access Token: `arn:aws:secretsmanager:us-east-1:984906149037:secret:github/personal_token-7lbje4`
 - Anthropic API Key: Stored in stack secrets
 
 ## Deployment Verification
