@@ -39,14 +39,34 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   };
 
   const handleDownload = async (report: ResearchReport) => {
-    if (!report.downloadUrl) {
+    if (!report.s3Key && !report.downloadUrl) {
       toast.error('Download not available for this report');
       return;
     }
 
     try {
+      let downloadUrl = report.downloadUrl;
+      
+      // If we have an s3Key, fetch a fresh presigned URL
+      if (report.s3Key) {
+        const encodedKey = btoa(report.s3Key);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/research/download/${encodedKey}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to get download URL');
+        }
+        
+        const data = await response.json();
+        if (data.download_url) {
+          downloadUrl = data.download_url;
+        } else {
+          throw new Error('No download URL received');
+        }
+      }
+      
+      // Use the fresh URL (or existing one if no s3Key)
       const link = document.createElement('a');
-      link.href = report.downloadUrl;
+      link.href = downloadUrl;
       link.download = `research_${report.reportId}.json`;
       document.body.appendChild(link);
       link.click();
@@ -202,9 +222,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     </Link>
                     <button
                       onClick={() => handleDownload(report)}
-                      disabled={!report.downloadUrl}
+                      disabled={!report.downloadUrl && !report.s3Key}
                       className={`px-3 py-1 rounded-lg text-white ${
-                        report.downloadUrl
+                        report.downloadUrl || report.s3Key
                           ? 'bg-blue-600 hover:bg-blue-700'
                           : 'bg-gray-400 cursor-not-allowed'
                       }`}
