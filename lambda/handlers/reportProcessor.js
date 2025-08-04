@@ -60,8 +60,9 @@ Execute comprehensive research and analysis with detailed findings and actionabl
  * @returns {object} - Processing result
  */
 async function processResearchReport(requestData, options = {}) {
-  // Import the service function
-  const { processResearchReport: processWithBedrock } = require('./services/report-processing-service');
+  // Import the service class
+  const { ReportProcessingService } = require('./services/report-processing-service');
+  const reportService = new ReportProcessingService();
   
   // Handle different field names from different invocation sources
   const team = requestData.team;
@@ -99,32 +100,25 @@ async function processResearchReport(requestData, options = {}) {
     // Use the report processing service instead of direct API call
     try {
       // Call the service which handles Bedrock/Claude integration
-      const result = await processWithBedrock({
+      const result = await reportService.processReport({
         reportId: requestId,
         rawContent: task,
         team: team,
         objective: requestData.objective || prompt,
-        metadata: formData
+        metadata: formData,
+        secrets: {}, // Secrets will be loaded from environment
+        timeoutMs: 30000 // 30 second timeout
       });
 
-      if (!result.success) {
-        return {
-          success: false,
-          requestId,
-          error: result.error || 'Report processing failed',
-          errorType: 'PROCESSING_ERROR'
-        };
-      }
-
       // Extract processed content from result
-      const processedContent = result.result.cleanedContent || result.result.summary;
+      const processedContent = result.summary;
         
       // Extract summary and sections from result
-      const contentSummary = result.result.summary;
-      const sections = result.result.sections;
+      const contentSummary = result.summary;
+      const sections = result.sections;
       
       // Calculate metrics
-      const wordCount = result.result.wordCount || processedContent.split(/\s+/).length;
+      const wordCount = result.wordCount || processedContent.split(/\s+/).length;
       const processingTime = Date.now() - startTime;
 
       // Generate S3 key with timestamp

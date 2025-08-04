@@ -45,11 +45,11 @@ Your task is to transform the raw research content into a professional, actionab
 
 ## REQUIREMENTS:
 
-1. **EXECUTIVE SUMMARY** (EXACTLY 120 words):
+1. **EXECUTIVE SUMMARY** (approximately 120 words):
    - Create a compelling summary that captures the essence of the research
    - Focus on key findings, implications, and opportunities
    - Write for C-level executives who need quick insights
-   - Must be exactly 120 words (±2 words acceptable)
+   - Target 100-140 words, but prioritize clarity and completeness over exact word count
 
 2. **KEY FINDINGS** (3-5 bullet points):
    - Extract the most important discoveries from the research
@@ -84,7 +84,7 @@ Your task is to transform the raw research content into a professional, actionab
 Please return your response as a valid JSON object with this exact structure:
 
 {
-  "summary": "Exactly 120-word executive summary here...",
+  "summary": "Approximately 120-word executive summary here...",
   "wordCount": 120,
   "sections": [
     {
@@ -125,7 +125,7 @@ Please return your response as a valid JSON object with this exact structure:
   }
 }
 
-CRITICAL: Ensure the summary is exactly 120 words. Count carefully and adjust as needed.
+CRITICAL: Ensure the summary is approximately 120 words (100-140 words is acceptable). Focus on creating a compelling, complete summary.
 CRITICAL: Return only valid JSON. Do not include any text before or after the JSON object.
 `;
 
@@ -395,8 +395,8 @@ class ReportProcessingService {
         };
 
         // Validate summary word count
-        if (Math.abs(validatedReport.wordCount - SUMMARY_WORD_TARGET) > 10) {
-            console.warn(`⚠️ Summary word count (${validatedReport.wordCount}) differs significantly from target (${SUMMARY_WORD_TARGET})`);
+        if (validatedReport.wordCount < 100 || validatedReport.wordCount > 140) {
+            console.warn(`⚠️ Summary word count (${validatedReport.wordCount}) is outside the target range (100-140 words)`);
         }
 
         // Ensure required sections exist
