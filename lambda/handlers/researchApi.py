@@ -10,6 +10,7 @@ import uuid
 secrets_manager = boto3.client("secretsmanager", region_name="us-east-1")
 s3_client = boto3.client("s3")
 dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
+lambda_client = boto3.client("lambda", region_name="us-east-1")
 
 # Constants
 PERPLEXITY_ASYNC_URL = "https://api.perplexity.ai/async/chat/completions"
@@ -83,6 +84,46 @@ def upload_to_s3(content: str, metadata: Dict[str, Any]) -> str:
     except Exception as e:
         print(f"Error uploading to S3: {str(e)}")
         # Don't fail the request if S3 upload fails
+        return None
+
+
+def invoke_report_processor(
+    report_id: str,
+    content: str,
+    team: str,
+    task: str,
+    metadata: Dict[str, Any],
+) -> Optional[Dict[str, Any]]:
+    """Invoke the ReportProcessingFunction to generate structured reports."""
+    try:
+        print(f"Invoking report processor for {report_id}")
+        
+        # Prepare the payload for report processing
+        payload = {
+            "reportId": report_id,
+            "rawContent": content,
+            "team": team,
+            "objective": task,
+            "metadata": metadata
+        }
+        
+        # Invoke the report processing function asynchronously
+        # Use environment variable or construct ARN
+        function_name = os.environ.get("REPORT_PROCESSING_FUNCTION_NAME", 
+                                      "color-code-research-hub-ReportProcessingFunction-HaCSag5t4t7Y")
+        
+        response = lambda_client.invoke(
+            FunctionName=function_name,
+            InvocationType="Event",  # Async invocation
+            Payload=json.dumps(payload)
+        )
+        
+        print(f"Report processor invoked with status: {response['StatusCode']}")
+        return {"invoked": True, "statusCode": response['StatusCode']}
+        
+    except Exception as e:
+        print(f"Error invoking report processor: {str(e)}")
+        # Don't fail the main request if report processing fails
         return None
 
 
@@ -437,6 +478,22 @@ def handler(event, context):
                         request_id=request_id,
                         content_summary=content_summary
                     )
+                    
+                    # Invoke report processor to generate structured reports
+                    # This will create the 5 different output formats with LLM processing
+                    processor_result = invoke_report_processor(
+                        report_id=research_id,
+                        content=research_content,
+                        team=team,
+                        task=content_summary or "Research Analysis",
+                        metadata=metadata
+                    )
+                    
+                    if processor_result:
+                        print(f"Report processor invoked successfully for {research_id}")
+                        response_data["report_processing_status"] = "initiated"
+                    else:
+                        print(f"Failed to invoke report processor for {research_id}")
 
                 response_data["content"] = research_content
                 response_data["s3_location"] = (

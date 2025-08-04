@@ -311,6 +311,7 @@ Resources:
         Variables:
           RESEARCH_BUCKET: !Ref ResearchResultsBucket
           RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+          REPORT_PROCESSING_FUNCTION_NAME: !Ref ReportProcessingFunction
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -335,6 +336,10 @@ Resources:
               Resource: 
                 - !GetAtt ResearchReportsTable.Arn
                 - !Sub '${ResearchReportsTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: !GetAtt ReportProcessingFunction.Arn
       Events:
         ResearchEndpoint:
           Type: Api

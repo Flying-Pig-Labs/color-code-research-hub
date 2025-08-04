@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const Anthropic = require('@anthropic-ai/sdk');
 const { v4: uuidv4 } = require('uuid');
 
 // AWS services
@@ -7,14 +6,8 @@ const s3 = new AWS.S3();
 const cloudWatchLogs = new AWS.CloudWatchLogs();
 
 // Environment variables
-const S3_BUCKET = process.env.S3_BUCKET || 'color-code-research-reports';
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const S3_BUCKET = process.env.REPORT_BUCKET || 'color-code-research-results-984906149037';
 const LOG_GROUP = process.env.LOG_GROUP || '/aws/lambda/report-processor';
-
-// Initialize Anthropic client
-const anthropic = new Anthropic({
-  apiKey: ANTHROPIC_API_KEY
-});
 
 /**
  * Strip <think> blocks from LLM output to clean up the content
@@ -61,13 +54,20 @@ Execute comprehensive research and analysis with detailed findings and actionabl
 }
 
 /**
- * Process research report using Claude API
+ * Process research report using report-processing-service
  * @param {object} requestData - Request data including team, task, formData, requestId
  * @param {object} options - Processing options
  * @returns {object} - Processing result
  */
 async function processResearchReport(requestData, options = {}) {
-  const { team, task, formData, requestId } = requestData;
+  // Import the service function
+  const { processResearchReport: processWithBedrock } = require('./services/report-processing-service');
+  
+  // Handle different field names from different invocation sources
+  const team = requestData.team;
+  const task = requestData.rawContent || requestData.task;
+  const formData = requestData.metadata || requestData.formData || {};
+  const requestId = requestData.reportId || requestData.requestId;
   const { maxRetries = 0 } = options;
   
   const startTime = Date.now();
@@ -95,66 +95,62 @@ async function processResearchReport(requestData, options = {}) {
       promptLength: prompt.length
     });
 
-    let lastError;
-    let attemptCount = 0;
 
-    // Retry logic for LLM calls
-    while (attemptCount <= maxRetries) {
-      try {
-        // Call Claude API
-        const response = await anthropic.messages.create({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 8192,
-          temperature: 0.3,
-          messages: [{
-            role: 'user',
-            content: prompt
-          }]
-        });
+    // Use the report processing service instead of direct API call
+    try {
+      // Call the service which handles Bedrock/Claude integration
+      const result = await processWithBedrock({
+        reportId: requestId,
+        rawContent: task,
+        team: team,
+        objective: requestData.objective || prompt,
+        metadata: formData
+      });
 
-        // Validate response
-        if (!response.content || response.content.length === 0) {
-          return {
-            success: false,
-            requestId,
-            error: 'LLM returned empty or invalid response',
-            errorType: 'INVALID_RESPONSE'
-          };
-        }
-
-        // Extract and clean content
-        const rawContent = response.content[0].text;
-        const processedContent = strip_think_blocks(rawContent);
-        
-        // Extract summary
-        const contentSummary = extractContentSummary(processedContent);
-        
-        // Calculate metrics
-        const wordCount = processedContent.split(/\s+/).length;
-        const processingTime = Date.now() - startTime;
-
-        // Generate S3 key with timestamp
-        const timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
-        const s3Key = `reports/${team}_${timestamp}_${requestId}.json`;
-
-        // Prepare report data
-        const reportData = {
+      if (!result.success) {
+        return {
+          success: false,
           requestId,
-          team,
-          originalTask: task,
-          formData,
-          processedContent,
-          rawContent,
-          contentSummary,
-          wordCount,
-          processingTime,
-          modelUsed: 'claude-3-5-sonnet-20241022',
-          timestamp: new Date().toISOString(),
-          metadata: {
-            promptLength: prompt.length,
-            attemptCount: attemptCount + 1
-          }
+          error: result.error || 'Report processing failed',
+          errorType: 'PROCESSING_ERROR'
         };
+      }
+
+      // Extract processed content from result
+      const processedContent = result.result.cleanedContent || result.result.summary;
+        
+      // Extract summary and sections from result
+      const contentSummary = result.result.summary;
+      const sections = result.result.sections;
+      
+      // Calculate metrics
+      const wordCount = result.result.wordCount || processedContent.split(/\s+/).length;
+      const processingTime = Date.now() - startTime;
+
+      // Generate S3 key with timestamp
+      const timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
+      const s3Key = `reports/${team}_${timestamp}_${requestId}.json`;
+
+      // Prepare report data
+      const reportData = {
+        requestId,
+        team,
+        originalTask: task,
+        formData,
+        processedContent,
+        rawContent: task,
+        contentSummary,
+        sections,
+        wordCount,
+        processingTime,
+        modelUsed: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          promptLength: prompt.length,
+          apiCallsUsed: result.processing?.apiCallsUsed || 1,
+          thinkBlocksRemoved: result.processing?.thinkBlocksRemoved || 0
+        }
+      };
 
         // Upload to S3
         const uploadResult = await s3.upload({
@@ -177,55 +173,40 @@ async function processResearchReport(requestData, options = {}) {
           processingTime
         });
 
-        return {
-          success: true,
-          requestId,
-          s3Location: uploadResult.Location,
-          s3Key: uploadResult.Key,
-          contentSummary,
-          wordCount,
-          processingTime
-        };
-
-      } catch (error) {
-        lastError = error;
-        attemptCount++;
-
-        // Check if it's a timeout error that should be retried
-        if (error.code === 'TIMEOUT' && attemptCount <= maxRetries) {
-          await logToCloudWatch(`report-processor-${requestId}`, `Attempt ${attemptCount} failed, retrying`, {
-            requestId,
-            error: error.message
-          });
-          continue;
-        }
-
-        // Break out of retry loop for non-retryable errors
-        break;
-      }
-    }
-
-    // Handle final error after retries
-    if (lastError) {
-      await logToCloudWatch(`report-processor-${requestId}`, 'Processing failed after retries', {
+      return {
+        success: true,
         requestId,
-        error: lastError.message,
-        attempts: attemptCount
+        s3Location: uploadResult.Location,
+        s3Key: uploadResult.Key,
+        contentSummary,
+        sections,
+        wordCount,
+        processingTime,
+        processing: result.processing
+      };
+
+    } catch (error) {
+      // Log the error
+      await logToCloudWatch(`report-processor-${requestId}`, 'Processing failed', {
+        requestId,
+        error: error.message
       });
 
-      if (lastError.code === 'TIMEOUT') {
+      // Handle specific error types
+      if (error.code && error.code.includes('S3')) {
         return {
           success: false,
           requestId,
-          error: 'LLM request timeout - please try again',
-          errorType: 'TIMEOUT'
+          error: `Failed to save report to S3: ${error.message}`,
+          errorType: 'S3_ERROR'
         };
       }
 
+      // Return general error
       return {
         success: false,
         requestId,
-        error: `Processing failed: ${lastError.message}`,
+        error: `Processing failed: ${error.message}`,
         errorType: 'PROCESSING_ERROR'
       };
     }
@@ -352,18 +333,21 @@ function validateRequestData(requestData) {
     errors.push(`Invalid team type: ${requestData.team}. Must be one of: red, white, black`);
   }
   
-  if (!requestData.task) {
-    errors.push('Missing required field: task');
+  if (!requestData.rawContent && !requestData.task) {
+    errors.push('Missing required field: rawContent or task');
   }
   
-  if (!requestData.formData) {
-    errors.push('Missing required field: formData');
+  if (!requestData.objective && !requestData.task) {
+    errors.push('Missing required field: objective');
   }
   
-  if (!requestData.requestId) {
-    errors.push('Missing required field: requestId');
-  } else if (typeof requestData.requestId !== 'string' || requestData.requestId.trim() === '') {
-    errors.push('Request ID cannot be empty');
+  if (!requestData.requestId && !requestData.reportId) {
+    errors.push('Missing required field: requestId or reportId');
+  } else {
+    const id = requestData.requestId || requestData.reportId;
+    if (typeof id !== 'string' || id.trim() === '') {
+      errors.push('Request/Report ID cannot be empty');
+    }
   }
   
   return {
@@ -372,8 +356,87 @@ function validateRequestData(requestData) {
   };
 }
 
+/**
+ * Lambda handler function
+ */
+exports.handler = async (event) => {
+  console.log('Report Processor Lambda invoked:', JSON.stringify(event, null, 2));
+  
+  try {
+    // Parse the body if it's a string (from API Gateway or direct invocation)
+    let requestData;
+    if (typeof event === 'string') {
+      requestData = JSON.parse(event);
+    } else if (event.body) {
+      requestData = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+    } else {
+      requestData = event;
+    }
+    
+    // Validate request data
+    const validation = validateRequestData(requestData);
+    if (!validation.isValid) {
+      return {
+        statusCode: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          success: false,
+          error: 'Invalid request',
+          errors: validation.errors
+        })
+      };
+    }
+    
+    // Process the report
+    const result = await processResearchReport(requestData);
+    
+    // Return appropriate response based on invocation type
+    if (event.httpMethod) {
+      // API Gateway invocation
+      return {
+        statusCode: result.success ? 200 : 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Api-Key,Accept',
+          'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,PUT,DELETE'
+        },
+        body: JSON.stringify(result)
+      };
+    } else {
+      // Direct Lambda invocation
+      return result;
+    }
+  } catch (error) {
+    console.error('Handler error:', error);
+    
+    const errorResponse = {
+      success: false,
+      error: `Handler error: ${error.message}`,
+      errorType: 'HANDLER_ERROR'
+    };
+    
+    if (event.httpMethod) {
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(errorResponse)
+      };
+    }
+    
+    return errorResponse;
+  }
+};
+
 // Export functions for testing and usage
 module.exports = {
+  handler: exports.handler,
   strip_think_blocks,
   formatPromptForTeam,
   processResearchReport,
