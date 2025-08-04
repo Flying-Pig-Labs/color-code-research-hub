@@ -201,9 +201,256 @@ Returns repository README content.
 }
 ```
 
+## 🔬 Research API (Perplexity Integration)
+
+### Submit Research Request
+**POST** `/api/research`
+
+Submits a research request to Perplexity API for async processing.
+
+**Request Body:**
+```json
+{
+  "task": "Research topic or question",
+  "metadata": {
+    "team": "red|white|black",  // Team affiliation (optional)
+    "requester": "User Name",    // Who requested (optional)
+    "company": "Company Name",   // Company context (optional)
+    "project": "Project Name"    // Project context (optional)
+  }
+}
+```
+
+**Response (202 Accepted):**
+```json
+{
+  "request_id": "perplexity-request-id",
+  "status": "pending",
+  "message": "Research request submitted successfully"
+}
+```
+
+### Check Research Status
+**GET** `/api/research/status/{requestId}`
+
+Check the status of a research request.
+
+**Response (200 OK):**
+```json
+{
+  "request_id": "perplexity-request-id",
+  "status": "completed|pending|failed",
+  "result": {
+    "content": "Research findings...",
+    "model": "llama-3.1-sonar-large-128k-online",
+    "usage": {
+      "prompt_tokens": 100,
+      "completion_tokens": 500
+    }
+  },
+  "s3_location": "research-results/request-id.json"
+}
+```
+
+### List Research Reports
+**GET** `/api/research/reports`
+
+List all research reports with optional filtering.
+
+**Query Parameters:**
+- `team` - Filter by team (red|white|black)
+- `limit` - Number of results (default: 20, max: 100)
+
+**Response (200 OK):**
+```json
+{
+  "reports": [
+    {
+      "reportId": "uuid",
+      "task": "Research question",
+      "status": "completed",
+      "team": "red",
+      "requester": "User Name",
+      "completedAt": "2025-08-04T12:00:00Z",
+      "s3Location": "research-results/uuid.json"
+    }
+  ],
+  "count": 10,
+  "hasMore": false
+}
+```
+
+### Get Research Report
+**GET** `/api/research/reports/{reportId}`
+
+Retrieve a specific research report.
+
+**Response (200 OK):**
+```json
+{
+  "reportId": "uuid",
+  "title": "Research Report Title",
+  "summary": "120-word executive summary",
+  "cleanedContent": "Full report content with think blocks removed",
+  "sections": [
+    {
+      "id": "section-id",
+      "heading": "Section Title",
+      "markdown": "Section content in markdown",
+      "html": "Sanitized HTML content",
+      "wordCount": 500
+    }
+  ],
+  "toc": [
+    {
+      "id": "section-id",
+      "heading": "Section Title",
+      "level": 2
+    }
+  ],
+  "metrics": {
+    "wordCount": 5000,
+    "readingMinutes": 18
+  },
+  "entities": ["Company A", "Technology X"],
+  "tags": ["research", "competitive-analysis"],
+  "disclaimers": ["[Unverified] This report includes model-generated analysis"]
+}
+```
+
+### Download Research Result
+**GET** `/api/research/download/{s3Key}`
+
+Download raw research result from S3.
+
+**Response:** Binary file download
+
+## 📄 Report Processing
+
+### Process Raw Report
+**POST** `/api/reports/process`
+
+Process raw Perplexity output to generate structured reports.
+
+**Request Body:**
+```json
+{
+  "reportId": "unique-id",
+  "rawContent": "Raw research content with <think> blocks",
+  "team": "red|white|black",
+  "objective": "Research objective",
+  "metadata": {
+    "requester": "User Name",
+    "company": "Company Name"
+  }
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "reportId": "unique-id",
+  "result": {
+    "summary": "120-word executive summary",
+    "wordCount": 120,
+    "sections": {
+      "keyFindings": ["Finding 1", "Finding 2"],
+      "opportunities": ["Opportunity 1", "Opportunity 2"],
+      "recommendations": ["Recommendation 1", "Recommendation 2"],
+      "risks": ["Risk 1", "Risk 2"]
+    },
+    "s3Location": "reports/unique-id/report.json"
+  },
+  "processing": {
+    "thinkBlocksRemoved": 5,
+    "apiCallsUsed": 1,
+    "processingTimeMs": 4500
+  }
+}
+```
+
+### Enhance Existing Report
+**POST** `/api/reports/enhance/{reportId}`
+
+Enhance an existing report with additional processing.
+
+**Request Body:**
+```json
+{
+  "enhancements": ["visual-report", "action-items", "raw-export"]
+}
+```
+
+## 🔬 Enhanced Research (V2)
+
+### Submit Enhanced Research
+**POST** `/api/research/v2`
+
+Submit research with automatic report processing and 5 output formats.
+
+**Request Body:**
+```json
+{
+  "task": "Research question",
+  "metadata": {
+    "team": "red|white|black",
+    "requester": "User Name",
+    "company": "Company Name",
+    "vendor": "Vendor Name",
+    "tags": ["tag1", "tag2"],
+    "priority": "high|medium|low"
+  }
+}
+```
+
+**Response (202 Accepted):**
+```json
+{
+  "success": true,
+  "request_id": "uuid",
+  "status": "pending",
+  "outputs": {
+    "raw": "reports/uuid/raw.json",
+    "report": "reports/uuid/report.json",
+    "markdown": "reports/uuid/report.md",
+    "html": "reports/uuid/report.html",
+    "cleaned": "reports/uuid/cleaned.md"
+  }
+}
+```
+
+### Get Enhanced Research Status
+**GET** `/api/research/v2/status/{requestId}`
+
+**Response includes all 5 output formats when completed.**
+
+### List Enhanced Reports
+**GET** `/api/research/v2/reports`
+
+**Response includes format availability flags:**
+```json
+{
+  "reports": [
+    {
+      "reportId": "uuid",
+      "formats": {
+        "raw": true,
+        "json": true,
+        "markdown": true,
+        "html": true,
+        "cleaned": true
+      }
+    }
+  ]
+}
+```
+
 ## 🔐 Authentication
 
 Currently, the API uses GitHub OAuth for repository access. The GitHub token is retrieved from AWS Secrets Manager.
+
+For Research API endpoints, Perplexity API key is required and managed via AWS Secrets Manager.
 
 ## ⚠️ Error Responses
 
@@ -264,9 +511,79 @@ curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/a
 curl https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/api/plan/async/status/{jobId}
 ```
 
+### Submit Research Request
+```bash
+curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/api/research \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task": "Research competitive landscape for AI code assistants",
+    "metadata": {
+      "team": "red",
+      "requester": "John Doe",
+      "company": "Ocean Studio"
+    }
+  }'
+```
+
+### Process Report with Think Block Removal
+```bash
+curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/api/reports/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reportId": "unique-id",
+    "rawContent": "Research content with <think>internal thoughts</think>",
+    "team": "red",
+    "objective": "Competitive analysis"
+  }'
+```
+
 ## 📊 Rate Limits
 
 - Claude API: ~10 requests per minute (with retry logic)
 - OpenAI API: Fallback when Claude is overloaded
 - GitHub API: 5000 requests per hour
 - API Gateway: No specific limits
+- Perplexity API: Rate limits apply per API key
+
+## 🌐 CORS Configuration
+
+The API supports Cross-Origin Resource Sharing (CORS) with the following configuration:
+
+### Allowed Origins
+- `*` (all origins allowed)
+- Note: When using wildcard origin, credentials are not supported
+
+### Allowed Headers
+- `Content-Type`
+- `Authorization`
+- `X-Api-Key`
+- `Accept`
+
+### Allowed Methods
+- `GET`
+- `POST`
+- `OPTIONS`
+- `PUT`
+- `DELETE`
+
+### CORS Preflight
+All endpoints support OPTIONS requests for CORS preflight checks.
+
+### Frontend Integration
+The API is configured to work with:
+- Production frontend: `https://oceanstudio.io`
+- Development: `http://localhost:5173`
+
+Example frontend usage:
+```javascript
+const response = await fetch('https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/api/research', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    task: 'Research question',
+    metadata: { team: 'red' }
+  })
+});
+```

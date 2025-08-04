@@ -95,8 +95,32 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 
 #### External Integrations
 - **AI Provider**: Anthropic Claude API (Sonnet model)
+- **Research API**: Perplexity API for competitive intelligence
 - **Version Control**: GitHub API for repo/issue creation
-- **Cloud Services**: AWS Bedrock, Secrets Manager
+- **Cloud Services**: AWS Bedrock, Secrets Manager, S3, DynamoDB
+
+### Key Features
+
+#### 🔬 Research & Intelligence
+- **Perplexity API Integration**: Submit research requests for competitive analysis
+- **Think Block Removal**: Automatically removes `<think>` blocks from AI responses
+- **5 Output Formats**: Generate reports in JSON, Markdown, HTML, cleaned text, and raw format
+- **120-Word Summaries**: Precise executive summaries for quick insights
+- **Team-Based Organization**: Filter reports by Red, White, or Black teams
+
+#### 📊 Report Processing
+- **Structured Analysis**: Auto-extract key findings, opportunities, recommendations, and risks
+- **Visual Reports**: Generate charts and visual representations
+- **Action Items**: Convert research into prioritized task lists
+- **Quality Metrics**: Track confidence, completeness, and relevance scores
+- **Async Processing**: Handle long-running research tasks without timeouts
+
+#### 🏗️ Project Planning
+- **10-Phase SDLC**: Comprehensive project breakdown with pre-phase SplashPage
+- **SPARC Methodology**: Structured project implementation approach
+- **Role-Based Tasks**: Assign tasks to specific roles (Developer, Designer, etc.)
+- **GitHub Integration**: Direct issue creation in repositories
+- **Async Generation**: Handle 50-90 LLM calls without timeouts
 
 ---
 

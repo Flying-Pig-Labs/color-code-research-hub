@@ -7,18 +7,69 @@
 #### 1. CORS Errors
 **Symptom**: "Access to fetch at '...' from origin '...' has been blocked by CORS policy"
 
+**Common Causes**:
+- Lambda function not connected to API Gateway routes
+- OPTIONS preflight requests returning 500 errors
+- Incorrect CORS headers in Lambda responses
+- AllowCredentials set to true with wildcard origin
+
 **Solutions**:
-- Check that Lambda responses include CORS headers:
+1. **Ensure Lambda has Events section in SAM template**:
+```yaml
+ResearchApiFunction:
+  Type: AWS::Serverless::Function
+  Properties:
+    # ... other properties
+  Events:
+    ResearchEndpoint:
+      Type: Api
+      Properties:
+        RestApiId: !Ref ResearchHubApi
+        Path: /api/research
+        Method: POST
+    OptionsResearch:
+      Type: Api
+      Properties:
+        RestApiId: !Ref ResearchHubApi
+        Path: /api/research
+        Method: OPTIONS
+```
+
+2. **Check Lambda responses include CORS headers**:
 ```javascript
 const corsHeaders = {
-  'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key',
-  'Access-Control-Allow-Methods': 'POST,OPTIONS'
+  'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Api-Key,Accept',
+  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,PUT,DELETE',
+  'Access-Control-Max-Age': '86400'
 };
 ```
-- Ensure OPTIONS requests are handled
-- Verify environment variable: `VITE_API_BASE_URL` (not `VITE_API_URL`)
+
+3. **Add global CORS to API Gateway (SAM template)**:
+```yaml
+ResearchHubApi:
+  Type: AWS::Serverless::Api
+  Properties:
+    StageName: production
+    Cors:
+      AllowOrigin: "'*'"
+      AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept'"
+      AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
+      MaxAge: "'86400'"
+```
+
+4. **Handle OPTIONS requests in Lambda**:
+```javascript
+if (event.httpMethod === 'OPTIONS') {
+    return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: ''
+    };
+}
+```
+
+5. **Verify environment variable**: `VITE_API_BASE_URL` (not `VITE_API_URL`)
 
 #### 2. Frontend Not Updating After Push
 **Symptom**: Changes pushed to GitHub but not reflected on live site
