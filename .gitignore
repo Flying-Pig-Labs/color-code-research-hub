@@ -139,3 +139,6 @@ playwright-report/
 test-results.xml
 agent-team-composer/
 infrastructure/.aws-sam/
+
+# AWS SAM CLI source (accidentally added)
+aws-sam-cli-src/
