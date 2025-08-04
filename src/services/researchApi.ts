@@ -9,6 +9,14 @@ interface ResearchResponse {
   s3_key?: string;
   download_url?: string;
   error?: string;
+  summary?: string;
+  summaryWordCount?: number;
+  reportId?: string;
+  reportProcessed?: boolean;
+  team?: string;
+  title?: string;
+  vendorName?: string;
+  companyName?: string;
 }
 
 interface AsyncJobResponse {
@@ -36,6 +44,14 @@ interface StatusCheckResponse {
   model_used?: string;
   timestamp: string;
   error?: string;
+  summary?: string;
+  summaryWordCount?: number;
+  reportId?: string;
+  reportProcessed?: boolean;
+  team?: string;
+  title?: string;
+  vendorName?: string;
+  companyName?: string;
 }
 
 // Use API Gateway proxy to avoid CORS/private network issues
@@ -99,7 +115,15 @@ export async function checkResearchStatus(requestId: string): Promise<ResearchRe
       } : undefined,
       s3_key: data.s3_key,
       download_url: data.download_url,
-      error: data.error
+      error: data.error,
+      summary: data.summary,
+      summaryWordCount: data.summaryWordCount,
+      reportId: data.reportId,
+      reportProcessed: data.reportProcessed,
+      team: data.team,
+      title: data.title,
+      vendorName: data.vendorName,
+      companyName: data.companyName
     };
   } catch (error) {
     console.error('Error checking research status:', error);
@@ -363,6 +387,8 @@ export interface ResearchReport {
   vendorName?: string;
   companyName?: string;
   contentSummary?: string;
+  processedSummary?: string;
+  summaryWordCount?: number;
   downloadUrl?: string;
   metadata?: any;
 }

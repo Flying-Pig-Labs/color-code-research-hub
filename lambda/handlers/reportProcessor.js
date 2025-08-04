@@ -173,6 +173,46 @@ async function processResearchReport(requestData, options = {}) {
           processingTime
         });
 
+      // Update DynamoDB with the processed summary
+      try {
+        const AWS = require('aws-sdk');
+        const dynamodb = new AWS.DynamoDB.DocumentClient();
+        const tableName = process.env.RESEARCH_REPORTS_TABLE || 'ResearchReports';
+        
+        // Find the report by requestId and update it with the processed summary
+        const scanParams = {
+          TableName: tableName,
+          FilterExpression: "requestId = :rid",
+          ExpressionAttributeValues: { ":rid": requestData.requestId || requestId },
+          Limit: 1
+        };
+        
+        const scanResult = await dynamodb.scan(scanParams).promise();
+        
+        if (scanResult.Items && scanResult.Items.length > 0) {
+          const reportItem = scanResult.Items[0];
+          
+          // Update the item with processed summary
+          const updateParams = {
+            TableName: tableName,
+            Key: { reportId: reportItem.reportId },
+            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, processedS3Key = :s3key",
+            ExpressionAttributeValues: {
+              ":summary": contentSummary,
+              ":wc": wordCount,
+              ":pa": new Date().toISOString(),
+              ":s3key": s3Key
+            }
+          };
+          
+          await dynamodb.update(updateParams).promise();
+          console.log(`Updated DynamoDB report ${reportItem.reportId} with processed summary`);
+        }
+      } catch (dbError) {
+        console.error('Failed to update DynamoDB with processed summary:', dbError);
+        // Don't fail the whole operation if DB update fails
+      }
+
       return {
         success: true,
         requestId,

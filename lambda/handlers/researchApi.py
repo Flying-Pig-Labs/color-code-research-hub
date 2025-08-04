@@ -423,6 +423,41 @@ def handler(event, context):
                 "status": status.lower(),  # Convert to lowercase for frontend compatibility
                 "timestamp": datetime.now().isoformat(),
             }
+            
+            # Check if we have a processed report in DynamoDB
+            # If the report has been processed, include the 120-word summary
+            try:
+                table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+                # Query for report by request_id
+                scan_response = table.scan(
+                    FilterExpression="requestId = :rid",
+                    ExpressionAttributeValues={":rid": request_id},
+                    Limit=1
+                )
+                
+                if scan_response.get("Items") and len(scan_response["Items"]) > 0:
+                    report_item = scan_response["Items"][0]
+                    
+                    # Check if we have a processed report with summary
+                    if report_item.get("processedSummary"):
+                        response_data["summary"] = report_item["processedSummary"]
+                        response_data["summaryWordCount"] = report_item.get("summaryWordCount", 120)
+                        response_data["reportId"] = report_item.get("reportId")
+                        response_data["reportProcessed"] = True
+                        
+                        # Add metadata if available
+                        if report_item.get("team"):
+                            response_data["team"] = report_item["team"]
+                        if report_item.get("title"):
+                            response_data["title"] = report_item["title"]
+                        if report_item.get("vendorName"):
+                            response_data["vendorName"] = report_item["vendorName"]
+                        if report_item.get("companyName"):
+                            response_data["companyName"] = report_item["companyName"]
+                            
+            except Exception as e:
+                print(f"Error checking for processed report: {str(e)}")
+                # Don't fail the request if we can't check for processed report
 
             # If completed, include the result
             if status == "COMPLETED":

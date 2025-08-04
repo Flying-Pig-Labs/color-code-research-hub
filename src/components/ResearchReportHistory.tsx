@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { listResearchReports, ResearchReport } from '../services/researchApi';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Eye } from 'lucide-react';
+import { ReportModal } from './ReportModal';
 
 interface ResearchReportHistoryProps {
   team?: 'red' | 'black' | 'white';
@@ -14,6 +15,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   const [reports, setReports] = useState<ResearchReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedReport, setSelectedReport] = useState<ResearchReport | null>(null);
+  const [modalMode, setModalMode] = useState<'preview' | 'full'>('preview');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     loadReports();
@@ -52,6 +56,22 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
       console.error('Download failed:', error);
       toast.error('Failed to download report');
     }
+  };
+
+  const handlePreview = (report: ResearchReport) => {
+    setSelectedReport(report);
+    setModalMode('preview');
+    setIsModalOpen(true);
+  };
+
+  const handleViewFull = () => {
+    setModalMode('full');
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedReport(null);
+    setModalMode('preview');
   };
 
   const getTeamColor = (teamType: string) => {
@@ -164,6 +184,15 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex space-x-2">
+                    {report.processedSummary && (
+                      <button
+                        onClick={() => handlePreview(report)}
+                        className="inline-flex items-center px-3 py-1 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Preview
+                      </button>
+                    )}
                     <Link
                       to={`/reports/${report.reportId}`}
                       className="inline-flex items-center px-3 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors"
@@ -189,6 +218,25 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
           </tbody>
         </table>
       </div>
+
+      {/* Report Modal */}
+      {selectedReport && (
+        <ReportModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          reportId={selectedReport.reportId}
+          reportData={{
+            title: selectedReport.title || selectedReport.vendorName || selectedReport.companyName,
+            summary: selectedReport.processedSummary || selectedReport.contentSummary,
+            team: selectedReport.team,
+            createdAt: selectedReport.createdAt,
+            vendorName: selectedReport.vendorName,
+            companyName: selectedReport.companyName
+          }}
+          mode={modalMode}
+          onViewFull={handleViewFull}
+        />
+      )}
     </div>
   );
 }

@@ -26,6 +26,10 @@ interface ResearchTask {
   result?: any;
   s3_key?: string;
   download_url?: string;
+  summary?: string;
+  summaryWordCount?: number;
+  reportId?: string;
+  reportProcessed?: boolean;
 }
 
 interface ResearchRequestTableActiveProps {
@@ -97,7 +101,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
         try {
           const status = await checkResearchStatus(task.requestId);
           
-          if (status.status !== task.status) {
+          if (status.status !== task.status || (status.summary && !task.summary)) {
             hasUpdates = true;
             
             // Update task in localStorage
@@ -109,17 +113,30 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                     status: status.status, 
                     result: status.result,
                     s3_key: status.s3_key,
-                    download_url: status.download_url
+                    download_url: status.download_url,
+                    summary: status.summary,
+                    summaryWordCount: status.summaryWordCount,
+                    reportId: status.reportId,
+                    reportProcessed: status.reportProcessed
                   }
                 : t
             );
             localStorage.setItem('researchTasks', JSON.stringify(updatedTasks));
             
-            // Show toast for completion
-            if (status.status === 'completed') {
+            // Show toast for completion or when summary becomes available
+            if (status.status === 'completed' && !task.summary && status.summary) {
+              toast.success(
+                <div>
+                  <p className="font-semibold">Research completed with summary!</p>
+                  <p className="text-sm mt-1">{task.vendorName || task.companyName || 'task'}</p>
+                </div>
+              );
+            } else if (status.status === 'completed' && !task.summary) {
               toast.success(`Research for ${task.vendorName || task.companyName || 'task'} completed!`);
             } else if (status.status === 'failed') {
               toast.error(`Research for ${task.vendorName || task.companyName || 'task'} failed`);
+            } else if (!task.summary && status.summary) {
+              toast.info(`Summary ready for ${task.vendorName || task.companyName || 'task'}`);
             }
           }
         } catch (error) {
@@ -310,7 +327,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
               {activeTasks.map((task) => (
                 <div key={task.id} className="border rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h4 className={`font-medium ${teamType === 'black' ? 'text-white' : ''}`}>
                         {getTaskTitle(task)}
                       </h4>
@@ -320,10 +337,21 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                     </div>
                     {getStatusBadge(task)}
                   </div>
+                  {task.summary && (
+                    <div className={`bg-purple-50 border border-purple-200 rounded-lg p-3 ${teamType === 'black' ? 'bg-purple-900/20 border-purple-400/30' : ''}`}>
+                      <p className={`text-sm font-medium mb-1 ${teamType === 'black' ? 'text-purple-300' : 'text-purple-900'}`}>
+                        Executive Summary ({task.summaryWordCount || 120} words)
+                      </p>
+                      <p className={`text-sm ${teamType === 'black' ? 'text-white/80' : 'text-gray-700'}`}>
+                        {task.summary}
+                      </p>
+                    </div>
+                  )}
                   <div className="w-full">
-                    <Progress value={30} className="h-2" />
+                    <Progress value={task.reportProcessed ? 100 : 30} className="h-2" />
                     <p className={`text-xs mt-1 ${teamType === 'black' ? 'text-white/60' : 'text-muted-foreground'}`}>
                       Started {format(new Date(task.createdAt), 'MMM dd, HH:mm')}
+                      {task.reportProcessed && ' • Report processed'}
                     </p>
                   </div>
                 </div>
@@ -382,6 +410,14 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                         <div className={`text-sm ${teamType === 'black' ? 'text-white/70' : 'text-muted-foreground'}`}>
                           {getTaskDescription(task)}
                         </div>
+                        {task.summary && (
+                          <div className={`mt-2 text-xs p-2 rounded bg-purple-50 ${teamType === 'black' ? 'bg-purple-900/20' : ''}`}>
+                            <span className={`font-medium ${teamType === 'black' ? 'text-purple-300' : 'text-purple-700'}`}>Summary:</span>
+                            <span className={`ml-1 ${teamType === 'black' ? 'text-white/70' : 'text-gray-600'}`}>
+                              {task.summary.substring(0, 150)}...
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
