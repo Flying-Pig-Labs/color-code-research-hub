@@ -219,11 +219,13 @@ def handler(event, context):
     """Lambda handler for research API requests."""
     print(f"Research API request: {json.dumps(event, indent=2)}")
 
-    # CORS headers
+    # CORS headers - Updated to support oceanstudio.io
     cors_headers = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Api-Key",
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Api-Key,Accept",
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS,PUT,DELETE",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Max-Age": "86400"
     }
 
     # Handle preflight requests

@@ -110,9 +110,11 @@ Resources:
     Properties:
       StageName: production
       Cors:
-        AllowMethods: "'GET,POST,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Api-Key,Authorization'"
         AllowOrigin: "'*'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept'"
+        AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
+        AllowCredentials: true
+        MaxAge: "'86400'"
       Auth:
         ApiKeyRequired: false # Set to true if you want API key authentication
 
@@ -334,6 +336,55 @@ Resources:
               Resource: 
                 - !GetAtt ResearchReportsTable.Arn
                 - !Sub '${ResearchReportsTable.Arn}/index/*'
+      Events:
+        ResearchEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research
+            Method: POST
+        OptionsResearch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research
+            Method: OPTIONS
+        ResearchStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/status/{requestId}
+            Method: GET
+        OptionsResearchStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/status/{requestId}
+            Method: OPTIONS
+        ResearchDownloadEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/download/{s3Key}
+            Method: GET
+        OptionsResearchDownload:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/download/{s3Key}
+            Method: OPTIONS
+        ResearchReportsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/reports
+            Method: GET
+        OptionsResearchReports:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/reports
+            Method: OPTIONS
 
   # Enhanced Research Report Function - Node.js with advanced data formats
   GenerateResearchReportFunction:
@@ -476,55 +527,6 @@ Resources:
           Properties:
             RestApiId: !Ref ResearchHubApi
             Path: /api/reports/enhance/{reportId}
-            Method: OPTIONS
-      Events:
-        ResearchEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research
-            Method: POST
-        OptionsResearch:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research
-            Method: OPTIONS
-        ResearchStatusEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research/status/{requestId}
-            Method: GET
-        OptionsResearchStatus:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research/status/{requestId}
-            Method: OPTIONS
-        ResearchDownloadEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research/download/{s3Key}
-            Method: GET
-        OptionsResearchDownload:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research/download/{s3Key}
-            Method: OPTIONS
-        ResearchReportsEndpoint:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research/reports
-            Method: GET
-        OptionsResearchReports:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/research/reports
             Method: OPTIONS
         LogsEndpoint:
           Type: Api

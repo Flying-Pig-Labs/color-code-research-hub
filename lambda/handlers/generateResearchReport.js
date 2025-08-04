@@ -674,11 +674,13 @@ async function checkJobStatus(requestId) {
 exports.handler = async (event) => {
     console.log('Research Report API request:', JSON.stringify(event, null, 2));
 
-    // CORS headers
+    // CORS headers - Updated to support oceanstudio.io
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Api-Key',
-        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Api-Key,Accept',
+        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,PUT,DELETE',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '86400'
     };
 
     // Handle preflight requests
