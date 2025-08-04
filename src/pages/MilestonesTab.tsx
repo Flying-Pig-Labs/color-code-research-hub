@@ -119,7 +119,7 @@ const MilestonesTab = () => {
         <Header 
           title="Reef Builder"
           subtitle="Dynamic Backlog Generation"
-          icon="🩸"
+          icon="🪸"
           navItems={navItems}
           showHealthCheck={false}
         />
@@ -142,7 +142,7 @@ const MilestonesTab = () => {
       <Header 
         title="Reef Builder"
         subtitle="Dynamic Backlog Generation"
-        icon="🩸"
+        icon="🪸"
         navItems={navItems}
         showHealthCheck={false}
       />
