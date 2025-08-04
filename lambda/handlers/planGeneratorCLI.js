@@ -1,3 +1,21 @@
+/**
+ * @file planGeneratorCLI.js
+ * @description Lambda handler for the CLI plan generation endpoint
+ * 
+ * This handler implements the working plan generation logic that:
+ * - Generates 10 phases (including auto-injected SplashPage)
+ * - Creates 5-10 epics per phase (currently limited to phase 1)
+ * - Formats epics into GitHub issues with SPARC methodology
+ * 
+ * Endpoints:
+ * - POST /api/plan/generate-cli-plan - Generate full project plan
+ * - POST /api/plan/populate-form - Auto-populate form fields from README
+ * 
+ * @module planGeneratorCLI
+ * @requires services/llm-orchestrator-service
+ * @requires services/form-populator-service
+ */
+
 const { generateProjectPlan } = require('./services/llm-orchestrator-service.js');
 const { populateFormWithAI } = require('./services/form-populator-service.js');
 
@@ -9,6 +27,17 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST,OPTIONS'
 };
 
+/**
+ * AWS Lambda handler function
+ * Routes requests to appropriate services based on path
+ * 
+ * @async
+ * @param {Object} event - AWS Lambda event object
+ * @param {string} event.httpMethod - HTTP method (POST, OPTIONS)
+ * @param {string} event.path - Request path
+ * @param {string} event.body - JSON request body
+ * @returns {Promise<Object>} Lambda response with statusCode, headers, and body
+ */
 exports.handler = async (event) => {
   // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {

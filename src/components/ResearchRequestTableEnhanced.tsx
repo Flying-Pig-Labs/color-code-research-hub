@@ -1,3 +1,16 @@
+/**
+ * @file ResearchRequestTableEnhanced.tsx
+ * @description Enhanced research request table component with GitHub integration and real-time status tracking
+ * 
+ * This component displays research tasks for different teams (Red, Black, White) with:
+ * - Real-time job status updates from EC2 Claude Flow
+ * - GitHub repository status checking
+ * - Local storage persistence with API sync
+ * - Automatic polling for job updates
+ * 
+ * @module ResearchRequestTableEnhanced
+ */
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -10,30 +23,45 @@ import { toast } from "sonner";
 import { githubService } from "@/services/githubService";
 import { getExpectedRepoName } from "@/utils/idGenerator";
 
+/**
+ * Research task data structure
+ * @interface ResearchTask
+ */
 interface ResearchTask {
   id: string;
-  repoId: string; // New field for GitHub tracking
-  jobId?: string; // EC2 job ID for status tracking
+  repoId: string; // Unique identifier for GitHub repository tracking
+  jobId?: string; // EC2 Claude Flow job ID for status tracking
   team: string;
-  vendorName?: string;
-  whitespaceType?: string[];
-  targetUser?: string[];
+  vendorName?: string; // For Black Team vendor replacement
+  whitespaceType?: string[]; // For White Team opportunity types
+  targetUser?: string[]; // Target user segments
   createdAt: string;
   deadline?: string;
   status: string;
   teamSize?: string;
   roles?: string[];
-  githubUrl?: string; // New field for GitHub URL
-  githubStatus?: 'pending' | 'checking' | 'found' | 'not-found'; // New field
-  jobStatus?: 'submitted' | 'processing' | 'completed' | 'failed'; // EC2 job status
+  githubUrl?: string; // Full GitHub repository URL
+  githubStatus?: 'pending' | 'checking' | 'found' | 'not-found'; // Repository existence status
+  jobStatus?: 'submitted' | 'processing' | 'completed' | 'failed'; // EC2 job processing status
   estimatedTime?: string; // Expected completion time
-  customizations?: Record<string, any>; // Store the form data
+  customizations?: Record<string, any>; // Team-specific form data
 }
 
+/**
+ * Props for ResearchRequestTable component
+ * @interface ResearchRequestTableProps
+ */
 interface ResearchRequestTableProps {
   teamType: 'red' | 'black' | 'white';
 }
 
+/**
+ * Enhanced research request table with real-time updates and GitHub integration
+ * 
+ * @component
+ * @param {ResearchRequestTableProps} props - Component props
+ * @returns {JSX.Element} Research request table component
+ */
 const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
   const [tasks, setTasks] = useState<ResearchTask[]>([]);
   const [isLoading, setIsLoading] = useState(false);

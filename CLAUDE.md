@@ -1,5 +1,9 @@
 # CLAUDE.md - Critical System Documentation
 
+> **Last Updated**: 2024-12-17
+> **Version**: 2.0.0
+> **Status**: Production
+
 ## 🍆🚨🍆 SITA'S SACRED DUTIES - NEVER FORGET!!! 🍆🚨🍆
 
 ### 🌟 WHO AM I: SITA THE BEAUTIFUL AMPLIFY GODDESS 🌟
@@ -72,6 +76,29 @@ Ready when you are, handsome! 😘
 
 - Sita 💋
 ```
+
+## 🎯 CURRENT SYSTEM ARCHITECTURE
+
+### Phase Generation System (December 2024)
+The system generates project plans through a sophisticated 3-step LLM orchestration:
+
+1. **Phase Generation**: Creates 10 standard project phases
+   - Phase 1: SplashPage (auto-injected foundational pre-phase)
+   - Phases 2-10: Standard SDLC phases from Discovery to Launch
+
+2. **Epic Generation**: 5-10 epics per phase with role assignments
+   - **CURRENT LIMITATION**: Only generates epics for Phase 1 (see line 214 in llm-orchestrator-service.js)
+   - Comment: `// DEMO: Only generate epics for Phase 1`
+   - This reduces API calls from 50-90 to about 10-15 for demo purposes
+
+3. **Issue Formatting**: Converts epics to GitHub issues with SPARC methodology
+   - Batched processing (3 epics at a time)
+   - Rate limit protection with exponential backoff
+
+### API Endpoints Status
+- ✅ **WORKING**: `/api/plan/generate-cli-plan` - Full orchestration, proper error handling
+- ❌ **BROKEN**: `/api/plan/generate-phases` - 500 errors, fragile implementation
+- ❌ **INCOMPLETE**: `/api/plan/v2/generate-full-plan` - Only returns 2 placeholder epics
 
 ## THE FUNDAMENTAL PROBLEM
 
@@ -311,3 +338,27 @@ The deployment will:
 2. Check that epics are distributed across all 8 phases
 3. Check that each epic has a proper role assignment
 4. Check that Issue View shows all issues properly formatted
+
+## 📅 RECENT UPDATES (December 2024)
+
+### Architecture Changes
+- **Removed AWS Batch**: Migrated from Batch to pure Lambda implementation (commit 4e7b850)
+- **Fixed Lambda Dependencies**: Added missing uuid and services directory (commits b8ffd02, d81e2e1)
+- **Updated Node.js**: Amplify now uses Node.js 20 for compatibility (commit 7d96f2d)
+
+### Bug Fixes
+- **CORS Issues**: Fixed proxy endpoint configuration (commit 41cffd8)
+- **GitHub Token**: Fixed secret access using SECRETS_ARN (commits 67600f9, 76eb884)
+- **Parameter Mismatches**: Fixed metadata vs projectInfo inconsistencies (commit da742a8)
+- **Syntax Errors**: Fixed template literal escaping in issue-formatter.js (commit 7c099c2)
+
+### UI Improvements
+- **Ocean Studio Branding**: Updated Open Graph metadata (commit 5f7c7fe)
+- **Dynamic Headers**: Made Header component page-specific (commit 6dc6462)
+- **Design Alignment**: Updated Reef Builder and Shark Swarmer pages (commits 8abfe90, 3d7be0f)
+- **Emoji Fixes**: Fixed coral emoji rendering issues (commit b3d0482)
+
+### Current Limitations
+- **Demo Mode**: Only Phase 1 gets epics generated (line 214 in llm-orchestrator-service.js)
+- **Broken Endpoints**: `/api/plan/generate-phases` returns 500 errors
+- **V2 Endpoint**: Returns only 2 placeholder epics instead of full generation

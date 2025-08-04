@@ -3,15 +3,16 @@
 <div align="center">
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)
 ![React](https://img.shields.io/badge/react-19.1.0-61dafb.svg)
 ![TypeScript](https://img.shields.io/badge/typescript-5.8.3-3178c6.svg)
-![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20SQS%20%7C%20DynamoDB-ff9900.svg)
+![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20DynamoDB%20%7C%20Bedrock-ff9900.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 
 **Strategic Competitive Intelligence Platform**  
 *Three specialized AI research teams for market disruption, tool replacement, and whitespace discovery*
 
-[Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Teams](#research-teams) • [API](#api-reference) • [Deployment](#deployment)
+[Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Teams](#research-teams) • [API](#api-reference) • [Deployment](#deployment) • [Changelog](CHANGELOG.md)
 
 </div>
 
@@ -29,9 +30,10 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 
 ### Powered by Advanced AI
 
-- **LLM Orchestration**: 3-step process generating 40-80 actionable insights per research
+- **10-Phase Generation**: Comprehensive project planning with SplashPage foundation
+- **LLM Orchestration**: 3-step process with intelligent batching and rate limiting
 - **SPARC Methodology**: Autonomous agent execution framework
-- **Claude Integration**: Direct integration with Anthropic's Claude API
+- **Claude Integration**: AWS Bedrock with Anthropic's Claude Sonnet model
 - **GitHub Automation**: Automatic repository creation and issue management
 
 ---
@@ -42,32 +44,34 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Frontend (React)                         │
+│                    Frontend (AWS Amplify)                        │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
 │  │  Red Team   │  │ Black Team  │  │ White Team  │            │
 │  │    Form     │  │    Form     │  │    Form     │            │
 │  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘            │
 │        └─────────────────┴─────────────────┘                    │
 │                           │                                      │
-│                    Vite Dev Server                               │
-│                      (Port 3000)                                 │
+│                 Plan Generation Interface                        │
+│                   (10 Phases + SPARC)                           │
 └───────────────────────────┬─────────────────────────────────────┘
-                            │ Proxy /api
+                            │ HTTPS
 ┌───────────────────────────┴─────────────────────────────────────┐
-│                    Express Backend API                           │
-│                      (Port 3001)                                 │
+│                      API Gateway                                 │
+│               /api/plan/generate-cli-plan                        │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
 ┌───────────────────────────┴─────────────────────────────────────┐
-│                    AWS Infrastructure                            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │   Lambda    │  │     SQS     │  │  DynamoDB   │            │
-│  │  Functions  │  │    Queue    │  │   Tables    │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
+│                 AWS Lambda Functions                             │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │          LLM Orchestrator Service (3-Step)               │  │
+│  │  1. Phase Generation (10 phases)                         │  │
+│  │  2. Epic Generation (5-10 per phase)                     │  │
+│  │  3. Issue Formatting (SPARC methodology)                 │  │
+│  └─────────────────────────────────────────────────────────┘  │
 │                                                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │   Secrets   │  │     API     │  │    AWS      │            │
-│  │   Manager   │  │   Gateway   │  │    Batch    │            │
+│  │   Bedrock   │  │  DynamoDB   │  │   Secrets   │            │
+│  │   Claude    │  │    Jobs     │  │   Manager   │            │
 │  └─────────────┘  └─────────────┘  └─────────────┘            │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -83,11 +87,11 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 - **Routing**: React Router v7
 
 #### Backend
-- **API Server**: Express.js on Node.js
-- **Cloud Functions**: AWS Lambda (Node.js 18.x)
-- **Queue Service**: AWS SQS for async processing
+- **Cloud Functions**: AWS Lambda (Node.js 20.x runtime)
+- **LLM Service**: AWS Bedrock with Claude Sonnet
 - **Database**: DynamoDB for job tracking
 - **Infrastructure**: AWS SAM (Serverless Application Model)
+- **API Management**: API Gateway with CORS support
 
 #### External Integrations
 - **AI Provider**: Anthropic Claude API (Sonnet model)
@@ -100,10 +104,11 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 
 ### Prerequisites
 
-- Node.js >= 16.0.0
+- Node.js >= 20.0.0
 - AWS CLI configured with credentials
+- AWS SAM CLI for Lambda deployments
 - GitHub personal access token
-- Anthropic Claude API key
+- AWS Bedrock access (Claude Sonnet model)
 
 ### Installation
 
@@ -358,32 +363,49 @@ sam deploy \
 
 The platform implements SPARC (Specialized Planning and Autonomous Research Coordination) methodology for AI agent execution:
 
-1. **Phase Generation**: 8 standard phases for any project
-2. **Epic Creation**: 5-10 epics per phase with role assignments
-3. **Issue Formatting**: GitHub issues with SPARC directives for autonomous execution
+### 10-Phase Project Planning
 
-Each research generates 40-80 actionable items across:
-- Discovery & Requirements
-- Technical Planning & Architecture
-- UI/UX Design & Prototyping
-- Core Development
-- System Integration & Testing
-- Quality Assurance
-- Deployment & Distribution
-- Launch & Documentation
+1. **SplashPage Pre-Phase** (Auto-injected foundation)
+   - Public-facing landing experience
+   - Modular architecture foundation
+   - CI/CD pipeline setup
+   - NOT a disposable landing page
+
+2. **Discovery & Requirements**
+3. **Technical Planning & Architecture**
+4. **UI/UX Design & Prototyping**
+5. **Core Development**
+6. **System Integration & Testing**
+7. **Quality Assurance & Testing**
+8. **Deployment & Distribution**
+9. **GTM Strategy & Launch Readiness**
+10. **Launch Activation & Feedback Loop**
+
+### Generation Process
+- **Phase 1 Only (Demo)**: Currently generates 5-10 epics with full details
+- **Phases 2-10**: Structure only (epics disabled for demo)
+- **Full Mode**: Would generate 40-80 epics across all phases
 
 ---
 
 ## 📊 Data Flow
 
-1. **User Input** → Custom research form submission
-2. **API Gateway** → Express backend validates and processes
-3. **SQS Queue** → Asynchronous job submission
-4. **Lambda Functions** → LLM orchestration and processing
-5. **Claude API** → Multi-step AI analysis
-6. **GitHub API** → Repository and issue creation
-7. **DynamoDB** → Job status tracking
-8. **Frontend Polling** → Real-time status updates
+### Plan Generation Flow
+1. **User Input** → Project metadata and README content
+2. **API Gateway** → Routes to `/api/plan/generate-cli-plan`
+3. **Lambda Handler** → `planGeneratorCLI.js` processes request
+4. **LLM Orchestrator** → 3-step generation process:
+   - Step 1: Generate 10 phases (1 Claude API call)
+   - Step 2: Generate epics for Phase 1 (1 Claude API call)
+   - Step 3: Format issues with batching (5-10 Claude API calls)
+5. **Response** → Complete plan with phases and formatted issues
+
+### Research Team Flow
+1. **Team Selection** → Red, Black, or White team form
+2. **Form Submission** → Custom fields per team type
+3. **EC2 Integration** → Claude Flow swarm orchestration
+4. **GitHub Creation** → Repository and issue generation
+5. **Status Updates** → Real-time progress tracking
 
 ---
 

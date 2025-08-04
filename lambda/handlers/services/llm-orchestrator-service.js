@@ -1,3 +1,25 @@
+/**
+ * @file llm-orchestrator-service.js
+ * @description Core orchestration service for multi-step LLM plan generation
+ * 
+ * This service implements a 3-step plan generation process:
+ * 1. Phase Generation - Creates 10 project phases based on README content
+ * 2. Epic Generation - Generates 5-10 epics per phase with role assignments (currently limited to phase 1 for demo)
+ * 3. Issue Formatting - Formats epics into GitHub-ready issues with SPARC methodology
+ * 
+ * The service makes 50-90 LLM calls total when fully enabled:
+ * - 1 call for phase generation
+ * - 8 calls for epic generation (one per phase, excluding SplashPage and Launch)
+ * - 40-80 calls for issue formatting (batched in groups of 3)
+ * 
+ * @module llm-orchestrator-service
+ * @requires @aws-sdk/client-bedrock-runtime
+ * @requires prompts/phase-generator
+ * @requires prompts/epic-generator
+ * @requires prompts/issue-formatter
+ * @requires services/prompt-sanitizer
+ */
+
 const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
 const { PHASE_GENERATOR_PROMPT } = require('../prompts/phase-generator.js');
 const { EPIC_GENERATOR_PROMPT } = require('../prompts/epic-generator.js');
@@ -129,14 +151,34 @@ const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
 const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
 
 /**
- * Main orchestrator that follows the exact same 3-step process as the CLI
+ * Main orchestrator class that implements the 3-step LLM plan generation process
+ * This follows the exact same sequence as the CLI implementation for consistency
+ * 
+ * @class LLMOrchestrator
  */
 class LLMOrchestrator {
   /**
-   * Generate project plan following the exact CLI sequence:
-   * 1. Generate phases based on README
-   * 2. For each phase, generate epics/tasks with role assignments
-   * 3. Format issues for GitHub
+   * Generate a complete project plan following the CLI sequence
+   * 
+   * @async
+   * @param {Object} projectInfo - Project metadata and configuration
+   * @param {string} projectInfo.title - Project title
+   * @param {string} projectInfo.description - Project description
+   * @param {string} projectInfo.domain - Project domain/category
+   * @param {string} [projectInfo.repository] - GitHub repository (owner/repo format)
+   * @param {string} [projectInfo.branch='main'] - Target branch
+   * @param {string[]} projectInfo.targetUsers - Target user personas
+   * @param {string[]} projectInfo.techStack - Technology stack
+   * @param {string[]} projectInfo.features - Key features
+   * @param {string} projectInfo.complexity - Complexity level (simple|moderate|complex)
+   * @param {string} readmeContent - Raw README.md content to analyze
+   * 
+   * @returns {Promise<Object>} Complete project plan with phases and issues
+   * @returns {Object} returns.summary - Project summary information
+   * @returns {Array} returns.phases - Array of phase objects with issues
+   * 
+   * @throws {Error} If phase generation fails
+   * @throws {Error} If Claude API rate limit is exceeded
    */
   async generateProjectPlan(projectInfo, readmeContent) {
     console.log('🤖 Starting LLM orchestration...');
@@ -170,7 +212,19 @@ class LLMOrchestrator {
   }
 
   /**
-   * Step 1: Generate phases using the exact same prompt as CLI
+   * Step 1: Generate project phases based on README content
+   * Creates 9 standard phases (2-10) and automatically injects SplashPage as phase 1
+   * 
+   * @async
+   * @param {Object} projectInfo - Project metadata
+   * @param {string} projectInfo.domain - Project domain for contextualization
+   * @param {string} readmeContent - README content to analyze
+   * @returns {Promise<Array>} Array of phase objects
+   * @returns {string} returns[].id - Unique phase identifier
+   * @returns {string} returns[].title - Phase title
+   * @returns {string} returns[].description - Phase description
+   * @returns {string[]} returns[].suggestedRoles - Recommended roles for the phase
+   * @throws {Error} If phase generation fails or returns invalid JSON
    */
   async generatePhases(projectInfo, readmeContent) {
     const prompt = buildSafePrompt(PHASE_GENERATOR_PROMPT, {
@@ -206,7 +260,22 @@ class LLMOrchestrator {
   }
 
   /**
-   * Step 2: Generate epics for each phase with role assignments
+   * Step 2: Generate epics/tasks for each phase with role assignments
+   * Currently limited to phase 1 only (DEMO mode) to reduce API calls
+   * 
+   * @async
+   * @param {Array} phases - Array of phase objects from generatePhases
+   * @param {Object} projectInfo - Project metadata for context
+   * @returns {Promise<Array>} Array of phases with populated tasks
+   * @returns {string} returns[].id - Phase ID
+   * @returns {string} returns[].title - Phase title
+   * @returns {string} returns[].description - Phase description
+   * @returns {string[]} returns[].roles - Roles involved in the phase
+   * @returns {Array} returns[].tasks - Array of epic/task objects
+   * @returns {Array} returns[].issues - Empty array (populated in step 3)
+   * @returns {boolean} returns[].approved - Approval status (false initially)
+   * 
+   * @note Only generates epics for phase 1 due to DEMO limitation at line 214
    */
   async generateEpicsForPhases(phases, projectInfo) {
     const results = await Promise.all(
@@ -246,7 +315,24 @@ class LLMOrchestrator {
   }
 
   /**
-   * Step 3: Format issues for GitHub - process in batches like CLI
+   * Step 3: Format epics into GitHub-ready issues using SPARC methodology
+   * Processes tasks in batches of 3 to respect rate limits
+   * 
+   * @async
+   * @param {Array} phasesWithTasks - Phases with populated tasks from step 2
+   * @param {Object} projectInfo - Project metadata for issue context
+   * @returns {Promise<Array>} Array of phases with formatted GitHub issues
+   * @returns {string} returns[].id - Phase ID
+   * @returns {string} returns[].title - Phase title
+   * @returns {string} returns[].description - Phase description
+   * @returns {string[]} returns[].roles - Phase roles
+   * @returns {Array} returns[].issues - Formatted GitHub issues
+   * @returns {string} returns[].issues[].title - Issue title with role prefix
+   * @returns {string} returns[].issues[].description - Markdown-formatted issue body
+   * @returns {string} returns[].issues[].role - Assigned role
+   * @returns {boolean} returns[].approved - Set to true after formatting
+   * 
+   * @note Adds 1-2 second delays between batches to avoid rate limits
    */
   async formatIssuesForGitHub(phasesWithTasks, projectInfo) {
     const formattedPhases = [];
@@ -319,7 +405,14 @@ class LLMOrchestrator {
   }
 
   /**
-   * Get common roles for phase - exact same mapping as CLI
+   * Get predefined common roles based on phase title
+   * Maps phase keywords to relevant role suggestions
+   * 
+   * @param {string} phaseTitle - The phase title to match
+   * @returns {string[]} Array of role descriptions
+   * @example
+   * getCommonRolesForPhase('Discovery & Requirements')
+   * // Returns: ['Market Research Analyst - Conducts market research...', ...]
    */
   getCommonRolesForPhase(phaseTitle) {
     const rolesByPhase = {
@@ -382,7 +475,15 @@ class LLMOrchestrator {
   }
 
   /**
-   * Call Claude API using Bedrock with retry and exponential backoff
+   * Call Claude API via AWS Bedrock with automatic retry on rate limits
+   * Implements exponential backoff: 2s, 4s, 8s between retries
+   * 
+   * @async
+   * @param {string} prompt - The prompt to send to Claude
+   * @param {number} [retries=3] - Maximum number of retry attempts
+   * @returns {Promise<string>} Claude's response text
+   * @throws {Error} If all retry attempts fail
+   * @throws {Error} If non-rate-limit error occurs
    */
   async callClaude(prompt, retries = 3) {
     const command = new InvokeModelCommand({
@@ -425,7 +526,17 @@ class LLMOrchestrator {
   }
 
   /**
-   * Extract JSON from Claude's response with better error handling
+   * Extract and parse JSON from Claude's response
+   * Handles various response formats including code blocks and raw JSON
+   * 
+   * @param {string} content - Claude's raw response content
+   * @returns {Object} Parsed JSON object
+   * @returns {Array} returns.phases - If response is array, wraps in phases property
+   * @throws {Error} If no valid JSON found in response
+   * 
+   * @example
+   * extractJSON('```json\n{"phases": [...]}\n```')
+   * extractJSON('[{"id": "phase1"}, ...]')  // Auto-wraps in {phases: ...}
    */
   extractJSON(content) {
     try {
@@ -482,7 +593,27 @@ class LLMOrchestrator {
   }
 }
 
-// Export singleton function to match CLI pattern
+/**
+ * Singleton function for generating project plans
+ * Creates a new LLMOrchestrator instance and generates the plan
+ * 
+ * @async
+ * @function generateProjectPlan
+ * @param {Object} projectInfo - Project metadata (see LLMOrchestrator.generateProjectPlan)
+ * @param {string} readmeContent - README content to analyze
+ * @returns {Promise<Object>} Complete project plan with phases and issues
+ * @throws {Error} If plan generation fails
+ * 
+ * @example
+ * const plan = await generateProjectPlan({
+ *   title: 'My Project',
+ *   description: 'A cool project',
+ *   domain: 'web',
+ *   techStack: ['React', 'Node.js'],
+ *   features: ['Auth', 'Dashboard'],
+ *   complexity: 'moderate'
+ * }, readmeContent);
+ */
 async function generateProjectPlan(projectInfo, readmeContent) {
   const orchestrator = new LLMOrchestrator();
   return orchestrator.generateProjectPlan(projectInfo, readmeContent);
