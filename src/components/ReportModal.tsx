@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { X, FileText, ChevronRight, Loader2 } from 'lucide-react';
-import { getReportById } from '../services/reportService';
-import { Report } from '../types/report';
+import { 
+  fetchReportData, 
+  processReport, 
+  renderMarkdownToHtml,
+  ProcessedReport,
+  ReportMetadata 
+} from '../services/reportService';
 
 interface ReportModalProps {
   isOpen: boolean;
   onClose: () => void;
   reportId: string;
-  reportData?: Partial<Report>;
+  reportData?: {
+    title?: string;
+    summary?: string;
+    team?: string;
+    createdAt?: string;
+    vendorName?: string;
+    companyName?: string;
+  };
   mode: 'preview' | 'full';
   onViewFull?: () => void;
 }
@@ -20,7 +32,7 @@ export function ReportModal({
   mode, 
   onViewFull 
 }: ReportModalProps) {
-  const [report, setReport] = useState<Report | null>(null);
+  const [report, setReport] = useState<ProcessedReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,8 +46,9 @@ export function ReportModal({
     setLoading(true);
     setError(null);
     try {
-      const fullReport = await getReportById(reportId);
-      setReport(fullReport);
+      const rawReport = await fetchReportData(reportId);
+      const processedReport = processReport(rawReport);
+      setReport(processedReport);
     } catch (err) {
       setError('Failed to load report');
       console.error('Error loading report:', err);
@@ -47,8 +60,8 @@ export function ReportModal({
   if (!isOpen) return null;
 
   const isPreview = mode === 'preview';
-  const title = reportData?.title || report?.title || 'Research Report';
-  const summary = reportData?.summary || report?.summary || reportData?.contentSummary || 'No summary available';
+  const title = reportData?.title || report?.metadata?.title || 'Research Report';
+  const summary = reportData?.summary || report?.metadata?.summary || 'No summary available';
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -137,23 +150,23 @@ export function ReportModal({
                 <>
                   {/* Report Header */}
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{report.title}</h3>
-                    <p className="text-gray-600">{report.summary}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{report.metadata.title}</h3>
+                    <p className="text-gray-600">{report.metadata.summary}</p>
                   </div>
 
                   {/* Table of Contents */}
-                  {report.toc && report.toc.length > 0 && (
+                  {report.tableOfContents && report.tableOfContents.length > 0 && (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h4 className="font-semibold text-gray-900 mb-3">Table of Contents</h4>
                       <ul className="space-y-2">
-                        {report.toc.map((item, index) => (
+                        {report.tableOfContents.map((item, index) => (
                           <li key={index} className="flex items-center text-sm">
                             <ChevronRight className="h-4 w-4 text-gray-400 mr-2" />
                             <a
                               href={`#${item.id}`}
                               className="text-blue-600 hover:text-blue-800 hover:underline"
                             >
-                              {item.heading}
+                              {item.title}
                             </a>
                           </li>
                         ))}
@@ -165,11 +178,11 @@ export function ReportModal({
                   {report.sections && report.sections.map((section, index) => (
                     <div key={index} id={section.id} className="border-t pt-6">
                       <h4 className="text-xl font-semibold text-gray-900 mb-3">
-                        {section.heading}
+                        {section.title}
                       </h4>
                       <div 
                         className="prose prose-gray max-w-none"
-                        dangerouslySetInnerHTML={{ __html: section.html }}
+                        dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(section.content) }}
                       />
                     </div>
                   ))}
@@ -179,22 +192,22 @@ export function ReportModal({
                     <h4 className="font-semibold text-gray-900 mb-3">Report Information</h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium text-gray-500">Word Count:</span>
-                        <span className="ml-2">{report.metrics?.wordCount || 'N/A'}</span>
+                        <span className="font-medium text-gray-500">Team:</span>
+                        <span className="ml-2">{report.metadata.team?.toUpperCase() || 'N/A'}</span>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-500">Reading Time:</span>
-                        <span className="ml-2">{report.metrics?.readingMinutes || 'N/A'} min</span>
+                        <span className="font-medium text-gray-500">Created:</span>
+                        <span className="ml-2">{new Date(report.metadata.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Disclaimers */}
-                  {report.disclaimers && report.disclaimers.length > 0 && (
+                  {report.metadata.disclaimers && report.metadata.disclaimers.length > 0 && (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                       <h4 className="font-semibold text-yellow-900 mb-2">Important Notice</h4>
                       <ul className="space-y-1 text-sm text-yellow-800">
-                        {report.disclaimers.map((disclaimer, index) => (
+                        {report.metadata.disclaimers.map((disclaimer, index) => (
                           <li key={index}>• {disclaimer}</li>
                         ))}
                       </ul>
