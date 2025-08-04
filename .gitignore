@@ -140,5 +140,8 @@ test-results.xml
 agent-team-composer/
 infrastructure/.aws-sam/
 
+.claude-flow
+.claude-flow/*
+
 # AWS SAM CLI source (accidentally added)
 aws-sam-cli-src/
