@@ -33,18 +33,12 @@ const getGitHubToken = async () => {
   }
 
   try {
-    const command = new GetSecretValueCommand({
-      SecretId: 'arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy'
-    });
-    
-    const response = await secretsClient.send(command);
-    
-    // Parse the secret - it's stored as JSON
-    const secretData = JSON.parse(response.SecretString);
-    cachedGitHubToken = secretData.github_token;
+    // Use the getSecrets function which uses SECRETS_ARN
+    const secrets = await getSecrets();
+    cachedGitHubToken = secrets.GITHUB_PAT || secrets.github_token;
     
     if (!cachedGitHubToken) {
-      throw new Error('GitHub token not found in secret');
+      throw new Error('GitHub token not found in secrets');
     }
     
     return cachedGitHubToken;

@@ -22,10 +22,6 @@ Parameters:
     Default: Your Company
     Description: Client company name
   
-  SQSQueueUrl:
-    Type: String
-    Description: SQS Queue URL for research requests
-    Default: ""  # Will be overridden by !Ref ResearchRequestQueue
 
 Resources:
   # DynamoDB Table for Plan Generation Jobs
@@ -50,12 +46,6 @@ Resources:
           Value: color-code-research-hub
 
   # SQS Queue for Research Requests
-  ResearchRequestQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: research-requests-queue
-      VisibilityTimeout: 900
-      MessageRetentionPeriod: 1209600  # 14 days
 
   # S3 Bucket for Research Results
   ResearchResultsBucket:
@@ -297,31 +287,6 @@ Resources:
             Path: /api/plan/generate-cli-plan
             Method: POST
 
-  SubmitToSQSFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambda/handlers/
-      Handler: submitToSQS.handler
-      Environment:
-        Variables:
-          SQS_QUEUE_URL: !Ref ResearchRequestQueue
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - sqs:SendMessage
-                - sqs:GetQueueAttributes
-              Resource: !GetAtt ResearchRequestQueue.Arn
-      Events:
-        SubmitRequest:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/sqs/submit
-            Method: POST
-
-
   # Lambda Execution Role
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -336,15 +301,6 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-        - PolicyName: SQSAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - sqs:SendMessage
-                  - sqs:GetQueueAttributes
-                Resource: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:*
         - PolicyName: SecretsAccess
           PolicyDocument:
             Version: '2012-10-17'
@@ -608,11 +564,6 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-GetStatusFunction
   
-  SQSQueueUrl:
-    Description: URL of the research requests SQS queue
-    Value: !Ref ResearchRequestQueue
-    Export:
-      Name: !Sub ${AWS::StackName}-QueueUrl
   
   ResearchResultsBucketName:
     Description: Name of the S3 bucket for research results

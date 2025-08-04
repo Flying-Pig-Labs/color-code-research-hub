@@ -3,7 +3,12 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
 const { LambdaClient, InvokeCommand } = require('@aws-sdk/client-lambda');
-const { v4: uuidv4 } = require('uuid');
+// Using timestamp-based ID instead of uuid to avoid dependency issues
+const generateJobId = () => {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substr(2, 9);
+  return `job-${timestamp}-${random}`;
+};
 
 const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient, {
@@ -31,7 +36,7 @@ exports.handler = async (event) => {
     const { projectDescription, selectedTeams, teamFields, githubConfig, metadata, readmeContent } = body;
 
     // Generate unique job ID
-    const jobId = uuidv4();
+    const jobId = generateJobId();
     const timestamp = new Date().toISOString();
     const ttl = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours TTL
 
