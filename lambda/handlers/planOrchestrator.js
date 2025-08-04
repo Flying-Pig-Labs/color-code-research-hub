@@ -88,12 +88,10 @@ exports.handler = async (event) => {
       // Call the existing planGeneratorV2 handler which handles all stages
       const generatorEvent = {
         body: JSON.stringify({
-          projectDescription: input.projectDescription,
-          selectedTeams: input.selectedTeams,
-          teamFields: input.teamFields,
-          githubConfig: input.githubConfig,
-          metadata: input.metadata || {
-            projectDescription: input.projectDescription,
+          projectInfo: input.metadata || {
+            title: input.metadata?.title || 'Project',
+            description: input.projectDescription || input.metadata?.description,
+            domain: input.metadata?.domain || 'general',
             ...input.teamFields
           },
           readmeContent: input.readmeContent || ''
