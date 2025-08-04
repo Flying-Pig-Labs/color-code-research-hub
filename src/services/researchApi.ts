@@ -6,6 +6,8 @@ interface ResearchResponse {
   request_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   result?: any;
+  s3_key?: string;
+  download_url?: string;
   error?: string;
 }
 
@@ -29,6 +31,8 @@ interface StatusCheckResponse {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   content?: string;
   s3_location?: string;
+  s3_key?: string;
+  download_url?: string;
   model_used?: string;
   timestamp: string;
   error?: string;
@@ -93,6 +97,8 @@ export async function checkResearchStatus(requestId: string): Promise<ResearchRe
         model_used: data.model_used,
         timestamp: data.timestamp
       } : undefined,
+      s3_key: data.s3_key,
+      download_url: data.download_url,
       error: data.error
     };
   } catch (error) {
