@@ -69,9 +69,6 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
       BillingMode: PAY_PER_REQUEST
       TimeToLiveSpecification:
         AttributeName: ttl
@@ -136,25 +133,6 @@ Resources:
             Path: /health
             Method: GET
 
-  TeamsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambda/handlers/
-      Handler: teams.handler
-      Events:
-        GetTeams:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /teams
-            Method: GET
-        GetTeamFields:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /teams/{teamType}/fields
-            Method: GET
-
   # GitHub Repository Function
   GitHubReposFunction:
     Type: AWS::Serverless::Function
@@ -187,136 +165,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /api/github/repos/{org}
             Method: GET
-
-  # Plan Generator Function (Original - kept for backward compatibility)
-  PlanGeneratorFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambda/handlers/
-      Handler: planGenerator.handler
-      Timeout: 120
-      MemorySize: 256
-      Environment:
-        Variables:
-          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
-          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - secretsmanager:GetSecretValue
-              Resource: 
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
-      Events:
-        ParseReadme:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/parse-readme
-            Method: POST
-        PopulateForm:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/populate-form
-            Method: POST
-        GeneratePhases:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/generate-phases
-            Method: POST
-        CreateGitHubIssues:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/create-github-issues
-            Method: POST
-
-  # Plan Generator V2 Function (Full orchestration)
-  PlanGeneratorV2Function:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambda/handlers/
-      Handler: planGeneratorV2.handler
-      Timeout: 900 # 15 minutes for full orchestration
-      MemorySize: 512
-      Environment:
-        Variables:
-          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
-          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
-          AWS_BEDROCK_REGION: us-east-1
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - bedrock:InvokeModel
-              Resource: 
-                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
-            - Effect: Allow
-              Action:
-                - secretsmanager:GetSecretValue
-              Resource: 
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
-      Events:
-        GenerateFullPlan:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/v2/generate-full-plan
-            Method: POST
-        GenerateIssues:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/v2/generate-issues
-            Method: POST
-        CreateGitHubIssuesV2:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/v2/create-github-issues
-            Method: POST
-
-  # Plan Generator CLI Function (Full working implementation)
-  PlanGeneratorCLIFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambda/handlers/
-      Handler: planGeneratorCLI.handler
-      Timeout: 900 # 15 minutes for full orchestration
-      MemorySize: 512
-      Environment:
-        Variables:
-          AWS_BEDROCK_REGION: us-east-1
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - bedrock:InvokeModel
-              Resource: 
-                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
-            - Effect: Allow
-              Action:
-                - secretsmanager:GetSecretValue
-              Resource: 
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
-                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
-      Events:
-        GenerateCLIPlan:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ResearchHubApi
-            Path: /api/plan/generate-cli-plan
-            Method: POST
 
   # Lambda Execution Role
   LambdaExecutionRole:
@@ -436,7 +284,20 @@ Resources:
             Path: /api/plan/async/status/{jobId}
             Method: GET
 
-  # Research API Function - Perplexity Integration
+  # Lambda Layer for Python Dependencies
+  PythonDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: python-dependencies-layer
+      Description: Layer containing Python dependencies for report processing
+      ContentUri: ../layers/python-dependencies/
+      CompatibleRuntimes:
+        - python3.11
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: python3.11
+
+  # Research API Function - Perplexity Integration (Python)
   ResearchApiFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -473,6 +334,149 @@ Resources:
               Resource: 
                 - !GetAtt ResearchReportsTable.Arn
                 - !Sub '${ResearchReportsTable.Arn}/index/*'
+
+  # Enhanced Research Report Function - Node.js with advanced data formats
+  GenerateResearchReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: generateResearchReport.handler
+      Runtime: nodejs18.x
+      Timeout: 900
+      MemorySize: 1024
+      Environment:
+        Variables:
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:perplexity-key-*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:GetObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+                - !Sub '${ResearchReportsTable.Arn}/index/*'
+      Events:
+        # Enhanced research endpoints with structured data
+        EnhancedResearchEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/v2
+            Method: POST
+        OptionsEnhancedResearch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/v2
+            Method: OPTIONS
+        EnhancedResearchStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/v2/status/{requestId}
+            Method: GET
+        OptionsEnhancedResearchStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/v2/status/{requestId}
+            Method: OPTIONS
+        EnhancedResearchReportsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/v2/reports
+            Method: GET
+        OptionsEnhancedResearchReports:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/v2/reports
+            Method: OPTIONS
+
+  # Report Processing Function - Enhanced Research Post-Processing (Node.js)
+  ReportProcessingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: reportProcessor.handler
+      Runtime: nodejs18.x
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          REPORT_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:GetObject
+                - s3:ListBucket
+              Resource: 
+                - !Sub '${ResearchResultsBucket.Arn}/*'
+                - !GetAtt ResearchResultsBucket.Arn
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+                - !Sub '${ResearchReportsTable.Arn}/index/*'
+      Events:
+        ProcessReportEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/reports/process
+            Method: POST
+        OptionsProcessReport:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/reports/process
+            Method: OPTIONS
+        EnhanceReportEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/reports/enhance/{reportId}
+            Method: POST
+        OptionsEnhanceReport:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/reports/enhance/{reportId}
+            Method: OPTIONS
       Events:
         ResearchEndpoint:
           Type: Api
@@ -584,6 +588,44 @@ Resources:
             Path: /api/claude-flow/health
             Method: OPTIONS
 
+  # Get Individual Report Function
+  GetReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: getReportHandler.handler
+      Runtime: nodejs18.x
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+      Events:
+        GetReportEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/reports/{reportId}
+            Method: GET
+        OptionsGetReport:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/reports/{reportId}
+            Method: OPTIONS
 
 Outputs:
   ApiGatewayUrl:
@@ -623,3 +665,15 @@ Outputs:
     Value: !Ref ResearchResultsBucket
     Export:
       Name: !Sub ${AWS::StackName}-ResearchBucket
+  
+  ReportProcessingFunctionArn:
+    Description: ARN of the Report Processing Lambda function
+    Value: !GetAtt ReportProcessingFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-ReportProcessingFunction
+  
+  PythonDependenciesLayerArn:
+    Description: ARN of the Python Dependencies Lambda Layer
+    Value: !Ref PythonDependenciesLayer
+    Export:
+      Name: !Sub ${AWS::StackName}-PythonDependenciesLayer

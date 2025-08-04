@@ -146,6 +146,173 @@ sam build
 sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
 ```
 
+## 🧠 Perplexity API Report Processing Architecture
+
+### Overview
+The system integrates with Perplexity API's async research capabilities to generate comprehensive intelligence reports. The architecture processes research requests through a sophisticated pipeline that generates 5 distinct output artifacts.
+
+### Data Flow Architecture
+```
+1. User submits research request → Frontend
+2. Frontend calls POST /api/research
+3. ResearchApiFunction:
+   - Creates async job with Perplexity API
+   - Returns request_id for polling
+4. Frontend polls GET /api/research/status/{request_id}
+5. When completed, ResearchApiFunction:
+   - Retrieves research content from Perplexity
+   - Processes through LLM pipeline (5 artifacts)
+   - Stores results in S3 bucket
+   - Logs metadata to DynamoDB
+6. Frontend displays processed results
+```
+
+### Lambda Functions for Research Processing
+
+#### 1. ResearchApiFunction (Existing)
+- **Handler**: `researchApi.py`
+- **Runtime**: Python 3.9
+- **Timeout**: 30 seconds
+- **Memory**: 256MB
+- **Purpose**: Handles Perplexity API integration and basic processing
+- **Endpoints**:
+  - `POST /api/research` - Create async research job
+  - `GET /api/research/status/{request_id}` - Check job status
+  - `GET /api/research/reports` - List historical reports
+  - `GET /api/research/download/{s3_key}` - Generate presigned URLs
+
+#### 2. ReportProcessorFunction (New - To Be Created)
+- **Handler**: `reportProcessor.js`
+- **Runtime**: Node.js 18.x
+- **Timeout**: 900 seconds (15 minutes)
+- **Memory**: 3008MB
+- **Purpose**: Process raw research content into 5 structured artifacts
+- **Trigger**: S3 event when raw research is uploaded
+- **Environment Variables**:
+  - `REPORTS_BUCKET_NAME`: S3 bucket for processed reports
+  - `ANTHROPIC_API_KEY`: From Secrets Manager
+  - `REPORTS_TABLE_NAME`: DynamoDB table name
+
+### 5 Output Artifacts Architecture
+
+The report processing pipeline generates these artifacts:
+
+1. **Executive Summary** (`executive-summary.json`)
+   - High-level insights and key findings
+   - Strategic recommendations
+   - Risk assessment matrix
+
+2. **Detailed Analysis** (`detailed-analysis.json`)
+   - Comprehensive research findings
+   - Methodology and sources
+   - Evidence-based conclusions
+
+3. **Action Items** (`action-items.json`)
+   - Prioritized task list
+   - Timeline recommendations
+   - Resource requirements
+
+4. **Visual Report** (`visual-report.json`)
+   - Chart and graph specifications
+   - Data visualization configs
+   - Presentation-ready formats
+
+5. **Raw Data Export** (`raw-data.json`)
+   - Original research content
+   - Source citations
+   - Metadata and timestamps
+
+### Data Storage Architecture
+
+#### S3 Bucket Structure
+```
+color-code-research-results-{account-id}/
+├── raw/
+│   └── {timestamp}_{research_id}.json (from Perplexity)
+├── processed/
+│   └── {research_id}/
+│       ├── executive-summary.json
+│       ├── detailed-analysis.json
+│       ├── action-items.json
+│       ├── visual-report.json
+│       └── raw-data.json
+└── exports/
+    └── {research_id}_complete_report.zip
+```
+
+#### DynamoDB Schema Enhancement
+**Table**: `ResearchReports` (existing, to be enhanced)
+```json
+{
+  "reportId": "uuid",
+  "team": "red|black|white",
+  "status": "processing|completed|failed",
+  "perplexityRequestId": "original-request-id",
+  "s3RawKey": "path-to-raw-content",
+  "s3ProcessedPrefix": "path-to-processed-artifacts",
+  "artifacts": {
+    "executiveSummary": {"status": "completed|failed", "s3Key": "..."},
+    "detailedAnalysis": {"status": "completed|failed", "s3Key": "..."},
+    "actionItems": {"status": "completed|failed", "s3Key": "..."},
+    "visualReport": {"status": "completed|failed", "s3Key": "..."},
+    "rawDataExport": {"status": "completed|failed", "s3Key": "..."}
+  },
+  "processingStartedAt": "ISO-8601",
+  "processingCompletedAt": "ISO-8601",
+  "metadata": {
+    "originalRequest": {},
+    "processingStats": {}
+  }
+}
+```
+
+### LLM Processing Pipeline
+
+#### Processing Strategy
+1. **Raw Content Analysis** - Extract key themes and structure
+2. **Parallel Artifact Generation** - Process 5 artifacts concurrently
+3. **Cross-Artifact Validation** - Ensure consistency across outputs
+4. **Quality Assurance** - Validate completeness and accuracy
+
+#### Prompt Structure for Each Artifact
+Each artifact uses specialized prompts:
+- **Executive Summary Prompt**: Focus on strategic insights
+- **Detailed Analysis Prompt**: Comprehensive technical analysis
+- **Action Items Prompt**: Actionable task generation
+- **Visual Report Prompt**: Data visualization specifications
+- **Raw Data Export Prompt**: Structured data extraction
+
+### Integration Points
+
+#### Frontend Integration
+The React components need updates to handle the new processing pipeline:
+
+```typescript
+// New components needed:
+- ReportProcessingStatus.tsx
+- ArtifactViewer.tsx
+- ReportDownloader.tsx
+- ProcessingProgress.tsx
+```
+
+#### API Endpoints Enhancement
+New endpoints to be added to `researchApi.py`:
+- `GET /api/research/artifacts/{report_id}` - List available artifacts
+- `GET /api/research/artifact/{report_id}/{artifact_type}` - Get specific artifact
+- `POST /api/research/reprocess/{report_id}` - Trigger reprocessing
+
+### Error Handling & Resilience
+
+#### Retry Strategy
+- **S3 Upload Failures**: 3 retries with exponential backoff
+- **LLM API Failures**: Fallback to OpenAI if Claude fails
+- **Processing Timeouts**: Checkpoint intermediate results
+
+#### Monitoring & Alerting
+- CloudWatch metrics for processing success rates
+- Dead letter queues for failed processing
+- SNS notifications for processing completion
+
 ## 🔧 Key Technical Details
 
 ### Rate Limiting Strategy
@@ -154,11 +321,13 @@ sam deploy --profile personal --stack-name color-code-research-hub --capabilitie
 - Batch processing: Issues processed 3 at a time
 - Phase delays: 2 seconds between phases
 - Batch delays: 1 second between issue batches
+- **Perplexity API**: 5 concurrent requests max, 1s delays between batches
 
 ### LLM Models
 - **Primary**: Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`)
 - **Fallback**: GPT-4 Turbo (`gpt-4-turbo-preview`)
 - **AWS Bedrock**: `anthropic.claude-3-sonnet-20240229-v1:0`
+- **Perplexity**: `sonar-deep-research` (async research model)
 
 ### Node.js Configuration
 - **Runtime**: Node.js 18.x

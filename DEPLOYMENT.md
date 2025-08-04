@@ -69,17 +69,55 @@ The application uses AWS Secrets Manager for:
 
 ## Deployment Verification
 
-### 1. Check Lambda Functions
+### Automated Validation Script
+Use the comprehensive validation script to check all infrastructure components:
+
+```bash
+cd infrastructure
+./validate-deployment.sh
+```
+
+This script validates:
+- CloudFormation stack status
+- All Lambda functions
+- Lambda layer deployment
+- DynamoDB tables
+- S3 bucket
+- API endpoints (health checks)
+- Secrets Manager secrets (optional)
+
+### Manual Verification Steps
+
+#### 1. Check Lambda Functions
 ```bash
 aws lambda list-functions --profile personal --region us-east-1 | grep color-code
 ```
 
-### 2. Check API Gateway
+#### 2. Check API Gateway
 ```bash
 aws apigateway get-rest-apis --profile personal --region us-east-1
 ```
 
-### 3. Check Amplify Status
+#### 3. Check New Report Processing Function
+```bash
+aws lambda get-function --function-name color-code-research-hub-ReportProcessingFunction --profile personal --region us-east-1
+```
+
+#### 4. Check Python Dependencies Layer
+```bash
+aws lambda list-layer-versions --layer-name python-dependencies-layer --profile personal --region us-east-1
+```
+
+#### 5. Test Report Processing Endpoints
+```bash
+# Test CORS preflight
+curl -X OPTIONS https://[API-ID].execute-api.us-east-1.amazonaws.com/production/api/reports/process
+
+# Test basic endpoint availability (should return method not allowed or similar)
+curl -X GET https://[API-ID].execute-api.us-east-1.amazonaws.com/production/api/reports/process
+```
+
+#### 6. Check Amplify Status
 Visit the AWS Amplify console to monitor deployment progress.
 
 ## Common Issues
@@ -105,6 +143,37 @@ Verify secrets are accessible:
 ```bash
 aws secretsmanager get-secret-value --secret-id github/personal_token-7lbje4 --profile personal --region us-east-1
 ```
+
+### Report Processing Issues
+
+#### Lambda Layer Build Failures
+If the Python dependencies layer fails to build:
+1. Check that SAM CLI version supports Python 3.11
+2. Verify the layer directory structure:
+   ```
+   layers/python-dependencies/
+   ├── requirements.txt
+   └── README.md
+   ```
+3. Ensure requirements.txt has valid package specifications
+
+#### Report Processing Function Errors
+Check CloudWatch logs for the report processing function:
+```bash
+aws logs tail /aws/lambda/color-code-research-hub-ReportProcessingFunction --profile personal --region us-east-1 --since 5m
+```
+
+#### Missing Dependencies
+If imports fail in the Lambda function:
+1. Verify the layer is properly attached to the function
+2. Check that the layer contains the required packages
+3. Ensure Python version compatibility (3.11)
+
+#### API Gateway Timeouts
+For long-running report processing:
+1. Consider using async processing pattern (like plan generation)
+2. Increase Lambda timeout (currently set to 900s/15min)
+3. Monitor memory usage and adjust if needed (currently 3008MB)
 
 ## Rollback Procedures
 
@@ -148,8 +217,37 @@ New routes added for Claude Flow integration:
 - **Purpose**: API key for authenticating with EC2 Claude Flow service
 - **Access**: ResearchProxyFunction has permission to retrieve this secret
 
+## Report Processing Infrastructure (NEW)
+
+### Report Processing Function
+A new Lambda function has been added for enhanced research report processing:
+- **Function**: `ReportProcessingFunction`
+- **Runtime**: Python 3.11
+- **Timeout**: 900 seconds (15 minutes)
+- **Memory**: 3008 MB
+- **Purpose**: Post-process research reports with enhanced formatting, structure, and analysis
+
+### Python Dependencies Layer
+A new Lambda layer provides shared Python libraries:
+- **Layer**: `PythonDependenciesLayer`
+- **Dependencies**: markdown, bleach, beautifulsoup4, lxml, requests, boto3
+- **Purpose**: Shared dependencies for Python-based Lambda functions
+
+### New API Endpoints
+- `POST /api/reports/process` - Process and enhance raw research reports
+- `POST /api/reports/enhance/{reportId}` - Enhance existing reports with additional analysis
+- All endpoints include proper CORS support with OPTIONS methods
+
 ### Deployment Profile
-**Important**: Always use the `mvp` profile for deployments:
+**Important**: Use the `personal` profile for deployments (as per CLAUDE.md):
 ```bash
-sam deploy --profile mvp --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+# Using the deployment script (recommended)
+cd infrastructure
+./deploy.sh
+
+# Or manually with personal profile
+sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+
+# Override profile if needed
+AWS_PROFILE=mvp ./deploy.sh
 ```

@@ -15,6 +15,8 @@ import BuildTab from "./pages/BuildTab";
 import SharkSwarmer from "./pages/SharkSwarmer";
 import NotFound from "./pages/NotFound";
 import SwarmDashboard from "./components/monitoring/SwarmDashboard";
+import { ReportView } from "./components/ReportView";
+import { ReportViewDemo } from "./components/ReportViewDemo";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,10 @@ const App = () => (
           
           {/* Monitoring Dashboard */}
           <Route path="/monitoring" element={<AppLayout><SwarmDashboard /></AppLayout>} />
+          
+          {/* Report Viewer */}
+          <Route path="/reports/:reportId" element={<AppLayout><ReportView /></AppLayout>} />
+          <Route path="/demo/reports" element={<AppLayout><ReportViewDemo /></AppLayout>} />
           
           {/* Redirects and 404 */}
           <Route path="/research" element={<Navigate to="/" replace />} />

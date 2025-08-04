@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { 
   submitResearch, 
   checkResearchStatus, 
+  listResearchReports,
   formatRedTeamPrompt, 
   formatWhiteTeamPrompt, 
-  formatBlackTeamPrompt 
+  formatBlackTeamPrompt,
+  type ResearchReport 
 } from '../researchApi';
 
 describe('researchApi', () => {
@@ -368,6 +370,187 @@ describe('researchApi', () => {
       expect(prompt).toContain('Single developer implementation');
       expect(prompt).toContain('MVP - Quick prototype');
       expect(prompt).toContain('Low threshold - Rapid prototyping acceptable');
+    });
+  });
+
+  describe('listResearchReports', () => {
+    const mockReports: ResearchReport[] = [
+      {
+        reportId: 'report-1',
+        team: 'red',
+        createdAt: '2024-01-15T10:30:00Z',
+        requestId: 'req-1',
+        s3Key: 'reports/red_report_1.json',
+        title: 'Competitive Analysis',
+        vendorName: 'Competitor Corp',
+        contentSummary: 'Analysis of competitive landscape',
+        downloadUrl: 'https://s3.amazonaws.com/bucket/report1.json',
+        metadata: { wordCount: 1500 }
+      },
+      {
+        reportId: 'report-2',
+        team: 'white',
+        createdAt: '2024-01-14T15:45:00Z',
+        requestId: 'req-2',
+        s3Key: 'reports/white_report_2.json',
+        companyName: 'Innovation Inc',
+        contentSummary: 'Market opportunity analysis',
+        downloadUrl: 'https://s3.amazonaws.com/bucket/report2.json',
+        metadata: { wordCount: 2200 }
+      }
+    ];
+
+    it('should list all research reports', async () => {
+      const mockResponse = {
+        success: true,
+        reports: mockReports,
+        total: 2
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse
+      });
+
+      const result = await listResearchReports();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        `${mockBaseUrl}/api/research/reports?limit=50`
+      );
+
+      expect(result).toEqual(mockReports);
+    });
+
+    it('should list reports filtered by team', async () => {
+      const redTeamReports = mockReports.filter(r => r.team === 'red');
+      const mockResponse = {
+        success: true,
+        reports: redTeamReports,
+        total: 1
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse
+      });
+
+      const result = await listResearchReports('red', 20);
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        `${mockBaseUrl}/api/research/reports?team=red&limit=20`
+      );
+
+      expect(result).toEqual(redTeamReports);
+    });
+
+    it('should handle empty reports list', async () => {
+      const mockResponse = {
+        success: true,
+        reports: [],
+        total: 0
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse
+      });
+
+      const result = await listResearchReports();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle missing reports array in response', async () => {
+      const mockResponse = {
+        success: true,
+        total: 0
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse
+      });
+
+      const result = await listResearchReports();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle list reports HTTP errors', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        statusText: 'Internal Server Error'
+      });
+
+      await expect(listResearchReports()).rejects.toThrow(
+        'Failed to list reports: Internal Server Error'
+      );
+    });
+  });
+
+  describe('Error Handling and Edge Cases', () => {
+    it('should handle JSON parsing errors', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => {
+          throw new Error('Invalid JSON');
+        }
+      });
+
+      await expect(submitResearch({ task: 'test' })).rejects.toThrow('Invalid JSON');
+    });
+
+    it('should handle network timeouts', async () => {
+      mockFetch.mockImplementation(() => 
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timeout')), 100)
+        )
+      );
+
+      await expect(submitResearch({ task: 'test' })).rejects.toThrow('Request timeout');
+    });
+
+    it('should handle malformed API responses', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          // Missing required fields
+          success: true
+        })
+      });
+
+      const result = await submitResearch({ task: 'test' });
+
+      expect(result.request_id).toBeUndefined();
+      expect(result.status).toBeUndefined();
+    });
+
+    it('should handle empty environment variable gracefully', async () => {
+      const originalEnv = import.meta.env.VITE_API_BASE_URL;
+      
+      // Temporarily clear the env var
+      Object.defineProperty(import.meta.env, 'VITE_API_BASE_URL', {
+        value: '',
+        configurable: true
+      });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true, request_id: 'test', status: 'pending' })
+      });
+
+      await submitResearch({ task: 'test' });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        '/api/research',
+        expect.any(Object)
+      );
+
+      // Restore original env
+      Object.defineProperty(import.meta.env, 'VITE_API_BASE_URL', {
+        value: originalEnv,
+        configurable: true
+      });
     });
   });
 });

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { listResearchReports, ResearchReport } from '../services/researchApi';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { ExternalLink } from 'lucide-react';
 
 interface ResearchReportHistoryProps {
   team?: 'red' | 'black' | 'white';
@@ -161,17 +163,26 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   {report.contentSummary || 'No summary available'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <button
-                    onClick={() => handleDownload(report)}
-                    disabled={!report.downloadUrl}
-                    className={`px-3 py-1 rounded-lg text-white ${
-                      report.downloadUrl
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    Download
-                  </button>
+                  <div className="flex space-x-2">
+                    <Link
+                      to={`/reports/${report.reportId}`}
+                      className="inline-flex items-center px-3 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors"
+                    >
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      View
+                    </Link>
+                    <button
+                      onClick={() => handleDownload(report)}
+                      disabled={!report.downloadUrl}
+                      className={`px-3 py-1 rounded-lg text-white ${
+                        report.downloadUrl
+                          ? 'bg-blue-600 hover:bg-blue-700'
+                          : 'bg-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      Download
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
