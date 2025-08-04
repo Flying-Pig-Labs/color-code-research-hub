@@ -224,7 +224,6 @@ def handler(event, context):
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Api-Key,Accept",
         "Access-Control-Allow-Methods": "GET,POST,OPTIONS,PUT,DELETE",
-        "Access-Control-Allow-Credentials": "true",
         "Access-Control-Max-Age": "86400"
     }
 

@@ -113,7 +113,6 @@ Resources:
         AllowOrigin: "'*'"
         AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept'"
         AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
-        AllowCredentials: true
         MaxAge: "'86400'"
       Auth:
         ApiKeyRequired: false # Set to true if you want API key authentication
