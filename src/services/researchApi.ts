@@ -1,5 +1,8 @@
 interface ResearchRequest {
   task: string;
+  team?: string;
+  companyName?: string;
+  vendorName?: string;
 }
 
 interface ResearchResponse {
@@ -68,7 +71,10 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
         content: request.task,
         title: 'Research Request',
         model: 'sonar-deep-research',
-        reasoning_effort: 'low'
+        reasoning_effort: 'low',
+        team: request.team || 'unknown',
+        companyName: request.companyName,
+        vendorName: request.vendorName
       }),
     });
 

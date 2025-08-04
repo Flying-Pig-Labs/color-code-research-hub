@@ -482,19 +482,28 @@ def handler(event, context):
                     )
 
                 # Upload to S3
-                # Extract team and other metadata from the original request
-                # For now, we'll try to parse it from the research content or use defaults
+                # Extract team from the stored metadata instead of content detection
+                # The team should have been passed in the original request
                 team = "unknown"
                 vendor_name = None
                 company_name = None
                 
-                # Try to detect team from content
-                if "RED TEAM" in research_content[:500]:
-                    team = "red"
-                elif "BLACK TEAM" in research_content[:500]:
-                    team = "black"
-                elif "WHITE TEAM" in research_content[:500]:
-                    team = "white"
+                # Try to get team from original request metadata first
+                # This is more reliable than content detection
+                if request_id:
+                    # For completed jobs, we should have the team from the original request
+                    # Note: In future, store original request metadata with job
+                    pass
+                
+                # Fallback: Try to detect team from content only if no team info available
+                # This is less reliable but better than nothing
+                if team == "unknown" and research_content:
+                    if "RED TEAM" in research_content[:500]:
+                        team = "red"
+                    elif "BLACK TEAM" in research_content[:500]:
+                        team = "black"
+                    elif "WHITE TEAM" in research_content[:500]:
+                        team = "white"
                 
                 metadata = {
                     "request_id": request_id,

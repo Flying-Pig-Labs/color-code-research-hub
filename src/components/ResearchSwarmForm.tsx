@@ -92,7 +92,10 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
       
       // Submit to EC2 research endpoint
       const response = await submitResearch({
-        task: researchPrompt
+        task: researchPrompt,
+        team: 'red', // This is Red Team research
+        companyName: companyName,
+        vendorName: companyName // Add vendor name for better tracking
       });
       
       toast.success(`Research swarm launched for ${companyName || 'Unknown Company'}!`, {

@@ -224,7 +224,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   {report.vendorName || report.companyName || report.title || 'N/A'}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500 max-w-md truncate">
-                  {report.contentSummary || 'No summary available'}
+                  {report.processedSummary || report.contentSummary || 'No summary available'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex space-x-2">
