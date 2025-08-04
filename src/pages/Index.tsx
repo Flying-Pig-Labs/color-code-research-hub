@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import SectionWrapper from "@/components/SectionWrapper";
 import TeamCard from "@/components/TeamCard";
+import { ResearchReportHistory } from "@/components/ResearchReportHistory";
 import { Target, Bug, Lightbulb } from "lucide-react";
 
 const Index = () => {
@@ -71,6 +72,16 @@ const Index = () => {
             variant="white-team"
             theme="white"
           />
+        </div>
+      </SectionWrapper>
+
+      {/* Research History Section */}
+      <SectionWrapper className="py-12 bg-gradient-carmax-fade">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">Recent Research Reports</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <ResearchReportHistory limit={10} />
+          </div>
         </div>
       </SectionWrapper>
     </div>

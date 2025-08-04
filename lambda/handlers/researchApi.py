@@ -9,11 +9,13 @@ import uuid
 # Initialize AWS clients
 secrets_manager = boto3.client("secretsmanager", region_name="us-east-1")
 s3_client = boto3.client("s3")
+dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
 
 # Constants
 PERPLEXITY_ASYNC_URL = "https://api.perplexity.ai/async/chat/completions"
 PERPLEXITY_STATUS_URL = "https://api.perplexity.ai/async/chat/completions/{request_id}"
 S3_BUCKET = os.environ.get("RESEARCH_BUCKET", "color-code-research-results")
+RESEARCH_REPORTS_TABLE = os.environ.get("RESEARCH_REPORTS_TABLE", "ResearchReports")
 PERPLEXITY_SECRET_NAME = "perplexity-key"
 
 # Cache for the API key
@@ -82,6 +84,59 @@ def upload_to_s3(content: str, metadata: Dict[str, Any]) -> str:
         print(f"Error uploading to S3: {str(e)}")
         # Don't fail the request if S3 upload fails
         return None
+
+
+def log_report_to_dynamodb(
+    report_id: str,
+    team: str,
+    metadata: Dict[str, Any],
+    s3_key: str,
+    request_id: str,
+    content_summary: str = None
+) -> bool:
+    """Log research report metadata to DynamoDB for tracking and retrieval."""
+    try:
+        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+        
+        # Prepare item for DynamoDB
+        item = {
+            "reportId": report_id,
+            "team": team,
+            "createdAt": datetime.now().isoformat(),
+            "requestId": request_id,
+            "s3Key": s3_key,
+            "s3Bucket": S3_BUCKET,
+            "metadata": metadata,
+            "status": "completed",
+            "ttl": int(datetime.now().timestamp()) + 7776000  # 90 days TTL
+        }
+        
+        # Add optional fields
+        if content_summary:
+            item["contentSummary"] = content_summary[:500]  # Limit summary length
+        
+        if metadata.get("title"):
+            item["title"] = metadata["title"]
+            
+        if metadata.get("requester"):
+            item["requester"] = metadata["requester"]
+            
+        if metadata.get("vendorName"):
+            item["vendorName"] = metadata["vendorName"]
+            
+        if metadata.get("companyName"):
+            item["companyName"] = metadata["companyName"]
+            
+        # Write to DynamoDB
+        table.put_item(Item=item)
+        
+        print(f"Successfully logged report {report_id} to DynamoDB")
+        return True
+        
+    except Exception as e:
+        print(f"Error logging to DynamoDB: {str(e)}")
+        # Don't fail the request if DynamoDB logging fails
+        return False
 
 
 def create_async_research_job(
@@ -195,6 +250,9 @@ def handler(event, context):
                 "tags": body.get("tags", []),
                 "model": model,
                 "reasoning_effort": reasoning_effort,
+                "team": body.get("team", "unknown"),
+                "vendorName": body.get("vendorName"),
+                "companyName": body.get("companyName"),
             }
 
             if not user_content:
@@ -339,11 +397,45 @@ def handler(event, context):
                     )
 
                 # Upload to S3
+                # Extract team and other metadata from the original request
+                # For now, we'll try to parse it from the research content or use defaults
+                team = "unknown"
+                vendor_name = None
+                company_name = None
+                
+                # Try to detect team from content
+                if "RED TEAM" in research_content[:500]:
+                    team = "red"
+                elif "BLACK TEAM" in research_content[:500]:
+                    team = "black"
+                elif "WHITE TEAM" in research_content[:500]:
+                    team = "white"
+                
                 metadata = {
                     "request_id": request_id,
                     "model": response_obj.get("model", "sonar-deep-research"),
+                    "team": team,
                 }
+                
                 s3_key = upload_to_s3(research_content, metadata)
+                
+                # Log to DynamoDB if S3 upload succeeded
+                if s3_key:
+                    # Generate a unique report ID
+                    research_id = str(uuid.uuid4())[:8]
+                    
+                    # Get first 500 chars as summary
+                    content_summary = research_content[:500] if research_content else None
+                    
+                    # Log to DynamoDB
+                    log_report_to_dynamodb(
+                        report_id=research_id,
+                        team=team,
+                        metadata=metadata,
+                        s3_key=s3_key,
+                        request_id=request_id,
+                        content_summary=content_summary
+                    )
 
                 response_data["content"] = research_content
                 response_data["s3_location"] = (
@@ -381,6 +473,61 @@ def handler(event, context):
                 "body": json.dumps(response_data),
             }
 
+        # Handle list reports endpoint
+        elif path == "/api/research/reports" and event.get("httpMethod") == "GET":
+            try:
+                # Get query parameters
+                query_params = event.get("queryStringParameters", {}) or {}
+                team = query_params.get("team")
+                limit = int(query_params.get("limit", 50))
+                
+                table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+                
+                # Build query parameters
+                if team:
+                    # Query by team using GSI
+                    response = table.query(
+                        IndexName="team-createdAt-index",
+                        KeyConditionExpression="team = :team",
+                        ExpressionAttributeValues={":team": team},
+                        ScanIndexForward=False,  # Sort by createdAt descending
+                        Limit=limit
+                    )
+                else:
+                    # Scan all reports (less efficient but needed for all teams)
+                    response = table.scan(Limit=limit)
+                
+                # Extract items and generate presigned URLs
+                items = response.get("Items", [])
+                for item in items:
+                    if item.get("s3Key"):
+                        # Generate fresh presigned URL
+                        download_url = generate_presigned_url(item["s3Key"])
+                        if download_url:
+                            item["downloadUrl"] = download_url
+                
+                return {
+                    "statusCode": 200,
+                    "headers": {**cors_headers, "Content-Type": "application/json"},
+                    "body": json.dumps({
+                        "success": True,
+                        "reports": items,
+                        "count": len(items),
+                        "hasMore": response.get("LastEvaluatedKey") is not None
+                    }),
+                }
+                
+            except Exception as e:
+                print(f"Error listing reports: {str(e)}")
+                return {
+                    "statusCode": 500,
+                    "headers": {**cors_headers, "Content-Type": "application/json"},
+                    "body": json.dumps({
+                        "error": "Internal Server Error",
+                        "message": "Failed to list research reports"
+                    }),
+                }
+        
         else:
             return {
                 "statusCode": 404,

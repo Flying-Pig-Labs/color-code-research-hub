@@ -353,6 +353,40 @@ IMPORTANT: This is an EXHAUSTIVE DISCOVERY mission. Your output should be encycl
 Generate EXHAUSTIVE white space analysis documenting EVERY possible opportunity with COMPLETE supporting research. Prioritize BREADTH and DEPTH over executive summary.`;
 }
 
+export interface ResearchReport {
+  reportId: string;
+  team: string;
+  createdAt: string;
+  requestId: string;
+  s3Key: string;
+  title?: string;
+  vendorName?: string;
+  companyName?: string;
+  contentSummary?: string;
+  downloadUrl?: string;
+  metadata?: any;
+}
+
+export async function listResearchReports(team?: string, limit: number = 50): Promise<ResearchReport[]> {
+  try {
+    const params = new URLSearchParams();
+    if (team) params.append('team', team);
+    params.append('limit', limit.toString());
+    
+    const response = await fetch(`${API_BASE_URL}/api/research/reports?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to list reports: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data.reports || [];
+  } catch (error) {
+    console.error('Error listing research reports:', error);
+    throw error;
+  }
+}
+
 export function formatBlackTeamPrompt(formData: any): string {
   return `⚫ BLACK TEAM RESEARCH SWARM - EXHAUSTIVE VENDOR REPLACEMENT ANALYSIS ⚫
 

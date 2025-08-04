@@ -45,6 +45,41 @@ Resources:
         - Key: Application
           Value: color-code-research-hub
 
+  # DynamoDB Table for Research Reports Metadata
+  ResearchReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ResearchReports
+      AttributeDefinitions:
+        - AttributeName: reportId
+          AttributeType: S
+        - AttributeName: team
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: reportId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: team-createdAt-index
+          KeySchema:
+            - AttributeName: team
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Application
+          Value: color-code-research-hub
+
   # SQS Queue for Research Requests
 
   # S3 Bucket for Research Results
@@ -413,6 +448,7 @@ Resources:
       Environment:
         Variables:
           RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -427,6 +463,16 @@ Resources:
                 - s3:PutObjectAcl
                 - s3:GetObject
               Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+                - !Sub '${ResearchReportsTable.Arn}/index/*'
       Events:
         ResearchEndpoint:
           Type: Api
@@ -463,6 +509,18 @@ Resources:
           Properties:
             RestApiId: !Ref ResearchHubApi
             Path: /api/research/download/{s3Key}
+            Method: OPTIONS
+        ResearchReportsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/reports
+            Method: GET
+        OptionsResearchReports:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/research/reports
             Method: OPTIONS
         LogsEndpoint:
           Type: Api
