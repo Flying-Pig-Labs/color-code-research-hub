@@ -370,7 +370,7 @@ def handler(event, context):
     # CORS headers - Updated to support oceanstudio.io
     cors_headers = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Api-Key,Accept",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Api-Key,Accept,X-User-Id",
         "Access-Control-Allow-Methods": "GET,POST,OPTIONS,PUT,DELETE",
         "Access-Control-Max-Age": "86400"
     }
