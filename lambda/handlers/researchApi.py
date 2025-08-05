@@ -602,12 +602,12 @@ def handler(event, context):
                         response_obj["choices"][0].get("message", {}).get("content", "")
                     )
 
-                # Upload to S3
                 # Extract team from the stored metadata instead of content detection
                 # The team should have been passed in the original request
                 team = "unknown"
                 vendor_name = None
                 company_name = None
+                s3_info = None
                 
                 # Try to get team from original request metadata first
                 # This is more reliable than content detection
@@ -629,6 +629,15 @@ def handler(event, context):
                             if existing_record.get("metadata"):
                                 vendor_name = existing_record["metadata"].get("vendorName")
                                 company_name = existing_record["metadata"].get("companyName")
+                            
+                            # Check if S3 files already exist
+                            if existing_record.get("s3Prefix") and existing_record.get("s3Files"):
+                                print(f"Found existing S3 files for request {request_id}, not re-uploading")
+                                s3_info = {
+                                    "s3_prefix": existing_record["s3Prefix"],
+                                    "s3_bucket": existing_record.get("s3Bucket", S3_BUCKET),
+                                    "files": existing_record["s3Files"]
+                                }
                             print(f"Retrieved team '{team}' from existing DynamoDB record for request {request_id}")
                     except Exception as e:
                         print(f"Warning: Failed to retrieve existing record: {str(e)}")
@@ -658,8 +667,10 @@ def handler(event, context):
                 # Get user ID from headers
                 user_id = event.get('headers', {}).get('X-User-Id', 'fprior')
                 
-                # Upload to S3 with new structure
-                s3_info = upload_to_s3(research_content, metadata, research_id, user_id)
+                # Only upload to S3 if we don't already have S3 files
+                if not s3_info:
+                    print(f"Uploading new content to S3 for request {request_id}")
+                    s3_info = upload_to_s3(research_content, metadata, research_id, user_id)
                 
                 # Log to DynamoDB with S3 prefix info
                 if s3_info:
