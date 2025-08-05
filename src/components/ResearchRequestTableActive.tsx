@@ -49,6 +49,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
   const [isUsingApi, setIsUsingApi] = useState(false);
   const [pollingTasks, setPollingTasks] = useState<Set<string>>(new Set());
   const [downloadingTasks, setDownloadingTasks] = useState<Set<string>>(new Set());
+  const [progressValues, setProgressValues] = useState<Record<string, number>>({});
 
   const loadTasks = async () => {
     setIsLoading(true);
@@ -87,6 +88,36 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
       window.removeEventListener('taskUpdated', handleTaskUpdated);
     };
   }, [teamType]);
+
+  // Update progress bars for active tasks
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgressValues(prev => {
+        const newValues = { ...prev };
+        
+        tasks.forEach(task => {
+          if (task.status === 'processing' || task.status === 'pending' || 
+              (task.status === 'completed' && !task.summary)) {
+            const startTime = new Date(task.createdAt).getTime();
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+            
+            // Calculate progress (0-100%)
+            const progress = Math.min((elapsed / tenMinutes) * 100, 100);
+            newValues[task.id] = progress;
+          } else {
+            // Remove progress for completed tasks
+            delete newValues[task.id];
+          }
+        });
+        
+        return newValues;
+      });
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, [tasks]);
 
   // Poll for status updates of processing tasks
   useEffect(() => {
@@ -379,12 +410,17 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                     </div>
                   )}
                   <div className="w-full">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Loader2 className={`h-4 w-4 animate-spin ${teamType === 'black' ? 'text-white' : 'text-muted-foreground'}`} />
+                      <span className={`text-sm font-medium ${teamType === 'black' ? 'text-white' : 'text-muted-foreground'}`}>
+                        Wayfinding...
+                      </span>
+                      <span className={`text-xs ${teamType === 'black' ? 'text-white/60' : 'text-muted-foreground'}`}>
+                        {Math.round(progressValues[task.id] || 0)}%
+                      </span>
+                    </div>
                     <Progress 
-                      value={
-                        task.summary ? 100 : 
-                        task.status === 'completed' ? 70 : 
-                        30
-                      } 
+                      value={progressValues[task.id] || 0}
                       className="h-2" 
                     />
                     <p className={`text-xs mt-1 ${teamType === 'black' ? 'text-white/60' : 'text-muted-foreground'}`}>
