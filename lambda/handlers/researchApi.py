@@ -555,7 +555,7 @@ def handler(event, context):
                     ),
                 }
 
-            # Check job status
+            # Check job status with Perplexity
             status_response = check_job_status(request_id)
 
             # Extract status and data
@@ -703,82 +703,65 @@ def handler(event, context):
                     if company_name:
                         full_metadata["companyName"] = company_name
                     
-                    # Update or create DynamoDB record with new S3 structure
+                    # When Perplexity completes, update DynamoDB and invoke processor
                     try:
                         table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
-                        table.update_item(
-                            Key={"reportId": research_id},
-                            UpdateExpression="SET #status = :status, s3Prefix = :prefix, s3Bucket = :bucket, s3Files = :files, userId = :userid, contentSummary = :summary, metadata = :metadata, updatedAt = :updated",
-                            ExpressionAttributeNames={
-                                "#status": "status"
-                            },
-                            ExpressionAttributeValues={
-                                ":status": "completed",
-                                ":prefix": s3_info["s3_prefix"],
-                                ":bucket": s3_info["s3_bucket"],
-                                ":files": s3_info["files"],
-                                ":userid": user_id,
-                                ":summary": content_summary,
-                                ":metadata": full_metadata,
-                                ":updated": datetime.now().isoformat()
-                            }
-                        )
-                        print(f"Updated DynamoDB record {research_id} with S3 prefix: {s3_info['s3_prefix']}")
-                    except Exception as e:
-                        print(f"Failed to update record, creating new one: {str(e)}")
-                        # Fallback to creating a new record with new structure
-                        log_report_to_dynamodb_v2(
-                            report_id=research_id,
-                            team=team,
-                            metadata=full_metadata,
-                            s3_info=s3_info,
-                            user_id=user_id,
-                            request_id=request_id,
-                            content_summary=content_summary
-                        )
-                    
-                    # Atomic guard to ensure report processor is invoked exactly once
-                    try:
-                        # Try to mark the record as "processing started"
-                        # This will only succeed if processingStatus doesn't exist
-                        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
-                        table.update_item(
-                            Key={"reportId": research_id},
-                            ConditionExpression="attribute_not_exists(processingStatus)",
-                            UpdateExpression="SET processingStatus = :started, processingStartedAt = :timestamp",
-                            ExpressionAttributeValues={
-                                ":started": "initiated",
-                                ":timestamp": datetime.now().isoformat()
-                            }
-                        )
                         
-                        # We won the race - we're the first to process this report
-                        print(f"Successfully acquired processing lock for {research_id}")
+                        # Check if we already have a completed record
+                        existing = table.get_item(Key={"reportId": research_id}).get("Item")
                         
-                        # Now safe to invoke report processor exactly once
-                        processor_result = invoke_report_processor(
-                            report_id=research_id,
-                            content=research_content,
-                            team=team,
-                            task=content_summary or "Research Analysis",
-                            metadata=metadata
-                        )
-                        
-                        if processor_result:
-                            print(f"Report processor invoked successfully for {research_id}")
-                            response_data["report_processing_status"] = "initiated"
-                        else:
-                            print(f"Failed to invoke report processor for {research_id}")
+                        if not existing or existing.get("status") == "pending":
+                            # First time seeing completion - update to processing
+                            print(f"Perplexity research {research_id} completed - updating to processing status")
                             
-                    except ClientError as e:
-                        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
-                            # Someone else already started processing - this is normal
-                            print(f"Report {research_id} is already being processed or was processed")
-                            response_data["report_processing_status"] = "already_initiated"
-                        else:
-                            # Real error - log it but don't fail the status check
-                            print(f"Error updating processing status: {str(e)}")
-                            response_data["report_processing_status"] = "error"
+                            # Update record with S3 info and set status to processing
+                            table.update_item(
+                                Key={"reportId": research_id},
+                                UpdateExpression="SET #status = :status, s3Prefix = :prefix, s3Bucket = :bucket, s3Files = :files, contentSummary = :summary, metadata = :metadata, updatedAt = :updated",
+                                ExpressionAttributeNames={"#status": "status"},
+                                ExpressionAttributeValues={
+                                    ":status": "processing",  # Set to processing, not completed
+                                    ":prefix": s3_info["s3_prefix"],
+                                    ":bucket": s3_info["s3_bucket"],
+                                    ":files": s3_info["files"],
+                                    ":summary": content_summary,
+                                    ":metadata": full_metadata,
+                                    ":updated": datetime.now().isoformat()
+                                }
+                            )
+                            
+                            # Invoke report processor ONCE
+                            try:
+                                # Atomic guard to prevent duplicate processing
+                                table.update_item(
+                                    Key={"reportId": research_id},
+                                    ConditionExpression="attribute_not_exists(processingInvoked)",
+                                    UpdateExpression="SET processingInvoked = :true",
+                                    ExpressionAttributeValues={":true": True}
+                                )
+                                
+                                # Invoke the processor
+                                processor_result = invoke_report_processor(
+                                    report_id=research_id,
+                                    content=research_content,
+                                    team=team,
+                                    task=content_summary or "Research Analysis",
+                                    metadata=metadata
+                                )
+                                
+                                if processor_result:
+                                    print(f"Report processor invoked for {research_id}")
+                                else:
+                                    print(f"Failed to invoke processor for {research_id}")
+                                    
+                            except ClientError as e:
+                                if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                                    print(f"Processor already invoked for {research_id}")
+                                else:
+                                    print(f"Error invoking processor: {str(e)}")
+                                    
+                    except Exception as e:
+                        print(f"Error handling Perplexity completion: {str(e)}")
 
                 response_data["content"] = research_content
                 response_data["research_id"] = research_id  # Add research ID

@@ -196,12 +196,16 @@ async function processResearchReport(requestData, options = {}) {
           const updateParams = {
             TableName: tableName,
             Key: { reportId: reportItem.reportId },
-            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, processedS3Key = :s3key",
+            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, processedS3Key = :s3key, #status = :status",
+            ExpressionAttributeNames: {
+              "#status": "status"
+            },
             ExpressionAttributeValues: {
               ":summary": contentSummary,
               ":wc": wordCount,
               ":pa": new Date().toISOString(),
-              ":s3key": s3Key
+              ":s3key": s3Key,
+              ":status": "completed"
             }
           };
           
