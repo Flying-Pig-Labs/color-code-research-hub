@@ -151,16 +151,24 @@ def invoke_report_processor(
         # Prepare the payload for report processing
         payload = {
             "reportId": report_id,
+            "requestId": report_id,  # Add requestId for compatibility
             "rawContent": content,
             "team": team,
             "objective": task,
-            "metadata": metadata
+            "task": task,  # Some handlers expect 'task' field
+            "metadata": metadata,
+            "formData": metadata  # Add formData alias for compatibility
         }
         
-        # Invoke the report processing function asynchronously
-        # Use environment variable or construct ARN
-        function_name = os.environ.get("REPORT_PROCESSING_FUNCTION_NAME", 
-                                      "color-code-research-hub-ReportProcessingFunction-HaCSag5t4t7Y")
+        # Get the function name from environment variable
+        function_name = os.environ.get("REPORT_PROCESSING_FUNCTION_NAME")
+        
+        if not function_name:
+            print("ERROR: REPORT_PROCESSING_FUNCTION_NAME environment variable not set")
+            print("Cannot invoke report processor - missing configuration")
+            return None
+            
+        print(f"Invoking report processor Lambda function: {function_name}")
         
         response = lambda_client.invoke(
             FunctionName=function_name,
@@ -169,7 +177,13 @@ def invoke_report_processor(
         )
         
         print(f"Report processor invoked with status: {response['StatusCode']}")
-        return {"invoked": True, "statusCode": response['StatusCode']}
+        
+        # Check if invocation was accepted (202 for async)
+        if response['StatusCode'] == 202:
+            return {"invoked": True, "statusCode": response['StatusCode']}
+        else:
+            print(f"WARNING: Unexpected status code: {response['StatusCode']}")
+            return {"invoked": False, "statusCode": response['StatusCode']}
         
     except Exception as e:
         print(f"Error invoking report processor: {str(e)}")

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, FileText, ChevronRight, Loader2 } from 'lucide-react';
+import { X, FileText, ChevronRight, Loader2, Lightbulb, ExternalLink } from 'lucide-react';
 import { 
   fetchReportData, 
   processReport, 
@@ -7,6 +7,8 @@ import {
   ProcessedReport,
   ReportMetadata 
 } from '../services/reportService';
+import { innovationPipelineService } from '../services/innovationPipelineService';
+import { toast } from 'sonner';
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -35,6 +37,10 @@ export function ReportModal({
   const [report, setReport] = useState<ProcessedReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ideateLoading, setIdeateLoading] = useState(false);
+  const [ideateJobId, setIdeateJobId] = useState<string | null>(null);
+  const [ideateProgress, setIdeateProgress] = useState<string>('');
+  const [ideateGithubUrl, setIdeateGithubUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && mode === 'full' && !report) {
@@ -54,6 +60,63 @@ export function ReportModal({
       console.error('Error loading report:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleIdeate = async () => {
+    if (ideateLoading) return;
+    
+    setIdeateLoading(true);
+    setIdeateProgress('Starting innovation pipeline...');
+    
+    try {
+      // Start the pipeline
+      const response = await innovationPipelineService.startPipeline(reportId, 'fprior');
+      setIdeateJobId(response.jobId);
+      
+      toast.success('Innovation pipeline started!', {
+        description: `Estimated completion time: ${response.estimatedCompletionTime}`,
+        duration: 5000,
+      });
+      
+      // Start polling for completion
+      setIdeateProgress('Processing your research for innovation ideas...');
+      
+      const finalStatus = await innovationPipelineService.pollJobCompletion(
+        response.jobId,
+        (status) => {
+          // Update progress
+          if (status.currentStep) {
+            setIdeateProgress(status.currentStep);
+          }
+          if (status.progress) {
+            setIdeateProgress(`${status.currentStep || 'Processing'} (${status.progress}%)`);
+          }
+        }
+      );
+      
+      if (finalStatus.status === 'completed' && finalStatus.githubUrl) {
+        setIdeateGithubUrl(finalStatus.githubUrl);
+        setIdeateProgress('');
+        toast.success('Innovation ideas generated!', {
+          description: 'Click the link to view your GitHub repository',
+          action: {
+            label: 'View on GitHub',
+            onClick: () => window.open(finalStatus.githubUrl, '_blank')
+          },
+          duration: 10000,
+        });
+      } else if (finalStatus.status === 'failed') {
+        throw new Error(finalStatus.error || 'Pipeline failed');
+      }
+    } catch (err) {
+      console.error('Error running innovation pipeline:', err);
+      toast.error('Failed to generate innovation ideas', {
+        description: err instanceof Error ? err.message : 'Unknown error occurred',
+      });
+      setIdeateProgress('');
+    } finally {
+      setIdeateLoading(false);
     }
   };
 
@@ -127,6 +190,21 @@ export function ReportModal({
                   )}
                 </div>
               )}
+              
+              {/* IDEATE Info */}
+              <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <Lightbulb className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-purple-900">Innovation Pipeline</p>
+                    <p className="text-sm text-purple-700 mt-1">
+                      Click <span className="font-semibold">IDEATE</span> to generate actionable innovation ideas 
+                      from this research. The process takes approximately 22 minutes and creates a GitHub 
+                      repository with detailed implementation plans.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             // Full Report Mode
@@ -233,13 +311,51 @@ export function ReportModal({
               >
                 Close
               </button>
-              <button
-                onClick={onViewFull}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
-              >
-                View Full Report
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </button>
+              <div className="flex space-x-3">
+                {/* IDEATE Button */}
+                {ideateGithubUrl ? (
+                  <a
+                    href={ideateGithubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Innovation Ideas
+                  </a>
+                ) : (
+                  <button
+                    onClick={handleIdeate}
+                    disabled={ideateLoading}
+                    className={`px-4 py-2 text-white rounded-lg flex items-center transition-colors ${
+                      ideateLoading 
+                        ? 'bg-purple-400 cursor-not-allowed' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                    title="Generate innovation ideas from this research"
+                  >
+                    {ideateLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        {ideateProgress || 'Processing...'}
+                      </>
+                    ) : (
+                      <>
+                        <Lightbulb className="h-4 w-4 mr-2" />
+                        IDEATE
+                      </>
+                    )}
+                  </button>
+                )}
+                
+                <button
+                  onClick={onViewFull}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
+                >
+                  View Full Report
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </button>
+              </div>
             </>
           ) : (
             <button

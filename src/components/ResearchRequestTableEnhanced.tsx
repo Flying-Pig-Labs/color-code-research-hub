@@ -18,9 +18,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { apiService } from "@/services/api";
-import { Loader2, RefreshCw, ExternalLink, Github } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Github, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { githubService } from "@/services/githubService";
+import { jobService } from "@/services/jobService";
 import { getExpectedRepoName } from "@/utils/idGenerator";
 
 /**
@@ -396,20 +397,24 @@ const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
                 <TableCell>
                   <div className="flex gap-1">
                     {/* Job Status Check Button */}
-                    {task.jobId && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => checkJobStatus(task)}
-                        disabled={checkingRepos.has(task.id)}
-                        className="p-2"
-                        title="Check job status"
-                      >
-                        <Clock className={`h-4 w-4 ${
-                          checkingRepos.has(task.id) ? 'animate-spin' : ''
-                        }`} />
-                      </Button>
-                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => checkJobStatus(task)}
+                      disabled={!task.jobId || checkingRepos.has(task.id)}
+                      className={`p-2 ${!task.jobId ? 'opacity-50' : ''}`}
+                      title={
+                        !task.jobId 
+                          ? 'No job ID available' 
+                          : checkingRepos.has(task.id)
+                          ? 'Checking...'
+                          : 'Check job status'
+                      }
+                    >
+                      <Clock className={`h-4 w-4 ${
+                        checkingRepos.has(task.id) ? 'animate-spin' : ''
+                      }`} />
+                    </Button>
                     
                     {/* GitHub Check Button */}
                     <Button
@@ -417,8 +422,16 @@ const ResearchRequestTable = ({ teamType }: ResearchRequestTableProps) => {
                       variant="ghost"
                       onClick={() => checkGitHub(task)}
                       disabled={checkingRepos.has(task.id) || !!task.githubUrl}
-                      className="p-2"
-                      title="Check GitHub repository"
+                      className={`p-2 ${!task.repoId ? 'opacity-50' : ''}`}
+                      title={
+                        !!task.githubUrl
+                          ? 'Repository already found'
+                          : checkingRepos.has(task.id)
+                          ? 'Checking...'
+                          : !task.repoId
+                          ? 'No tracking ID available'
+                          : 'Check GitHub repository'
+                      }
                     >
                       <RefreshCw className={`h-4 w-4 ${
                         checkingRepos.has(task.id) ? 'animate-spin' : ''

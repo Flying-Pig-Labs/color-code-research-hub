@@ -245,15 +245,19 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex space-x-2">
-                    {report.processedSummary && (
-                      <button
-                        onClick={() => handlePreview(report)}
-                        className="inline-flex items-center px-3 py-1 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
-                      >
-                        <Eye className="h-3 w-3 mr-1" />
-                        Preview
-                      </button>
-                    )}
+                    <button
+                      onClick={() => handlePreview(report)}
+                      disabled={!report.processedSummary}
+                      className={`inline-flex items-center px-3 py-1 rounded-lg text-white transition-colors ${
+                        report.processedSummary
+                          ? 'bg-purple-600 hover:bg-purple-700 cursor-pointer'
+                          : 'bg-gray-400 cursor-not-allowed opacity-60'
+                      }`}
+                      title={!report.processedSummary ? 'Summary not yet processed' : 'Preview summary'}
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
+                      Preview
+                    </button>
                     <Link
                       to={`/reports/${report.reportId}`}
                       className="inline-flex items-center px-3 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors"
@@ -264,11 +268,16 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     <button
                       onClick={() => handleDownload(report)}
                       disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response}
-                      className={`px-3 py-1 rounded-lg text-white ${
+                      className={`inline-flex items-center px-3 py-1 rounded-lg text-white transition-colors ${
                         report.downloadUrl || report.s3Key || report.s3Files?.response
-                          ? 'bg-blue-600 hover:bg-blue-700'
-                          : 'bg-gray-400 cursor-not-allowed'
+                          ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+                          : 'bg-gray-400 cursor-not-allowed opacity-60'
                       }`}
+                      title={
+                        !report.downloadUrl && !report.s3Key && !report.s3Files?.response
+                          ? 'Download not available yet'
+                          : 'Download report'
+                      }
                     >
                       Download
                     </button>

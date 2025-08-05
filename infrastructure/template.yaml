@@ -507,6 +507,12 @@ Resources:
               Resource: 
                 - !GetAtt ResearchReportsTable.Arn
                 - !Sub '${ResearchReportsTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: 
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0
       Events:
         ProcessReportEndpoint:
           Type: Api
