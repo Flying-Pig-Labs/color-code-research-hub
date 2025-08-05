@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
 from decimal import Decimal
+from botocore.exceptions import ClientError
 
 # Initialize AWS clients
 secrets_manager = boto3.client("secretsmanager", region_name="us-east-1")
@@ -736,21 +737,48 @@ def handler(event, context):
                             content_summary=content_summary
                         )
                     
-                    # Invoke report processor to generate structured reports
-                    # This will create the 5 different output formats with LLM processing
-                    processor_result = invoke_report_processor(
-                        report_id=research_id,
-                        content=research_content,
-                        team=team,
-                        task=content_summary or "Research Analysis",
-                        metadata=metadata
-                    )
-                    
-                    if processor_result:
-                        print(f"Report processor invoked successfully for {research_id}")
-                        response_data["report_processing_status"] = "initiated"
-                    else:
-                        print(f"Failed to invoke report processor for {research_id}")
+                    # Atomic guard to ensure report processor is invoked exactly once
+                    try:
+                        # Try to mark the record as "processing started"
+                        # This will only succeed if processingStatus doesn't exist
+                        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+                        table.update_item(
+                            Key={"reportId": research_id},
+                            ConditionExpression="attribute_not_exists(processingStatus)",
+                            UpdateExpression="SET processingStatus = :started, processingStartedAt = :timestamp",
+                            ExpressionAttributeValues={
+                                ":started": "initiated",
+                                ":timestamp": datetime.now().isoformat()
+                            }
+                        )
+                        
+                        # We won the race - we're the first to process this report
+                        print(f"Successfully acquired processing lock for {research_id}")
+                        
+                        # Now safe to invoke report processor exactly once
+                        processor_result = invoke_report_processor(
+                            report_id=research_id,
+                            content=research_content,
+                            team=team,
+                            task=content_summary or "Research Analysis",
+                            metadata=metadata
+                        )
+                        
+                        if processor_result:
+                            print(f"Report processor invoked successfully for {research_id}")
+                            response_data["report_processing_status"] = "initiated"
+                        else:
+                            print(f"Failed to invoke report processor for {research_id}")
+                            
+                    except ClientError as e:
+                        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                            # Someone else already started processing - this is normal
+                            print(f"Report {research_id} is already being processed or was processed")
+                            response_data["report_processing_status"] = "already_initiated"
+                        else:
+                            # Real error - log it but don't fail the status check
+                            print(f"Error updating processing status: {str(e)}")
+                            response_data["report_processing_status"] = "error"
 
                 response_data["content"] = research_content
                 response_data["research_id"] = research_id  # Add research ID
