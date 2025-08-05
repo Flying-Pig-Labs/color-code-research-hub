@@ -159,8 +159,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-8">
+      <div className="flex justify-center items-center py-8" role="status" aria-label="Loading research reports">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span className="sr-only">Loading...</span>
       </div>
     );
   }

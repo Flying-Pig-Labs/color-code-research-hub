@@ -2,6 +2,7 @@ import json
 import boto3
 import requests
 import os
+import time
 from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
@@ -396,8 +397,11 @@ def handler(event, context):
 
     try:
         path = event.get("path", "")
+        # Strip stage prefix if present (e.g., /production/api/... -> /api/...)
+        if path.startswith("/production"):
+            path = path[11:]  # Remove "/production" prefix
 
-        # Handle async job creation
+        # Handle async job creation with polling
         if path == "/api/research" and event.get("httpMethod") == "POST":
             # Parse request body
             body = json.loads(event.get("body", "{}"))
@@ -431,52 +435,174 @@ def handler(event, context):
                     ),
                 }
 
-            # Create async job
-            job_response = create_async_research_job(
-                user_content=user_content, model=model
-            )
-
-            # Extract id from response (Perplexity uses 'id' not 'request_id')
-            request_id = job_response.get("id")
-
-            if not request_id:
-                raise ValueError("No id returned from Perplexity API")
-
-            # Create DynamoDB record immediately with all metadata
-            # This ensures we don't lose team information during async processing
+            # Generate research ID upfront
+            research_id = str(uuid.uuid4())
+            start_time = int(datetime.now().timestamp() * 1000)  # Epoch ms
+            
+            # Create DynamoDB record with processing status
             try:
-                # Generate a report ID (will be updated when research completes)
-                initial_report_id = str(uuid.uuid4())[:8]
+                table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+                table.put_item(
+                    Item={
+                        "reportId": research_id,  # Using reportId as PK for compatibility
+                        "startTime": start_time,
+                        "status": "processing",
+                        "team": metadata.get("team", "unknown"),
+                        "metadata": metadata,
+                        "createdAt": datetime.now().isoformat()
+                    }
+                )
+                print(f"Created DynamoDB record {research_id} with status=processing")
+            except Exception as e:
+                print(f"Error creating DynamoDB record: {str(e)}")
+                return {
+                    "statusCode": 500,
+                    "headers": {**cors_headers, "Content-Type": "application/json"},
+                    "body": json.dumps({"error": "Failed to create research record"}),
+                }
+
+            # Create async job with Perplexity
+            try:
+                job_response = create_async_research_job(
+                    user_content=user_content, model=model
+                )
+                request_id = job_response.get("id")
                 
-                # Create initial DynamoDB record with pending status
-                log_report_to_dynamodb(
-                    report_id=initial_report_id,
-                    team=metadata.get("team", "unknown"),
-                    metadata=metadata,
-                    s3_key=None,  # Will be updated when research completes
-                    request_id=request_id,
-                    content_summary="Research in progress...",
-                    status="pending"
+                if not request_id:
+                    raise ValueError("No id returned from Perplexity API")
+                    
+                # Update record with Perplexity request ID
+                table.update_item(
+                    Key={"reportId": research_id},
+                    UpdateExpression="SET requestId = :rid",
+                    ExpressionAttributeValues={":rid": request_id}
                 )
                 
-                print(f"Created initial DynamoDB record for request {request_id} with team {metadata.get('team')}")
             except Exception as e:
-                print(f"Warning: Failed to create initial DynamoDB record: {str(e)}")
-                # Don't fail the request if initial logging fails
+                # Update status to error
+                table.update_item(
+                    Key={"reportId": research_id},
+                    UpdateExpression="SET #status = :status, errorMessage = :error",
+                    ExpressionAttributeNames={"#status": "status"},
+                    ExpressionAttributeValues={
+                        ":status": "error",
+                        ":error": f"Failed to start Perplexity job: {str(e)}"
+                    }
+                )
+                return {
+                    "statusCode": 500,
+                    "headers": {**cors_headers, "Content-Type": "application/json"},
+                    "body": json.dumps({"error": "Failed to start research job"}),
+                }
 
-            # Return job creation response
-            response_data = {
-                "success": True,
-                "request_id": request_id,
-                "status": "pending",
-                "metadata": metadata,
-                "timestamp": datetime.now().isoformat(),
-            }
-
+            # Start polling loop (up to 15 minutes)
+            max_poll_time = 15 * 60  # 15 minutes in seconds
+            poll_interval = 5  # Start with 5 second intervals
+            elapsed_time = 0
+            
+            while elapsed_time < max_poll_time:
+                try:
+                    # Check Perplexity status
+                    status_response = check_job_status(request_id)
+                    status = status_response.get("status", "UNKNOWN")
+                    
+                    if status == "COMPLETED":
+                        # Get the completed research content
+                        response_obj = status_response.get("response", {})
+                        research_content = response_obj.get("choices", [{}])[0].get("message", {}).get("content", "")
+                        
+                        if research_content:
+                            # Invoke Lambda B (Raw Report Handler)
+                            # For now, we'll invoke inline since Lambda B doesn't exist yet
+                            # TODO: Replace with actual Lambda B invocation
+                            
+                            # Upload raw report to S3
+                            raw_key = f"reports/{research_id}/raw.txt"
+                            s3_client.put_object(
+                                Bucket=S3_BUCKET,
+                                Key=raw_key,
+                                Body=research_content.encode('utf-8'),
+                                ContentType='text/plain'
+                            )
+                            
+                            # Update DynamoDB status
+                            table.update_item(
+                                Key={"reportId": research_id},
+                                UpdateExpression="SET #status = :status, rawS3Key = :key",
+                                ExpressionAttributeNames={"#status": "status"},
+                                ExpressionAttributeValues={
+                                    ":status": "pending_postprocessing",
+                                    ":key": raw_key
+                                }
+                            )
+                            
+                            # Invoke Lambda C (ReportProcessingFunction)
+                            processor_result = invoke_report_processor(
+                                report_id=research_id,
+                                content=research_content,
+                                team=metadata.get("team", "unknown"),
+                                task=user_content,
+                                metadata=metadata
+                            )
+                            
+                            # Return success
+                            return {
+                                "statusCode": 200,
+                                "headers": {**cors_headers, "Content-Type": "application/json"},
+                                "body": json.dumps({
+                                    "success": True,
+                                    "research_id": research_id,
+                                    "status": "pending_postprocessing",
+                                    "message": "Research completed, post-processing started"
+                                }),
+                            }
+                            
+                    elif status == "FAILED":
+                        # Update status to error
+                        error_msg = status_response.get("error_message", "Unknown error")
+                        table.update_item(
+                            Key={"reportId": research_id},
+                            UpdateExpression="SET #status = :status, errorMessage = :error",
+                            ExpressionAttributeNames={"#status": "status"},
+                            ExpressionAttributeValues={
+                                ":status": "error",
+                                ":error": f"Perplexity job failed: {error_msg}"
+                            }
+                        )
+                        return {
+                            "statusCode": 500,
+                            "headers": {**cors_headers, "Content-Type": "application/json"},
+                            "body": json.dumps({"error": "Research job failed"}),
+                        }
+                        
+                except Exception as e:
+                    print(f"Error during polling: {str(e)}")
+                
+                # Sleep before next poll (with exponential backoff)
+                time.sleep(poll_interval)
+                elapsed_time += poll_interval
+                # Increase interval up to 30 seconds
+                poll_interval = min(poll_interval * 1.5, 30)
+            
+            # Timeout after 15 minutes
+            table.update_item(
+                Key={"reportId": research_id},
+                UpdateExpression="SET #status = :status, errorMessage = :error",
+                ExpressionAttributeNames={"#status": "status"},
+                ExpressionAttributeValues={
+                    ":status": "error_timeout",
+                    ":error": "Research timed out after 15 minutes"
+                }
+            )
+            
             return {
-                "statusCode": 202,  # Accepted
+                "statusCode": 408,  # Request Timeout
                 "headers": {**cors_headers, "Content-Type": "application/json"},
-                "body": json.dumps(response_data),
+                "body": json.dumps({
+                    "error": "Research timeout",
+                    "research_id": research_id,
+                    "message": "Research did not complete within 15 minutes"
+                }),
             }
 
         # Handle download URL generation
@@ -555,250 +681,95 @@ def handler(event, context):
                     ),
                 }
 
-            # Check job status with Perplexity
-            status_response = check_job_status(request_id)
-
-            # Extract status and data
-            status = status_response.get("status", "UNKNOWN")
-
-            response_data = {
-                "success": True,
-                "request_id": request_id,
-                "status": status.lower(),  # Convert to lowercase for frontend compatibility
-                "timestamp": datetime.now().isoformat(),
-            }
-            
-            # Check if we have a processed report in DynamoDB
-            # If the report has been processed, include the 120-word summary
+            # Read-only status check from DynamoDB
             try:
                 table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
-                # Query for report by request_id
+                
+                # Query by requestId
                 scan_response = table.scan(
                     FilterExpression="requestId = :rid",
                     ExpressionAttributeValues={":rid": request_id},
                     Limit=1
                 )
                 
-                if scan_response.get("Items") and len(scan_response["Items"]) > 0:
-                    report_item = scan_response["Items"][0]
-                    
-                    # Check if we have a processed report with summary
-                    if report_item.get("processedSummary"):
-                        response_data["summary"] = report_item["processedSummary"]
-                        response_data["summaryWordCount"] = report_item.get("summaryWordCount", 120)
-                        response_data["reportId"] = report_item.get("reportId")
-                        response_data["reportProcessed"] = True
-                        
-                        # Add metadata if available
-                        if report_item.get("team"):
-                            response_data["team"] = report_item["team"]
-                        if report_item.get("title"):
-                            response_data["title"] = report_item["title"]
-                        if report_item.get("vendorName"):
-                            response_data["vendorName"] = report_item["vendorName"]
-                        if report_item.get("companyName"):
-                            response_data["companyName"] = report_item["companyName"]
-                            
-            except Exception as e:
-                print(f"Error checking for processed report: {str(e)}")
-                # Don't fail the request if we can't check for processed report
-
-            # If completed, include the result
-            if status == "COMPLETED":
-                # Extract the research content from nested response
-                research_content = ""
-                response_obj = status_response.get("response", {})
-                if (
-                    response_obj
-                    and "choices" in response_obj
-                    and len(response_obj["choices"]) > 0
-                ):
-                    research_content = (
-                        response_obj["choices"][0].get("message", {}).get("content", "")
-                    )
-
-                # Extract team from the stored metadata instead of content detection
-                # The team should have been passed in the original request
-                team = "unknown"
-                vendor_name = None
-                company_name = None
-                s3_info = None
+                if not scan_response.get("Items") or len(scan_response["Items"]) == 0:
+                    # No record found
+                    return {
+                        "statusCode": 404,
+                        "headers": {**cors_headers, "Content-Type": "application/json"},
+                        "body": json.dumps({
+                            "success": False,
+                            "error": "Report not found",
+                            "request_id": request_id
+                        }),
+                    }
                 
-                # Try to get team from original request metadata first
-                # This is more reliable than content detection
-                existing_record = None
-                if request_id:
-                    # Look up the existing DynamoDB record to get the team and metadata
-                    try:
-                        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
-                        # Query by requestId to find the existing record
-                        response = table.scan(
-                            FilterExpression="requestId = :rid",
-                            ExpressionAttributeValues={":rid": request_id},
-                            Limit=1
-                        )
-                        
-                        if response.get("Items") and len(response["Items"]) > 0:
-                            existing_record = response["Items"][0]
-                            team = existing_record.get("team", "unknown")
-                            if existing_record.get("metadata"):
-                                vendor_name = existing_record["metadata"].get("vendorName")
-                                company_name = existing_record["metadata"].get("companyName")
-                            
-                            # Check if S3 files already exist
-                            if existing_record.get("s3Prefix") and existing_record.get("s3Files"):
-                                print(f"Found existing S3 files for request {request_id}, not re-uploading")
-                                s3_info = {
-                                    "s3_prefix": existing_record["s3Prefix"],
-                                    "s3_bucket": existing_record.get("s3Bucket", S3_BUCKET),
-                                    "files": existing_record["s3Files"]
-                                }
-                            print(f"Retrieved team '{team}' from existing DynamoDB record for request {request_id}")
-                    except Exception as e:
-                        print(f"Warning: Failed to retrieve existing record: {str(e)}")
+                # Get the report record
+                report_item = scan_response["Items"][0]
                 
-                # Fallback: Try to detect team from content only if no team info available
-                # This is less reliable but better than nothing
-                if team == "unknown" and research_content:
-                    if "RED TEAM" in research_content[:500]:
-                        team = "red"
-                    elif "BLACK TEAM" in research_content[:500]:
-                        team = "black"
-                    elif "WHITE TEAM" in research_content[:500]:
-                        team = "white"
-                
-                metadata = {
+                # Build response based on status
+                response_data = {
+                    "success": True,
                     "request_id": request_id,
-                    "model": response_obj.get("model", "sonar-deep-research"),
-                    "team": team,
+                    "status": report_item.get("status", "unknown"),
+                    "timestamp": datetime.now().isoformat(),
+                    "reportId": report_item.get("reportId"),
                 }
                 
-                # Generate research ID if not updating existing
-                if request_id and 'existing_record' in locals() and existing_record:
-                    research_id = existing_record.get("reportId")
+                # Add all relevant fields from DynamoDB
+                if report_item.get("processedSummary"):
+                    response_data["summary"] = report_item["processedSummary"]
+                    response_data["summaryWordCount"] = report_item.get("summaryWordCount", 120)
+                    response_data["reportProcessed"] = True
                 else:
-                    research_id = f"research_{uuid.uuid4().hex[:12]}"
+                    response_data["reportProcessed"] = False
                 
-                # Get user ID from headers
-                user_id = event.get('headers', {}).get('X-User-Id', 'fprior')
-                
-                # Only upload to S3 if we don't already have S3 files
-                if not s3_info:
-                    print(f"Uploading new content to S3 for request {request_id}")
-                    s3_info = upload_to_s3(research_content, metadata, research_id, user_id)
-                
-                # Log to DynamoDB with S3 prefix info
-                if s3_info:
-                    # Get first 500 chars as summary
-                    content_summary = research_content[:500] if research_content else None
+                # Add metadata fields
+                if report_item.get("team"):
+                    response_data["team"] = report_item["team"]
+                if report_item.get("title"):
+                    response_data["title"] = report_item["title"]
+                if report_item.get("vendorName"):
+                    response_data["vendorName"] = report_item["vendorName"]
+                if report_item.get("companyName"):
+                    response_data["companyName"] = report_item["companyName"]
                     
-                    # If no existing record, generate a new report ID
-                    if not research_id:
-                        research_id = str(uuid.uuid4())[:8]
+                # Add S3 information
+                if report_item.get("s3Prefix"):
+                    response_data["s3_prefix"] = report_item["s3Prefix"]
+                    response_data["s3_location"] = f"s3://{S3_BUCKET}/{report_item['s3Prefix']}/"
+                if report_item.get("s3Files"):
+                    response_data["s3_files"] = report_item["s3Files"]
+                if report_item.get("s3Key"):
+                    response_data["s3_key"] = report_item["s3Key"]
                     
-                    # Update the metadata with the full information
-                    full_metadata = metadata.copy()
-                    if vendor_name:
-                        full_metadata["vendorName"] = vendor_name
-                    if company_name:
-                        full_metadata["companyName"] = company_name
-                    
-                    # When Perplexity completes, update DynamoDB and invoke processor
+                # Add content if status is completed
+                if report_item.get("status") == "completed" and report_item.get("s3Files", {}).get("response"):
+                    # Generate presigned URL for download
                     try:
-                        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
-                        
-                        # Check if we already have a completed record
-                        existing = table.get_item(Key={"reportId": research_id}).get("Item")
-                        
-                        if not existing or existing.get("status") == "pending":
-                            # First time seeing completion - update to processing
-                            print(f"Perplexity research {research_id} completed - updating to processing status")
-                            
-                            # Update record with S3 info and set status to processing
-                            table.update_item(
-                                Key={"reportId": research_id},
-                                UpdateExpression="SET #status = :status, s3Prefix = :prefix, s3Bucket = :bucket, s3Files = :files, contentSummary = :summary, metadata = :metadata, updatedAt = :updated",
-                                ExpressionAttributeNames={"#status": "status"},
-                                ExpressionAttributeValues={
-                                    ":status": "processing",  # Set to processing, not completed
-                                    ":prefix": s3_info["s3_prefix"],
-                                    ":bucket": s3_info["s3_bucket"],
-                                    ":files": s3_info["files"],
-                                    ":summary": content_summary,
-                                    ":metadata": full_metadata,
-                                    ":updated": datetime.now().isoformat()
-                                }
-                            )
-                            
-                            # Invoke report processor ONCE
-                            try:
-                                # Atomic guard to prevent duplicate processing
-                                table.update_item(
-                                    Key={"reportId": research_id},
-                                    ConditionExpression="attribute_not_exists(processingInvoked)",
-                                    UpdateExpression="SET processingInvoked = :true",
-                                    ExpressionAttributeValues={":true": True}
-                                )
-                                
-                                # Invoke the processor
-                                processor_result = invoke_report_processor(
-                                    report_id=research_id,
-                                    content=research_content,
-                                    team=team,
-                                    task=content_summary or "Research Analysis",
-                                    metadata=metadata
-                                )
-                                
-                                if processor_result:
-                                    print(f"Report processor invoked for {research_id}")
-                                else:
-                                    print(f"Failed to invoke processor for {research_id}")
-                                    
-                            except ClientError as e:
-                                if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
-                                    print(f"Processor already invoked for {research_id}")
-                                else:
-                                    print(f"Error invoking processor: {str(e)}")
-                                    
+                        download_url = generate_presigned_url(report_item["s3Files"]["response"])
+                        if download_url:
+                            response_data["download_url"] = download_url
                     except Exception as e:
-                        print(f"Error handling Perplexity completion: {str(e)}")
-
-                response_data["content"] = research_content
-                response_data["research_id"] = research_id  # Add research ID
-                response_data["s3_prefix"] = s3_info["s3_prefix"]  # Add S3 prefix
-                response_data["s3_location"] = (
-                    f"s3://{S3_BUCKET}/{s3_info['s3_prefix']}/" if s3_info else None
-                )
-                response_data["s3_files"] = s3_info.get("files", {}) if s3_info else {}
-
-                # Generate presigned URL for the response file
-                if s3_info and s3_info.get("files", {}).get("response"):
-                    download_url = generate_presigned_url(s3_info["files"]["response"])
-                    if download_url:
-                        response_data["download_url"] = download_url
-
-                response_data["model_used"] = response_obj.get("model")
-                response_data["status"] = "completed"  # lowercase for frontend
-
-            # If failed, include error info
-            elif status == "FAILED":
-                response_data["error"] = status_response.get(
-                    "error_message", "Unknown error"
-                )
-                response_data["status"] = "failed"  # lowercase for frontend
-
-            # Handle other statuses
-            elif status == "IN_PROGRESS":
-                response_data["status"] = (
-                    "processing"  # Map to frontend expected status
-                )
-            elif status == "CREATED":
-                response_data["status"] = "pending"  # Map to frontend expected status
-
+                        print(f"Error generating presigned URL: {str(e)}")
+                        
+            except Exception as e:
+                print(f"Error reading from DynamoDB: {str(e)}")
+                return {
+                    "statusCode": 500,
+                    "headers": {**cors_headers, "Content-Type": "application/json"},
+                    "body": json.dumps({
+                        "success": False,
+                        "error": "Failed to check status",
+                        "message": str(e)
+                    }),
+                }
+            
+            # Return the read-only status response
             return {
                 "statusCode": 200,
                 "headers": {**cors_headers, "Content-Type": "application/json"},
-                "body": json.dumps(response_data),
+                "body": json.dumps(response_data, default=decimal_default),
             }
 
         # Handle list reports endpoint

@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, expect, describe, it, beforeEach, afterEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { ResearchReportHistory } from '../ResearchReportHistory';
 import * as researchApi from '../../services/researchApi';
 
@@ -31,6 +32,15 @@ vi.mock('sonner', () => ({
   }
 }));
 
+// Helper function to render with Router
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(
+    <MemoryRouter>
+      {component}
+    </MemoryRouter>
+  );
+};
+
 const mockReports = [
   {
     reportId: 'report-1',
@@ -60,13 +70,14 @@ const mockReports = [
     team: 'black',
     createdAt: '2024-01-13T09:15:00Z',
     requestId: 'req-3',
-    s3Key: 'reports/black_report_3.json',
+    s3Key: null, // No s3Key
+    s3Files: null, // No s3Files
     vendorName: 'Legacy Vendor',
     contentSummary: 'Technical vendor replacement analysis',
     downloadUrl: null, // No download URL available
     metadata: { wordCount: 3100 }
   }
-];
+] as any[];
 
 describe('ResearchReportHistory', () => {
   beforeEach(() => {
@@ -84,27 +95,29 @@ describe('ResearchReportHistory', () => {
         () => new Promise(() => {}) // Never resolves
       );
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
       
       expect(screen.getByRole('status')).toBeInTheDocument();
-      expect(screen.getByLabelText(/loading/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/loading research reports/i)).toBeInTheDocument();
+      expect(screen.getByText(/loading/i)).toBeInTheDocument();
     });
 
     it('should render reports table when data loads', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
       });
 
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getByText('Competitive Analysis')).toBeInTheDocument();
+      // Component displays vendorName or companyName, not title
+      expect(screen.getByText('Competitor Corp')).toBeInTheDocument();
       expect(screen.getByText('Innovation Inc')).toBeInTheDocument();
       expect(screen.getByText('Legacy Vendor')).toBeInTheDocument();
     });
 
     it('should display team badges with correct colors', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('RED')).toBeInTheDocument();
@@ -120,7 +133,7 @@ describe('ResearchReportHistory', () => {
     });
 
     it('should show formatted dates', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText(/Jan 15, 2024/)).toBeInTheDocument();
@@ -133,7 +146,7 @@ describe('ResearchReportHistory', () => {
 
   describe('Team Filtering', () => {
     it('should filter by red team when team prop is provided', async () => {
-      render(<ResearchReportHistory team="red" />);
+      renderWithRouter(<ResearchReportHistory team="red" />);
 
       await waitFor(() => {
         expect(mockedResearchApi.listResearchReports).toHaveBeenCalledWith('red', 20);
@@ -144,7 +157,7 @@ describe('ResearchReportHistory', () => {
     });
 
     it('should filter by white team', async () => {
-      render(<ResearchReportHistory team="white" />);
+      renderWithRouter(<ResearchReportHistory team="white" />);
 
       await waitFor(() => {
         expect(mockedResearchApi.listResearchReports).toHaveBeenCalledWith('white', 20);
@@ -154,7 +167,7 @@ describe('ResearchReportHistory', () => {
     });
 
     it('should filter by black team', async () => {
-      render(<ResearchReportHistory team="black" />);
+      renderWithRouter(<ResearchReportHistory team="black" />);
 
       await waitFor(() => {
         expect(mockedResearchApi.listResearchReports).toHaveBeenCalledWith('black', 20);
@@ -164,7 +177,7 @@ describe('ResearchReportHistory', () => {
     });
 
     it('should respect custom limit prop', async () => {
-      render(<ResearchReportHistory limit={10} />);
+      renderWithRouter(<ResearchReportHistory limit={10} />);
 
       await waitFor(() => {
         expect(mockedResearchApi.listResearchReports).toHaveBeenCalledWith(undefined, 10);
@@ -177,7 +190,7 @@ describe('ResearchReportHistory', () => {
       const errorMessage = 'Network error';
       mockedResearchApi.listResearchReports.mockRejectedValue(new Error(errorMessage));
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Failed to load research history')).toBeInTheDocument();
@@ -191,7 +204,7 @@ describe('ResearchReportHistory', () => {
         .mockRejectedValueOnce(new Error('Network error'))
         .mockResolvedValueOnce(mockReports);
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Failed to load research history')).toBeInTheDocument();
@@ -210,7 +223,7 @@ describe('ResearchReportHistory', () => {
     it('should show empty state when no reports are found', async () => {
       mockedResearchApi.listResearchReports.mockResolvedValue([]);
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('No research reports found')).toBeInTheDocument();
@@ -220,7 +233,7 @@ describe('ResearchReportHistory', () => {
     it('should show team-specific empty state', async () => {
       mockedResearchApi.listResearchReports.mockResolvedValue([]);
 
-      render(<ResearchReportHistory team="red" />);
+      renderWithRouter(<ResearchReportHistory team="red" />);
 
       await waitFor(() => {
         expect(screen.getByText('No research reports found for red team')).toBeInTheDocument();
@@ -229,57 +242,61 @@ describe('ResearchReportHistory', () => {
   });
 
   describe('Download Functionality', () => {
-    // Mock DOM methods for download testing
-    const mockCreateElement = vi.fn();
-    const mockAppendChild = vi.fn();
-    const mockRemoveChild = vi.fn();
-    const mockClick = vi.fn();
-
-    beforeEach(() => {
-      const mockLink = {
-        href: '',
-        download: '',
-        click: mockClick
-      };
-
-      mockCreateElement.mockReturnValue(mockLink);
-      
-      Object.defineProperty(document, 'createElement', {
-        value: mockCreateElement,
-        writable: true
-      });
-      Object.defineProperty(document.body, 'appendChild', {
-        value: mockAppendChild,
-        writable: true
-      });
-      Object.defineProperty(document.body, 'removeChild', {
-        value: mockRemoveChild,
-        writable: true
-      });
-    });
-
     it('should download report when download button is clicked', async () => {
-      render(<ResearchReportHistory />);
+      // Mock fetch for the s3 key download URL request
+      global.fetch = vi.fn().mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ download_url: 'https://s3.amazonaws.com/bucket/fresh-url.json' })
+      });
+      
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
       });
 
+      // Mock the DOM methods just before the click
+      const originalCreateElement = document.createElement;
+      const mockLink = {
+        href: '',
+        download: '',
+        click: vi.fn()
+      };
+      
+      const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+        if (tagName === 'a') {
+          return mockLink as any;
+        }
+        return originalCreateElement.call(document, tagName);
+      });
+      
+      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any);
+      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any);
+
       const downloadButtons = screen.getAllByRole('button', { name: /download/i });
-      const firstDownloadButton = downloadButtons[0];
+      // Find an enabled download button (first two reports have downloadUrl)
+      const enabledButton = downloadButtons.find(button => !button.hasAttribute('disabled'));
 
-      expect(firstDownloadButton).not.toBeDisabled();
+      expect(enabledButton).toBeDefined();
+      expect(enabledButton).not.toBeDisabled();
 
-      fireEvent.click(firstDownloadButton);
+      fireEvent.click(enabledButton!);
 
-      expect(mockCreateElement).toHaveBeenCalledWith('a');
-      expect(mockClick).toHaveBeenCalled();
-      expect(mockAppendChild).toHaveBeenCalled();
-      expect(mockRemoveChild).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(createElementSpy).toHaveBeenCalledWith('a');
+        expect(mockLink.click).toHaveBeenCalled();
+        expect(appendChildSpy).toHaveBeenCalled();
+        expect(removeChildSpy).toHaveBeenCalled();
+      });
+      
+      // Restore original methods
+      createElementSpy.mockRestore();
+      appendChildSpy.mockRestore();
+      removeChildSpy.mockRestore();
     });
 
     it('should disable download button when no download URL is available', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
@@ -292,44 +309,89 @@ describe('ResearchReportHistory', () => {
       expect(disabledButton).toHaveClass('bg-gray-400', 'cursor-not-allowed');
     });
 
-    it('should show error toast when download URL is not available', async () => {
+    it('should show error toast when s3Key fetch fails', async () => {
       const { toast } = await import('sonner');
+      
+      // Mock fetch to fail
+      global.fetch = vi.fn().mockRejectedValueOnce(new Error('Network error'));
 
-      render(<ResearchReportHistory />);
+      // Create a report with s3Key but no downloadUrl to trigger fetch
+      const mockReportWithS3Key = [{
+        ...mockReports[0],
+        downloadUrl: null,
+        s3Key: 'reports/test.json'
+      }];
+      
+      mockedResearchApi.listResearchReports.mockResolvedValueOnce(mockReportWithS3Key);
+
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
       });
 
       const downloadButtons = screen.getAllByRole('button', { name: /download/i });
-      const disabledButton = downloadButtons.find(button => button.hasAttribute('disabled'));
+      const firstDownloadButton = downloadButtons[0];
 
-      fireEvent.click(disabledButton!);
+      fireEvent.click(firstDownloadButton);
 
-      expect(toast.error).toHaveBeenCalledWith('Download not available for this report');
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('Failed to download report');
+      });
     });
 
     it('should show success toast on successful download', async () => {
       const { toast } = await import('sonner');
-
-      render(<ResearchReportHistory />);
+      
+      // Mock fetch for the s3 key download URL request
+      global.fetch = vi.fn().mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ download_url: 'https://s3.amazonaws.com/bucket/fresh-url.json' })
+      });
+      
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
       });
+
+      // Mock the DOM methods just before the click
+      const originalCreateElement = document.createElement;
+      const mockLink = {
+        href: '',
+        download: '',
+        click: vi.fn()
+      };
+      
+      const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+        if (tagName === 'a') {
+          return mockLink as any;
+        }
+        return originalCreateElement.call(document, tagName);
+      });
+      
+      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any);
+      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any);
 
       const downloadButtons = screen.getAllByRole('button', { name: /download/i });
       const enabledButton = downloadButtons.find(button => !button.hasAttribute('disabled'));
 
       fireEvent.click(enabledButton!);
 
-      expect(toast.success).toHaveBeenCalledWith('Download started');
+      await waitFor(() => {
+        expect(toast.success).toHaveBeenCalledWith('Download started');
+      });
+      
+      // Restore original methods
+      createElementSpy.mockRestore();
+      appendChildSpy.mockRestore();
+      removeChildSpy.mockRestore();
     });
   });
 
   describe('Data Display', () => {
     it('should display correct target information', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Competitor Corp')).toBeInTheDocument();
@@ -340,7 +402,7 @@ describe('ResearchReportHistory', () => {
     });
 
     it('should display content summaries', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText(/Comprehensive analysis of competitor/)).toBeInTheDocument();
@@ -358,7 +420,7 @@ describe('ResearchReportHistory', () => {
 
       mockedResearchApi.listResearchReports.mockResolvedValue([longSummaryReport]);
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         const summaryCell = screen.getByRole('cell', { name: /AAAA/ });
@@ -379,7 +441,7 @@ describe('ResearchReportHistory', () => {
 
       mockedResearchApi.listResearchReports.mockResolvedValue([incompleteReport]);
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('N/A')).toBeInTheDocument();
@@ -391,7 +453,7 @@ describe('ResearchReportHistory', () => {
 
   describe('Refresh Functionality', () => {
     it('should refresh data when refresh button is clicked', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
@@ -404,7 +466,7 @@ describe('ResearchReportHistory', () => {
     });
 
     it('should show loading state during refresh', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByText('Research History')).toBeInTheDocument();
@@ -425,7 +487,7 @@ describe('ResearchReportHistory', () => {
 
   describe('Accessibility', () => {
     it('should have proper table structure', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         const table = screen.getByRole('table');
@@ -446,14 +508,14 @@ describe('ResearchReportHistory', () => {
         () => new Promise(() => {}) // Never resolves
       );
 
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
       
       const spinner = screen.getByRole('status');
       expect(spinner).toHaveAttribute('aria-label', expect.stringMatching(/loading/i));
     });
 
     it('should have proper button labels', async () => {
-      render(<ResearchReportHistory />);
+      renderWithRouter(<ResearchReportHistory />);
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /refresh/i })).toBeInTheDocument();
