@@ -784,12 +784,10 @@ def handler(event, context):
                 
                 # Build query parameters
                 if team:
-                    # Query by team using GSI
-                    response = table.query(
-                        IndexName="team-createdAt-index",
-                        KeyConditionExpression="team = :team",
+                    # Filter by team using scan (GSI not available)
+                    response = table.scan(
+                        FilterExpression="team = :team",
                         ExpressionAttributeValues={":team": team},
-                        ScanIndexForward=False,  # Sort by createdAt descending
                         Limit=limit
                     )
                 else:
