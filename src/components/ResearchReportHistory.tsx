@@ -226,7 +226,11 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
             {reports.map((report) => (
               <tr key={report.reportId} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {format(new Date(report.createdAt), 'MMM dd, yyyy HH:mm')}
+                  {(() => {
+                    if (!report.createdAt) return 'N/A';
+                    const date = new Date(report.createdAt);
+                    return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'MMM dd, yyyy HH:mm');
+                  })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTeamBgColor(report.team)} ${getTeamColor(report.team)}`}>
