@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { ArrowLeft, Download, ExternalLink, Menu, X, Clock, User, Tag } from 'lucide-react';
+import { ArrowLeft, Download, ExternalLink, Menu, X, Clock, User, Tag, Sparkles } from 'lucide-react';
 import {
   fetchReportData,
   processReport,
@@ -12,6 +12,7 @@ import {
   ProcessedReport,
   ReportServiceError
 } from '../services/reportService';
+import { apiService } from '../services/api';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -33,6 +34,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
   const [tocOpen, setTocOpen] = useState(false);
+  const [isIdeating, setIsIdeating] = useState(false);
   
   const contentRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<{ [key: string]: HTMLElement }>({});
@@ -171,6 +173,45 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
     }
   };
 
+  const handleIdeate = async () => {
+    if (!report || !report.metadata.reportId) return;
+
+    setIsIdeating(true);
+    
+    try {
+      // Extract the research ID (assuming reportId is the same as research_id)
+      const researchDocId = report.metadata.reportId;
+      
+      // Call the ideation pipeline API
+      const response = await apiService.startIdeationPipeline(researchDocId);
+      
+      // Show success message
+      toast.success('Ideation pipeline started!', {
+        description: `Processing research document: ${researchDocId}`,
+        duration: 5000,
+      });
+
+      // If the response contains a GitHub repo URL, offer to open it
+      if (response.repositoryUrl) {
+        toast.success('GitHub repository created!', {
+          description: response.repositoryName,
+          action: {
+            label: 'Open Repository',
+            onClick: () => window.open(response.repositoryUrl, '_blank'),
+          },
+          duration: 10000,
+        });
+      }
+    } catch (error) {
+      console.error('Ideation failed:', error);
+      toast.error('Failed to start ideation pipeline', {
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+      });
+    } finally {
+      setIsIdeating(false);
+    }
+  };
+
   const getTeamColor = (team: string) => {
     switch (team) {
       case 'red': return 'bg-red-100 text-red-800 border-red-200';
@@ -273,6 +314,16 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
               <Badge className={getTeamColor(report.metadata.team)}>
                 {report.metadata.team.toUpperCase()} Team
               </Badge>
+              
+              <Button
+                onClick={handleIdeate}
+                disabled={isIdeating}
+                size="sm"
+                className="flex items-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                {isIdeating ? 'Starting...' : 'Ideate'}
+              </Button>
               
               <Button
                 onClick={handleDownload}

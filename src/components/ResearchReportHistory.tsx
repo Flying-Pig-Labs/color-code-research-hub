@@ -39,10 +39,12 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
           .filter((task: any) => task.status === 'completed' && (!team || task.team === team))
           .slice(0, limit)
           .map((task: any) => ({
-            reportId: task.requestId || task.id,
+            reportId: task.research_id || task.requestId || task.id,
             team: task.team || 'unknown',
             createdAt: task.createdAt,
             requestId: task.requestId,
+            s3Prefix: task.s3_prefix,
+            s3Files: task.s3_files,
             s3Key: task.s3_key,
             vendorName: task.vendorName,
             companyName: task.companyName,
@@ -63,7 +65,10 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   };
 
   const handleDownload = async (report: ResearchReport) => {
-    if (!report.s3Key && !report.downloadUrl) {
+    // Check for new structure first, then fall back to old structure
+    const s3Key = report.s3Files?.response || report.s3Key;
+    
+    if (!s3Key && !report.downloadUrl) {
       toast.error('Download not available for this report');
       return;
     }
@@ -72,8 +77,8 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
       let downloadUrl = report.downloadUrl;
       
       // If we have an s3Key, fetch a fresh presigned URL
-      if (report.s3Key) {
-        const encodedKey = btoa(report.s3Key);
+      if (s3Key) {
+        const encodedKey = btoa(s3Key);
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/research/download/${encodedKey}`);
         
         if (!response.ok) {
@@ -254,9 +259,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     </Link>
                     <button
                       onClick={() => handleDownload(report)}
-                      disabled={!report.downloadUrl && !report.s3Key}
+                      disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response}
                       className={`px-3 py-1 rounded-lg text-white ${
-                        report.downloadUrl || report.s3Key
+                        report.downloadUrl || report.s3Key || report.s3Files?.response
                           ? 'bg-blue-600 hover:bg-blue-700'
                           : 'bg-gray-400 cursor-not-allowed'
                       }`}

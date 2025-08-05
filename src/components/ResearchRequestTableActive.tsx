@@ -24,7 +24,14 @@ interface ResearchTask {
   roles?: string[];
   requestId?: string;
   result?: any;
-  s3_key?: string;
+  research_id?: string;    // New: unique research ID
+  s3_prefix?: string;      // New: S3 folder prefix
+  s3_files?: {             // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
+  s3_key?: string;         // Deprecated: kept for backwards compatibility
   download_url?: string;
   summary?: string;
   summaryWordCount?: number;
@@ -113,11 +120,14 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
                     ...t, 
                     status: status.status, 
                     result: status.result,
+                    research_id: status.research_id,
+                    s3_prefix: status.s3_prefix,
+                    s3_files: status.s3_files,
                     s3_key: status.s3_key,
                     download_url: status.download_url,
                     summary: status.summary,
                     summaryWordCount: status.summaryWordCount,
-                    reportId: status.reportId,
+                    reportId: status.reportId || status.research_id,
                     reportProcessed: status.reportProcessed
                   }
                 : t
@@ -162,7 +172,10 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
   };
 
   const handleDownload = async (task: ResearchTask) => {
-    if (!task.s3_key) {
+    // Check for new structure first, then fall back to old structure
+    const s3Key = task.s3_files?.response || task.s3_key;
+    
+    if (!s3Key) {
       toast.error('No download available for this research');
       return;
     }
@@ -174,14 +187,14 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
       if (task.download_url) {
         const link = document.createElement('a');
         link.href = task.download_url;
-        link.download = `research_${task.requestId || task.id}.json`;
+        link.download = `research_${task.research_id || task.requestId || task.id}.json`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         toast.success('Download started');
       } else {
         // Otherwise, fetch a new presigned URL
-        const encodedKey = btoa(task.s3_key);
+        const encodedKey = btoa(s3Key);
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/research/download/${encodedKey}`);
         
         if (!response.ok) {
@@ -192,7 +205,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
         if (data.download_url) {
           const link = document.createElement('a');
           link.href = data.download_url;
-          link.download = `research_${task.requestId || task.id}.json`;
+          link.download = `research_${task.research_id || task.requestId || task.id}.json`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -288,6 +301,10 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
     }
     if (task.roles && task.roles.length > 0) {
       return `Roles: ${task.roles.join(', ')}`;
+    }
+    // Prefer research_id for new structure, fall back to requestId
+    if (task.research_id) {
+      return `Research ID: ${task.research_id}`;
     }
     if (task.requestId) {
       return `Request ID: ${task.requestId.substring(0, 8)}...`;

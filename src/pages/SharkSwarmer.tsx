@@ -1,13 +1,27 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, UtensilsCrossed } from 'lucide-react';
+import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, CircleHelp } from 'lucide-react';
 import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
 
 const SharkSwarmer = () => {
+  const [showHow, setShowHow] = useState(false);
+  
+  // Toggle "How" section when hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      setShowHow(window.location.hash === "#how");
+    };
+    
+    handleHashChange(); // Check initial hash
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+  
   const navItems = [
     { path: "#", label: "Leaderboard", icon: Table, variant: "ghost" as const },
     { path: "#", label: "Ideas", icon: Lightbulb, variant: "ghost" as const },
-    { path: "#", label: "Sharks", icon: UtensilsCrossed, variant: "ghost" as const },
+    { path: "#how", label: "How", icon: CircleHelp, variant: "ghost" as const },
   ];
 
   return (
@@ -43,6 +57,30 @@ const SharkSwarmer = () => {
           </p>
         </div>
       </SectionWrapper>
+
+      {/* How It Works Section - Revealed on toggle */}
+      {showHow && (
+        <SectionWrapper className="py-8 bg-gradient-carmax-fade">
+          <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 max-w-4xl mx-auto">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-carmax-yellow/20">
+                  <AlertCircle className="h-6 w-6 text-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2 text-xl">How Shark Swarmer Works</h3>
+                  <div className="space-y-4 text-sm text-muted-foreground">
+                    {/* Content to be filled in later */}
+                    <p className="leading-relaxed">
+                      [How It Works content will be added here]
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </SectionWrapper>
+      )}
 
       {/* Features Overview */}
       <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">

@@ -1,13 +1,37 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import SectionWrapper from "@/components/SectionWrapper";
 import TeamCard from "@/components/TeamCard";
 import { ResearchReportHistory } from "@/components/ResearchReportHistory";
-import { Target, Bug, Lightbulb } from "lucide-react";
+import { Target, Bug, Lightbulb, CircleHelp, ShipWheel } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 const Index = () => {
+  const [showHow, setShowHow] = useState(false);
+  
+  // Toggle "How" section when hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      setShowHow(window.location.hash === "#how");
+    };
+    
+    handleHashChange(); // Check initial hash
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+  
+  const navItems = [
+    { path: "#", label: "Teams", icon: ShipWheel, variant: "ghost" as const },
+    { path: "#how", label: "How", icon: CircleHelp, variant: "ghost" as const },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
-      <Header />
+      <Header 
+        showHealthCheck={false}
+        navItems={navItems}
+      />
       
       {/* Hero Section with CarMax Fading */}
       <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
@@ -33,6 +57,30 @@ const Index = () => {
           
         </div>
       </SectionWrapper>
+
+      {/* How It Works Section - Revealed on toggle */}
+      {showHow && (
+        <SectionWrapper className="py-8 bg-gradient-carmax-fade">
+          <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 max-w-4xl mx-auto">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-carmax-yellow/20">
+                  <AlertCircle className="h-6 w-6 text-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2 text-xl">How Wayfinder Works</h3>
+                  <div className="space-y-4 text-sm text-muted-foreground">
+                    {/* Content to be filled in later */}
+                    <p className="leading-relaxed">
+                      [How It Works content will be added here]
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </SectionWrapper>
+      )}
 
       {/* Teams Overview */}
       <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">

@@ -1,9 +1,15 @@
-const AWS = require('aws-sdk');
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { CloudWatchLogsClient, PutLogEventsCommand, CreateLogStreamCommand } = require('@aws-sdk/client-cloudwatch-logs');
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, ScanCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 // AWS services
-const s3 = new AWS.S3();
-const cloudWatchLogs = new AWS.CloudWatchLogs();
+const s3 = new S3Client({ region: 'us-east-1' });
+const cloudWatchLogs = new CloudWatchLogsClient({ region: 'us-east-1' });
+const dynamoClient = new DynamoDBClient({ region: 'us-east-1' });
+const dynamodb = DynamoDBDocumentClient.from(dynamoClient);
 
 // Environment variables
 const S3_BUCKET = process.env.REPORT_BUCKET || 'color-code-research-results-984906149037';
@@ -147,7 +153,7 @@ async function processResearchReport(requestData, options = {}) {
       };
 
         // Upload to S3
-        const uploadResult = await s3.upload({
+        const uploadCommand = new PutObjectCommand({
           Bucket: S3_BUCKET,
           Key: s3Key,
           Body: JSON.stringify(reportData, null, 2),
@@ -157,7 +163,8 @@ async function processResearchReport(requestData, options = {}) {
             requestId,
             originalTask: task
           }
-        }).promise();
+        });
+        const uploadResult = await s3.send(uploadCommand);
 
         // Log success
         await logToCloudWatch(`report-processor-${requestId}`, 'Processing completed successfully', {
@@ -169,8 +176,6 @@ async function processResearchReport(requestData, options = {}) {
 
       // Update DynamoDB with the processed summary
       try {
-        const AWS = require('aws-sdk');
-        const dynamodb = new AWS.DynamoDB.DocumentClient();
         const tableName = process.env.RESEARCH_REPORTS_TABLE || 'ResearchReports';
         
         // Find the report by requestId and update it with the processed summary
@@ -181,7 +186,8 @@ async function processResearchReport(requestData, options = {}) {
           Limit: 1
         };
         
-        const scanResult = await dynamodb.scan(scanParams).promise();
+        const scanCommand = new ScanCommand(scanParams);
+        const scanResult = await dynamodb.send(scanCommand);
         
         if (scanResult.Items && scanResult.Items.length > 0) {
           const reportItem = scanResult.Items[0];
@@ -199,7 +205,8 @@ async function processResearchReport(requestData, options = {}) {
             }
           };
           
-          await dynamodb.update(updateParams).promise();
+          const updateCommand = new UpdateCommand(updateParams);
+          await dynamodb.send(updateCommand);
           console.log(`Updated DynamoDB report ${reportItem.reportId} with processed summary`);
         }
       } catch (dbError) {
@@ -271,20 +278,17 @@ async function processResearchReport(requestData, options = {}) {
  * @param {string} s3Key - S3 object key
  * @returns {Promise<string>} - Signed URL
  */
-function generateDownloadUrl(s3Key) {
-  return new Promise((resolve, reject) => {
-    s3.getSignedUrl('getObject', {
+async function generateDownloadUrl(s3Key) {
+  try {
+    const command = new GetObjectCommand({
       Bucket: S3_BUCKET,
-      Key: s3Key,
-      Expires: 3600 // 1 hour
-    }, (err, url) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(url);
-      }
+      Key: s3Key
     });
-  });
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 }); // 1 hour
+    return url;
+  } catch (error) {
+    throw error;
+  }
 }
 
 /**
@@ -342,11 +346,12 @@ async function logToCloudWatch(logStreamName, message, metadata = {}) {
       })
     };
 
-    await cloudWatchLogs.putLogEvents({
+    const putLogEventsCommand = new PutLogEventsCommand({
       logGroupName: LOG_GROUP,
       logStreamName,
       logEvents: [logEvent]
-    }).promise();
+    });
+    await cloudWatchLogs.send(putLogEventsCommand);
   } catch (error) {
     // Don't throw on logging errors
     console.error('CloudWatch logging failed:', error);

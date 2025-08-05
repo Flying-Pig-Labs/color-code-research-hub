@@ -61,38 +61,80 @@ def get_perplexity_api_key() -> str:
         raise
 
 
-def upload_to_s3(content: str, metadata: Dict[str, Any]) -> str:
-    """Upload research results to S3 and return the S3 key."""
+def upload_to_s3(content: str, metadata: Dict[str, Any], research_id: str, user_id: str = "fprior") -> Dict[str, str]:
+    """Upload research results to S3 with new structure and return S3 info."""
     try:
-        # Generate unique S3 key
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        research_id = str(uuid.uuid4())[:8]
-        s3_key = f"research/{timestamp}_{research_id}.json"
-
-        # Prepare the data to store
-        s3_data = {
-            "metadata": metadata,
-            "content": content,
-            "timestamp": datetime.now().isoformat(),
-            "research_id": research_id,
-        }
-
-        # Upload to S3
+        # Create S3 prefix for this research
+        s3_prefix = f"users/{user_id}/research/{research_id}"
+        
+        # Prepare files to upload
+        timestamp = datetime.now().isoformat()
+        
+        # 1. Upload request metadata
+        request_key = f"{s3_prefix}/request.json"
         s3_client.put_object(
             Bucket=S3_BUCKET,
-            Key=s3_key,
-            Body=json.dumps(s3_data, indent=2),
-            ContentType="application/json",
-            Metadata={"research-id": research_id, "timestamp": timestamp},
+            Key=request_key,
+            Body=json.dumps({
+                "research_id": research_id,
+                "user_id": user_id,
+                "timestamp": timestamp,
+                "metadata": metadata,
+                "type": "request"
+            }, indent=2),
+            ContentType="application/json"
+        )
+        
+        # 2. Upload response content
+        response_key = f"{s3_prefix}/response.json"
+        s3_client.put_object(
+            Bucket=S3_BUCKET,
+            Key=response_key,
+            Body=json.dumps({
+                "research_id": research_id,
+                "content": content,
+                "timestamp": timestamp,
+                "type": "response"
+            }, indent=2),
+            ContentType="application/json"
+        )
+        
+        # 3. Upload combined metadata
+        metadata_key = f"{s3_prefix}/metadata.json"
+        s3_client.put_object(
+            Bucket=S3_BUCKET,
+            Key=metadata_key,
+            Body=json.dumps({
+                "research_id": research_id,
+                "user_id": user_id,
+                "timestamp": timestamp,
+                "s3_prefix": s3_prefix,
+                "content_summary": content[:500] + "..." if len(content) > 500 else content,
+                "word_count": len(content.split()),
+                "metadata": metadata,
+                "files": {
+                    "request": request_key,
+                    "response": response_key,
+                    "metadata": metadata_key
+                }
+            }, indent=2),
+            ContentType="application/json"
         )
 
-        print(f"Successfully uploaded research results to S3: {S3_BUCKET}/{s3_key}")
-        return s3_key
+        print(f"Successfully uploaded research to S3: {S3_BUCKET}/{s3_prefix}/")
+        return {
+            "s3_prefix": s3_prefix,
+            "s3_bucket": S3_BUCKET,
+            "files": {
+                "request": request_key,
+                "response": response_key,
+                "metadata": metadata_key
+            }
+        }
 
     except Exception as e:
         print(f"Error uploading to S3: {str(e)}")
-        # Don't fail the request if S3 upload fails
-        return None
+        raise  # We want to know if S3 upload fails now
 
 
 def invoke_report_processor(
@@ -135,13 +177,70 @@ def invoke_report_processor(
         return None
 
 
+def log_report_to_dynamodb_v2(
+    report_id: str,
+    team: str,
+    metadata: Dict[str, Any],
+    s3_info: Dict[str, Any],
+    user_id: str,
+    request_id: str,
+    content_summary: str = None,
+    status: str = "completed"
+) -> bool:
+    """Log research report metadata to DynamoDB with new S3 structure."""
+    try:
+        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+        
+        # Prepare item for DynamoDB with S3 prefix
+        item = {
+            "reportId": report_id,
+            "userId": user_id,
+            "team": team,
+            "createdAt": datetime.now().isoformat(),
+            "requestId": request_id,
+            "s3Prefix": s3_info["s3_prefix"],
+            "s3Bucket": s3_info["s3_bucket"],
+            "s3Files": s3_info["files"],
+            "metadata": metadata,
+            "status": status,
+            "ttl": int(datetime.now().timestamp()) + 7776000  # 90 days TTL
+        }
+        
+        # Add optional fields
+        if content_summary:
+            item["contentSummary"] = content_summary[:500]  # Limit summary length
+        
+        if metadata.get("title"):
+            item["title"] = metadata["title"]
+            
+        if metadata.get("requester"):
+            item["requester"] = metadata["requester"]
+            
+        if metadata.get("vendorName"):
+            item["vendorName"] = metadata["vendorName"]
+            
+        if metadata.get("companyName"):
+            item["companyName"] = metadata["companyName"]
+            
+        # Write to DynamoDB
+        table.put_item(Item=item)
+        
+        print(f"Successfully logged report {report_id} to DynamoDB with S3 prefix: {s3_info['s3_prefix']}")
+        return True
+        
+    except Exception as e:
+        print(f"Error logging to DynamoDB: {str(e)}")
+        return False
+
+
 def log_report_to_dynamodb(
     report_id: str,
     team: str,
     metadata: Dict[str, Any],
     s3_key: str,
     request_id: str,
-    content_summary: str = None
+    content_summary: str = None,
+    status: str = "completed"
 ) -> bool:
     """Log research report metadata to DynamoDB for tracking and retrieval."""
     try:
@@ -156,7 +255,7 @@ def log_report_to_dynamodb(
             "s3Key": s3_key,
             "s3Bucket": S3_BUCKET,
             "metadata": metadata,
-            "status": "completed",
+            "status": status,
             "ttl": int(datetime.now().timestamp()) + 7776000  # 90 days TTL
         }
         
@@ -328,6 +427,28 @@ def handler(event, context):
             if not request_id:
                 raise ValueError("No id returned from Perplexity API")
 
+            # Create DynamoDB record immediately with all metadata
+            # This ensures we don't lose team information during async processing
+            try:
+                # Generate a report ID (will be updated when research completes)
+                initial_report_id = str(uuid.uuid4())[:8]
+                
+                # Create initial DynamoDB record with pending status
+                log_report_to_dynamodb(
+                    report_id=initial_report_id,
+                    team=metadata.get("team", "unknown"),
+                    metadata=metadata,
+                    s3_key=None,  # Will be updated when research completes
+                    request_id=request_id,
+                    content_summary="Research in progress...",
+                    status="pending"
+                )
+                
+                print(f"Created initial DynamoDB record for request {request_id} with team {metadata.get('team')}")
+            except Exception as e:
+                print(f"Warning: Failed to create initial DynamoDB record: {str(e)}")
+                # Don't fail the request if initial logging fails
+
             # Return job creation response
             response_data = {
                 "success": True,
@@ -490,10 +611,27 @@ def handler(event, context):
                 
                 # Try to get team from original request metadata first
                 # This is more reliable than content detection
+                existing_record = None
                 if request_id:
-                    # For completed jobs, we should have the team from the original request
-                    # Note: In future, store original request metadata with job
-                    pass
+                    # Look up the existing DynamoDB record to get the team and metadata
+                    try:
+                        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+                        # Query by requestId to find the existing record
+                        response = table.scan(
+                            FilterExpression="requestId = :rid",
+                            ExpressionAttributeValues={":rid": request_id},
+                            Limit=1
+                        )
+                        
+                        if response.get("Items") and len(response["Items"]) > 0:
+                            existing_record = response["Items"][0]
+                            team = existing_record.get("team", "unknown")
+                            if existing_record.get("metadata"):
+                                vendor_name = existing_record["metadata"].get("vendorName")
+                                company_name = existing_record["metadata"].get("companyName")
+                            print(f"Retrieved team '{team}' from existing DynamoDB record for request {request_id}")
+                    except Exception as e:
+                        print(f"Warning: Failed to retrieve existing record: {str(e)}")
                 
                 # Fallback: Try to detect team from content only if no team info available
                 # This is less reliable but better than nothing
@@ -511,25 +649,67 @@ def handler(event, context):
                     "team": team,
                 }
                 
-                s3_key = upload_to_s3(research_content, metadata)
+                # Generate research ID if not updating existing
+                if request_id and 'existing_record' in locals() and existing_record:
+                    research_id = existing_record.get("reportId")
+                else:
+                    research_id = f"research_{uuid.uuid4().hex[:12]}"
                 
-                # Log to DynamoDB if S3 upload succeeded
-                if s3_key:
-                    # Generate a unique report ID
-                    research_id = str(uuid.uuid4())[:8]
-                    
+                # Get user ID from headers
+                user_id = event.get('headers', {}).get('X-User-Id', 'fprior')
+                
+                # Upload to S3 with new structure
+                s3_info = upload_to_s3(research_content, metadata, research_id, user_id)
+                
+                # Log to DynamoDB with S3 prefix info
+                if s3_info:
                     # Get first 500 chars as summary
                     content_summary = research_content[:500] if research_content else None
                     
-                    # Log to DynamoDB
-                    log_report_to_dynamodb(
-                        report_id=research_id,
-                        team=team,
-                        metadata=metadata,
-                        s3_key=s3_key,
-                        request_id=request_id,
-                        content_summary=content_summary
-                    )
+                    # If no existing record, generate a new report ID
+                    if not research_id:
+                        research_id = str(uuid.uuid4())[:8]
+                    
+                    # Update the metadata with the full information
+                    full_metadata = metadata.copy()
+                    if vendor_name:
+                        full_metadata["vendorName"] = vendor_name
+                    if company_name:
+                        full_metadata["companyName"] = company_name
+                    
+                    # Update or create DynamoDB record with new S3 structure
+                    try:
+                        table = dynamodb.Table(RESEARCH_REPORTS_TABLE)
+                        table.update_item(
+                            Key={"reportId": research_id},
+                            UpdateExpression="SET #status = :status, s3Prefix = :prefix, s3Bucket = :bucket, s3Files = :files, userId = :userid, contentSummary = :summary, metadata = :metadata, updatedAt = :updated",
+                            ExpressionAttributeNames={
+                                "#status": "status"
+                            },
+                            ExpressionAttributeValues={
+                                ":status": "completed",
+                                ":prefix": s3_info["s3_prefix"],
+                                ":bucket": s3_info["s3_bucket"],
+                                ":files": s3_info["files"],
+                                ":userid": user_id,
+                                ":summary": content_summary,
+                                ":metadata": full_metadata,
+                                ":updated": datetime.now().isoformat()
+                            }
+                        )
+                        print(f"Updated DynamoDB record {research_id} with S3 prefix: {s3_info['s3_prefix']}")
+                    except Exception as e:
+                        print(f"Failed to update record, creating new one: {str(e)}")
+                        # Fallback to creating a new record with new structure
+                        log_report_to_dynamodb_v2(
+                            report_id=research_id,
+                            team=team,
+                            metadata=full_metadata,
+                            s3_info=s3_info,
+                            user_id=user_id,
+                            request_id=request_id,
+                            content_summary=content_summary
+                        )
                     
                     # Invoke report processor to generate structured reports
                     # This will create the 5 different output formats with LLM processing
@@ -548,14 +728,16 @@ def handler(event, context):
                         print(f"Failed to invoke report processor for {research_id}")
 
                 response_data["content"] = research_content
+                response_data["research_id"] = research_id  # Add research ID
+                response_data["s3_prefix"] = s3_info["s3_prefix"]  # Add S3 prefix
                 response_data["s3_location"] = (
-                    f"s3://{S3_BUCKET}/{s3_key}" if s3_key else None
+                    f"s3://{S3_BUCKET}/{s3_info['s3_prefix']}/" if s3_info else None
                 )
-                response_data["s3_key"] = s3_key  # Store the key for later download
+                response_data["s3_files"] = s3_info.get("files", {}) if s3_info else {}
 
-                # Generate presigned URL for download
-                if s3_key:
-                    download_url = generate_presigned_url(s3_key)
+                # Generate presigned URL for the response file
+                if s3_info and s3_info.get("files", {}).get("response"):
+                    download_url = generate_presigned_url(s3_info["files"]["response"])
                     if download_url:
                         response_data["download_url"] = download_url
 

@@ -269,6 +269,21 @@ export const apiService = {
       { jobId, attempts }
     );
   },
+
+  // Start ideation pipeline for a research document
+  async startIdeationPipeline(researchDocId: string, username: string = 'fprior'): Promise<any> {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+    return fetchWithErrorHandling<any>(
+      `${apiUrl}/api/start-pipeline`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ 
+          researchDocId,
+          username 
+        }),
+      }
+    );
+  },
 };
 
 // Export helper function to get current environment

@@ -55,7 +55,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
  ╚═════╝  ╚═════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝`}
           </pre>
           <p className="text-gray-400 text-center mt-4">
-            AI-Powered Proof-of-Concept Engine
+            AI-Powered Go-To-Market Engine
           </p>
         </header>
 

@@ -9,7 +9,14 @@ interface ResearchResponse {
   request_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   result?: any;
-  s3_key?: string;
+  research_id?: string;  // New: unique research ID
+  s3_prefix?: string;    // New: S3 folder prefix
+  s3_files?: {           // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
+  s3_key?: string;       // Deprecated: kept for backwards compatibility
   download_url?: string;
   error?: string;
   summary?: string;
@@ -41,7 +48,14 @@ interface StatusCheckResponse {
   request_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   content?: string;
+  research_id?: string;    // New: unique research ID
+  s3_prefix?: string;      // New: S3 folder prefix
   s3_location?: string;
+  s3_files?: {             // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
   s3_key?: string;
   download_url?: string;
   model_used?: string;
@@ -66,6 +80,7 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-User-Id': 'fprior',  // Add user header
       },
       body: JSON.stringify({
         content: request.task,
@@ -119,12 +134,15 @@ export async function checkResearchStatus(requestId: string): Promise<ResearchRe
         model_used: data.model_used,
         timestamp: data.timestamp
       } : undefined,
+      research_id: data.research_id,
+      s3_prefix: data.s3_prefix,
+      s3_files: data.s3_files,
       s3_key: data.s3_key,
       download_url: data.download_url,
       error: data.error,
       summary: data.summary,
       summaryWordCount: data.summaryWordCount,
-      reportId: data.reportId,
+      reportId: data.reportId || data.research_id,  // Use research_id as fallback
       reportProcessed: data.reportProcessed,
       team: data.team,
       title: data.title,
@@ -385,10 +403,17 @@ Generate EXHAUSTIVE white space analysis documenting EVERY possible opportunity 
 
 export interface ResearchReport {
   reportId: string;
+  userId?: string;         // New: user who created the report
   team: string;
   createdAt: string;
   requestId: string;
-  s3Key: string;
+  s3Prefix?: string;       // New: S3 folder prefix
+  s3Files?: {             // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
+  s3Key?: string;          // Deprecated: kept for backwards compatibility
   title?: string;
   vendorName?: string;
   companyName?: string;
