@@ -27,7 +27,7 @@ const WhiteTeam = () => {
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-            Dedicated research into competitive white space identification and new product opportunity development through systematic market gap analysis.
+            Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research. Delivers strategic insights to drive sustainable growth and customer-centric solutions before the competition gets there first.
           </p>
           
           <WhiteResearchSwarmForm>
