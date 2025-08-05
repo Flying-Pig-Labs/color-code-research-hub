@@ -84,7 +84,7 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
       },
       body: JSON.stringify({
         content: request.task,
-        title: 'Research Request',
+        title: request.companyName ? `${request.companyName} Research` : 'Research Request',
         model: 'sonar-deep-research',
         reasoning_effort: 'low',
         team: request.team || 'unknown',

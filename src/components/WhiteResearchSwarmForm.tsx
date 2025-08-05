@@ -170,7 +170,10 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
       
       // Submit to EC2 research endpoint
       const response = await submitResearch({
-        task: researchPrompt
+        task: researchPrompt,
+        team: 'white',
+        companyName: companyName || 'Not specified',
+        vendorName: opportunityTypes.join(', ') || 'White space opportunity'
       });
       
       // Store the request ID for tracking
