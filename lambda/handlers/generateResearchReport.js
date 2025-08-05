@@ -815,6 +815,14 @@ exports.handler = async (event) => {
                         status: 'completed',
                         content: structuredReport.content.fullText,
                         summary: structuredReport.content.summary,
+                        // New structure expected by frontend
+                        s3_prefix: s3Keys.baseKey,
+                        s3_files: {
+                            request: s3Keys.formats.structured,  // The structured report has the processed data
+                            response: s3Keys.formats.raw,        // The raw Perplexity response
+                            metadata: `${s3Keys.baseKey}/metadata.json`
+                        },
+                        // Keep old structure for backward compatibility
                         s3_locations: {
                             bucket: S3_BUCKET,
                             baseKey: s3Keys.baseKey,

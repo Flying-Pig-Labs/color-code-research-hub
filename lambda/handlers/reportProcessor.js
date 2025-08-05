@@ -127,41 +127,53 @@ async function processResearchReport(requestData, options = {}) {
       const wordCount = result.wordCount || processedContent.split(/\s+/).length;
       const processingTime = Date.now() - startTime;
 
-      // Generate S3 key with timestamp
-      const timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
-      const s3Key = `reports/${team}_${timestamp}_${requestId}.json`;
+      // Generate S3 key in the same prefix as the raw report
+      const s3Key = `reports/${requestId}/processed.json`;
 
-      // Prepare report data
-      const reportData = {
+      // Convert sections to markdown format for frontend
+      const markdownContent = formatSectionsAsMarkdown(result);
+      
+      // Prepare the full cleaned report data
+      const fullReportData = {
         requestId,
         team,
-        originalTask: task,
-        formData,
-        processedContent,
-        rawContent: task,
-        contentSummary,
-        sections,
-        wordCount,
-        processingTime,
-        modelUsed: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+        title: metadata.title || formData.title || 'Research Report',
+        objective: requestData.objective || prompt,
         timestamp: new Date().toISOString(),
+        content: markdownContent, // Markdown formatted content for frontend
+        processedContent: result, // The full structured report from processing service
+        sections: sections,
         metadata: {
+          ...metadata,
+          originalTaskLength: task.length,
+          processedLength: processedContent.length,
+          wordCount: wordCount,
+          processingTime: processingTime,
+          modelUsed: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
           promptLength: prompt.length,
           apiCallsUsed: result.processing?.apiCallsUsed || 1,
-          thinkBlocksRemoved: result.processing?.thinkBlocksRemoved || 0
+          thinkBlocksRemoved: result.processing?.thinkBlocksRemoved || 0,
+          title: metadata.title || formData.title || 'Research Report',
+          summary: contentSummary,
+          team: team,
+          createdAt: new Date().toISOString(),
+          reportId: requestId,
+          s3Key: s3Key,
+          requestId: requestId,
+          contentSummary: contentSummary
         }
       };
 
-        // Upload to S3
+        // Upload the full cleaned report to S3
         const uploadCommand = new PutObjectCommand({
           Bucket: S3_BUCKET,
           Key: s3Key,
-          Body: JSON.stringify(reportData, null, 2),
+          Body: JSON.stringify(fullReportData, null, 2),
           ContentType: 'application/json',
           Metadata: {
             team,
             requestId,
-            originalTask: task
+            reportType: 'full_cleaned'
           }
         });
         const uploadResult = await s3.send(uploadCommand);
@@ -174,7 +186,7 @@ async function processResearchReport(requestData, options = {}) {
           processingTime
         });
 
-      // Update DynamoDB with the processed summary
+      // Update DynamoDB with the processed summary and metadata
       try {
         const tableName = process.env.RESEARCH_REPORTS_TABLE || 'ResearchReports';
         
@@ -192,11 +204,11 @@ async function processResearchReport(requestData, options = {}) {
         if (scanResult.Items && scanResult.Items.length > 0) {
           const reportItem = scanResult.Items[0];
           
-          // Update the item with processed summary
+          // Update the item with the summary and full report metadata
           const updateParams = {
             TableName: tableName,
             Key: { reportId: reportItem.reportId },
-            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, processedS3Key = :s3key, #status = :status",
+            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, fullReportS3Key = :s3key, #status = :status, reportSections = :sections, pipelineCompletedAt = :pca",
             ExpressionAttributeNames: {
               "#status": "status"
             },
@@ -205,13 +217,15 @@ async function processResearchReport(requestData, options = {}) {
               ":wc": wordCount,
               ":pa": new Date().toISOString(),
               ":s3key": s3Key,
-              ":status": "completed"
+              ":status": "completed",
+              ":sections": sections, // Store the structured sections in DynamoDB too
+              ":pca": new Date().toISOString() // Pipeline completion timestamp
             }
           };
           
           const updateCommand = new UpdateCommand(updateParams);
           await dynamodb.send(updateCommand);
-          console.log(`Updated DynamoDB report ${reportItem.reportId} with processed summary`);
+          console.log(`Updated DynamoDB report ${reportItem.reportId} with summary (${wordCount} words) and full report reference`);
         }
       } catch (dbError) {
         console.error('Failed to update DynamoDB with processed summary:', dbError);
@@ -221,13 +235,13 @@ async function processResearchReport(requestData, options = {}) {
       return {
         success: true,
         requestId,
-        s3Location: uploadResult.Location,
-        s3Key: uploadResult.Key,
-        contentSummary,
-        sections,
-        wordCount,
+        fullReportS3Key: s3Key,
+        summary: contentSummary,
+        summaryWordCount: wordCount,
+        sections: sections,
         processingTime,
-        processing: result.processing
+        processing: result.processing,
+        message: 'Report processed successfully. Summary stored in DynamoDB, full report in S3.'
       };
 
     } catch (error) {
@@ -293,6 +307,53 @@ async function generateDownloadUrl(s3Key) {
   } catch (error) {
     throw error;
   }
+}
+
+/**
+ * Format sections as markdown for frontend display
+ * @param {object} result - Processed report result from report-processing-service
+ * @returns {string} - Markdown formatted content
+ */
+function formatSectionsAsMarkdown(result) {
+  let markdown = '';
+  
+  // Add executive summary at the top
+  if (result.summary) {
+    markdown += `# Executive Summary\n\n${result.summary}\n\n`;
+  }
+  
+  // Add each section
+  if (result.sections && Array.isArray(result.sections)) {
+    result.sections.forEach(section => {
+      // Section title as H2
+      markdown += `## ${section.title}\n\n`;
+      
+      // Section content - check if it's an array of bullet points or a string
+      if (Array.isArray(section.content)) {
+        // Format as bullet list
+        section.content.forEach(item => {
+          markdown += `* ${item}\n`;
+        });
+        markdown += '\n';
+      } else if (typeof section.content === 'string') {
+        // Add as paragraph
+        markdown += `${section.content}\n\n`;
+      }
+    });
+  }
+  
+  // Add metadata section at the end
+  if (result.metadata) {
+    markdown += `## Report Information\n\n`;
+    markdown += `* **Generated at:** ${result.metadata.processingTimestamp || new Date().toISOString()}\n`;
+    markdown += `* **Team:** ${result.metadata.sourceTeam || 'Unknown'}\n`;
+    if (result.metadata.objective) {
+      markdown += `* **Objective:** ${result.metadata.objective}\n`;
+    }
+    markdown += '\n';
+  }
+  
+  return markdown;
 }
 
 /**

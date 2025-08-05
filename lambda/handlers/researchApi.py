@@ -437,7 +437,7 @@ def handler(event, context):
 
             # Generate research ID upfront
             research_id = str(uuid.uuid4())
-            start_time = int(datetime.now().timestamp() * 1000)  # Epoch ms
+            pipeline_started_at = datetime.now().isoformat()
             
             # Create DynamoDB record with processing status
             try:
@@ -445,11 +445,11 @@ def handler(event, context):
                 table.put_item(
                     Item={
                         "reportId": research_id,  # Using reportId as PK for compatibility
-                        "startTime": start_time,
+                        "pipelineStartedAt": pipeline_started_at,
                         "status": "processing",
                         "team": metadata.get("team", "unknown"),
                         "metadata": metadata,
-                        "createdAt": datetime.now().isoformat()
+                        "createdAt": pipeline_started_at  # Use same timestamp
                     }
                 )
                 print(f"Created DynamoDB record {research_id} with status=processing")
@@ -516,23 +516,29 @@ def handler(event, context):
                             # For now, we'll invoke inline since Lambda B doesn't exist yet
                             # TODO: Replace with actual Lambda B invocation
                             
-                            # Upload raw report to S3
-                            raw_key = f"reports/{research_id}/raw.txt"
+                            # Upload raw report to S3 as JSON (since Perplexity returns JSON)
+                            raw_key = f"reports/{research_id}/raw.json"
                             s3_client.put_object(
                                 Bucket=S3_BUCKET,
                                 Key=raw_key,
-                                Body=research_content.encode('utf-8'),
-                                ContentType='text/plain'
+                                Body=json.dumps({
+                                    "perplexityResponse": status_response,
+                                    "content": research_content,
+                                    "metadata": metadata,
+                                    "timestamp": datetime.now().isoformat()
+                                }, indent=2),
+                                ContentType='application/json'
                             )
                             
                             # Update DynamoDB status
                             table.update_item(
                                 Key={"reportId": research_id},
-                                UpdateExpression="SET #status = :status, rawS3Key = :key",
+                                UpdateExpression="SET #status = :status, rawS3Key = :key, perplexityCompletedAt = :pca",
                                 ExpressionAttributeNames={"#status": "status"},
                                 ExpressionAttributeValues={
                                     ":status": "pending_postprocessing",
-                                    ":key": raw_key
+                                    ":key": raw_key,
+                                    ":pca": datetime.now().isoformat()
                                 }
                             )
                             
@@ -724,6 +730,22 @@ def handler(event, context):
                 else:
                     response_data["reportProcessed"] = False
                 
+                # Add timestamps and calculate duration if available
+                if report_item.get("pipelineStartedAt"):
+                    response_data["pipelineStartedAt"] = report_item["pipelineStartedAt"]
+                if report_item.get("pipelineCompletedAt"):
+                    response_data["pipelineCompletedAt"] = report_item["pipelineCompletedAt"]
+                    
+                    # Calculate duration if both timestamps exist
+                    if report_item.get("pipelineStartedAt"):
+                        try:
+                            started = datetime.fromisoformat(report_item["pipelineStartedAt"].replace('Z', '+00:00'))
+                            completed = datetime.fromisoformat(report_item["pipelineCompletedAt"].replace('Z', '+00:00'))
+                            duration_seconds = (completed - started).total_seconds()
+                            response_data["pipelineDurationSeconds"] = duration_seconds
+                        except Exception as e:
+                            print(f"Error calculating duration: {str(e)}")
+                
                 # Add metadata fields
                 if report_item.get("team"):
                     response_data["team"] = report_item["team"]
@@ -799,11 +821,32 @@ def handler(event, context):
                 # Extract items and generate presigned URLs
                 items = response.get("Items", [])
                 for item in items:
-                    if item.get("s3Key"):
-                        # Generate fresh presigned URL
+                    # Generate presigned URL for full report if available
+                    if item.get("fullReportS3Key"):
+                        # Use the new fullReportS3Key field
+                        download_url = generate_presigned_url(item["fullReportS3Key"])
+                        if download_url:
+                            item["downloadUrl"] = download_url
+                    elif item.get("s3Key"):
+                        # Fallback to old s3Key field for backward compatibility
                         download_url = generate_presigned_url(item["s3Key"])
                         if download_url:
                             item["downloadUrl"] = download_url
+                    
+                    # Ensure summary is included if available
+                    if item.get("processedSummary"):
+                        item["summary"] = item["processedSummary"]
+                        item["summaryWordCount"] = item.get("summaryWordCount", 0)
+                    
+                    # Calculate duration if both timestamps exist
+                    if item.get("pipelineStartedAt") and item.get("pipelineCompletedAt"):
+                        try:
+                            started = datetime.fromisoformat(item["pipelineStartedAt"].replace('Z', '+00:00'))
+                            completed = datetime.fromisoformat(item["pipelineCompletedAt"].replace('Z', '+00:00'))
+                            item["pipelineDurationSeconds"] = (completed - started).total_seconds()
+                        except Exception as e:
+                            # Don't fail if timestamp parsing fails
+                            pass
                 
                 return {
                     "statusCode": 200,

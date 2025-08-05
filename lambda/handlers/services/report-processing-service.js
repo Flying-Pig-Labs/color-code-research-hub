@@ -56,6 +56,7 @@ Your task is to transform the raw research content into a professional, actionab
    - Each finding should be actionable and specific
    - Include relevant data points, trends, or insights
    - Prioritize findings by business impact
+   - Each bullet point should be a complete, well-formatted sentence or paragraph suitable for markdown display
 
 3. **OPPORTUNITIES** (2-4 bullet points):
    - Identify specific business opportunities based on the research
@@ -127,6 +128,7 @@ Please return your response as a valid JSON object with this exact structure:
 
 CRITICAL: Ensure the summary is approximately 120 words (100-140 words is acceptable). Focus on creating a compelling, complete summary.
 CRITICAL: Return only valid JSON. Do not include any text before or after the JSON object.
+CRITICAL: Format all text content to be clean and suitable for markdown rendering. Avoid special characters that might break formatting.
 `;
 
 /**
