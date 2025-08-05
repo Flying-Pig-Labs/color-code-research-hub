@@ -249,13 +249,13 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-black-team-bg border-white/20">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border-gray-200">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-white">
+          <DialogTitle className="flex items-center gap-2 text-gray-900">
             <Bug className="h-5 w-5" />
             ⚫ Launch Research Swarm
           </DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogDescription className="text-gray-600">
             Explore replacing a third-party tool with internal software.
           </DialogDescription>
         </DialogHeader>
@@ -574,7 +574,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
           <DialogContent className="max-w-6xl max-h-[90vh] h-[80vh] flex flex-col bg-black-team-light border-white/20">
             <DialogHeader>
               <DialogTitle className="text-white">Swarm Execution Logs</DialogTitle>
-              <DialogDescription className="text-white/70">
+              <DialogDescription className="text-gray-600">
                 Real-time logs from the research swarm execution
               </DialogDescription>
             </DialogHeader>

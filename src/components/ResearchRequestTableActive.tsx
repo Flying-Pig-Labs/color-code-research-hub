@@ -338,7 +338,7 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
       {activeTasks.length > 0 && (
         <Card className={`${teamType === 'black' ? 'bg-black-team-light border-white/20' : 'border-gray-200'}`}>
           <CardHeader>
-            <CardTitle className={`text-lg ${teamType === 'black' ? 'text-white' : 'text-foreground'} flex items-center justify-between`}>
+            <CardTitle className={`text-lg ${teamType === 'black' ? 'text-gray-900' : 'text-foreground'} flex items-center justify-between`}>
               <span className="flex items-center gap-2">
                 Active Research Jobs
                 <Badge variant="outline" className="text-xs">
