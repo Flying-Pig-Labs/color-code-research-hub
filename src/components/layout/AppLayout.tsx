@@ -19,6 +19,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       setActiveTab("archipelago");
     } else if (location.pathname.startsWith("/shark-swarmer")) {
       setActiveTab("shark-swarmer");
+    } else if (location.pathname.startsWith("/home") || location.pathname.startsWith("/red-team") || 
+               location.pathname.startsWith("/black-team") || location.pathname.startsWith("/white-team") ||
+               location.pathname.startsWith("/reports") || location.pathname.startsWith("/demo/reports")) {
+      setActiveTab("wayfinder");
     } else {
       setActiveTab("wayfinder");
     }
@@ -28,7 +32,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setActiveTab(value);
     switch (value) {
       case "wayfinder":
-        navigate("/");
+        navigate("/home");
         break;
       case "shark-swarmer":
         navigate("/shark-swarmer");

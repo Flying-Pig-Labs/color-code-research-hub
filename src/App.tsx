@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
+import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import RedTeam from "./pages/RedTeam";
 import BlackTeam from "./pages/BlackTeam";
@@ -27,8 +28,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Landing Page */}
+          <Route path="/" element={<Landing />} />
+          
           {/* Wayfinder Tab Routes (formerly Research) */}
-          <Route path="/" element={<AppLayout><Index /></AppLayout>} />
+          <Route path="/home" element={<AppLayout><Index /></AppLayout>} />
           <Route path="/red-team" element={<AppLayout><RedTeam /></AppLayout>} />
           <Route path="/black-team" element={<AppLayout><BlackTeam /></AppLayout>} />
           <Route path="/white-team" element={<AppLayout><WhiteTeam /></AppLayout>} />
@@ -52,9 +56,9 @@ const App = () => (
           <Route path="/demo/reports" element={<AppLayout><ReportViewDemo /></AppLayout>} />
           
           {/* Redirects and 404 */}
-          <Route path="/research" element={<Navigate to="/" replace />} />
-          <Route path="/plan" element={<Navigate to="/" replace />} />
-          <Route path="/plan/*" element={<Navigate to="/" replace />} />
+          <Route path="/research" element={<Navigate to="/home" replace />} />
+          <Route path="/plan" element={<Navigate to="/home" replace />} />
+          <Route path="/plan/*" element={<Navigate to="/home" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
