@@ -216,7 +216,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 Target
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Summary
+                Duration
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -241,8 +241,14 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 <td className="px-6 py-4 text-sm text-gray-900">
                   {report.vendorName || report.companyName || report.title || 'N/A'}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-md truncate">
-                  {report.processedSummary || report.contentSummary || 'No summary available'}
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {report.pipelineDurationSeconds ? (
+                    <span className="font-mono">
+                      {Math.floor(report.pipelineDurationSeconds / 60)}m {Math.floor(report.pipelineDurationSeconds % 60)}s
+                    </span>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex space-x-2">

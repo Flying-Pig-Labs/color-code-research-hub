@@ -422,6 +422,9 @@ export interface ResearchReport {
   summaryWordCount?: number;
   downloadUrl?: string;
   metadata?: any;
+  pipelineDurationSeconds?: number;
+  pipelineStartedAt?: string;
+  pipelineCompletedAt?: string;
 }
 
 export async function listResearchReports(team?: string, limit: number = 50): Promise<ResearchReport[]> {
