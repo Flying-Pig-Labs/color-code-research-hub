@@ -249,7 +249,7 @@ class ReportProcessingService {
     }
 
     /**
-     * Generate summary using Claude API
+     * Generate summary using OpenAI API (Claude removed due to token limits)
      * 
      * @async
      * @param {Object} config - Generation configuration
@@ -264,25 +264,14 @@ class ReportProcessingService {
         // Build prompt without aggressive sanitization that removes content
         const prompt = SUMMARY_PROMPT.replace('{content}', contentToSummarize);
 
-        try {
-            const response = await this.callClaudeWithRetry(prompt, config.secrets, 'summary');
-            return response.trim();
-        } catch (claudeError) {
-            // If Claude fails due to rate limiting, try OpenAI
-            if (claudeError.message?.includes('rate limit') || 
-                claudeError.message?.includes('Too many requests') ||
-                claudeError.name === 'ThrottlingException') {
-                console.log('⚡ Claude rate limited, switching to OpenAI for summary generation');
-                const response = await this.callOpenAIFallback(prompt, config.secrets, 'summary');
-                return response.trim();
-            }
-            // If it's not a rate limit error, re-throw
-            throw claudeError;
-        }
+        // Always use OpenAI for better token limits
+        console.log('🤖 Using OpenAI for summary generation');
+        const response = await this.callOpenAIFallback(prompt, config.secrets, 'summary');
+        return response.trim();
     }
 
     /**
-     * Format report using Claude API
+     * Format report using OpenAI API (Claude removed due to token limits)
      * 
      * @async
      * @param {Object} config - Generation configuration
@@ -297,21 +286,10 @@ class ReportProcessingService {
         // Build prompt without aggressive sanitization that removes content
         const prompt = FORMAT_REPORT_PROMPT.replace('{content}', contentToFormat);
 
-        try {
-            const response = await this.callClaudeWithRetry(prompt, config.secrets, 'format');
-            return response.trim();
-        } catch (claudeError) {
-            // If Claude fails due to rate limiting, try OpenAI
-            if (claudeError.message?.includes('rate limit') || 
-                claudeError.message?.includes('Too many requests') ||
-                claudeError.name === 'ThrottlingException') {
-                console.log('⚡ Claude rate limited, switching to OpenAI for report formatting');
-                const response = await this.callOpenAIFallback(prompt, config.secrets, 'format');
-                return response.trim();
-            }
-            // If it's not a rate limit error, re-throw
-            throw claudeError;
-        }
+        // Always use OpenAI for better token limits
+        console.log('🤖 Using OpenAI for report formatting');
+        const response = await this.callOpenAIFallback(prompt, config.secrets, 'format');
+        return response.trim();
     }
 
     /**

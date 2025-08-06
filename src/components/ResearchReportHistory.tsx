@@ -65,8 +65,8 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   };
 
   const handleDownload = async (report: ResearchReport) => {
-    // Check for new structure first, then fall back to old structure
-    const s3Key = report.s3Files?.response || report.s3Key;
+    // Check for all possible S3 key fields
+    const s3Key = report.s3ReportKey || report.fullReportS3Key || report.s3Files?.response || report.s3Key;
     
     if (!s3Key && !report.downloadUrl) {
       toast.error('Download not available for this report');
@@ -96,7 +96,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
       // Use the fresh URL (or existing one if no s3Key)
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = `research_${report.reportId}.json`;
+      // Use formatted report extension if it's the report, otherwise json
+      const isFormattedReport = s3Key === report.s3ReportKey || s3Key?.includes('/report.md');
+      link.download = isFormattedReport ? `research_${report.reportId}.md` : `research_${report.reportId}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -239,7 +241,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  {report.vendorName || report.companyName || report.title || 'N/A'}
+                  {report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A'}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
                   {report.pipelineDurationSeconds ? (
@@ -274,14 +276,14 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     </Link>
                     <button
                       onClick={() => handleDownload(report)}
-                      disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response}
+                      disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key}
                       className={`inline-flex items-center px-3 py-1 rounded-lg text-white transition-colors ${
-                        report.downloadUrl || report.s3Key || report.s3Files?.response
+                        report.downloadUrl || report.s3Key || report.s3Files?.response || report.s3ReportKey || report.fullReportS3Key
                           ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
                           : 'bg-gray-400 cursor-not-allowed opacity-60'
                       }`}
                       title={
-                        !report.downloadUrl && !report.s3Key && !report.s3Files?.response
+                        !report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key
                           ? 'Download not available yet'
                           : 'Download report'
                       }

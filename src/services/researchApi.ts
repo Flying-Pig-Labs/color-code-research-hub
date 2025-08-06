@@ -414,6 +414,8 @@ export interface ResearchReport {
     metadata?: string;
   };
   s3Key?: string;          // Deprecated: kept for backwards compatibility
+  s3ReportKey?: string;    // New: formatted report S3 key
+  fullReportS3Key?: string; // New: full report S3 key
   title?: string;
   vendorName?: string;
   companyName?: string;
@@ -421,7 +423,13 @@ export interface ResearchReport {
   processedSummary?: string;
   summaryWordCount?: number;
   downloadUrl?: string;
-  metadata?: any;
+  metadata?: {
+    title?: string;
+    vendorName?: string;
+    companyName?: string;
+    team?: string;
+    [key: string]: any;
+  };
   pipelineDurationSeconds?: number;
   pipelineStartedAt?: string;
   pipelineCompletedAt?: string;
