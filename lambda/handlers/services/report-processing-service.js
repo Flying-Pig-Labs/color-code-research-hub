@@ -24,7 +24,6 @@
 const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
-const { buildSafePrompt } = require('./prompt-sanitizer');
 const axios = require('axios');
 
 // AWS clients
@@ -259,9 +258,11 @@ class ReportProcessingService {
      * @returns {Promise<string>} 120-word summary
      */
     async generateSummary(config) {
-        const prompt = buildSafePrompt(SUMMARY_PROMPT, {
-            content: config.content.substring(0, 45000) // Limit content size
-        });
+        // Limit content size but don't over-sanitize it
+        const contentToSummarize = config.content.substring(0, 45000);
+        
+        // Build prompt without aggressive sanitization that removes content
+        const prompt = SUMMARY_PROMPT.replace('{content}', contentToSummarize);
 
         try {
             const response = await this.callClaudeWithRetry(prompt, config.secrets, 'summary');
@@ -290,9 +291,11 @@ class ReportProcessingService {
      * @returns {Promise<string>} Formatted markdown report
      */
     async formatReport(config) {
-        const prompt = buildSafePrompt(FORMAT_REPORT_PROMPT, {
-            content: config.content.substring(0, 45000) // Limit content size
-        });
+        // Limit content size but don't over-sanitize it
+        const contentToFormat = config.content.substring(0, 45000);
+        
+        // Build prompt without aggressive sanitization that removes content
+        const prompt = FORMAT_REPORT_PROMPT.replace('{content}', contentToFormat);
 
         try {
             const response = await this.callClaudeWithRetry(prompt, config.secrets, 'format');
