@@ -2,7 +2,6 @@ import Header from "@/components/Header";
 
 import SectionWrapper from "@/components/SectionWrapper";
 import ResearchRequestTableActive from "@/components/ResearchRequestTableActive";
-import { ResearchReportHistory } from "@/components/ResearchReportHistory";
 import ResearchSwarmForm from "@/components/ResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,14 +43,6 @@ const RedTeam = () => {
       <SectionWrapper className="py-6">
         <ResearchRequestTableActive teamType="red" />
       </SectionWrapper>
-
-      {/* Research History */}
-      <SectionWrapper className="py-6">
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <ResearchReportHistory team="red" />
-        </div>
-      </SectionWrapper>
-
 
       {/* Methodologies */}
       <SectionWrapper theme="red">
