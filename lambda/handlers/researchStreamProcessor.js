@@ -28,8 +28,16 @@ async function getPerplexityApiKey() {
     try {
         const command = new GetSecretValueCommand({ SecretId: 'perplexity-key' });
         const response = await secretsClient.send(command);
-        const secret = JSON.parse(response.SecretString);
-        perplexityApiKey = secret.PERPLEXITY_API_KEY || secret.perplexity_api_key || secret;
+        
+        // Try to parse as JSON first, if it fails, use as plain string
+        try {
+            const secret = JSON.parse(response.SecretString);
+            perplexityApiKey = secret.PERPLEXITY_API_KEY || secret.perplexity_api_key || secret;
+        } catch (parseError) {
+            // If parsing fails, it's a plain string
+            perplexityApiKey = response.SecretString;
+        }
+        
         return perplexityApiKey;
     } catch (error) {
         console.error('Failed to retrieve Perplexity API key:', error);
