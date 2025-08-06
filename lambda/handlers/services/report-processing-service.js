@@ -400,7 +400,23 @@ class ReportProcessingService {
     async callOpenAIFallback(prompt, secrets, responseType = 'json') {
         console.log(`🔄 Falling back to OpenAI (${OPENAI_MODEL}) due to Claude rate limiting`);
         
-        if (!secrets.OPENAI_API_KEY) {
+        // Get OpenAI key from separate secret
+        let openaiKey;
+        if (secrets.OPENAI_API_KEY) {
+            openaiKey = secrets.OPENAI_API_KEY;
+        } else {
+            try {
+                const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
+                const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
+                const command = new GetSecretValueCommand({ SecretId: 'openai_key' });
+                const response = await secretsClient.send(command);
+                openaiKey = response.SecretString;
+            } catch (error) {
+                throw new Error(`Failed to retrieve OpenAI API key: ${error.message}`);
+            }
+        }
+        
+        if (!openaiKey) {
             throw new Error('OpenAI API key not found in secrets');
         }
 
@@ -420,7 +436,7 @@ class ReportProcessingService {
                 },
                 {
                     headers: {
-                        'Authorization': `Bearer ${secrets.OPENAI_API_KEY}`,
+                        'Authorization': `Bearer ${openaiKey}`,
                         'Content-Type': 'application/json'
                     },
                     timeout: 30000 // 30 second timeout
