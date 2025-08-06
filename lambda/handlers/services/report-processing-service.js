@@ -585,6 +585,7 @@ class ReportProcessingService {
             thinkBlocksRemoved: { N: metadata.thinkBlocksRemoved.toString() },
             processingTimeMs: { N: metadata.processingTimeMs.toString() },
             processingCompletedAt: { S: new Date().toISOString() },
+            status: { S: 'completed' }, // Ensure status is always set
             ttl: { N: Math.floor(Date.now() / 1000 + (30 * 24 * 60 * 60)).toString() } // 30 days TTL
         };
 
