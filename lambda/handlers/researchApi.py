@@ -497,161 +497,73 @@ def handler(event, context):
                     "body": json.dumps({"error": "Failed to start research job"}),
                 }
 
-            # Start polling loop (up to 15 minutes)
-            max_poll_time = 15 * 60  # 15 minutes in seconds
-            poll_interval = 5  # Start with 5 second intervals
-            elapsed_time = 0
+            # Upload initial request data to S3 using unified structure
+            team = metadata.get("team", "red")
+            user_id = metadata.get("userId", "fprior")
             
-            while elapsed_time < max_poll_time:
-                try:
-                    # Check Perplexity status
-                    status_response = check_job_status(request_id)
-                    status = status_response.get("status", "UNKNOWN")
-                    
-                    if status == "COMPLETED":
-                        # Get the completed research content
-                        response_obj = status_response.get("response", {})
-                        research_content = response_obj.get("choices", [{}])[0].get("message", {}).get("content", "")
-                        
-                        if research_content:
-                            # Invoke Lambda B (Raw Report Handler)
-                            # For now, we'll invoke inline since Lambda B doesn't exist yet
-                            # TODO: Replace with actual Lambda B invocation
-                            
-                            # Upload raw report to S3 using unified structure
-                            team = metadata.get("team", "red")
-                            user_id = metadata.get("userId", "fprior")
-                            raw_key = f"users/{user_id}/research/{team}/{research_id}/response.json"
-                            s3_client.put_object(
-                                Bucket=S3_BUCKET,
-                                Key=raw_key,
-                                Body=json.dumps({
-                                    "perplexityResponse": status_response,
-                                    "content": research_content,
-                                    "metadata": metadata,
-                                    "timestamp": datetime.now().isoformat()
-                                }, indent=2),
-                                ContentType='application/json'
-                            )
-                            
-                            # Also upload request.json and metadata.json for completeness
-                            request_key = f"users/{user_id}/research/{team}/{research_id}/request.json"
-                            s3_client.put_object(
-                                Bucket=S3_BUCKET,
-                                Key=request_key,
-                                Body=json.dumps({
-                                    "team": team,
-                                    "metadata": metadata,
-                                    "user_content": user_content,
-                                    "timestamp": pipeline_started_at
-                                }, indent=2),
-                                ContentType='application/json'
-                            )
-                            
-                            metadata_key = f"users/{user_id}/research/{team}/{research_id}/metadata.json"
-                            s3_client.put_object(
-                                Bucket=S3_BUCKET,
-                                Key=metadata_key,
-                                Body=json.dumps({
-                                    "research_id": research_id,
-                                    "request_id": request_id,
-                                    "team": team,
-                                    "user_id": user_id,
-                                    "started_at": pipeline_started_at,
-                                    "completed_at": datetime.now().isoformat(),
-                                    "model": model,
-                                    "metadata": metadata
-                                }, indent=2),
-                                ContentType='application/json'
-                            )
-                            
-                            # Update DynamoDB status with new unified structure
-                            s3_base_path = f"users/{user_id}/research/{team}/{research_id}"
-                            table.update_item(
-                                Key={"reportId": research_id},
-                                UpdateExpression="SET #status = :status, rawS3Key = :key, perplexityCompletedAt = :pca, s3BasePath = :basePath, s3ResponseKey = :responseKey, s3RequestKey = :requestKey, s3MetadataKey = :metadataKey, username = :username, content = :content",
-                                ExpressionAttributeNames={"#status": "status"},
-                                ExpressionAttributeValues={
-                                    ":status": "pending_postprocessing",
-                                    ":key": raw_key,
-                                    ":pca": datetime.now().isoformat(),
-                                    ":basePath": s3_base_path,
-                                    ":responseKey": raw_key,
-                                    ":requestKey": request_key,
-                                    ":metadataKey": metadata_key,
-                                    ":username": user_id,
-                                    ":content": research_content
-                                }
-                            )
-                            
-                            # Invoke Lambda C (ReportProcessingFunction)
-                            processor_result = invoke_report_processor(
-                                report_id=research_id,
-                                content=research_content,
-                                team=metadata.get("team", "unknown"),
-                                task=user_content,
-                                metadata=metadata,
-                                username=user_id
-                            )
-                            
-                            # Return success
-                            return {
-                                "statusCode": 200,
-                                "headers": {**cors_headers, "Content-Type": "application/json"},
-                                "body": json.dumps({
-                                    "success": True,
-                                    "research_id": research_id,
-                                    "status": "pending_postprocessing",
-                                    "message": "Research completed, post-processing started"
-                                }),
-                            }
-                            
-                    elif status == "FAILED":
-                        # Update status to error
-                        error_msg = status_response.get("error_message", "Unknown error")
-                        table.update_item(
-                            Key={"reportId": research_id},
-                            UpdateExpression="SET #status = :status, errorMessage = :error",
-                            ExpressionAttributeNames={"#status": "status"},
-                            ExpressionAttributeValues={
-                                ":status": "error",
-                                ":error": f"Perplexity job failed: {error_msg}"
-                            }
-                        )
-                        return {
-                            "statusCode": 500,
-                            "headers": {**cors_headers, "Content-Type": "application/json"},
-                            "body": json.dumps({"error": "Research job failed"}),
-                        }
-                        
-                except Exception as e:
-                    print(f"Error during polling: {str(e)}")
-                
-                # Sleep before next poll (with exponential backoff)
-                time.sleep(poll_interval)
-                elapsed_time += poll_interval
-                # Increase interval up to 30 seconds
-                poll_interval = min(poll_interval * 1.5, 30)
+            # Upload request.json
+            request_key = f"users/{user_id}/research/{team}/{research_id}/request.json"
+            s3_client.put_object(
+                Bucket=S3_BUCKET,
+                Key=request_key,
+                Body=json.dumps({
+                    "team": team,
+                    "metadata": metadata,
+                    "user_content": user_content,
+                    "perplexity_request_id": request_id,
+                    "timestamp": pipeline_started_at
+                }, indent=2),
+                ContentType='application/json'
+            )
             
-            # Timeout after 15 minutes
+            # Upload metadata.json
+            metadata_key = f"users/{user_id}/research/{team}/{research_id}/metadata.json"
+            s3_client.put_object(
+                Bucket=S3_BUCKET,
+                Key=metadata_key,
+                Body=json.dumps({
+                    "research_id": research_id,
+                    "request_id": request_id,
+                    "team": team,
+                    "user_id": user_id,
+                    "started_at": pipeline_started_at,
+                    "model": model,
+                    "metadata": metadata
+                }, indent=2),
+                ContentType='application/json'
+            )
+            
+            # Update DynamoDB with initial data and S3 paths
+            s3_base_path = f"users/{user_id}/research/{team}/{research_id}"
             table.update_item(
                 Key={"reportId": research_id},
-                UpdateExpression="SET #status = :status, errorMessage = :error",
-                ExpressionAttributeNames={"#status": "status"},
+                UpdateExpression="SET s3BasePath = :basePath, s3RequestKey = :requestKey, s3MetadataKey = :metadataKey, username = :username, userId = :userId",
                 ExpressionAttributeValues={
-                    ":status": "error_timeout",
-                    ":error": "Research timed out after 15 minutes"
+                    ":basePath": s3_base_path,
+                    ":requestKey": request_key,
+                    ":metadataKey": metadata_key,
+                    ":username": user_id,
+                    ":userId": user_id
                 }
             )
             
+            print(f"Successfully created research job {research_id} with Perplexity request {request_id}")
+            print(f"DynamoDB Stream will trigger async processing")
+            
+            # Return immediately - DO NOT POLL!
             return {
-                "statusCode": 408,  # Request Timeout
+                "statusCode": 200,
                 "headers": {**cors_headers, "Content-Type": "application/json"},
                 "body": json.dumps({
-                    "error": "Research timeout",
+                    "success": True,
                     "research_id": research_id,
-                    "message": "Research did not complete within 15 minutes"
-                }),
+                    "request_id": request_id,
+                    "team": team,
+                    "status": "processing",
+                    "message": "Research job started. Use the status endpoint to check progress.",
+                    "status_url": f"/api/research/status/{request_id}",
+                    "report_url": f"/reports/{research_id}"
+                })
             }
 
         # Handle download URL generation
