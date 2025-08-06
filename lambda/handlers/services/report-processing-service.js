@@ -410,7 +410,15 @@ class ReportProcessingService {
                 const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
                 const command = new GetSecretValueCommand({ SecretId: 'openai_key' });
                 const response = await secretsClient.send(command);
-                openaiKey = response.SecretString;
+                
+                // Parse the JSON secret (unlike perplexity-key which is plain text)
+                try {
+                    const secretData = JSON.parse(response.SecretString);
+                    openaiKey = secretData.openai_key || secretData.OPENAI_API_KEY || response.SecretString;
+                } catch (parseError) {
+                    // If it's not JSON, use as plain string
+                    openaiKey = response.SecretString;
+                }
             } catch (error) {
                 throw new Error(`Failed to retrieve OpenAI API key: ${error.message}`);
             }
