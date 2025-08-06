@@ -9,6 +9,7 @@ import {
 } from '../services/reportService';
 import { innovationPipelineService } from '../services/innovationPipelineService';
 import { toast } from 'sonner';
+import PipelineProgress from './PipelineProgress';
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -37,14 +38,21 @@ export function ReportModal({
   const [report, setReport] = useState<ProcessedReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [ideateLoading, setIdeateLoading] = useState(false);
-  const [ideateJobId, setIdeateJobId] = useState<string | null>(null);
-  const [ideateProgress, setIdeateProgress] = useState<string>('');
-  const [ideateGithubUrl, setIdeateGithubUrl] = useState<string | null>(null);
+  const [pipelineJobId, setPipelineJobId] = useState<string | null>(null);
+  const [showPipelineProgress, setShowPipelineProgress] = useState(false);
 
   useEffect(() => {
     if (isOpen && mode === 'full' && !report) {
       loadFullReport();
+    }
+    
+    // Check for existing pipeline job on mount
+    if (isOpen) {
+      const existingJobId = localStorage.getItem('innovationPipelineJobId');
+      if (existingJobId) {
+        setPipelineJobId(existingJobId);
+        setShowPipelineProgress(true);
+      }
     }
   }, [isOpen, mode, reportId]);
 
@@ -64,60 +72,42 @@ export function ReportModal({
   };
 
   const handleIdeate = async () => {
-    if (ideateLoading) return;
-    
-    setIdeateLoading(true);
-    setIdeateProgress('Starting innovation pipeline...');
-    
     try {
       // Start the pipeline
-      const response = await innovationPipelineService.startPipeline(reportId, 'fprior');
-      setIdeateJobId(response.jobId);
-      
-      toast.success('Innovation pipeline started!', {
-        description: `Estimated completion time: ${response.estimatedCompletionTime}`,
-        duration: 5000,
-      });
-      
-      // Start polling for completion
-      setIdeateProgress('Processing your research for innovation ideas...');
-      
-      const finalStatus = await innovationPipelineService.pollJobCompletion(
-        response.jobId,
-        (status) => {
-          // Update progress
-          if (status.currentStep) {
-            setIdeateProgress(status.currentStep);
-          }
-          if (status.progress) {
-            setIdeateProgress(`${status.currentStep || 'Processing'} (${status.progress}%)`);
-          }
-        }
-      );
-      
-      if (finalStatus.status === 'completed' && finalStatus.githubUrl) {
-        setIdeateGithubUrl(finalStatus.githubUrl);
-        setIdeateProgress('');
-        toast.success('Innovation ideas generated!', {
-          description: 'Click the link to view your GitHub repository',
-          action: {
-            label: 'View on GitHub',
-            onClick: () => window.open(finalStatus.githubUrl, '_blank')
-          },
-          duration: 10000,
-        });
-      } else if (finalStatus.status === 'failed') {
-        throw new Error(finalStatus.error || 'Pipeline failed');
-      }
+      const response = await innovationPipelineService.startPipeline(reportId, 'user');
+      setPipelineJobId(response.jobId);
+      setShowPipelineProgress(true);
     } catch (err) {
-      console.error('Error running innovation pipeline:', err);
-      toast.error('Failed to generate innovation ideas', {
+      console.error('Error starting innovation pipeline:', err);
+      toast.error('Failed to start innovation pipeline', {
         description: err instanceof Error ? err.message : 'Unknown error occurred',
       });
-      setIdeateProgress('');
-    } finally {
-      setIdeateLoading(false);
     }
+  };
+  
+  const handlePipelineComplete = (repoUrl: string) => {
+    toast.success('Innovation ideas generated!', {
+      description: 'Your GitHub repository is ready',
+      action: {
+        label: 'View on GitHub',
+        onClick: () => window.open(repoUrl, '_blank')
+      },
+      duration: 10000,
+    });
+  };
+  
+  const handlePipelineError = (error: string) => {
+    toast.error('Pipeline failed', {
+      description: error,
+    });
+    setShowPipelineProgress(false);
+    setPipelineJobId(null);
+  };
+  
+  const handleRetryPipeline = () => {
+    setShowPipelineProgress(false);
+    setPipelineJobId(null);
+    handleIdeate();
   };
 
   if (!isOpen) return null;
@@ -125,6 +115,7 @@ export function ReportModal({
   const isPreview = mode === 'preview';
   const title = reportData?.title || report?.metadata?.title || 'Research Report';
   const summary = reportData?.summary || report?.metadata?.summary || 'No summary available';
+  const isShowingPipeline = showPipelineProgress && pipelineJobId;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -146,8 +137,15 @@ export function ReportModal({
         </div>
 
         {/* Content */}
-        <div className={`p-6 ${!isPreview && 'overflow-y-auto max-h-[calc(90vh-180px)]'}`}>
-          {isPreview ? (
+        <div className={`p-6 ${!isPreview && !isShowingPipeline && 'overflow-y-auto max-h-[calc(90vh-180px)]'}`}>
+          {isShowingPipeline ? (
+            // Pipeline Progress View
+            <PipelineProgress 
+              jobId={pipelineJobId!}
+              onComplete={handlePipelineComplete}
+              onError={handlePipelineError}
+            />
+          ) : isPreview ? (
             // Preview Mode - Show 120-word summary
             <div className="space-y-4">
               <div>
@@ -312,39 +310,15 @@ export function ReportModal({
                 Close
               </button>
               <div className="flex space-x-3">
-                {/* IDEATE Button */}
-                {ideateGithubUrl ? (
-                  <a
-                    href={ideateGithubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Innovation Ideas
-                  </a>
-                ) : (
+                {/* IDEATE Button - Hidden when pipeline is showing */}
+                {!isShowingPipeline && (
                   <button
                     onClick={handleIdeate}
-                    disabled={ideateLoading}
-                    className={`px-4 py-2 text-white rounded-lg flex items-center transition-colors ${
-                      ideateLoading 
-                        ? 'bg-purple-400 cursor-not-allowed' 
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    }`}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center transition-colors"
                     title="Generate innovation ideas from this research"
                   >
-                    {ideateLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {ideateProgress || 'Processing...'}
-                      </>
-                    ) : (
-                      <>
-                        <Lightbulb className="h-4 w-4 mr-2" />
-                        IDEATE
-                      </>
-                    )}
+                    <Lightbulb className="h-4 w-4 mr-2" />
+                    IDEATE
                   </button>
                 )}
                 
