@@ -25,6 +25,7 @@ const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-be
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { buildSafePrompt } = require('./prompt-sanitizer');
+const axios = require('axios');
 
 // AWS clients
 const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
@@ -33,6 +34,8 @@ const dynamodb = new DynamoDBClient({ region: 'us-east-1' });
 
 // Configuration constants
 const CLAUDE_MODEL_ID = 'anthropic.claude-3-5-sonnet-20240620-v1:0';
+const OPENAI_MODEL = 'gpt-4o';
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 const SUMMARY_WORD_TARGET = 120;
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 2000; // 2 seconds
@@ -260,8 +263,21 @@ class ReportProcessingService {
             content: config.content.substring(0, 45000) // Limit content size
         });
 
-        const response = await this.callClaudeWithRetry(prompt, config.secrets, 'summary');
-        return response.trim();
+        try {
+            const response = await this.callClaudeWithRetry(prompt, config.secrets, 'summary');
+            return response.trim();
+        } catch (claudeError) {
+            // If Claude fails due to rate limiting, try OpenAI
+            if (claudeError.message?.includes('rate limit') || 
+                claudeError.message?.includes('Too many requests') ||
+                claudeError.name === 'ThrottlingException') {
+                console.log('⚡ Claude rate limited, switching to OpenAI for summary generation');
+                const response = await this.callOpenAIFallback(prompt, config.secrets, 'summary');
+                return response.trim();
+            }
+            // If it's not a rate limit error, re-throw
+            throw claudeError;
+        }
     }
 
     /**
@@ -278,8 +294,21 @@ class ReportProcessingService {
             content: config.content.substring(0, 45000) // Limit content size
         });
 
-        const response = await this.callClaudeWithRetry(prompt, config.secrets, 'format');
-        return response.trim();
+        try {
+            const response = await this.callClaudeWithRetry(prompt, config.secrets, 'format');
+            return response.trim();
+        } catch (claudeError) {
+            // If Claude fails due to rate limiting, try OpenAI
+            if (claudeError.message?.includes('rate limit') || 
+                claudeError.message?.includes('Too many requests') ||
+                claudeError.name === 'ThrottlingException') {
+                console.log('⚡ Claude rate limited, switching to OpenAI for report formatting');
+                const response = await this.callOpenAIFallback(prompt, config.secrets, 'format');
+                return response.trim();
+            }
+            // If it's not a rate limit error, re-throw
+            throw claudeError;
+        }
     }
 
     /**
@@ -357,6 +386,60 @@ class ReportProcessingService {
         
         // If we've exhausted all retries, throw an error
         throw new Error(`Failed to complete Claude API call after ${retries} attempts due to rate limiting`);
+    }
+
+    /**
+     * Call OpenAI API as fallback when Claude/Bedrock rate limits
+     * 
+     * @async
+     * @param {string} prompt - The prompt to send to OpenAI
+     * @param {Object} secrets - API secrets object containing OPENAI_API_KEY
+     * @param {string} responseType - Expected response type ('summary', 'format', or 'json')
+     * @returns {Promise<string|Object>} Response from OpenAI
+     */
+    async callOpenAIFallback(prompt, secrets, responseType = 'json') {
+        console.log(`🔄 Falling back to OpenAI (${OPENAI_MODEL}) due to Claude rate limiting`);
+        
+        if (!secrets.OPENAI_API_KEY) {
+            throw new Error('OpenAI API key not found in secrets');
+        }
+
+        try {
+            const response = await axios.post(
+                OPENAI_API_URL,
+                {
+                    model: OPENAI_MODEL,
+                    messages: [
+                        {
+                            role: 'user',
+                            content: prompt
+                        }
+                    ],
+                    temperature: 0.3,
+                    max_tokens: 4096
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${secrets.OPENAI_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    timeout: 30000 // 30 second timeout
+                }
+            );
+
+            const content = response.data.choices[0].message.content;
+            
+            // Return based on expected response type
+            if (responseType === 'json') {
+                return this.parseClaudeResponse(content); // Works for OpenAI too
+            } else {
+                // For summary and format, return plain text
+                return content;
+            }
+        } catch (error) {
+            console.error('❌ OpenAI API call failed:', error.response?.data || error.message);
+            throw new Error(`OpenAI API error: ${error.response?.data?.error?.message || error.message}`);
+        }
     }
 
     /**
