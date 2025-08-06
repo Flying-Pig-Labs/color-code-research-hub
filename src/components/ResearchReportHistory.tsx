@@ -65,7 +65,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   };
 
   const handleDownload = async (report: ResearchReport) => {
-    // Check for all possible S3 key fields
+    // Prioritize the formatted .md report over the raw JSON
     const s3Key = report.s3ReportKey || report.fullReportS3Key || report.s3Files?.response || report.s3Key;
     
     if (!s3Key && !report.downloadUrl) {
@@ -96,8 +96,8 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
       // Use the fresh URL (or existing one if no s3Key)
       const link = document.createElement('a');
       link.href = downloadUrl;
-      // Use formatted report extension if it's the report, otherwise json
-      const isFormattedReport = s3Key === report.s3ReportKey || s3Key?.includes('/report.md');
+      // Always download as .md if it's a report (prefer formatted report)
+      const isFormattedReport = report.s3ReportKey || report.fullReportS3Key || s3Key?.includes('/report.md') || s3Key?.includes('/formatted_report.md');
       link.download = isFormattedReport ? `research_${report.reportId}.md` : `research_${report.reportId}.json`;
       document.body.appendChild(link);
       link.click();
@@ -128,9 +128,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   const getTeamColor = (teamType: string) => {
     switch (teamType) {
       case 'red':
-        return 'text-red-600';
+        return 'text-red-700';
       case 'black':
-        return 'text-gray-900';
+        return 'text-gray-700';
       case 'white':
         return 'text-gray-600';
       default:
@@ -141,13 +141,13 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   const getTeamBgColor = (teamType: string) => {
     switch (teamType) {
       case 'red':
-        return 'bg-red-50';
+        return 'bg-red-50 border border-red-200';
       case 'black':
-        return 'bg-gray-100';
+        return 'bg-gray-100 border border-gray-300';
       case 'white':
-        return 'bg-gray-50';
+        return 'bg-gray-50 border border-gray-200';
       default:
-        return 'bg-gray-50';
+        return 'bg-gray-50 border border-gray-200';
     }
   };
 
@@ -257,10 +257,10 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     <button
                       onClick={() => handlePreview(report)}
                       disabled={!report.processedSummary}
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-white transition-colors ${
+                      className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                         report.processedSummary
-                          ? 'bg-purple-600 hover:bg-purple-700 cursor-pointer'
-                          : 'bg-gray-400 cursor-not-allowed opacity-60'
+                          ? 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 cursor-pointer'
+                          : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
                       }`}
                       title={!report.processedSummary ? 'Summary not yet processed' : 'Preview summary'}
                     >
@@ -269,7 +269,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     </button>
                     <Link
                       to={`/reports/${report.reportId}`}
-                      className="inline-flex items-center px-3 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors"
+                      className="inline-flex items-center px-3 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
                     >
                       <ExternalLink className="h-3 w-3 mr-1" />
                       View
@@ -277,10 +277,10 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     <button
                       onClick={() => handleDownload(report)}
                       disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key}
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-white transition-colors ${
+                      className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                         report.downloadUrl || report.s3Key || report.s3Files?.response || report.s3ReportKey || report.fullReportS3Key
-                          ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
-                          : 'bg-gray-400 cursor-not-allowed opacity-60'
+                          ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 cursor-pointer'
+                          : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
                       }`}
                       title={
                         !report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key
