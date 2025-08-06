@@ -37,98 +37,71 @@ const SUMMARY_WORD_TARGET = 120;
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 2000; // 2 seconds
 
-// Report processing prompt template
-const REPORT_PROCESSING_PROMPT = `
-You are an expert research analyst tasked with processing and structuring research reports from Perplexity API.
+// Summary generation prompt
+const SUMMARY_PROMPT = `
+Create a concise 120-word executive summary of the following research report.
 
-Your task is to transform the raw research content into a professional, actionable report with the following structure:
+Focus on the key findings, implications, and actionable insights.
+Write for C-level executives who need quick understanding.
 
-## REQUIREMENTS:
+## Research Content:
+{content}
 
-1. **EXECUTIVE SUMMARY** (approximately 120 words):
-   - Create a compelling summary that captures the essence of the research
-   - Focus on key findings, implications, and opportunities
-   - Write for C-level executives who need quick insights
-   - Target 100-140 words, but prioritize clarity and completeness over exact word count
+## Requirements:
+- Exactly 120 words (acceptable range: 110-130 words)
+- Clear and compelling
+- Focus on what matters most
+- No fluff or filler
 
-2. **KEY FINDINGS** (3-5 bullet points):
-   - Extract the most important discoveries from the research
-   - Each finding should be actionable and specific
-   - Include relevant data points, trends, or insights
-   - Prioritize findings by business impact
-   - Each bullet point should be a complete, well-formatted sentence or paragraph suitable for markdown display
+Return ONLY the summary text, no JSON, no formatting, just the 120-word summary.
+`;
 
-3. **OPPORTUNITIES** (2-4 bullet points):
-   - Identify specific business opportunities based on the research
-   - Focus on actionable next steps or strategic directions
-   - Include market gaps, competitive advantages, or growth areas
-   - Quantify opportunities where possible
+// Report formatting prompt
+const FORMAT_REPORT_PROMPT = `
+Format the following raw Perplexity research report for human readability using markdown.
 
-4. **RECOMMENDATIONS** (3-5 bullet points):
-   - Provide specific, actionable recommendations
-   - Prioritize by implementation difficulty and potential impact
-   - Include both short-term and long-term actions
-   - Be specific about what should be done and why
+## Your Task:
+- Remove ONLY the LLM self-talk (e.g., "Let me search for...", "I'm looking for...", "I'll investigate...")
+- Keep ALL actual findings, data, quotes, statistics, and information EXACTLY as written
+- Do NOT summarize, condense, or rewrite any content
+- Add proper markdown formatting to improve readability
+- Organize into logical sections with clear headers
+- Preserve the original flow and every detail
 
-5. **RISKS & CONSIDERATIONS** (2-4 bullet points):
-   - Identify potential challenges or risks
-   - Include market risks, competitive threats, or implementation challenges
-   - Suggest mitigation strategies where appropriate
-   - Be balanced but realistic about potential obstacles
+## Raw Content:
+{content}
 
-## INPUT DATA:
-**Research Objective:** {objective}
-**Team:** {team}
-**Raw Content:** {content}
+## Markdown Formatting Guidelines:
+- Use ## for main section headers (e.g., ## Key Findings)
+- Use ### for subsection headers if needed
+- Use bullet points (- or *) for lists of findings or data points
+- Use **bold** for important numbers, statistics, or key terms
+- Use regular paragraphs for explanatory text
+- Add blank lines between sections for readability
+- Format data/statistics clearly (e.g., **$1.2B market size**)
+- Use numbered lists (1. 2. 3.) for sequential steps or rankings
 
-## OUTPUT FORMAT:
-Please return your response as a valid JSON object with this exact structure:
+## Example Structure:
+## Overview
+[Introductory findings and context]
 
-{
-  "summary": "Approximately 120-word executive summary here...",
-  "wordCount": 120,
-  "sections": [
-    {
-      "title": "Key Findings",
-      "content": [
-        "First key finding with specific details...",
-        "Second key finding with data points...",
-        "Third key finding with implications..."
-      ]
-    },
-    {
-      "title": "Opportunities",
-      "content": [
-        "First opportunity with market potential...",
-        "Second opportunity with strategic value..."
-      ]
-    },
-    {
-      "title": "Recommendations",
-      "content": [
-        "First recommendation with implementation notes...",
-        "Second recommendation with timeline...",
-        "Third recommendation with resource requirements..."
-      ]
-    },
-    {
-      "title": "Risks & Considerations",
-      "content": [
-        "First risk with mitigation strategy...",
-        "Second risk with probability assessment..."
-      ]
-    }
-  ],
-  "metadata": {
-    "processingTimestamp": "{timestamp}",
-    "sourceTeam": "{team}",
-    "objective": "{objective}"
-  }
-}
+## Market Analysis
+- **Market Size**: $X billion
+- **Growth Rate**: X% CAGR
+- **Key Players**: Company A, Company B
 
-CRITICAL: Ensure the summary is approximately 120 words (100-140 words is acceptable). Focus on creating a compelling, complete summary.
-CRITICAL: Return only valid JSON. Do not include any text before or after the JSON object.
-CRITICAL: Format all text content to be clean and suitable for markdown rendering. Avoid special characters that might break formatting.
+## Key Findings
+### Finding 1: [Title]
+[Detailed explanation with **bold** highlights]
+
+### Finding 2: [Title]
+[Detailed explanation]
+
+## Recommendations
+1. [First recommendation]
+2. [Second recommendation]
+
+Return ONLY the formatted markdown text, nothing else.
 `;
 
 /**
@@ -167,38 +140,43 @@ class ReportProcessingService {
             
             console.log(`✂️ Removed ${thinkBlocksRemoved} think blocks, content reduced by ${config.rawContent.length - cleanedContent.length} characters`);
 
-            // Step 2: Generate structured report using Claude
-            console.log('🤖 Step 2: Generating structured report...');
-            const structuredReport = await this.generateStructuredReport({
+            // Step 2: Generate 120-word summary (First API call)
+            console.log('🤖 Step 2: Generating 120-word summary...');
+            const summary = await this.generateSummary({
                 content: cleanedContent,
-                objective: config.objective,
-                team: config.team,
-                secrets: config.secrets,
-                timeoutMs: config.timeoutMs - (Date.now() - startTime)
+                secrets: config.secrets
             });
+            const summaryWordCount = this.countWords(summary);
+            console.log(`✅ Generated summary with ${summaryWordCount} words`);
 
-            // Step 3: Validate and enhance the report
-            console.log('✅ Step 3: Validating report structure...');
-            const validatedReport = this.validateAndEnhanceReport(structuredReport, config);
+            // Step 3: Format the full report (Second API call)
+            console.log('📝 Step 3: Formatting full report...');
+            const formattedReport = await this.formatReport({
+                content: cleanedContent,
+                secrets: config.secrets
+            });
+            console.log(`✅ Formatted report with ${formattedReport.length} characters`);
 
-            // Step 4: Store in S3
-            console.log('💾 Step 4: Storing processed report...');
-            const s3Key = await this.storeReportInS3({
+            // Step 4: Store files in unified S3 structure
+            console.log('💾 Step 4: Storing files in S3...');
+            const s3Results = await this.storeFilesInS3({
                 reportId: config.reportId,
-                report: validatedReport,
-                team: config.team
+                team: config.team,
+                username: config.username || 'fprior', // Default to fprior if not provided
+                summary: summary,
+                formattedReport: formattedReport
             });
 
             // Step 5: Save metadata to DynamoDB
-            console.log('📝 Step 5: Saving metadata...');
+            console.log('📝 Step 5: Saving metadata and summary to DynamoDB...');
             await this.saveReportMetadata({
                 reportId: config.reportId,
                 team: config.team,
+                username: config.username || 'fprior',
                 objective: config.objective,
-                s3Key,
-                summary: validatedReport.summary,
-                wordCount: validatedReport.wordCount,
-                sectionsCount: validatedReport.sections.length,
+                summary: summary,
+                summaryWordCount: summaryWordCount,
+                s3Paths: s3Results,
                 originalLength: config.rawContent.length,
                 processedLength: cleanedContent.length,
                 thinkBlocksRemoved,
@@ -208,11 +186,13 @@ class ReportProcessingService {
             console.log('🎉 Report processing completed successfully');
             
             return {
-                ...validatedReport,
-                s3Key,
+                summary: summary,
+                summaryWordCount: summaryWordCount,
+                formattedReport: formattedReport,
+                s3Paths: s3Results,
                 processing: {
                     thinkBlocksRemoved,
-                    apiCallsUsed: 1, // Currently one Claude call per report
+                    apiCallsUsed: 2, // Two Claude API calls
                     processingTimeMs: Date.now() - startTime
                 }
             };
@@ -267,27 +247,39 @@ class ReportProcessingService {
     }
 
     /**
-     * Generate structured report using Claude API
-     * Includes retry logic with exponential backoff for rate limits
+     * Generate summary using Claude API
      * 
      * @async
      * @param {Object} config - Generation configuration
-     * @param {string} config.content - Cleaned content to process
-     * @param {string} config.objective - Research objective
-     * @param {string} config.team - Team identifier
+     * @param {string} config.content - Cleaned content to summarize
      * @param {Object} config.secrets - API secrets
-     * @param {number} config.timeoutMs - Remaining timeout
-     * @returns {Promise<Object>} Structured report object
+     * @returns {Promise<string>} 120-word summary
      */
-    async generateStructuredReport(config) {
-        const prompt = buildSafePrompt(REPORT_PROCESSING_PROMPT, {
-            content: config.content.substring(0, 45000), // Limit content size for prompt
-            objective: config.objective,
-            team: config.team,
-            timestamp: new Date().toISOString()
+    async generateSummary(config) {
+        const prompt = buildSafePrompt(SUMMARY_PROMPT, {
+            content: config.content.substring(0, 45000) // Limit content size
         });
 
-        return await this.callClaudeWithRetry(prompt, config.secrets);
+        const response = await this.callClaudeWithRetry(prompt, config.secrets, 'summary');
+        return response.trim();
+    }
+
+    /**
+     * Format report using Claude API
+     * 
+     * @async
+     * @param {Object} config - Generation configuration
+     * @param {string} config.content - Cleaned content to format
+     * @param {Object} config.secrets - API secrets
+     * @returns {Promise<string>} Formatted markdown report
+     */
+    async formatReport(config) {
+        const prompt = buildSafePrompt(FORMAT_REPORT_PROMPT, {
+            content: config.content.substring(0, 45000) // Limit content size
+        });
+
+        const response = await this.callClaudeWithRetry(prompt, config.secrets, 'format');
+        return response.trim();
     }
 
     /**
@@ -296,10 +288,11 @@ class ReportProcessingService {
      * @async
      * @param {string} prompt - The prompt to send to Claude
      * @param {Object} secrets - API secrets object
+     * @param {string} responseType - Expected response type ('summary', 'format', or 'json')
      * @param {number} retries - Number of retries remaining
-     * @returns {Promise<Object>} Parsed JSON response from Claude
+     * @returns {Promise<string|Object>} Response from Claude
      */
-    async callClaudeWithRetry(prompt, secrets, retries = MAX_RETRIES) {
+    async callClaudeWithRetry(prompt, secrets, responseType = 'json', retries = MAX_RETRIES) {
         const command = new InvokeModelCommand({
             modelId: CLAUDE_MODEL_ID,
             contentType: 'application/json',
@@ -325,8 +318,13 @@ class ReportProcessingService {
                 const responseData = JSON.parse(new TextDecoder().decode(response.body));
                 const content = responseData.content[0].text;
 
-                // Parse the JSON response
-                return this.parseClaudeResponse(content);
+                // Return based on expected response type
+                if (responseType === 'json') {
+                    return this.parseClaudeResponse(content);
+                } else {
+                    // For summary and format, return plain text
+                    return content;
+                }
 
             } catch (error) {
                 // Enhanced rate limit detection
@@ -389,80 +387,67 @@ class ReportProcessingService {
         }
     }
 
-    /**
-     * Validate and enhance the report structure
-     * Ensures all required fields are present and properly formatted
-     * 
-     * @param {Object} report - Raw report from Claude
-     * @param {Object} config - Original processing configuration
-     * @returns {Object} Validated and enhanced report
-     */
-    validateAndEnhanceReport(report, config) {
-        // Ensure required fields exist
-        const validatedReport = {
-            summary: report.summary || 'Summary not available',
-            wordCount: this.countWords(report.summary || ''),
-            sections: report.sections || [],
-            metadata: {
-                ...report.metadata,
-                processingTimestamp: new Date().toISOString(),
-                originalObjective: config.objective,
-                sourceTeam: config.team,
-                reportId: config.reportId
-            }
-        };
-
-        // Validate summary word count
-        if (validatedReport.wordCount < 100 || validatedReport.wordCount > 140) {
-            console.warn(`⚠️ Summary word count (${validatedReport.wordCount}) is outside the target range (100-140 words)`);
-        }
-
-        // Ensure required sections exist
-        const requiredSections = ['Key Findings', 'Opportunities', 'Recommendations', 'Risks & Considerations'];
-        for (const sectionName of requiredSections) {
-            if (!validatedReport.sections.find(s => s.title === sectionName)) {
-                validatedReport.sections.push({
-                    title: sectionName,
-                    content: [`No ${sectionName.toLowerCase()} identified in the source material.`]
-                });
-            }
-        }
-
-        return validatedReport;
-    }
 
     /**
-     * Store processed report in S3 bucket
+     * Store summary and report files in unified S3 structure
      * 
      * @async
      * @param {Object} config - Storage configuration
      * @param {string} config.reportId - Report identifier
-     * @param {Object} config.report - Processed report object
      * @param {string} config.team - Team identifier
-     * @returns {Promise<string>} S3 key where report was stored
+     * @param {string} config.username - Username
+     * @param {string} config.summary - 120-word summary
+     * @param {string} config.formattedReport - Formatted markdown report
+     * @returns {Promise<Object>} S3 paths for stored files
      */
-    async storeReportInS3(config) {
-        const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        const s3Key = `processed-reports/${config.team}/${timestamp}/${config.reportId}.json`;
-
-        const command = new PutObjectCommand({
+    async storeFilesInS3(config) {
+        const basePath = `users/${config.username}/research/${config.team}/${config.reportId}`;
+        
+        // Store summary as plain text
+        const summaryKey = `${basePath}/summary.txt`;
+        const summaryCommand = new PutObjectCommand({
             Bucket: this.bucketName,
-            Key: s3Key,
-            Body: JSON.stringify(config.report, null, 2),
-            ContentType: 'application/json',
+            Key: summaryKey,
+            Body: config.summary,
+            ContentType: 'text/plain',
             Metadata: {
                 'report-id': config.reportId,
                 'team': config.team,
-                'processed-at': new Date().toISOString(),
-                'word-count': config.report.wordCount?.toString() || '0',
-                'sections-count': config.report.sections?.length?.toString() || '0'
+                'file-type': 'summary',
+                'processed-at': new Date().toISOString()
+            }
+        });
+        
+        // Store formatted report as markdown
+        const reportKey = `${basePath}/report.md`;
+        const reportCommand = new PutObjectCommand({
+            Bucket: this.bucketName,
+            Key: reportKey,
+            Body: config.formattedReport,
+            ContentType: 'text/markdown',
+            Metadata: {
+                'report-id': config.reportId,
+                'team': config.team,
+                'file-type': 'formatted-report',
+                'processed-at': new Date().toISOString()
             }
         });
 
-        await s3.send(command);
-        console.log(`📁 Report stored in S3: ${s3Key}`);
+        // Upload both files
+        await Promise.all([
+            s3.send(summaryCommand),
+            s3.send(reportCommand)
+        ]);
         
-        return s3Key;
+        console.log(`📁 Files stored in S3:`);
+        console.log(`   - Summary: ${summaryKey}`);
+        console.log(`   - Report: ${reportKey}`);
+        
+        return {
+            basePath,
+            summaryKey,
+            reportKey
+        };
     }
 
     /**
@@ -475,16 +460,21 @@ class ReportProcessingService {
         const item = {
             reportId: { S: metadata.reportId },
             team: { S: metadata.team },
+            username: { S: metadata.username },
             createdAt: { S: new Date().toISOString() },
             objective: { S: metadata.objective },
-            s3Key: { S: metadata.s3Key },
-            summary: { S: metadata.summary.substring(0, 1000) }, // Truncate for DynamoDB
-            wordCount: { N: metadata.wordCount.toString() },
-            sectionsCount: { N: metadata.sectionsCount.toString() },
+            // Store full S3 paths
+            s3BasePath: { S: metadata.s3Paths.basePath },
+            s3SummaryKey: { S: metadata.s3Paths.summaryKey },
+            s3ReportKey: { S: metadata.s3Paths.reportKey },
+            // Store the actual summary text for quick access
+            processedSummary: { S: metadata.summary },
+            summaryWordCount: { N: metadata.summaryWordCount.toString() },
             originalLength: { N: metadata.originalLength.toString() },
             processedLength: { N: metadata.processedLength.toString() },
             thinkBlocksRemoved: { N: metadata.thinkBlocksRemoved.toString() },
             processingTimeMs: { N: metadata.processingTimeMs.toString() },
+            processingCompletedAt: { S: new Date().toISOString() },
             ttl: { N: Math.floor(Date.now() / 1000 + (30 * 24 * 60 * 60)).toString() } // 30 days TTL
         };
 
@@ -494,7 +484,7 @@ class ReportProcessingService {
         });
 
         await dynamodb.send(command);
-        console.log(`📋 Metadata saved to DynamoDB for report: ${metadata.reportId.substring(0, 8)}...`);
+        console.log(`📋 Metadata and summary saved to DynamoDB for report: ${metadata.reportId.substring(0, 8)}...`);
     }
 
     /**

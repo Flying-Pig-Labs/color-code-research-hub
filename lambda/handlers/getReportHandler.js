@@ -76,9 +76,17 @@ exports.handler = async (event) => {
         const reportMetadata = unmarshall(dbResponse.Item);
         console.log('Found report metadata:', JSON.stringify(reportMetadata, null, 2));
         
-        // Get report content from S3
-        const s3Key = reportMetadata.s3Key;
-        if (!s3Key) {
+        // Get report content from S3 - check for new structure first, then fall back to old
+        let s3Key = reportMetadata.s3ReportKey || reportMetadata.s3Key;
+        
+        // If we have the new structure, prefer the formatted report
+        if (reportMetadata.s3ReportKey) {
+            s3Key = reportMetadata.s3ReportKey; // This is the .md file
+        } else if (reportMetadata.s3ResponseKey) {
+            s3Key = reportMetadata.s3ResponseKey; // This is the raw response.json
+        } else if (reportMetadata.s3Key) {
+            s3Key = reportMetadata.s3Key; // Legacy structure
+        } else {
             console.log('No S3 key found for report:', reportId);
             return {
                 statusCode: 500,
@@ -103,30 +111,41 @@ exports.handler = async (event) => {
             
             console.log('Successfully fetched report content, length:', reportContent.length);
             
-            // Parse the content if it's JSON
+            // Parse the content based on file type
             let parsedContent = reportContent;
-            try {
-                const jsonContent = JSON.parse(reportContent);
-                // If the content is structured, extract the main content
-                parsedContent = jsonContent.content || jsonContent.result || reportContent;
-            } catch (parseError) {
-                // If not JSON, use as-is (likely markdown or plain text)
-                console.log('Content is not JSON, using as-is');
+            let isMarkdown = s3Key.endsWith('.md');
+            
+            if (!isMarkdown) {
+                // If it's JSON (old format or response.json), try to parse it
+                try {
+                    const jsonContent = JSON.parse(reportContent);
+                    // If the content is structured, extract the main content
+                    parsedContent = jsonContent.content || jsonContent.result || reportContent;
+                } catch (parseError) {
+                    // If not JSON, use as-is
+                    console.log('Content is not JSON, using as-is');
+                }
             }
             
             // Prepare response data
             const responseData = {
                 metadata: {
                     title: reportMetadata.title || 'Research Report',
-                    summary: generateSummary(parsedContent),
+                    // Use processedSummary from DynamoDB if available, otherwise generate
+                    summary: reportMetadata.processedSummary || reportMetadata.contentSummary || generateSummary(parsedContent),
                     team: reportMetadata.team || 'unknown',
                     createdAt: reportMetadata.createdAt,
                     reportId: reportMetadata.reportId,
-                    s3Key: reportMetadata.s3Key,
+                    s3BasePath: reportMetadata.s3BasePath,
+                    s3ReportKey: reportMetadata.s3ReportKey,
+                    s3SummaryKey: reportMetadata.s3SummaryKey,
                     requestId: reportMetadata.requestId || reportMetadata.reportId,
-                    contentSummary: reportMetadata.contentSummary,
+                    username: reportMetadata.username || 'fprior',
+                    summaryWordCount: reportMetadata.summaryWordCount,
+                    processingCompletedAt: reportMetadata.processingCompletedAt || reportMetadata.pipelineCompletedAt
                 },
-                content: parsedContent
+                content: parsedContent,
+                contentType: isMarkdown ? 'markdown' : 'json'
             };
             
             return {

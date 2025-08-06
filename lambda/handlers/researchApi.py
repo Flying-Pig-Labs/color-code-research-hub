@@ -63,11 +63,11 @@ def get_perplexity_api_key() -> str:
         raise
 
 
-def upload_to_s3(content: str, metadata: Dict[str, Any], research_id: str, user_id: str = "fprior") -> Dict[str, str]:
+def upload_to_s3(content: str, metadata: Dict[str, Any], research_id: str, user_id: str = "fprior", team: str = "red") -> Dict[str, str]:
     """Upload research results to S3 with new structure and return S3 info."""
     try:
-        # Create S3 prefix for this research
-        s3_prefix = f"users/{user_id}/research/{research_id}"
+        # Create S3 prefix for this research with team folder
+        s3_prefix = f"users/{user_id}/research/{team}/{research_id}"
         
         # Prepare files to upload
         timestamp = datetime.now().isoformat()
@@ -145,6 +145,7 @@ def invoke_report_processor(
     team: str,
     task: str,
     metadata: Dict[str, Any],
+    username: str = "fprior"
 ) -> Optional[Dict[str, Any]]:
     """Invoke the ReportProcessingFunction to generate structured reports."""
     try:
@@ -156,6 +157,7 @@ def invoke_report_processor(
             "requestId": report_id,  # Add requestId for compatibility
             "rawContent": content,
             "team": team,
+            "username": username,
             "objective": task,
             "task": task,  # Some handlers expect 'task' field
             "metadata": metadata,
@@ -516,8 +518,10 @@ def handler(event, context):
                             # For now, we'll invoke inline since Lambda B doesn't exist yet
                             # TODO: Replace with actual Lambda B invocation
                             
-                            # Upload raw report to S3 as JSON (since Perplexity returns JSON)
-                            raw_key = f"reports/{research_id}/raw.json"
+                            # Upload raw report to S3 using unified structure
+                            team = metadata.get("team", "red")
+                            user_id = metadata.get("userId", "fprior")
+                            raw_key = f"users/{user_id}/research/{team}/{research_id}/response.json"
                             s3_client.put_object(
                                 Bucket=S3_BUCKET,
                                 Key=raw_key,
@@ -530,15 +534,53 @@ def handler(event, context):
                                 ContentType='application/json'
                             )
                             
-                            # Update DynamoDB status
+                            # Also upload request.json and metadata.json for completeness
+                            request_key = f"users/{user_id}/research/{team}/{research_id}/request.json"
+                            s3_client.put_object(
+                                Bucket=S3_BUCKET,
+                                Key=request_key,
+                                Body=json.dumps({
+                                    "team": team,
+                                    "metadata": metadata,
+                                    "user_content": user_content,
+                                    "timestamp": pipeline_started_at
+                                }, indent=2),
+                                ContentType='application/json'
+                            )
+                            
+                            metadata_key = f"users/{user_id}/research/{team}/{research_id}/metadata.json"
+                            s3_client.put_object(
+                                Bucket=S3_BUCKET,
+                                Key=metadata_key,
+                                Body=json.dumps({
+                                    "research_id": research_id,
+                                    "request_id": request_id,
+                                    "team": team,
+                                    "user_id": user_id,
+                                    "started_at": pipeline_started_at,
+                                    "completed_at": datetime.now().isoformat(),
+                                    "model": model,
+                                    "metadata": metadata
+                                }, indent=2),
+                                ContentType='application/json'
+                            )
+                            
+                            # Update DynamoDB status with new unified structure
+                            s3_base_path = f"users/{user_id}/research/{team}/{research_id}"
                             table.update_item(
                                 Key={"reportId": research_id},
-                                UpdateExpression="SET #status = :status, rawS3Key = :key, perplexityCompletedAt = :pca",
+                                UpdateExpression="SET #status = :status, rawS3Key = :key, perplexityCompletedAt = :pca, s3BasePath = :basePath, s3ResponseKey = :responseKey, s3RequestKey = :requestKey, s3MetadataKey = :metadataKey, username = :username, content = :content",
                                 ExpressionAttributeNames={"#status": "status"},
                                 ExpressionAttributeValues={
                                     ":status": "pending_postprocessing",
                                     ":key": raw_key,
-                                    ":pca": datetime.now().isoformat()
+                                    ":pca": datetime.now().isoformat(),
+                                    ":basePath": s3_base_path,
+                                    ":responseKey": raw_key,
+                                    ":requestKey": request_key,
+                                    ":metadataKey": metadata_key,
+                                    ":username": user_id,
+                                    ":content": research_content
                                 }
                             )
                             
@@ -548,7 +590,8 @@ def handler(event, context):
                                 content=research_content,
                                 team=metadata.get("team", "unknown"),
                                 task=user_content,
-                                metadata=metadata
+                                metadata=metadata,
+                                username=user_id
                             )
                             
                             # Return success

@@ -107,81 +107,27 @@ async function processResearchReport(requestData, options = {}) {
         reportId: requestId,
         rawContent: task,
         team: team,
+        username: requestData.username || 'fprior', // Extract username or default
         objective: requestData.objective || prompt,
         metadata: formData,
         secrets: {}, // Secrets will be loaded from environment
         timeoutMs: 30000 // 30 second timeout
       });
 
-      // Extract processed content from result
-      const processedContent = result.summary;
-        
-      // Extract summary and sections from result
-      const contentSummary = result.summary;
-      const sections = result.sections;
-      
-      // Calculate metrics
-      const wordCount = result.wordCount || processedContent.split(/\s+/).length;
+      // Extract results from the new structure
+      const summary = result.summary;
+      const formattedReport = result.formattedReport;
+      const s3Paths = result.s3Paths;
+      const summaryWordCount = result.summaryWordCount;
       const processingTime = Date.now() - startTime;
 
-      // Generate S3 key in the same prefix as the raw report
-      const s3Key = `reports/${requestId}/processed.json`;
-
-      // Convert sections to markdown format for frontend
-      const markdownContent = formatSectionsAsMarkdown(result);
-      
-      // Prepare the full cleaned report data
-      const fullReportData = {
+      // Log success
+      console.log('Processing completed successfully', {
         requestId,
-        team,
-        title: formData.title || 'Research Report',
-        objective: requestData.objective || prompt,
-        timestamp: new Date().toISOString(),
-        content: markdownContent, // Markdown formatted content for frontend
-        processedContent: result, // The full structured report from processing service
-        sections: sections,
-        metadata: {
-          ...formData,
-          originalTaskLength: task.length,
-          processedLength: processedContent.length,
-          wordCount: wordCount,
-          processingTime: processingTime,
-          modelUsed: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
-          promptLength: prompt.length,
-          apiCallsUsed: result.processing?.apiCallsUsed || 1,
-          thinkBlocksRemoved: result.processing?.thinkBlocksRemoved || 0,
-          title: formData.title || 'Research Report',
-          summary: contentSummary,
-          team: team,
-          createdAt: new Date().toISOString(),
-          reportId: requestId,
-          s3Key: s3Key,
-          requestId: requestId,
-          contentSummary: contentSummary
-        }
-      };
-
-        // Upload the full cleaned report to S3
-        const uploadCommand = new PutObjectCommand({
-          Bucket: S3_BUCKET,
-          Key: s3Key,
-          Body: JSON.stringify(fullReportData, null, 2),
-          ContentType: 'application/json',
-          Metadata: {
-            team,
-            requestId,
-            reportType: 'full_cleaned'
-          }
-        });
-        const uploadResult = await s3.send(uploadCommand);
-
-        // Log success
-        console.log('Processing completed successfully', {
-          requestId,
-          s3Key,
-          wordCount,
-          processingTime
-        });
+        s3Paths,
+        summaryWordCount,
+        processingTime
+      });
 
       // Update DynamoDB with the processed summary and metadata
       try {
@@ -201,28 +147,29 @@ async function processResearchReport(requestData, options = {}) {
         if (scanResult.Items && scanResult.Items.length > 0) {
           const reportItem = scanResult.Items[0];
           
-          // Update the item with the summary and full report metadata
+          // Update the item with the summary and S3 paths
           const updateParams = {
             TableName: tableName,
             Key: { reportId: reportItem.reportId },
-            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, fullReportS3Key = :s3key, #status = :status, reportSections = :sections, pipelineCompletedAt = :pca",
+            UpdateExpression: "SET processedSummary = :summary, summaryWordCount = :wc, processedAt = :pa, s3BasePath = :basePath, s3SummaryKey = :summaryKey, s3ReportKey = :reportKey, #status = :status, pipelineCompletedAt = :pca",
             ExpressionAttributeNames: {
               "#status": "status"
             },
             ExpressionAttributeValues: {
-              ":summary": contentSummary,
-              ":wc": wordCount,
+              ":summary": summary,
+              ":wc": summaryWordCount,
               ":pa": new Date().toISOString(),
-              ":s3key": s3Key,
+              ":basePath": s3Paths.basePath,
+              ":summaryKey": s3Paths.summaryKey,
+              ":reportKey": s3Paths.reportKey,
               ":status": "completed",
-              ":sections": sections, // Store the structured sections in DynamoDB too
               ":pca": new Date().toISOString() // Pipeline completion timestamp
             }
           };
           
           const updateCommand = new UpdateCommand(updateParams);
           await dynamodb.send(updateCommand);
-          console.log(`Updated DynamoDB report ${reportItem.reportId} with summary (${wordCount} words) and full report reference`);
+          console.log(`Updated DynamoDB report ${reportItem.reportId} with summary (${summaryWordCount} words) and S3 paths`);
         }
       } catch (dbError) {
         console.error('Failed to update DynamoDB with processed summary:', dbError);
@@ -232,13 +179,12 @@ async function processResearchReport(requestData, options = {}) {
       return {
         success: true,
         requestId,
-        fullReportS3Key: s3Key,
-        summary: contentSummary,
-        summaryWordCount: wordCount,
-        sections: sections,
+        s3Paths: s3Paths,
+        summary: summary,
+        summaryWordCount: summaryWordCount,
         processingTime,
         processing: result.processing,
-        message: 'Report processed successfully. Summary stored in DynamoDB, full report in S3.'
+        message: 'Report processed successfully. Summary stored in DynamoDB, files saved to S3.'
       };
 
     } catch (error) {
@@ -306,89 +252,6 @@ async function generateDownloadUrl(s3Key) {
   }
 }
 
-/**
- * Format sections as markdown for frontend display
- * @param {object} result - Processed report result from report-processing-service
- * @returns {string} - Markdown formatted content
- */
-function formatSectionsAsMarkdown(result) {
-  let markdown = '';
-  
-  // Add executive summary at the top
-  if (result.summary) {
-    markdown += `# Executive Summary\n\n${result.summary}\n\n`;
-  }
-  
-  // Add each section
-  if (result.sections && Array.isArray(result.sections)) {
-    result.sections.forEach(section => {
-      // Section title as H2
-      markdown += `## ${section.title}\n\n`;
-      
-      // Section content - check if it's an array of bullet points or a string
-      if (Array.isArray(section.content)) {
-        // Format as bullet list
-        section.content.forEach(item => {
-          markdown += `* ${item}\n`;
-        });
-        markdown += '\n';
-      } else if (typeof section.content === 'string') {
-        // Add as paragraph
-        markdown += `${section.content}\n\n`;
-      }
-    });
-  }
-  
-  // Add metadata section at the end
-  if (result.metadata) {
-    markdown += `## Report Information\n\n`;
-    markdown += `* **Generated at:** ${result.metadata.processingTimestamp || new Date().toISOString()}\n`;
-    markdown += `* **Team:** ${result.metadata.sourceTeam || 'Unknown'}\n`;
-    if (result.metadata.objective) {
-      markdown += `* **Objective:** ${result.metadata.objective}\n`;
-    }
-    markdown += '\n';
-  }
-  
-  return markdown;
-}
-
-/**
- * Extract content summary from processed content
- * @param {string} content - Processed content
- * @returns {string} - Content summary
- */
-function extractContentSummary(content) {
-  if (!content || typeof content !== 'string') {
-    return 'No summary available';
-  }
-
-  // Remove markdown headers and get first substantial paragraph
-  const cleanContent = content.replace(/^#+\s*/gm, '').trim();
-  const paragraphs = cleanContent.split('\n\n').filter(p => p.trim().length > 0);
-  
-  if (paragraphs.length === 0) {
-    return 'No summary available';
-  }
-
-  let summary = paragraphs[0].trim();
-  
-  // Find first meaningful paragraph (skip empty or very short ones)
-  for (const paragraph of paragraphs) {
-    const trimmed = paragraph.trim();
-    if (trimmed.length > 50) {
-      summary = trimmed;
-      break;
-    }
-  }
-
-  // Truncate if too long
-  if (summary.length > 250) {
-    summary = summary.substring(0, 247) + '...';
-  }
-
-  return summary;
-}
 
 
 /**
@@ -563,6 +426,5 @@ module.exports = {
   formatPromptForTeam,
   processResearchReport,
   generateDownloadUrl,
-  extractContentSummary,
   validateRequestData
 };
