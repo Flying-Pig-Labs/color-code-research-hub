@@ -331,7 +331,7 @@ class ReportProcessingService {
             accept: 'application/json',
             body: JSON.stringify({
                 anthropic_version: "bedrock-2023-05-31",
-                max_tokens: 4096,
+                max_tokens: responseType === 'summary' ? 500 : 8192, // Claude has lower max than GPT-4
                 temperature: 0.3, // Lower temperature for more consistent structured output
                 messages: [
                     {
@@ -443,7 +443,7 @@ class ReportProcessingService {
                         }
                     ],
                     temperature: 0.3,
-                    max_tokens: 4096
+                    max_tokens: responseType === 'summary' ? 500 : 16384 // Higher limit for formatting
                 },
                 {
                     headers: {
