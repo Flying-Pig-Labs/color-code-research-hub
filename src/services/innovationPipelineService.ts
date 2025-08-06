@@ -20,19 +20,50 @@ export interface StartPipelineRequest {
 
 export interface StartPipelineResponse {
   jobId: string;
+  status: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
   message: string;
-  estimatedCompletionTime?: string;
-  isExistingJob?: boolean;
+  estimatedCompletion?: string;
+  estimatedTotalMinutes?: number;
+  metadata?: {
+    researchDocId: string;
+    startedAt: string;
+    username: string;
+  };
+}
+
+export interface PipelineStage {
+  name: string;
+  status: 'completed' | 'running' | 'pending';
+  estimatedMinutes: number;
 }
 
 export interface PipelineJobStatus {
   jobId: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  progress?: number;
-  currentStep?: string;
-  githubUrl?: string;
-  error?: string;
+  status: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+  currentStage: number;
+  stageName: string;
+  stageProgress: number;
+  overallProgress: number;
+  estimatedTotalMinutes: number;
+  elapsedMinutes: number;
+  estimatedRemainingMinutes: number;
+  estimatedRemaining: string; // Legacy field
+  metadata: {
+    researchDocId: string;
+    startedAt: string;
+    username: string;
+    jobId: string;
+  };
+  stages: PipelineStage[];
+  results: {
+    githubRepoUrl: string | null;
+    githubRepoName: string | null;
+    issuesCreated: number;
+    analysisResults: any | null;
+  };
   completedAt?: string;
+  actualDurationMinutes?: number;
+  error?: string;
 }
 
 class InnovationPipelineService {
@@ -63,29 +94,26 @@ class InnovationPipelineService {
       // Handle 409 Conflict - job already exists
       if (response.status === 409) {
         toast.info('A pipeline is already running for this research', {
-          description: 'Reconnecting to existing job...',
+          description: `Stage ${data.currentStage}: ${data.stageName} (${Math.round(data.overallProgress)}%)`,
         });
         return {
-          jobId: data.existingJob.jobId,
-          message: data.message || 'Using existing pipeline job',
-          estimatedCompletionTime: '22 minutes',
-          isExistingJob: true,
+          jobId: data.existingJobId,
+          status: data.status,
+          message: data.error || 'Pipeline already running for this research document',
+          estimatedCompletion: new Date(Date.now() + data.estimatedRemainingMinutes * 60000).toISOString(),
+          estimatedTotalMinutes: data.estimatedTotalMinutes,
+          metadata: data.metadata,
         };
       }
 
       if (!response.ok) {
         throw new Error(
-          data?.message || `Failed to start pipeline: ${response.statusText}`
+          data?.error || data?.message || `Failed to start pipeline: ${response.statusText}`
         );
       }
       
-      // Expected response format for new job
-      return {
-        jobId: data.jobId,
-        message: data.message || 'Pipeline started successfully',
-        estimatedCompletionTime: data.estimatedCompletionTime || '22 minutes',
-        isExistingJob: false,
-      };
+      // Expected response format for new job (202 Accepted)
+      return data;
     } catch (error) {
       console.error('Error starting innovation pipeline:', error);
       throw error;
@@ -115,15 +143,8 @@ class InnovationPipelineService {
 
       const data = await response.json();
       
-      return {
-        jobId: data.jobId,
-        status: data.status,
-        progress: data.progress,
-        currentStep: data.currentStep,
-        githubUrl: data.githubUrl,
-        error: data.error,
-        completedAt: data.completedAt,
-      };
+      // Return the full response from backend
+      return data;
     } catch (error) {
       console.error('Error checking job status:', error);
       throw error;
@@ -156,7 +177,7 @@ class InnovationPipelineService {
           onProgress(status);
         }
 
-        if (status.status === 'completed' || status.status === 'failed') {
+        if (status.status === 'COMPLETED' || status.status === 'FAILED') {
           return status;
         }
 

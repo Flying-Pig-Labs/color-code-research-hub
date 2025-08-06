@@ -10,37 +10,40 @@ interface PipelineProgressProps {
   onError?: (error: string) => void;
 }
 
-interface PipelineStage {
-  id: string;
+interface BackendStage {
   name: string;
-  status: 'pending' | 'active' | 'completed' | 'error';
-  backendStages: number[];
+  status: 'completed' | 'running' | 'pending';
+  estimatedMinutes: number;
 }
 
-const PIPELINE_STAGES: PipelineStage[] = [
-  { id: 'research', name: 'Research', status: 'pending', backendStages: [1, 2] },
-  { id: 'analysis', name: 'Analysis', status: 'pending', backendStages: [3] },
-  { id: 'ideation', name: 'Ideation', status: 'pending', backendStages: [4, 5] },
-  { id: 'validation', name: 'Validation', status: 'pending', backendStages: [6] },
-  { id: 'documentation', name: 'Documentation', status: 'pending', backendStages: [7] }
-];
+interface PipelineResults {
+  githubRepoUrl: string | null;
+  githubRepoName: string | null;
+  issuesCreated: number;
+  analysisResults: any | null;
+}
 
 export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgressProps) => {
-  const [stages, setStages] = useState<PipelineStage[]>(PIPELINE_STAGES);
+  const [stages, setStages] = useState<BackendStage[]>([]);
   const [overallProgress, setOverallProgress] = useState(0);
-  const [status, setStatus] = useState<'running' | 'completed' | 'failed'>('running');
-  const [githubRepoUrl, setGithubRepoUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED'>('RUNNING');
+  const [currentStage, setCurrentStage] = useState(1);
+  const [stageName, setStageName] = useState('');
+  const [stageProgress, setStageProgress] = useState(0);
+  const [results, setResults] = useState<PipelineResults | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(true);
   const [timeEstimates, setTimeEstimates] = useState<{
     elapsedMinutes?: number;
     estimatedRemainingMinutes?: number;
     estimatedTotalMinutes?: number;
+    actualDurationMinutes?: number;
   }>({});
   const [metadata, setMetadata] = useState<{
     researchDocId?: string;
     username?: string;
     startedAt?: string;
+    jobId?: string;
   }>({});
 
   // Save jobId to localStorage for session recovery
@@ -52,7 +55,7 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
 
   // Poll for status updates
   useEffect(() => {
-    if (!isPolling || status !== 'running') return;
+    if (!isPolling || status === 'COMPLETED' || status === 'FAILED') return;
 
     const pollStatus = async () => {
       try {
@@ -69,47 +72,44 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
 
         const data = await response.json();
         
-        // Update overall progress
+        // Update all state from backend response
+        setStatus(data.status);
         setOverallProgress(data.overallProgress || 0);
+        setCurrentStage(data.currentStage || 1);
+        setStageName(data.stageName || '');
+        setStageProgress(data.stageProgress || 0);
         
         // Update time estimates
-        if (data.timeEstimates) {
-          setTimeEstimates(data.timeEstimates);
-        }
+        setTimeEstimates({
+          elapsedMinutes: data.elapsedMinutes,
+          estimatedRemainingMinutes: data.estimatedRemainingMinutes,
+          estimatedTotalMinutes: data.estimatedTotalMinutes || 22,
+          actualDurationMinutes: data.actualDurationMinutes
+        });
         
         // Update metadata
         if (data.metadata) {
           setMetadata(data.metadata);
         }
         
-        // Update stage statuses based on current stage
-        const currentStage = data.currentStage || 1;
-        const updatedStages = PIPELINE_STAGES.map(stage => {
-          const maxBackendStage = Math.max(...stage.backendStages);
-          const minBackendStage = Math.min(...stage.backendStages);
-          
-          if (currentStage > maxBackendStage) {
-            return { ...stage, status: 'completed' as const };
-          } else if (currentStage >= minBackendStage && currentStage <= maxBackendStage) {
-            return { ...stage, status: 'active' as const };
-          } else {
-            return { ...stage, status: 'pending' as const };
-          }
-        });
+        // Use backend's stages array
+        if (data.stages) {
+          setStages(data.stages);
+        }
         
-        setStages(updatedStages);
+        // Update results
+        if (data.results) {
+          setResults(data.results);
+        }
         
         // Check for completion
-        if (data.status === 'completed' && data.githubRepoUrl) {
-          setStatus('completed');
-          setGithubRepoUrl(data.githubRepoUrl);
+        if (data.status === 'COMPLETED' && data.results?.githubRepoUrl) {
           setIsPolling(false);
           localStorage.removeItem('innovationPipelineJobId');
           if (onComplete) {
-            onComplete(data.githubRepoUrl);
+            onComplete(data.results.githubRepoUrl);
           }
-        } else if (data.status === 'failed' || data.status === 'error') {
-          setStatus('failed');
+        } else if (data.status === 'FAILED') {
           setError(data.error || 'Pipeline failed');
           setIsPolling(false);
           localStorage.removeItem('innovationPipelineJobId');
@@ -133,26 +133,26 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
   }, [jobId, isPolling, status, onComplete, onError]);
 
   const handleCopyLink = () => {
-    if (githubRepoUrl) {
-      navigator.clipboard.writeText(githubRepoUrl);
+    if (results?.githubRepoUrl) {
+      navigator.clipboard.writeText(results.githubRepoUrl);
       toast.success('Repository link copied to clipboard');
     }
   };
 
   const handleRetry = () => {
     // Reset state and trigger parent retry logic
-    setStages(PIPELINE_STAGES);
+    setStages([]);
     setOverallProgress(0);
-    setStatus('running');
+    setStatus('RUNNING');
     setError(null);
     setIsPolling(true);
     // Parent should handle creating a new job
   };
 
-  const getStageIcon = (stage: PipelineStage) => {
+  const getStageIcon = (stage: BackendStage) => {
     if (stage.status === 'completed') {
       return <CheckCircle2 className="h-5 w-5 text-green-600" />;
-    } else if (stage.status === 'active') {
+    } else if (stage.status === 'running') {
       return <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />;
     } else {
       return <Circle className="h-5 w-5 text-gray-400" />;
@@ -164,23 +164,37 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
       {/* Header */}
       <div className="text-center">
         <h3 className="text-lg font-semibold text-foreground mb-2">
-          {status === 'running' && 'Innovation Pipeline Running'}
-          {status === 'completed' && 'Pipeline Complete!'}
-          {status === 'failed' && 'Pipeline Failed'}
+          {status === 'RUNNING' && 'Innovation Pipeline Running'}
+          {status === 'QUEUED' && 'Pipeline Queued'}
+          {status === 'COMPLETED' && 'Pipeline Complete!'}
+          {status === 'FAILED' && 'Pipeline Failed'}
         </h3>
         <p className="text-sm text-muted-foreground">
-          {status === 'running' && timeEstimates.estimatedRemainingMinutes !== undefined && (
+          {(status === 'RUNNING' || status === 'QUEUED') && timeEstimates.estimatedRemainingMinutes !== undefined && (
             <>Time remaining: approximately {Math.ceil(timeEstimates.estimatedRemainingMinutes)} minutes</>
           )}
-          {status === 'running' && timeEstimates.estimatedRemainingMinutes === undefined && 'This process takes approximately 22 minutes'}
-          {status === 'completed' && 'Your GitHub repository is ready'}
-          {status === 'failed' && error}
+          {(status === 'RUNNING' || status === 'QUEUED') && timeEstimates.estimatedRemainingMinutes === undefined && 'This process takes approximately 22 minutes'}
+          {status === 'COMPLETED' && results && (
+            <>Your GitHub repository is ready with {results.issuesCreated} innovation ideas!</>
+          )}
+          {status === 'FAILED' && error}
         </p>
-        {/* Time details for running jobs */}
-        {status === 'running' && timeEstimates.elapsedMinutes !== undefined && (
+        {/* Current stage details */}
+        {status === 'RUNNING' && stageName && (
+          <p className="text-sm font-medium text-primary mt-2">
+            {stageName} ({Math.round(stageProgress)}% complete)
+          </p>
+        )}
+        {/* Time details */}
+        {(status === 'RUNNING' || status === 'QUEUED') && timeEstimates.elapsedMinutes !== undefined && (
           <p className="text-xs text-muted-foreground mt-1">
             Elapsed: {Math.floor(timeEstimates.elapsedMinutes)} min • 
             Total estimate: {timeEstimates.estimatedTotalMinutes || 22} min
+          </p>
+        )}
+        {status === 'COMPLETED' && timeEstimates.actualDurationMinutes !== undefined && (
+          <p className="text-xs text-muted-foreground mt-1">
+            Completed in {Math.floor(timeEstimates.actualDurationMinutes)} minutes
           </p>
         )}
       </div>
@@ -189,20 +203,25 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
       <div className="space-y-4">
         {stages.map((stage, index) => (
           <div
-            key={stage.id}
-            className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-              stage.status === 'active' 
+            key={`stage-${index}`}
+            className={`flex items-center justify-between gap-3 p-3 rounded-lg transition-all ${
+              stage.status === 'running' 
                 ? 'bg-blue-50 border border-blue-200 shadow-sm animate-pulse' 
                 : 'bg-gray-50 border border-gray-200'
             }`}
           >
-            {getStageIcon(stage)}
-            <span className={`font-medium ${
-              stage.status === 'completed' ? 'text-green-700' :
-              stage.status === 'active' ? 'text-blue-700' :
-              'text-gray-500'
-            }`}>
-              {stage.name}
+            <div className="flex items-center gap-3">
+              {getStageIcon(stage)}
+              <span className={`font-medium ${
+                stage.status === 'completed' ? 'text-green-700' :
+                stage.status === 'running' ? 'text-blue-700' :
+                'text-gray-500'
+              }`}>
+                {stage.name}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {stage.estimatedMinutes} min
             </span>
           </div>
         ))}
@@ -218,10 +237,10 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
       </div>
 
       {/* Completion Actions */}
-      {status === 'completed' && githubRepoUrl && (
+      {status === 'COMPLETED' && results?.githubRepoUrl && (
         <div className="flex gap-3 justify-center pt-4">
           <Button
-            onClick={() => window.open(githubRepoUrl, '_blank')}
+            onClick={() => window.open(results.githubRepoUrl, '_blank')}
             className="gap-2"
           >
             <ExternalLink className="h-4 w-4" />
@@ -239,7 +258,7 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
       )}
 
       {/* Error Actions */}
-      {status === 'failed' && (
+      {status === 'FAILED' && (
         <div className="flex justify-center pt-4">
           <Button
             onClick={handleRetry}
@@ -253,7 +272,7 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
       )}
 
       {/* Status Info */}
-      {status === 'running' && (
+      {(status === 'RUNNING' || status === 'QUEUED') && (
         <div className="text-center text-xs text-muted-foreground">
           <AlertCircle className="h-3 w-3 inline mr-1" />
           You can safely close this modal - the pipeline will continue running

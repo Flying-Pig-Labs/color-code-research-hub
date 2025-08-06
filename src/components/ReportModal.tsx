@@ -77,6 +77,9 @@ export function ReportModal({
       const response = await innovationPipelineService.startPipeline(reportId, 'user');
       setPipelineJobId(response.jobId);
       setShowPipelineProgress(true);
+      
+      // Store jobId in localStorage for recovery
+      localStorage.setItem('innovationPipelineJobId', response.jobId);
     } catch (err) {
       console.error('Error starting innovation pipeline:', err);
       toast.error('Failed to start innovation pipeline', {
