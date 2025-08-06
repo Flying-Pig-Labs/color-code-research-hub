@@ -329,13 +329,26 @@ class ReportProcessingService {
                 return this.parseClaudeResponse(content);
 
             } catch (error) {
+                // Enhanced rate limit detection
                 const isRateLimit = error.message?.includes('Too many requests') || 
                                    error.message?.includes('rate limit') ||
-                                   error.$metadata?.httpStatusCode === 429;
+                                   error.message?.includes('ThrottlingException') ||
+                                   error.message?.includes('throttled') ||
+                                   error.$metadata?.httpStatusCode === 429 ||
+                                   error.name === 'ThrottlingException' ||
+                                   error.name === 'TooManyRequestsException';
                 
-                if (isRateLimit && attempt < retries - 1) {
-                    const waitTime = RETRY_BASE_DELAY * Math.pow(2, attempt);
-                    console.log(`⏳ Rate limited, waiting ${waitTime}ms before retry ${attempt + 1}/${retries}`);
+                const isRetryable = isRateLimit || 
+                                   error.$metadata?.httpStatusCode === 503 || // Service unavailable
+                                   error.$metadata?.httpStatusCode === 502;    // Bad gateway
+                
+                if (isRetryable && attempt < retries - 1) {
+                    // Calculate wait time with jitter to avoid thundering herd
+                    const baseWaitTime = RETRY_BASE_DELAY * Math.pow(2, attempt);
+                    const jitter = Math.random() * 1000; // Up to 1 second of jitter
+                    const waitTime = Math.min(baseWaitTime + jitter, 30000); // Cap at 30 seconds
+                    
+                    console.log(`⏳ ${isRateLimit ? 'Rate limited' : 'Service error'}, waiting ${Math.round(waitTime)}ms before retry ${attempt + 2}/${retries}`);
                     await new Promise(resolve => setTimeout(resolve, waitTime));
                 } else {
                     console.error(`❌ Claude API call failed on attempt ${attempt + 1}:`, error);
@@ -343,6 +356,9 @@ class ReportProcessingService {
                 }
             }
         }
+        
+        // If we've exhausted all retries, throw an error
+        throw new Error(`Failed to complete Claude API call after ${retries} attempts due to rate limiting`);
     }
 
     /**

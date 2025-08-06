@@ -1,19 +1,16 @@
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-const { CloudWatchLogsClient, PutLogEventsCommand, CreateLogStreamCommand } = require('@aws-sdk/client-cloudwatch-logs');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, ScanCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 // AWS services
 const s3 = new S3Client({ region: 'us-east-1' });
-const cloudWatchLogs = new CloudWatchLogsClient({ region: 'us-east-1' });
 const dynamoClient = new DynamoDBClient({ region: 'us-east-1' });
 const dynamodb = DynamoDBDocumentClient.from(dynamoClient);
 
 // Environment variables
 const S3_BUCKET = process.env.REPORT_BUCKET || 'color-code-research-results-984906149037';
-const LOG_GROUP = process.env.LOG_GROUP || '/aws/lambda/report-processor';
 
 /**
  * Strip <think> blocks from LLM output to clean up the content
@@ -95,7 +92,7 @@ async function processResearchReport(requestData, options = {}) {
     const prompt = formatPromptForTeam(team, formData);
     
     // Log processing start
-    await logToCloudWatch(`report-processor-${requestId}`, 'Processing started', {
+    console.log('Processing started', {
       requestId,
       team,
       taskLength: task.length,
@@ -137,14 +134,14 @@ async function processResearchReport(requestData, options = {}) {
       const fullReportData = {
         requestId,
         team,
-        title: metadata.title || formData.title || 'Research Report',
+        title: formData.title || 'Research Report',
         objective: requestData.objective || prompt,
         timestamp: new Date().toISOString(),
         content: markdownContent, // Markdown formatted content for frontend
         processedContent: result, // The full structured report from processing service
         sections: sections,
         metadata: {
-          ...metadata,
+          ...formData,
           originalTaskLength: task.length,
           processedLength: processedContent.length,
           wordCount: wordCount,
@@ -153,7 +150,7 @@ async function processResearchReport(requestData, options = {}) {
           promptLength: prompt.length,
           apiCallsUsed: result.processing?.apiCallsUsed || 1,
           thinkBlocksRemoved: result.processing?.thinkBlocksRemoved || 0,
-          title: metadata.title || formData.title || 'Research Report',
+          title: formData.title || 'Research Report',
           summary: contentSummary,
           team: team,
           createdAt: new Date().toISOString(),
@@ -179,7 +176,7 @@ async function processResearchReport(requestData, options = {}) {
         const uploadResult = await s3.send(uploadCommand);
 
         // Log success
-        await logToCloudWatch(`report-processor-${requestId}`, 'Processing completed successfully', {
+        console.log('Processing completed successfully', {
           requestId,
           s3Key,
           wordCount,
@@ -246,7 +243,7 @@ async function processResearchReport(requestData, options = {}) {
 
     } catch (error) {
       // Log the error
-      await logToCloudWatch(`report-processor-${requestId}`, 'Processing failed', {
+      console.error('Processing failed', {
         requestId,
         error: error.message
       });
@@ -393,35 +390,6 @@ function extractContentSummary(content) {
   return summary;
 }
 
-/**
- * Log events to CloudWatch
- * @param {string} logStreamName - Log stream name
- * @param {string} message - Log message
- * @param {object} metadata - Additional metadata
- */
-async function logToCloudWatch(logStreamName, message, metadata = {}) {
-  try {
-    const logEvent = {
-      timestamp: Date.now(),
-      message: JSON.stringify({
-        level: 'INFO',
-        message,
-        ...metadata,
-        timestamp: new Date().toISOString()
-      })
-    };
-
-    const putLogEventsCommand = new PutLogEventsCommand({
-      logGroupName: LOG_GROUP,
-      logStreamName,
-      logEvents: [logEvent]
-    });
-    await cloudWatchLogs.send(putLogEventsCommand);
-  } catch (error) {
-    // Don't throw on logging errors
-    console.error('CloudWatch logging failed:', error);
-  }
-}
 
 /**
  * Validate request data
@@ -467,6 +435,56 @@ exports.handler = async (event) => {
   console.log('Report Processor Lambda invoked:', JSON.stringify(event, null, 2));
   
   try {
+    // Check if this is an SQS event
+    if (event.Records && Array.isArray(event.Records)) {
+      console.log(`Processing ${event.Records.length} SQS messages`);
+      
+      // Process all SQS messages
+      const results = [];
+      for (const record of event.Records) {
+        try {
+          // Parse the SQS message body
+          const requestData = JSON.parse(record.body);
+          console.log(`Processing report ${requestData.reportId} from SQS`);
+          
+          // Validate request data
+          const validation = validateRequestData(requestData);
+          if (!validation.isValid) {
+            console.error(`Invalid SQS message for report ${requestData.reportId}:`, validation.errors);
+            results.push({
+              success: false,
+              reportId: requestData.reportId,
+              error: 'Invalid request',
+              errors: validation.errors
+            });
+            continue;
+          }
+          
+          // Process the report
+          const result = await processResearchReport(requestData);
+          results.push(result);
+          
+        } catch (recordError) {
+          console.error('Error processing SQS record:', recordError);
+          results.push({
+            success: false,
+            error: `Failed to process SQS record: ${recordError.message}`
+          });
+        }
+      }
+      
+      // For SQS events, we return a simple response
+      // Failed messages will be retried by SQS based on visibility timeout
+      return {
+        batchItemFailures: results
+          .map((result, index) => 
+            result.success ? null : { itemIdentifier: event.Records[index].messageId }
+          )
+          .filter(Boolean)
+      };
+    }
+    
+    // Handle direct invocation or API Gateway
     // Parse the body if it's a string (from API Gateway or direct invocation)
     let requestData;
     if (typeof event === 'string') {
@@ -546,6 +564,5 @@ module.exports = {
   processResearchReport,
   generateDownloadUrl,
   extractContentSummary,
-  logToCloudWatch,
   validateRequestData
 };

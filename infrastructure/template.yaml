@@ -24,6 +24,24 @@ Parameters:
   
 
 Resources:
+  # SQS Queue for Report Processing
+  ReportProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-ReportProcessingQueue'
+      VisibilityTimeout: 960  # 16 minutes (longer than Lambda timeout)
+      MessageRetentionPeriod: 86400  # 24 hours
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt ReportProcessingDLQ.Arn
+        maxReceiveCount: 3
+
+  # Dead Letter Queue for failed processing
+  ReportProcessingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-ReportProcessingDLQ'
+      MessageRetentionPeriod: 1209600  # 14 days
+
   # DynamoDB Table for Plan Generation Jobs
   PlanGenerationJobsTable:
     Type: AWS::DynamoDB::Table
@@ -70,6 +88,8 @@ Resources:
           Projection:
             ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: true
@@ -466,6 +486,42 @@ Resources:
             Path: /api/research/v2/reports
             Method: OPTIONS
 
+  # DynamoDB Stream Processor - Detects completed research and sends to SQS
+  ResearchStreamProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: researchStreamProcessor.handler
+      Runtime: nodejs18.x
+      Timeout: 60
+      MemorySize: 256
+      Environment:
+        Variables:
+          REPORT_PROCESSING_QUEUE_URL: !Ref ReportProcessingQueue
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+              Resource: !GetAtt ReportProcessingQueue.Arn
+            - Effect: Allow
+              Action:
+                - dynamodb:DescribeStream
+                - dynamodb:GetRecords
+                - dynamodb:GetShardIterator
+                - dynamodb:ListStreams
+              Resource: 
+                - !Sub '${ResearchReportsTable.Arn}/stream/*'
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt ResearchReportsTable.StreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+
   # Report Processing Function - Enhanced Research Post-Processing (Node.js)
   ReportProcessingFunction:
     Type: AWS::Serverless::Function
@@ -513,7 +569,18 @@ Resources:
               Resource: 
                 - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
                 - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0
+            - Effect: Allow
+              Action:
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource: !GetAtt ReportProcessingQueue.Arn
       Events:
+        ProcessFromQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ReportProcessingQueue.Arn
+            BatchSize: 1  # Process one report at a time
         ProcessReportEndpoint:
           Type: Api
           Properties:

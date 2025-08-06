@@ -181,17 +181,34 @@ The system integrates with Perplexity API's async research capabilities to gener
   - `GET /api/research/reports` - List historical reports
   - `GET /api/research/download/{s3_key}` - Generate presigned URLs
 
-#### 2. ReportProcessorFunction (New - To Be Created)
+#### 2. ReportProcessorFunction (Implemented)
 - **Handler**: `reportProcessor.js`
 - **Runtime**: Node.js 18.x
 - **Timeout**: 900 seconds (15 minutes)
 - **Memory**: 3008MB
 - **Purpose**: Process raw research content into 5 structured artifacts
-- **Trigger**: S3 event when raw research is uploaded
+- **Trigger**: SQS Queue (via DynamoDB Streams → ResearchStreamProcessor)
 - **Environment Variables**:
-  - `REPORTS_BUCKET_NAME`: S3 bucket for processed reports
-  - `ANTHROPIC_API_KEY`: From Secrets Manager
-  - `REPORTS_TABLE_NAME`: DynamoDB table name
+  - `REPORT_BUCKET`: S3 bucket for processed reports
+  - `RESEARCH_REPORTS_TABLE`: DynamoDB table name
+- **Features**:
+  - Team-specific prompts (red/white/black teams)
+  - AI summarization using Claude/OpenAI
+  - Structured report generation
+  - See [REPORT_PROCESSING_ARCHITECTURE.md](./REPORT_PROCESSING_ARCHITECTURE.md) for full details
+
+#### 3. ResearchStreamProcessorFunction (New)
+- **Handler**: `researchStreamProcessor.js`
+- **Runtime**: Node.js 18.x
+- **Timeout**: 60 seconds
+- **Memory**: 256MB
+- **Purpose**: Monitor DynamoDB Streams for completed research
+- **Trigger**: DynamoDB Streams on ResearchReports table
+- **Actions**:
+  - Detects status changes to "completed"
+  - Sends messages to SQS ReportProcessingQueue
+- **Environment Variables**:
+  - `REPORT_PROCESSING_QUEUE_URL`: SQS queue URL
 
 ### 5 Output Artifacts Architecture
 
