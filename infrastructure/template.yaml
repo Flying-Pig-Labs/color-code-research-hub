@@ -498,6 +498,8 @@ Resources:
       Environment:
         Variables:
           REPORT_PROCESSING_QUEUE_URL: !Ref ReportProcessingQueue
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -513,6 +515,21 @@ Resources:
                 - dynamodb:ListStreams
               Resource: 
                 - !Sub '${ResearchReportsTable.Arn}/stream/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:UpdateItem
+                - dynamodb:GetItem
+              Resource: !GetAtt ResearchReportsTable.Arn
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:perplexity-key*'
       Events:
         Stream:
           Type: DynamoDB
