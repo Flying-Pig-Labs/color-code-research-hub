@@ -8,7 +8,7 @@
 
 import { toast } from 'sonner';
 
-const PIPELINE_API_BASE = 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production';
+const PIPELINE_API_BASE = import.meta.env.VITE_INNOVATION_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production';
 
 export interface StartPipelineRequest {
   researchDocId: string;
@@ -82,7 +82,7 @@ class InnovationPipelineService {
    */
   async checkJobStatus(jobId: string): Promise<PipelineJobStatus> {
     try {
-      const response = await fetch(`${PIPELINE_API_BASE}/job-status/${jobId}`, {
+      const response = await fetch(`${PIPELINE_API_BASE}/status/${jobId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
