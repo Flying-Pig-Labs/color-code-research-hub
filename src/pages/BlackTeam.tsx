@@ -54,61 +54,46 @@ const BlackTeam = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="text-center border-gray-300 bg-gray-800 hover:bg-gray-700 transition-colors">
+          <Card className="text-center border-gray-300 bg-white hover:bg-gray-50 transition-colors">
             <CardHeader>
               <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-gray-900">
-                  <Bug className="h-8 w-8 text-white" />
+                <div className="p-3 rounded-xl bg-gray-100">
+                  <Bug className="h-8 w-8 text-gray-900" />
                 </div>
               </div>
-              <CardTitle className="text-white">System Analysis</CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardTitle className="text-gray-900">System Analysis</CardTitle>
+              <CardDescription className="text-gray-600">
                 Comprehensive reverse engineering and system architecture analysis
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
 
-          <Card className="text-center border-gray-300 bg-gray-800 hover:bg-gray-700 transition-colors">
+          <Card className="text-center border-gray-300 bg-white hover:bg-gray-50 transition-colors">
             <CardHeader>
               <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-gray-900">
-                  <Code className="h-8 w-8 text-white" />
+                <div className="p-3 rounded-xl bg-gray-100">
+                  <Code className="h-8 w-8 text-gray-900" />
                 </div>
               </div>
-              <CardTitle className="text-white">Code Engineering</CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardTitle className="text-gray-900">Code Engineering</CardTitle>
+              <CardDescription className="text-gray-600">
                 Advanced code analysis and alternative implementation development
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
 
-          <Card className="text-center border-gray-300 bg-gray-800 hover:bg-gray-700 transition-colors">
+          <Card className="text-center border-gray-300 bg-white hover:bg-gray-50 transition-colors">
             <CardHeader>
               <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-gray-900">
-                  <Wrench className="h-8 w-8 text-white" />
+                <div className="p-3 rounded-xl bg-gray-100">
+                  <Wrench className="h-8 w-8 text-gray-900" />
                 </div>
               </div>
-              <CardTitle className="text-white">Implementation</CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardTitle className="text-gray-900">Implementation</CardTitle>
+              <CardDescription className="text-gray-600">
                 Strategic implementation planning and migration pathway development
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
         </div>
       </SectionWrapper>

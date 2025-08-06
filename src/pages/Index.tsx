@@ -114,7 +114,7 @@ const Index = () => {
           <TeamCard
             title="White Team"
             description="Market Opportunity Researchers"
-            focus="Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research."
+            focus="Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research, so you can get to the puck before your competition."
             path="/white-team"
             icon={Lightbulb}
             variant="white-team"

@@ -96,8 +96,8 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
         const newValues = { ...prev };
         
         tasks.forEach(task => {
-          if (task.status === 'processing' || task.status === 'pending' || 
-              (task.status === 'completed' && !task.summary)) {
+          // Only show progress for truly active tasks
+          if (task.status === 'processing' || task.status === 'pending') {
             const startTime = new Date(task.createdAt).getTime();
             const now = Date.now();
             const elapsed = now - startTime;
@@ -360,7 +360,9 @@ const ResearchRequestTableActive = ({ teamType }: ResearchRequestTableActiveProp
     );
   }
 
+  // Only show tasks as active if they're truly processing or pending
   const activeTasks = tasks.filter(t => t.status === 'processing' || t.status === 'pending');
+  // Include all completed tasks, regardless of summary status
   const completedTasks = tasks.filter(t => t.status === 'completed' || t.status === 'failed');
 
   return (

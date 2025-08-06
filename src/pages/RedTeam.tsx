@@ -66,11 +66,6 @@ const RedTeam = () => {
                 Comprehensive mapping of competitive landscape and market positioning
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
 
           <Card className="text-center border-red-team/20">
@@ -85,11 +80,6 @@ const RedTeam = () => {
                 Deep dive analysis of market trends and competitive dynamics
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
 
           <Card className="text-center border-red-team/20">
@@ -104,11 +94,6 @@ const RedTeam = () => {
                 Advanced modeling of disruption scenarios and strategic responses
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
         </div>
       </SectionWrapper>

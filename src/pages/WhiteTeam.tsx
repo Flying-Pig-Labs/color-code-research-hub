@@ -27,7 +27,7 @@ const WhiteTeam = () => {
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-            Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research. Delivers strategic insights to drive sustainable growth and customer-centric solutions before the competition gets there first.
+            Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research, so you can get to the puck before your competition.
           </p>
           
           <WhiteResearchSwarmForm>
@@ -66,11 +66,6 @@ const WhiteTeam = () => {
                 Comprehensive mapping of market gaps and unexplored opportunities
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
 
           <Card className="text-center border-white-team-accent/30">
@@ -85,11 +80,6 @@ const WhiteTeam = () => {
                 Advanced research methodologies for product innovation and development
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
 
           <Card className="text-center border-white-team-accent/30">
@@ -104,11 +94,6 @@ const WhiteTeam = () => {
                 Strategic positioning and go-to-market planning for new opportunities
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" className="gap-2">
-                Learn More <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
           </Card>
         </div>
       </SectionWrapper>
