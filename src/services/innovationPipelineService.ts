@@ -8,7 +8,10 @@
 
 import { toast } from 'sonner';
 
-const PIPELINE_API_BASE = import.meta.env.VITE_INNOVATION_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production';
+// Force use of new API Gateway for innovation pipeline in production
+const PIPELINE_API_BASE = window.location.hostname === 'oceanstudio.io' 
+  ? 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production'
+  : (import.meta.env.VITE_INNOVATION_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production');
 
 export interface StartPipelineRequest {
   researchDocId: string;
