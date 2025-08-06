@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Shield, Target, Bug, Lightbulb, LucideIcon } from "lucide-react";
+import { Shield, Target, Bug, Lightbulb, FileText, LucideIcon } from "lucide-react";
 import { HealthCheck } from "@/components/HealthCheck";
 
 interface NavItem {
@@ -71,6 +71,21 @@ const Header = ({
                 );
               })}
             </div>
+            {/* Only show Reports button on main Wayfinder header */}
+            {title === "Wayfinder" && (
+              <>
+                <div className="h-6 w-px bg-border" />
+                <Button
+                  variant={location.pathname === "/" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => navigate("/")}
+                  className="gap-2"
+                >
+                  <FileText className="h-4 w-4" />
+                  Reports
+                </Button>
+              </>
+            )}
             {showHealthCheck && (
               <div className="pl-4 border-l border-border">
                 <HealthCheck />
