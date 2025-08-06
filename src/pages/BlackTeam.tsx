@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 
 import SectionWrapper from "@/components/SectionWrapper";
-import ResearchRequestTableActive from "@/components/ResearchRequestTableActive";
 import BlackResearchSwarmForm from "@/components/BlackResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,10 +38,6 @@ const BlackTeam = () => {
         </div>
       </SectionWrapper>
 
-      {/* Active Research Jobs */}
-      <SectionWrapper className="bg-white py-6">
-        <ResearchRequestTableActive teamType="black" />
-      </SectionWrapper>
 
       {/* Methodologies */}
       <SectionWrapper className="bg-gray-100">
