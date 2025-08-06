@@ -32,6 +32,16 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
   const [githubRepoUrl, setGithubRepoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(true);
+  const [timeEstimates, setTimeEstimates] = useState<{
+    elapsedMinutes?: number;
+    estimatedRemainingMinutes?: number;
+    estimatedTotalMinutes?: number;
+  }>({});
+  const [metadata, setMetadata] = useState<{
+    researchDocId?: string;
+    username?: string;
+    startedAt?: string;
+  }>({});
 
   // Save jobId to localStorage for session recovery
   useEffect(() => {
@@ -61,6 +71,16 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
         
         // Update overall progress
         setOverallProgress(data.overallProgress || 0);
+        
+        // Update time estimates
+        if (data.timeEstimates) {
+          setTimeEstimates(data.timeEstimates);
+        }
+        
+        // Update metadata
+        if (data.metadata) {
+          setMetadata(data.metadata);
+        }
         
         // Update stage statuses based on current stage
         const currentStage = data.currentStage || 1;
@@ -149,10 +169,20 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
           {status === 'failed' && 'Pipeline Failed'}
         </h3>
         <p className="text-sm text-muted-foreground">
-          {status === 'running' && 'This process takes approximately 22 minutes'}
+          {status === 'running' && timeEstimates.estimatedRemainingMinutes !== undefined && (
+            <>Time remaining: approximately {Math.ceil(timeEstimates.estimatedRemainingMinutes)} minutes</>
+          )}
+          {status === 'running' && timeEstimates.estimatedRemainingMinutes === undefined && 'This process takes approximately 22 minutes'}
           {status === 'completed' && 'Your GitHub repository is ready'}
           {status === 'failed' && error}
         </p>
+        {/* Time details for running jobs */}
+        {status === 'running' && timeEstimates.elapsedMinutes !== undefined && (
+          <p className="text-xs text-muted-foreground mt-1">
+            Elapsed: {Math.floor(timeEstimates.elapsedMinutes)} min • 
+            Total estimate: {timeEstimates.estimatedTotalMinutes || 22} min
+          </p>
+        )}
       </div>
 
       {/* Progress Stages */}

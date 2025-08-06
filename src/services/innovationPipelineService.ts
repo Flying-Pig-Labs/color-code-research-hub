@@ -22,6 +22,7 @@ export interface StartPipelineResponse {
   jobId: string;
   message: string;
   estimatedCompletionTime?: string;
+  isExistingJob?: boolean;
 }
 
 export interface PipelineJobStatus {
@@ -43,7 +44,7 @@ class InnovationPipelineService {
    */
   async startPipeline(
     researchDocId: string, 
-    username: string = 'fprior'
+    username: string = 'user'
   ): Promise<StartPipelineResponse> {
     try {
       const response = await fetch(`${PIPELINE_API_BASE}/start-pipeline`, {
@@ -57,20 +58,33 @@ class InnovationPipelineService {
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(
-          errorData?.message || `Failed to start pipeline: ${response.statusText}`
-        );
+      const data = await response.json();
+
+      // Handle 409 Conflict - job already exists
+      if (response.status === 409) {
+        toast.info('A pipeline is already running for this research', {
+          description: 'Reconnecting to existing job...',
+        });
+        return {
+          jobId: data.existingJob.jobId,
+          message: data.message || 'Using existing pipeline job',
+          estimatedCompletionTime: '22 minutes',
+          isExistingJob: true,
+        };
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          data?.message || `Failed to start pipeline: ${response.statusText}`
+        );
+      }
       
-      // Expected response format
+      // Expected response format for new job
       return {
         jobId: data.jobId,
         message: data.message || 'Pipeline started successfully',
         estimatedCompletionTime: data.estimatedCompletionTime || '22 minutes',
+        isExistingJob: false,
       };
     } catch (error) {
       console.error('Error starting innovation pipeline:', error);
