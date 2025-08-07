@@ -43,7 +43,7 @@ const Landing = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <span className="text-2xl">🌊</span>
-            <span className="text-lg sm:text-xl font-semibold text-gray-900">Ocean Studio</span>
+            <span className="text-lg sm:text-xl font-semibold text-gray-900" style={{ fontFamily: "'PT Sans', sans-serif" }}>Ocean Studio</span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
             <Button variant="outline" onClick={() => navigate("/home")}>Sign In</Button>
@@ -77,7 +77,7 @@ const Landing = () => {
         </div>
 
         <div className="container mx-auto max-w-5xl text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-900 mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-900 mb-4 sm:mb-6 leading-tight" style={{ fontFamily: "'PT Sans', sans-serif" }}>
             Raw Data into<br className="hidden sm:block" />
             Seaworthy Convictions
           </h1>
