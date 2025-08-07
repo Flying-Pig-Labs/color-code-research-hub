@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, LogIn } from "lucide-react";
+import { ArrowRight, Play, LogIn, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
@@ -74,7 +74,18 @@ const Landing = () => {
               <span className="text-white font-semibold text-lg" style={{ fontFamily: "'PT Sans', sans-serif" }}>Ocean Studio</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right">
-              <span>Ford Prior</span>
+              <span className="flex items-center gap-1">
+                Ford Prior
+                <a 
+                  href="https://www.linkedin.com/in/ford-prior/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-gray-400 transition-colors inline-flex"
+                  aria-label="LinkedIn Profile"
+                >
+                  <Linkedin className="h-3 w-3" />
+                </a>
+              </span>
               <span className="hidden sm:inline">•</span>
               <span>ford@flyingpig.ai</span>
               <span className="hidden sm:inline">•</span>
