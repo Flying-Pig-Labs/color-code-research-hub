@@ -27,8 +27,8 @@ const Landing = () => {
           {/* Hero Content */}
           <div className="text-center mt-12 max-w-5xl mx-auto">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-blue-300 mb-6 leading-tight" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-              Raw Data into<br className="hidden sm:block" />
-              Seaworthy Convictions
+              In the era of fast fashion SaaS,<br className="hidden sm:block" />
+              conviction is everything.
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto px-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
               Transform private data, public zeitgeist, & deep research 
