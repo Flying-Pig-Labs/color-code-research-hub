@@ -31,8 +31,8 @@ const Landing = () => {
               conviction is everything.
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto px-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-              Transform private data, public zeitgeist, & deep research 
-              into GTM-ready ideas using data science swarms.
+              Deploy on-demand data science agent swarms to transform private data, public zeitgeist, & deep research 
+              into GTM-ready ideas you rally behind.
             </p>
             
             {/* CTA Buttons */}
