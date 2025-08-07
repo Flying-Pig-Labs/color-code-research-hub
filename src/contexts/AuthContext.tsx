@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -18,22 +17,25 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check if user is already logged in (from sessionStorage) on initial load
+    const authStatus = sessionStorage.getItem('isAuthenticated');
+    return authStatus === 'true';
+  });
 
   useEffect(() => {
-    // Check if user is already logged in (from sessionStorage)
-    const authStatus = sessionStorage.getItem('isAuthenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
+    // Update sessionStorage when auth state changes
+    if (isAuthenticated) {
+      sessionStorage.setItem('isAuthenticated', 'true');
+    } else {
+      sessionStorage.removeItem('isAuthenticated');
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const login = (username: string, password: string): boolean => {
     // Hardcoded credentials for beta
     if (username === 'beta' && password === 'f@stf@shion') {
       setIsAuthenticated(true);
-      sessionStorage.setItem('isAuthenticated', 'true');
       return true;
     }
     return false;
@@ -41,8 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem('isAuthenticated');
-    navigate('/');
+    // Navigation will be handled by the component that calls logout
   };
 
   return (

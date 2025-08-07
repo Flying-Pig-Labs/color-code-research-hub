@@ -15,6 +15,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("wayfinder");
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   // Map routes to tab values
   useEffect(() => {
     if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/reef-builder")) {
@@ -56,7 +61,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <header className="mb-8 bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6 overflow-x-auto relative">
           {/* Logout Button - Positioned top-right */}
           <Button
-            onClick={logout}
+            onClick={handleLogout}
             variant="ghost"
             size="sm"
             className="absolute top-4 right-4 text-gray-400 hover:text-blue-400 hover:bg-gray-800/30"
