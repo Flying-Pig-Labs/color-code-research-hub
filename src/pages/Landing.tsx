@@ -31,8 +31,8 @@ const Landing = () => {
               Seaworthy Convictions
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto px-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-              Deploy agent swarms to transform private data, public zeitgeist, & deep research 
-              into ideas filtered by math, vetted by sharks, and expanded into a complex GTM roadmap.
+              Transform private data, public zeitgeist, & deep research 
+              into GTM-ready ideas using data science swarms.
             </p>
             
             {/* CTA Buttons */}
