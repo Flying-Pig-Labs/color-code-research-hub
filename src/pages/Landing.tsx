@@ -1,12 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex flex-col relative">
+      {/* Subtle Login Icon - Top Right */}
+      <button
+        onClick={() => navigate("/login")}
+        className="absolute top-6 right-6 text-gray-500 hover:text-blue-400 transition-colors p-2 rounded-lg hover:bg-gray-800/30"
+        aria-label="Login"
+      >
+        <LogIn className="h-5 w-5" />
+      </button>
+
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="container mx-auto">
@@ -40,7 +49,7 @@ const Landing = () => {
               <Button 
                 size="lg" 
                 className="bg-blue-600 hover:bg-blue-700 text-white text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto" 
-                onClick={() => navigate("/home")}
+                onClick={() => navigate("/login")}
               >
                 Request Beta Access <ArrowRight className="ml-2 h-4 sm:h-5 w-4 sm:w-5" />
               </Button>

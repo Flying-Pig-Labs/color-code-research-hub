@@ -1,6 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -9,6 +12,7 @@ interface AppLayoutProps {
 const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("wayfinder");
 
   // Map routes to tab values
@@ -49,7 +53,18 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       <div className="container mx-auto p-4">
-        <header className="mb-8 bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6 overflow-x-auto">
+        <header className="mb-8 bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6 overflow-x-auto relative">
+          {/* Logout Button - Positioned top-right */}
+          <Button
+            onClick={logout}
+            variant="ghost"
+            size="sm"
+            className="absolute top-4 right-4 text-gray-400 hover:text-blue-400 hover:bg-gray-800/30"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+          
           <pre className="text-blue-400 text-[0.2rem] sm:text-[0.25rem] md:text-[0.3rem] lg:text-[0.375rem] xl:text-[0.5rem] font-mono text-center mx-auto whitespace-pre">
 {` ██████╗  ██████╗███████╗ █████╗ ███╗   ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ 
 ██╔═══██╗██╔════╝██╔════╝██╔══██╗████╗  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗
