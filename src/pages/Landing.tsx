@@ -77,7 +77,7 @@ const Landing = () => {
         </div>
 
         <div className="container mx-auto max-w-5xl text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-900 mb-4 sm:mb-6 leading-tight" style={{ fontFamily: "'PT Sans', sans-serif" }}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-blue-900 mb-4 sm:mb-6 leading-tight" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
             Raw Data into<br className="hidden sm:block" />
             Seaworthy Convictions
           </h1>
@@ -96,181 +96,19 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Interactive Demo */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-blue-50">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-4">
-            Try It Now
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 text-center mb-6 sm:mb-8">
-            Enter a keyword to see instant market insights
-          </p>
-
-          <Card className="p-4 sm:p-6 md:p-8">
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Input
-                placeholder="Enter an industry or product keyword..."
-                value={demoKeyword}
-                onChange={(e) => setDemoKeyword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleDemo()}
-                className="text-base sm:text-lg"
-              />
-              <Button onClick={handleDemo} disabled={!demoKeyword} className="w-full sm:w-auto">
-                Analyze
-              </Button>
-            </div>
-            {demoResult && (
-              <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-blue-900 text-sm sm:text-base">{demoResult}</p>
-              </div>
-            )}
-          </Card>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
-            Trusted by Innovation Teams
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <p className="text-gray-600 italic mb-4">
-                  "Ocean Studio helped us identify a $50M market opportunity we completely missed. 
-                  The shark feedback was brutally honest—exactly what we needed."
-                </p>
-                <p className="font-semibold">Sarah Chen</p>
-                <p className="text-sm text-gray-500">VP Product, TechCorp</p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <p className="text-gray-600 italic mb-4">
-                  "We reduced our market research time from 3 months to 3 days. The private data 
-                  integration made our insights 10x more accurate."
-                </p>
-                <p className="font-semibold">Marcus Rodriguez</p>
-                <p className="text-sm text-gray-500">Head of Innovation, FinanceInc</p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <p className="text-gray-600 italic mb-4">
-                  "The generated roadmaps are production-ready. We went from idea to MVP launch 
-                  in half the usual time."
-                </p>
-                <p className="font-semibold">Alex Thompson</p>
-                <p className="text-sm text-gray-500">CTO, StartupXYZ</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6">
-        <div className="container mx-auto max-w-3xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
-            Frequently Asked Questions
-          </h2>
-
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <Card 
-                key={index} 
-                className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">{faq.question}</h3>
-                    {expandedFaq === index ? (
-                      <Minus className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <Plus className="h-5 w-5 text-gray-500" />
-                    )}
-                  </div>
-                </CardHeader>
-                {expandedFaq === index && (
-                  <CardContent className="pt-0">
-                    <p className="text-gray-600">{faq.answer}</p>
-                  </CardContent>
-                )}
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer CTA */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Ready to Transform Your Go-to-Market Strategy?
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 opacity-90">
-            Join thousands of product teams shipping smarter, faster products.
-          </p>
-          <Button 
-            size="lg" 
-            variant="secondary" 
-            className="text-lg px-8"
-            onClick={() => navigate("/home")}
-          >
-            Request Beta Access <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-8 sm:py-12 px-4 sm:px-6 bg-blue-900 text-blue-100">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-2xl">🌊</span>
-                <span className="text-white font-semibold">Ocean Studio</span>
-              </div>
-              <p className="text-sm text-blue-200">
-                AI-powered go-to-market intelligence for modern product teams.
-              </p>
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-2xl">🌊</span>
+              <span className="text-white font-semibold text-xl" style={{ fontFamily: "'PT Sans', sans-serif" }}>Ocean Studio</span>
             </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
-              </ul>
+            <div className="text-sm space-y-1">
+              <p className="text-blue-200">Ford Prior</p>
+              <p className="text-blue-200">ford@flyingpig.ai</p>
+              <p className="text-blue-200">Richmond, VA</p>
             </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-blue-800 mt-12 pt-8 text-center text-sm">
-            <p>&copy; 2025 Ocean Studio. All rights reserved.</p>
           </div>
         </div>
       </footer>
