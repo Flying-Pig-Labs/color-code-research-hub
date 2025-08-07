@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Target, Bug, Lightbulb, Zap, Shield, Clock, ChevronDown, Plus, Minus, Play } from "lucide-react";
+import { ArrowRight, Plus, Minus, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
@@ -37,23 +37,20 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
+      <nav className="fixed top-0 w-full bg-blue-50/80 backdrop-blur-md z-50 border-b border-blue-200">
         <div className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <span className="text-2xl">🌊</span>
             <span className="text-lg sm:text-xl font-semibold text-gray-900">Ocean Studio</span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors">How it Works</a>
-            <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-            <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
             <Button variant="outline" onClick={() => navigate("/home")}>Sign In</Button>
-            <Button onClick={() => navigate("/home")}>Get Started Free</Button>
+            <Button onClick={() => navigate("/home")}>Request Beta Access</Button>
           </div>
           <div className="md:hidden flex items-center space-x-2">
-            <Button size="sm" onClick={() => navigate("/home")}>Get Started</Button>
+            <Button size="sm" onClick={() => navigate("/home")}>Request Beta</Button>
           </div>
         </div>
       </nav>
@@ -62,7 +59,7 @@ const Landing = () => {
       <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 overflow-hidden">
         {/* Abstract wave background */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-0 w-full h-full opacity-5">
+          <div className="absolute top-0 left-0 w-full h-full opacity-10">
             <svg className="w-full h-full" viewBox="0 0 1440 800" preserveAspectRatio="none">
               <path
                 d="M0,400 C360,300 720,500 1440,400 L1440,800 L0,800 Z"
@@ -71,8 +68,8 @@ const Landing = () => {
               />
               <defs>
                 <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#3B82F6" />
-                  <stop offset="100%" stopColor="#8B5CF6" />
+                  <stop offset="0%" stopColor="#1E40AF" />
+                  <stop offset="100%" stopColor="#3B82F6" />
                 </linearGradient>
               </defs>
             </svg>
@@ -80,17 +77,17 @@ const Landing = () => {
         </div>
 
         <div className="container mx-auto max-w-5xl text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-            Turn Market Data into<br className="hidden sm:block" />
-            Go-to-Market Strategies<span className="hidden sm:inline">—</span><br className="sm:hidden" />Fast.
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-900 mb-4 sm:mb-6 leading-tight">
+            Raw Data into<br className="hidden sm:block" />
+            Seaworthy Convictions
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-            Ocean Studio unifies your private data, crowdsources expert-style feedback via AI "sharks," 
-            and auto-generates an actionable product roadmap in a single workflow.
+            Deploy agent swarms to transform private data, public zeitgeist, & deep research 
+            into novel, battle-tested products and the roadmaps to create them.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
             <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto" onClick={() => navigate("/home")}>
-              Get Started Free <ArrowRight className="ml-2 h-4 sm:h-5 w-4 sm:w-5" />
+              Request Beta Access <ArrowRight className="ml-2 h-4 sm:h-5 w-4 sm:w-5" />
             </Button>
             <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto">
               <Play className="mr-2 h-4 sm:h-5 w-4 sm:w-5" /> Watch 2-min Demo
@@ -99,129 +96,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-16 sm:py-20 px-4 sm:px-6 bg-gray-50">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-4">
-            How Ocean Studio Works
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 text-center mb-8 sm:mb-12 max-w-3xl mx-auto px-4">
-            Three powerful phases that transform raw market data into validated product strategies
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Wayfinder */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <Card className="relative h-full border-2 hover:border-blue-200 transition-colors">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <Target className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <CardTitle className="text-2xl">Wayfinder</CardTitle>
-                  <CardDescription>AI-powered market scouting</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Analyzes your market landscape, competitors, and opportunities using both public data 
-                    and your private intelligence to identify strategic gaps.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Shark Swarmer */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <Card className="relative h-full border-2 hover:border-purple-200 transition-colors">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                    <Bug className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <CardTitle className="text-2xl">Shark Swarmer</CardTitle>
-                  <CardDescription>Multi-agent vetting & scoring</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Deploys specialized AI agents that challenge your ideas with founder-level scrutiny, 
-                    providing realistic feedback before you invest resources.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Reef Builder */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 rounded-xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <Card className="relative h-full border-2 hover:border-green-200 transition-colors">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                    <Lightbulb className="h-6 w-6 text-green-600" />
-                  </div>
-                  <CardTitle className="text-2xl">Reef Builder</CardTitle>
-                  <CardDescription>Instant MVP plan & resources</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Generates a complete product roadmap with phases, epics, and GitHub issues—ready 
-                    for your team to execute immediately.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Deep-Dive Features */}
-      <section id="features" className="py-16 sm:py-20 px-4 sm:px-6">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
-            Enterprise-Grade Features
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Shield className="h-8 w-8 text-blue-600 mb-2" />
-                <CardTitle>Private Data Integration</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Securely connect your S3 buckets, databases, and internal docs. Your data never leaves your infrastructure.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Zap className="h-8 w-8 text-purple-600 mb-2" />
-                <CardTitle>Synthetic Interviews</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  AI sharks trained on thousands of founder interviews provide brutally honest feedback on your ideas.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Clock className="h-8 w-8 text-green-600 mb-2" />
-                <CardTitle>Cost & Time Tracking</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Real-time estimates for development costs, timeline, and resource requirements for every generated plan.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* Interactive Demo */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gray-50">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-blue-50">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-4">
             Try It Now
@@ -296,114 +172,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-16 sm:py-20 px-4 sm:px-6 bg-gray-50">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-4">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 text-center mb-8 sm:mb-12">
-            Pay only for the research credits you use
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Starter */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-2xl">Starter</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$99</span>
-                  <span className="text-gray-600">/month</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>10 research reports/month</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Basic shark feedback</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>GitHub integration</span>
-                  </li>
-                </ul>
-                <Button className="w-full mt-6" variant="outline">Get Started</Button>
-              </CardContent>
-            </Card>
-
-            {/* Professional */}
-            <Card className="hover:shadow-lg transition-shadow border-blue-200 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Most Popular</span>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl">Professional</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$299</span>
-                  <span className="text-gray-600">/month</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>50 research reports/month</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Advanced shark swarms</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Private data integration</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Priority support</span>
-                  </li>
-                </ul>
-                <Button className="w-full mt-6">Get Started</Button>
-              </CardContent>
-            </Card>
-
-            {/* Enterprise */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">Custom</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Unlimited reports</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Custom AI training</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>On-premise deployment</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronDown className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                    <span>SLA & dedicated support</span>
-                  </li>
-                </ul>
-                <Button className="w-full mt-6" variant="outline">Contact Sales</Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section className="py-16 sm:py-20 px-4 sm:px-6">
         <div className="container mx-auto max-w-3xl">
@@ -454,13 +222,13 @@ const Landing = () => {
             className="text-lg px-8"
             onClick={() => navigate("/home")}
           >
-            Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
+            Request Beta Access <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-12 px-4 sm:px-6 bg-gray-900 text-gray-400">
+      <footer className="py-8 sm:py-12 px-4 sm:px-6 bg-blue-900 text-blue-100">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             <div>
@@ -468,7 +236,7 @@ const Landing = () => {
                 <span className="text-2xl">🌊</span>
                 <span className="text-white font-semibold">Ocean Studio</span>
               </div>
-              <p className="text-sm">
+              <p className="text-sm text-blue-200">
                 AI-powered go-to-market intelligence for modern product teams.
               </p>
             </div>
@@ -501,7 +269,7 @@ const Landing = () => {
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
+          <div className="border-t border-blue-800 mt-12 pt-8 text-center text-sm">
             <p>&copy; 2025 Ocean Studio. All rights reserved.</p>
           </div>
         </div>
