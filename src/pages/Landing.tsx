@@ -19,7 +19,7 @@ const Landing = () => {
 ╚██████╔╝╚██████╗███████╗██║  ██║██║ ╚████║    ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝
  ╚═════╝  ╚═════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝`}
             </pre>
-            <p className="text-gray-400 text-center mt-4">
+            <p className="text-gray-400 text-center mt-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
               AI-Powered Go-To-Market Engine
             </p>
           </header>
@@ -30,7 +30,7 @@ const Landing = () => {
               Raw Data into<br className="hidden sm:block" />
               Seaworthy Convictions
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto px-4">
+            <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto px-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
               Deploy agent swarms to transform private data, public zeitgeist, & deep research 
               into ideas filtered by math, vetted by sharks, and expanded into a complex GTM roadmap.
             </p>
