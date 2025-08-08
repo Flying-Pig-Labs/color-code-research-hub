@@ -270,20 +270,8 @@ export const apiService = {
     );
   },
 
-  // Start ideation pipeline for a research document
-  async startIdeationPipeline(researchDocId: string, username: string = 'fprior'): Promise<any> {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
-    return fetchWithErrorHandling<any>(
-      `${apiUrl}/api/start-pipeline`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ 
-          researchDocId,
-          username 
-        }),
-      }
-    );
-  },
+  // Removed startIdeationPipeline - use innovationPipelineService.startPipeline() instead
+  // The correct endpoint is https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod/submit
 };
 
 // Export helper function to get current environment

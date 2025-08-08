@@ -80,10 +80,27 @@ export function ReportModal({
       
       // Store jobId in localStorage for recovery
       localStorage.setItem('innovationPipelineJobId', response.jobId);
+      
+      // Success message
+      toast.success('Innovation pipeline started!', {
+        description: `Job ${response.jobName} submitted successfully. Processing will take approximately 10-15 minutes.`,
+        duration: 5000,
+      });
     } catch (err) {
       console.error('Error starting innovation pipeline:', err);
+      
+      // Better error handling with specific messages
+      let errorMessage = 'Unknown error occurred';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+        // Make 404 errors more user-friendly
+        if (errorMessage.includes('not found') || errorMessage.includes('404')) {
+          errorMessage = `Research report '${reportId}' not found. Please ensure the report exists and has been fully processed.`;
+        }
+      }
+      
       toast.error('Failed to start innovation pipeline', {
-        description: err instanceof Error ? err.message : 'Unknown error occurred',
+        description: errorMessage,
       });
     }
   };

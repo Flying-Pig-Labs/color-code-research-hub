@@ -13,6 +13,7 @@ import {
   ReportServiceError
 } from '../services/reportService';
 import { apiService } from '../services/api';
+import { innovationPipelineService } from '../services/innovationPipelineService';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -179,33 +180,37 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
     setIsIdeating(true);
     
     try {
-      // Extract the research ID (assuming reportId is the same as research_id)
-      const researchDocId = report.metadata.reportId;
+      // Extract the research ID (reportId is the correct field)
+      const researchId = report.metadata.reportId;
       
-      // Call the ideation pipeline API
-      const response = await apiService.startIdeationPipeline(researchDocId);
+      // Call the innovation pipeline API using the correct service
+      const response = await innovationPipelineService.startPipeline(researchId, 'user');
       
       // Show success message
-      toast.success('Ideation pipeline started!', {
-        description: `Processing research document: ${researchDocId}`,
+      toast.success('Innovation pipeline started!', {
+        description: `Job ${response.jobName} submitted successfully. This will take approximately 10-15 minutes.`,
         duration: 5000,
       });
 
-      // If the response contains a GitHub repo URL, offer to open it
-      if (response.repositoryUrl) {
-        toast.success('GitHub repository created!', {
-          description: response.repositoryName,
-          action: {
-            label: 'Open Repository',
-            onClick: () => window.open(response.repositoryUrl, '_blank'),
-          },
-          duration: 10000,
-        });
+      // Store jobId in localStorage for potential recovery/tracking
+      if (response.jobId) {
+        localStorage.setItem('innovationPipelineJobId', response.jobId);
       }
     } catch (error) {
-      console.error('Ideation failed:', error);
-      toast.error('Failed to start ideation pipeline', {
-        description: error instanceof Error ? error.message : 'Unknown error occurred',
+      console.error('Innovation pipeline failed:', error);
+      
+      // Better error handling - check if it's a 404 for invalid research ID
+      let errorMessage = 'Unknown error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        // Check if it's a "Research not found" error
+        if (errorMessage.includes('Research not found') || errorMessage.includes('404')) {
+          errorMessage = `Research report not found. Please ensure the report exists and has been fully processed.`;
+        }
+      }
+      
+      toast.error('Failed to start innovation pipeline', {
+        description: errorMessage,
       });
     } finally {
       setIsIdeating(false);

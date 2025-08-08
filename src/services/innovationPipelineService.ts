@@ -107,17 +107,33 @@ class InnovationPipelineService {
         }),
       });
 
-      const data = await response.json();
+      // Try to parse JSON response regardless of status
+      const data = await response.json().catch(() => ({ error: response.statusText }));
 
       if (!response.ok) {
         // Handle specific error cases
+        if (response.status === 404) {
+          // Research not found - provide clear message
+          throw new Error(
+            data?.error === 'Research not found' 
+              ? `Research report with ID '${researchDocId}' not found. Please ensure the report exists and has been processed.`
+              : data?.error || 'Research report not found'
+          );
+        }
         if (response.status === 409) {
           toast.info('A pipeline job may already be running for this research', {
             description: 'Check the status to see current progress',
           });
         }
+        if (response.status === 400) {
+          // Bad request - likely missing researchId
+          throw new Error(
+            data?.error || 'Invalid request. Please ensure the research ID is valid.'
+          );
+        }
+        // Generic error for other status codes
         throw new Error(
-          data?.error || data?.message || `Failed to start pipeline: ${response.statusText}`
+          data?.error || data?.message || `Failed to start pipeline: ${response.statusText} (${response.status})`
         );
       }
       
