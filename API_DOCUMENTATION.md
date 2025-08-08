@@ -545,6 +545,238 @@ curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/a
 - API Gateway: No specific limits
 - Perplexity API: Rate limits apply per API key
 
+## 🚀 Innovation Pipeline API (AWS Batch)
+
+### Base URL
+```
+https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod
+```
+
+### Submit Pipeline Job
+**POST** `/submit`
+
+Submits a research document for innovation pipeline processing. The pipeline uses AWS Batch to run a multi-step LLM orchestration that:
+1. Analyzes the research document
+2. Generates innovation ideas
+3. Creates actionable implementation plans
+4. Sets up a GitHub repository with issues
+
+**Request Body:**
+```json
+{
+  "researchId": "string"  // ID of the research document from DynamoDB
+}
+```
+
+**Success Response (200 OK):**
+```json
+{
+  "jobId": "12345678-1234-1234-1234-123456789abc",
+  "jobName": "pipeline-research123-20241215-143022",
+  "status": "SUBMITTED",
+  "message": "Pipeline job submitted successfully"
+}
+```
+
+**Response Field Details:**
+- `jobId`: AWS Batch job ID (UUID format) - use this to track the job in AWS
+- `jobName`: Human-readable job name with format: `pipeline-{researchId}-{YYYYMMDD-HHMMSS}`
+- `status`: Always "SUBMITTED" for successful submissions
+- `message`: Confirmation message
+
+**Error Responses:**
+
+400 Bad Request (Missing researchId):
+```json
+{
+  "error": "researchId is required"
+}
+```
+
+404 Not Found (Research doesn't exist):
+```json
+{
+  "error": "Research not found"
+}
+```
+
+409 Conflict (Job already exists):
+```json
+{
+  "error": "A pipeline job may already be running for this research"
+}
+```
+
+**Behind the Scenes:**
+1. Validates the researchId exists in DynamoDB PipelineResearch table
+2. Retrieves the S3 key for the research document
+3. Generates a unique job ID and timestamped job name
+4. Submits an AWS Batch job with:
+   - Container image from ECR
+   - 4 vCPUs, 16GB RAM
+   - 2-hour timeout
+   - 2 retry attempts
+   - Environment variables for S3 input location
+5. Stores job metadata in DynamoDB PipelineBatchJobs table with:
+   - 30-day TTL for automatic cleanup
+   - Research ID association for lookup
+   - Log stream name for monitoring
+
+### Get Pipeline Job Logs
+**GET** `/logs/{researchId}`
+
+Retrieves the status and logs for a pipeline job. Poll this endpoint every 5 seconds to monitor progress.
+
+**Path Parameters:**
+- `researchId`: The research document ID (same as used in /submit)
+
+**Success Response (200 OK):**
+```json
+{
+  "jobId": "12345678-1234-1234-1234-123456789abc",
+  "researchId": "research123",
+  "status": "RUNNING",
+  "createdAt": "2024-12-15T14:30:22Z",
+  "logs": [
+    {
+      "timestamp": 1702652422000,
+      "message": "Starting pipeline processing..."
+    },
+    {
+      "timestamp": 1702652425000,
+      "message": "Stage 1: Analyzing research document"
+    },
+    {
+      "timestamp": 1702652430000,
+      "message": "Found 5 key insights in research"
+    }
+  ],
+  "logStreamUrl": "https://console.aws.amazon.com/cloudwatch/..."
+}
+```
+
+**Response Field Details:**
+- `jobId`: AWS Batch job ID
+- `researchId`: The research document ID
+- `status`: Current job status - one of:
+  - `SUBMITTED`: Job has been submitted to the queue
+  - `PENDING`: Job is waiting for resources
+  - `RUNNABLE`: Job is ready to run
+  - `STARTING`: Container is starting
+  - `RUNNING`: Job is actively processing
+  - `SUCCEEDED`: Job completed successfully
+  - `FAILED`: Job failed (check logs for details)
+- `createdAt`: When the job was submitted
+- `logs`: Array of log entries sorted by timestamp
+  - `timestamp`: Unix timestamp in milliseconds
+  - `message`: Log message content
+- `logStreamUrl`: Direct link to CloudWatch logs (optional)
+
+**Error Responses:**
+
+404 Not Found (No job found):
+```json
+{
+  "error": "No job found for this research"
+}
+```
+
+**Status Transitions:**
+```
+SUBMITTED → PENDING → RUNNABLE → STARTING → RUNNING → SUCCEEDED/FAILED
+```
+
+**Log Message Patterns:**
+The logs contain progress indicators that can be parsed to show detailed progress:
+- `"Stage 1"` or `"starting"`: Initialization phase
+- `"Stage 2"` or `"processing"`: Research analysis
+- `"Stage 3"` or `"analysis"`: Innovation ideation
+- `"Stage 4"` or `"innovation"`: Concept development
+- `"Stage 5"` or `"github"`: GitHub repository setup
+- `"Issue created"`: Individual GitHub issue created
+- `https://github.com/...`: GitHub repository URL when complete
+
+### Pipeline Processing Stages
+
+The innovation pipeline runs through 5 main stages:
+
+1. **Research Analysis** (3-5 minutes)
+   - Parses research document from S3
+   - Extracts key insights and patterns
+   - Identifies innovation opportunities
+
+2. **Innovation Ideation** (3-5 minutes)
+   - Generates 10-15 innovation concepts
+   - Evaluates feasibility and impact
+   - Prioritizes top ideas
+
+3. **Concept Development** (3-5 minutes)
+   - Develops detailed implementation plans
+   - Creates technical specifications
+   - Defines success metrics
+
+4. **GitHub Repository Setup** (2-3 minutes)
+   - Creates new repository in mvp-builder-app org
+   - Sets up README with project overview
+   - Configures repository settings
+
+5. **Issue Creation** (3-5 minutes)
+   - Creates 20-30 GitHub issues
+   - Adds detailed descriptions and acceptance criteria
+   - Assigns labels and milestones
+
+**Total Processing Time:** 10-15 minutes typical, up to 22 minutes for complex research
+
+### Integration with Frontend
+
+The frontend uses the `innovationPipelineService.ts` to interact with the Batch API:
+
+```typescript
+// Start a pipeline job
+const response = await innovationPipelineService.startPipeline(
+  researchDocId,  // The research document ID
+  username        // Username for tracking (optional)
+);
+
+// Poll for completion
+const status = await innovationPipelineService.pollJobCompletion(
+  researchDocId,
+  (progress) => {
+    console.log(`Progress: ${progress.overallProgress}%`);
+    console.log(`Current stage: ${progress.stageName}`);
+  },
+  180,  // Max attempts (180 * 5s = 15 minutes)
+  5000  // Poll interval (5 seconds)
+);
+
+// Results available when status.status === 'COMPLETED'
+if (status.status === 'COMPLETED') {
+  console.log(`GitHub repo: ${status.results.githubRepoUrl}`);
+  console.log(`Issues created: ${status.results.issuesCreated}`);
+}
+```
+
+### Environment Variables
+
+The frontend requires:
+```env
+VITE_BATCH_PIPELINE_URL=https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod
+```
+
+### Prerequisites
+
+Before submitting a pipeline job:
+1. The researchId must exist in the DynamoDB PipelineResearch table
+2. The research document must be uploaded to S3 at the registered location
+3. The research document should contain market research data to process
+
+### Rate Limiting & Polling
+
+- **Polling Interval:** 5 seconds (recommended by AWS for Batch jobs)
+- **Max Duration:** 2 hours (job timeout)
+- **Retry Logic:** Jobs automatically retry 2 times on failure
+- **Concurrent Jobs:** Only one job per researchId at a time
+
 ## 🌐 CORS Configuration
 
 The API supports Cross-Origin Resource Sharing (CORS) with the following configuration:
