@@ -59,10 +59,11 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
 
     const pollStatus = async () => {
       try {
-        // Force use of new API Gateway for innovation pipeline in production
-        const apiBase = window.location.hostname === 'oceanstudio.io' 
-          ? 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production'
-          : (import.meta.env.VITE_INNOVATION_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production');
+        // Use the correct Innovation Pipeline API Gateway URL (9hv22ga3uh)
+        // Fallback to main API Gateway if innovation API not configured
+        const apiBase = import.meta.env.VITE_INNOVATION_API_BASE_URL || 
+                       import.meta.env.VITE_API_BASE_URL || 
+                       'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
           
         const response = await fetch(`${apiBase}/status/${jobId}`);
         
