@@ -425,16 +425,63 @@ curl https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod/logs/test-resea
 - IAM roles with minimal permissions
 - Network isolation via VPC
 
-## Future Enhancements
+## Enhanced API Routes (Planned)
 
-1. **WebSocket Support**: Real-time status updates instead of polling
-2. **Multiple LLM Providers**: Fallback options for resilience
-3. **Custom Templates**: User-defined innovation frameworks
-4. **Batch Processing**: Submit multiple research documents
-5. **Export Options**: Download results as PDF/DOCX
-6. **Webhook Notifications**: Notify external systems on completion
-7. **Cost Tracking**: Per-job cost breakdown
-8. **Priority Queues**: Fast-track urgent research
+The following enhanced routes are designed and ready for deployment in `cdk_batch_pipeline_enhanced.py`:
+
+### ✅ Routes Ready for Deployment
+
+1. **Enhanced POST /submit**
+   - 409 conflict detection for running jobs
+   - Input validation and sanitization
+   - S3 file verification before submission
+   - Force flag to override existing jobs
+   
+2. **GET /status/{jobId}**
+   - Direct job status lookup by AWS Batch job ID
+   - Runtime metrics and detailed progress
+   
+3. **GET /jobs**
+   - List all jobs with pagination support
+   - Filter by status or researchId
+   - Sort by creation date
+   
+4. **DELETE /jobs/{jobId}**
+   - Cancel running jobs
+   - Reason tracking for audit trail
+   
+5. **GET /results/{researchId}**
+   - Retrieve pipeline outputs from S3
+   - Presigned URLs for secure downloads
+   - Multiple output format support
+   
+6. **GET /health**
+   - System health check
+   - AWS Batch queue status
+   - DynamoDB connectivity check
+
+### 🔑 Key Features in Enhanced Stack
+
+- **Conflict Detection**: Prevents duplicate jobs unless forced
+- **Input Validation**: Sanitizes researchId format (alphanumeric + hyphens)
+- **S3 Verification**: Confirms research document exists before job submission
+- **Presigned URLs**: Secure temporary download links (1-hour expiry)
+- **Pagination**: Efficiently handle large job lists (default 20, max 100)
+- **Status Tracking**: Real-time updates from AWS Batch with runtime calculations
+- **Comprehensive Error Handling**: Detailed error messages with troubleshooting hints
+
+### 🔄 Additional Future Enhancements
+
+1. **Rate Limiting**: API Gateway throttling (10 req/sec per IP)
+2. **Webhook Support**: POST callbacks on job completion/failure
+3. **Retry Logic**: Automatic retry with exponential backoff
+4. **WebSocket Support**: Real-time status updates without polling
+5. **Multiple LLM Providers**: Fallback options for resilience
+6. **Custom Templates**: User-defined innovation frameworks
+7. **Batch Processing**: Submit multiple research documents
+8. **Export Options**: Download results as PDF/DOCX
+9. **Cost Tracking**: Per-job cost breakdown with billing alerts
+10. **Priority Queues**: Fast-track urgent research with dedicated resources
 
 ## Support
 

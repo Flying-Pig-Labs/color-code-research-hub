@@ -777,6 +777,29 @@ Before submitting a pipeline job:
 - **Retry Logic:** Jobs automatically retry 2 times on failure
 - **Concurrent Jobs:** Only one job per researchId at a time
 
+### Currently Implemented Endpoints
+
+The AWS Batch Pipeline API currently provides two core endpoints:
+- **POST /submit** - Submit a research document for processing
+- **GET /logs/{researchId}** - Get status and logs for a running job
+
+### Enhanced Endpoints (Ready for Deployment)
+
+Additional endpoints are implemented in `cdk_batch_pipeline_enhanced.py` and ready for deployment:
+
+- **GET /status/{jobId}** - Direct status lookup by job ID
+- **GET /jobs** - List all jobs with pagination and filtering
+- **DELETE /jobs/{jobId}** - Cancel running jobs
+- **GET /results/{researchId}** - Download pipeline outputs
+- **GET /health** - System health check
+
+These enhanced endpoints provide:
+- Conflict detection (409 responses for duplicate jobs)
+- Input validation and S3 verification
+- Presigned URLs for secure result downloads
+- Pagination support for job listings
+- Comprehensive error handling with troubleshooting hints
+
 ## 🌐 CORS Configuration
 
 The API supports Cross-Origin Resource Sharing (CORS) with the following configuration:
