@@ -244,18 +244,30 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   {report.objective || report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A'}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {report.createdAt && report.processingCompletedAt ? (
-                    (() => {
+                  {(() => {
+                    // Try to calculate from timestamps first (for new records)
+                    if (report.createdAt && report.processingCompletedAt) {
                       const startTime = new Date(report.createdAt).getTime();
                       const endTime = new Date(report.processingCompletedAt).getTime();
                       const durationMs = endTime - startTime;
-                      const minutes = Math.floor(durationMs / 1000 / 60);
-                      const seconds = Math.floor((durationMs / 1000) % 60);
+                      
+                      // Only use if duration is positive (timestamps are different)
+                      if (durationMs > 0) {
+                        const minutes = Math.floor(durationMs / 1000 / 60);
+                        const seconds = Math.floor((durationMs / 1000) % 60);
+                        return <span className="font-mono">{minutes}m {seconds}s</span>;
+                      }
+                    }
+                    
+                    // Use processingTimeMs for existing records where timestamps are the same
+                    if (report.processingTimeMs) {
+                      const minutes = Math.floor(report.processingTimeMs / 1000 / 60);
+                      const seconds = Math.floor((report.processingTimeMs / 1000) % 60);
                       return <span className="font-mono">{minutes}m {seconds}s</span>;
-                    })()
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
+                    }
+                    
+                    return <span className="text-gray-400">-</span>;
+                  })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex space-x-2">

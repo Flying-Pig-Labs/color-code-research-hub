@@ -594,11 +594,30 @@ class ReportProcessingService {
      * @param {Object} metadata - Metadata to store
      */
     async saveReportMetadata(metadata) {
+        // First, try to get the existing record to preserve createdAt
+        let originalCreatedAt = null;
+        try {
+            const { GetItemCommand } = require('@aws-sdk/client-dynamodb');
+            const getCommand = new GetItemCommand({
+                TableName: this.tableName,
+                Key: {
+                    reportId: { S: metadata.reportId }
+                }
+            });
+            const existingRecord = await dynamodb.send(getCommand);
+            if (existingRecord.Item && existingRecord.Item.createdAt) {
+                originalCreatedAt = existingRecord.Item.createdAt.S;
+                console.log(`📅 Preserving original createdAt: ${originalCreatedAt}`);
+            }
+        } catch (error) {
+            console.log('📝 No existing record found, will create new');
+        }
+
         const item = {
             reportId: { S: metadata.reportId },
             team: { S: metadata.team },
             username: { S: metadata.username },
-            createdAt: { S: new Date().toISOString() },
+            createdAt: { S: originalCreatedAt || new Date().toISOString() }, // Use original if exists, otherwise current time
             objective: { S: metadata.objective },
             // Store full S3 paths
             s3BasePath: { S: metadata.s3Paths.basePath },
