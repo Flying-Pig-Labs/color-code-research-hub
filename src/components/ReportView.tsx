@@ -131,14 +131,27 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
   };
 
   const scrollToSection = (sectionId: string) => {
-    // Try to find the element by ID first (for the title with the actual ID)
+    // Find the element by ID
     const titleElement = document.getElementById(sectionId);
-    if (titleElement && contentRef.current) {
-      const offset = titleElement.offsetTop - 100; // Account for header
-      contentRef.current.scrollTo({
-        top: offset,
-        behavior: 'smooth'
+    if (titleElement) {
+      // Scroll the element into view
+      titleElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
+      
+      // Alternative: If we have a contentRef, use it
+      if (contentRef.current) {
+        const scrollContainer = contentRef.current.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollContainer) {
+          const offset = titleElement.offsetTop - 100; // Account for header
+          scrollContainer.scrollTo({
+            top: offset,
+            behavior: 'smooth'
+          });
+        }
+      }
+      
       setActiveSection(sectionId);
       setTocOpen(false); // Close mobile ToC
     }
@@ -184,8 +197,11 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
       // Extract the research ID (reportId is the correct field)
       const researchId = report.metadata.reportId;
       
-      // Call the innovation pipeline API using the correct service
-      const response = await innovationPipelineService.startPipeline(researchId, 'user');
+      // Get the team from metadata, default to 'red' if not specified
+      const team = report.metadata.team || 'red';
+      
+      // Call the innovation pipeline API with the team parameter
+      const response = await innovationPipelineService.startPipeline(researchId, 'user', team);
       
       // Show success message
       toast.success('Innovation pipeline started!', {

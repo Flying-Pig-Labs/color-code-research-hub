@@ -212,9 +212,10 @@ export function renderMarkdownToHtml(markdown: string): string {
   // Basic markdown to HTML conversion
   // For a production app, consider using a library like marked or remark
   let html = markdown
-    // Code blocks first (including language specifiers like ```markdown)
-    .replace(/```[\w]*\n([^`]+)```/gim, '<pre><code>$1</code></pre>')
-    .replace(/```([^`]+)```/gim, '<pre><code>$1</code></pre>')
+    // Code blocks with language specifiers (e.g., ```markdown, ```javascript)
+    .replace(/```[a-zA-Z]*\s*\n([\s\S]*?)```/gm, '<pre><code>$1</code></pre>')
+    // Code blocks without language specifiers
+    .replace(/```([\s\S]*?)```/gm, '<pre><code>$1</code></pre>')
     // Inline code
     .replace(/`([^`]+)`/gim, '<code>$1</code>')
     // Headers
