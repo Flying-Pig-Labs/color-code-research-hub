@@ -232,7 +232,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   {(() => {
                     if (!report.createdAt) return 'N/A';
                     const date = new Date(report.createdAt);
-                    return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'MMM dd, yyyy HH:mm');
+                    return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'M/d/yyyy h:mma');
                   })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

@@ -309,7 +309,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                   </h1>
                   <div className="flex items-center text-sm text-gray-500">
                     <Clock className="h-3 w-3 mr-1" />
-                    {format(new Date(report.metadata.createdAt), 'MMM dd, yyyy HH:mm')}
+                    {format(new Date(report.metadata.createdAt), 'M/d/yyyy h:mma')}
                   </div>
                 </div>
               </div>
