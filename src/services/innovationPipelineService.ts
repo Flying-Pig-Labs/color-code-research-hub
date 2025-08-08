@@ -90,11 +90,13 @@ class InnovationPipelineService {
    * Start a new innovation pipeline job using AWS Batch
    * @param researchDocId - The ID of the research document to process
    * @param username - The username for the job (not used by Batch API)
+   * @param team - The team (red/black/white) to help locate the research in S3
    * @returns Promise with job details
    */
   async startPipeline(
     researchDocId: string, 
-    username: string = 'user'
+    username: string = 'user',
+    team?: string
   ): Promise<StartPipelineResponse> {
     try {
       const response = await fetch(`${PIPELINE_API_BASE}/submit`, {
@@ -104,6 +106,7 @@ class InnovationPipelineService {
         },
         body: JSON.stringify({
           researchId: researchDocId, // Batch API expects 'researchId' not 'researchDocId'
+          team: team, // Include team to help backend construct correct S3 path
         }),
       });
 

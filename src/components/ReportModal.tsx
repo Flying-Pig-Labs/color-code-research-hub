@@ -62,8 +62,11 @@ export function ReportModal({
 
   const handleIdeate = async () => {
     try {
-      // Start the pipeline
-      const response = await innovationPipelineService.startPipeline(reportId, 'user');
+      // Get the team from reportData, default to 'red' if not specified
+      const team = reportData?.team || 'red';
+      
+      // Start the pipeline with the team parameter
+      const response = await innovationPipelineService.startPipeline(reportId, 'user', team);
       
       // Don't show the progress modal - just show success notification
       // The PipelineJobsTable will track the job
