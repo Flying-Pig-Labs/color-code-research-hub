@@ -63,8 +63,11 @@ def get_perplexity_api_key() -> str:
         raise
 
 
-def upload_to_s3(content: str, metadata: Dict[str, Any], research_id: str, user_id: str = "fprior", team: str = "red") -> Dict[str, str]:
+def upload_to_s3(content: str, metadata: Dict[str, Any], research_id: str, user_id: str = "fprior", team: str = None) -> Dict[str, str]:
     """Upload research results to S3 with new structure and return S3 info."""
+    if not team:
+        raise ValueError("Team is required for S3 upload")
+    
     try:
         # Create S3 prefix for this research with team folder
         s3_prefix = f"users/{user_id}/research/{team}/{research_id}"
@@ -498,7 +501,13 @@ def handler(event, context):
                 }
 
             # Upload initial request data to S3 using unified structure
-            team = metadata.get("team", "red")
+            team = metadata.get("team")
+            if not team:
+                return {
+                    "statusCode": 400,
+                    "headers": {**cors_headers, "Content-Type": "application/json"},
+                    "body": json.dumps({"error": "Team is required for research submission"}),
+                }
             user_id = metadata.get("userId", "fprior")
             
             # Upload request.json

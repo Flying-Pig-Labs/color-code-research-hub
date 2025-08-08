@@ -119,9 +119,21 @@ exports.handler = async (event) => {
                             }
                             
                             // Get S3 paths from DynamoDB
-                            const s3BasePath = newImage.s3BasePath?.S;
                             const userId = newImage.userId?.S || newImage.username?.S || 'fprior';
-                            const team = newImage.team?.S || 'red';
+                            const team = newImage.team?.S;
+                            
+                            if (!team) {
+                                console.error(`ERROR: Missing team for report ${reportId}. Cannot process without team.`);
+                                throw new Error('Team is required for report processing');
+                            }
+                            
+                            // Get or reconstruct s3BasePath
+                            let s3BasePath = newImage.s3BasePath?.S;
+                            if (!s3BasePath) {
+                                // Reconstruct path if not set (for backward compatibility)
+                                s3BasePath = `users/${userId}/research/${team}/${reportId}`;
+                                console.log(`Reconstructed s3BasePath: ${s3BasePath}`);
+                            }
                             
                             // Upload response.json to S3
                             const responseKey = `${s3BasePath}/response.json`;
