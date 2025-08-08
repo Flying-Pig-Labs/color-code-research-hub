@@ -46,8 +46,9 @@ export const PipelineJobsTable = () => {
   // Fetch running jobs from API
   const fetchJobs = async () => {
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || 
-                     'https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production';
+      // Use the Pipeline API Gateway where these endpoints are deployed
+      const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
+                     'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
       
       const response = await fetch(`${apiBase}/api/status/running`);
       
@@ -77,8 +78,9 @@ export const PipelineJobsTable = () => {
   const refreshJob = async (jobId: string) => {
     setRefreshing(jobId);
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || 
-                     'https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production';
+      // Use the Pipeline API Gateway where these endpoints are deployed
+      const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
+                     'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
       
       const response = await fetch(`${apiBase}/api/plan/async/status/${jobId}`);
       

@@ -60,9 +60,9 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
 
     const pollStatus = async () => {
       try {
-        // Poll the status endpoint as specified in the API contract
-        const apiBase = import.meta.env.VITE_API_BASE_URL || 
-                       'https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production';
+        // Poll the status endpoint on Pipeline API Gateway where it's deployed
+        const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
+                       'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
         
         const response = await fetch(`${apiBase}/api/plan/async/status/${jobId}`);
         
