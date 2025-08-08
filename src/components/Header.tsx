@@ -76,9 +76,9 @@ const Header = ({
               <>
                 <div className="h-6 w-px bg-border" />
                 <Button
-                  variant={location.pathname === "/" ? "default" : "ghost"}
+                  variant={location.pathname === "/home" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/home")}
                   className="gap-2"
                 >
                   <FileText className="h-4 w-4" />
