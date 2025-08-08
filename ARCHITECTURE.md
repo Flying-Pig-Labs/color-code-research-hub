@@ -1,23 +1,45 @@
 # Color Code Research Hub - Architecture Overview
 
+> **Last Updated**: January 8, 2025
+> **Version**: 2.1.0
+
 ## 🏗️ System Architecture
 
 ### Frontend (React + Vite)
 - **Location**: `/src`
 - **Deployment**: AWS Amplify (auto-deploys on git push to main)
-- **URL**: https://main.d2ql2vtt0qnyww.amplifyapp.com/
+- **URL**: https://oceanstudio.io
 - **Key Environment Variables**:
-  - `VITE_API_BASE_URL`: API Gateway endpoint (production)
+  - `VITE_API_BASE_URL`: Main API Gateway (zi612qxxv0)
+  - `VITE_BATCH_PIPELINE_URL`: Pipeline API Gateway (9hv22ga3uh)
 
-### Backend (AWS Lambda + API Gateway)
-- **Location**: `/lambda/handlers`
-- **Deployment**: AWS SAM (manual deployment required)
-- **API Gateway**: https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production
+### Backend Infrastructure
+
+#### Main API Gateway
+- **ID**: zi612qxxv0
+- **URL**: https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production
+- **Handles**: Plan generation, research reports, core functionality
+- **Lambda Functions**: 10+ functions for various endpoints
+
+#### Pipeline API Gateway (Innovation Pipeline)
+- **ID**: 9hv22ga3uh
+- **URL**: https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod
+- **Handles**: Innovation idea generation from research reports
+- **Backend**: AWS Batch for containerized processing
+- **Lambda Functions**: `pipeline-submit-job`, `pipeline-get-logs`
+
+### Data Storage
+- **DynamoDB Tables**:
+  - `ResearchReports`: Main research data storage
+  - `PlanGenerationJobs-production`: Async job tracking
+- **S3 Buckets**:
+  - `color-code-research-results-984906149037`: Research reports
+  - `pipeline-data-984906149037-us-east-1`: Pipeline processing data
 
 ### Infrastructure
 - **Location**: `/infrastructure`
 - **Template**: `template.yaml` (SAM template)
-- **DynamoDB Table**: `PlanGenerationJobs-production`
+- **AWS Account**: MVP Account (984906149037) - NEVER use personal account
 
 ## 🔄 Async Plan Generation Architecture
 
@@ -143,8 +165,58 @@ git push origin main
 ```bash
 cd /Users/williamprior/Development/GitHub/color-code-research-hub/infrastructure
 sam build
-sam deploy --profile personal --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
+sam deploy --profile mvp --stack-name color-code-research-hub --capabilities CAPABILITY_IAM --resolve-s3 --no-confirm-changeset --region us-east-1
 ```
+
+⚠️ **CRITICAL**: Always use `--profile mvp` (NOT personal!)
+
+## 🚀 Innovation Pipeline Architecture
+
+### Overview
+The Innovation Pipeline is a separate AWS Batch-based system that processes research reports to generate actionable innovation ideas and create GitHub repositories with structured issues.
+
+### Architecture Components
+
+#### Pipeline API Gateway
+- **ID**: 9hv22ga3uh
+- **Stage**: prod
+- **Endpoints**:
+  - `POST /submit`: Submit job to AWS Batch
+  - `GET /logs/{researchId}`: Poll for status and logs
+
+#### AWS Batch Components
+- **Compute Environment**: ECS-based container processing
+- **Job Queue**: Multi-step pipeline queue
+- **Job Definition**: Containerized LLM processing pipeline
+- **Processing Time**: 10-15 minutes typical
+
+#### Lambda Functions
+1. **pipeline-submit-job**
+   - Validates research exists
+   - Submits job to AWS Batch
+   - Returns job ID for tracking
+
+2. **pipeline-get-logs**
+   - Queries job status from AWS Batch
+   - Retrieves CloudWatch logs
+   - Returns formatted status response
+
+### Data Flow
+```
+1. User clicks IDEATE button → Frontend
+2. Frontend calls POST /submit with researchId
+3. Lambda submits job to AWS Batch queue
+4. Batch runs containerized pipeline (10-15 min)
+5. Frontend polls GET /logs/{researchId} every 5s
+6. Pipeline generates GitHub repo with issues
+7. Frontend displays completion with repo link
+```
+
+### Frontend Integration
+- **Service**: `innovationPipelineService.ts`
+- **Component**: `PipelineProgress.tsx`
+- **Polling**: 5-second intervals, 15-minute timeout
+- **Status Mapping**: Batch status → UI-friendly format
 
 ## 🧠 Perplexity API Report Processing Architecture
 

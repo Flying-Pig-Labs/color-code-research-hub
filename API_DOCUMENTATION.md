@@ -1,9 +1,91 @@
 # API Documentation - Color Code Research Hub
 
-## Base URL
+> **Last Updated**: January 8, 2025
+> **Version**: 2.1.0
+
+## API Gateways
+
+### Main API Gateway
 ```
-https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production
+https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production
 ```
+Handles plan generation, research reports, and core functionality.
+
+### Pipeline API Gateway (Innovation Pipeline)
+```
+https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod
+```
+Handles innovation pipeline processing via AWS Batch.
+
+## 🚀 Innovation Pipeline API
+
+### Submit Pipeline Job
+**POST** `https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod/submit`
+
+Submit a research report for innovation idea generation.
+
+**Request Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "researchId": "report-2024-12-15-123456"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "jobId": "12345678-1234-1234-1234-123456789abc",
+  "jobName": "pipeline-report123-20241215-143022",
+  "status": "SUBMITTED",
+  "message": "Pipeline job submitted successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Missing researchId
+- **404 Not Found**: Research not found
+
+### Get Pipeline Status
+**GET** `https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod/logs/{researchId}`
+
+Poll for job status and logs. Recommended polling interval: 5-10 seconds.
+
+**Response (200 OK):**
+```json
+{
+  "jobId": "uuid-string",
+  "researchId": "your-research-id",
+  "status": "SUBMITTED | PENDING | RUNNABLE | STARTING | RUNNING | SUCCEEDED | FAILED",
+  "createdAt": "2024-12-15T10:30:00",
+  "logs": [
+    {
+      "timestamp": 1702634400000,
+      "message": "Starting pipeline execution..."
+    },
+    {
+      "timestamp": 1702634401000,
+      "message": "Stage 1: Research Analysis started"
+    }
+  ],
+  "logStreamUrl": "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/..."
+}
+```
+
+**Status Values:**
+- `SUBMITTED`: Job submitted to queue
+- `PENDING`: Waiting for resources
+- `RUNNABLE`: Ready to run
+- `STARTING`: Container starting
+- `RUNNING`: Pipeline actively executing
+- `SUCCEEDED`: Pipeline completed successfully
+- `FAILED`: Pipeline failed
+
+**Processing Time:** Typically 10-15 minutes
 
 ## 🔄 Async Plan Generation (Recommended)
 
@@ -164,6 +246,43 @@ Creates issues in GitHub repository.
   ]
 }
 ```
+
+## 📊 Research Reports API
+
+### List Research Reports
+**GET** `/api/research/reports`
+
+Returns list of all research reports with AI-generated summaries.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "reports": [
+    {
+      "reportId": "df6fe952-7296-4185-9dd5-4a9fab20cd54",
+      "createdAt": "2025-08-06T10:37:07.144Z",
+      "objective": "K2 Awards Research",
+      "team": "red",
+      "username": "fprior",
+      "processedSummary": "The trophy and awards industry is ripe for disruption...",
+      "processingTimeMs": 18124,
+      "summaryWordCount": 108,
+      "s3ReportKey": "users/fprior/research/red/df6fe952-7296-4185-9dd5-4a9fab20cd54/report.md",
+      "status": "completed"
+    }
+  ],
+  "count": 2
+}
+```
+
+**DynamoDB Fields:**
+- `reportId`: Unique identifier
+- `objective`: Research target/goal (displayed as "Target" in UI)
+- `processingTimeMs`: Processing duration in milliseconds (displayed as "Duration")
+- `processedSummary`: AI-generated summary text
+- `team`: Team designation (red/black/white)
+- `s3ReportKey`: S3 location of full report
 
 ## 📚 GitHub Integration
 

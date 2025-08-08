@@ -1,6 +1,9 @@
 # 🏗️ Infrastructure Documentation - Color Code Research Hub
 
 > **Complete infrastructure as code documentation using AWS SAM**
+> **Last Updated**: January 8, 2025
+> **Version**: 2.1.0
+> **AWS Account**: MVP (984906149037) - NEVER use personal account!
 
 ## 📋 Table of Contents
 
@@ -36,12 +39,35 @@ The infrastructure for Color Code Research Hub is defined using AWS SAM (Serverl
 
 - **AWS SAM**: Infrastructure definition and deployment
 - **CloudFormation**: Underlying infrastructure provisioning
-- **Lambda**: Serverless compute
-- **API Gateway**: REST API management
-- **DynamoDB**: NoSQL database for job tracking
-- **Secrets Manager**: Secure credential storage
-- **S3**: Deployment artifact storage
+- **Lambda**: Serverless compute (10+ functions)
+- **API Gateway**: 2 REST APIs (Main + Pipeline)
+- **DynamoDB**: 2 tables (ResearchReports, PlanGenerationJobs)
+- **Secrets Manager**: API keys and tokens
+- **S3**: Multiple buckets for data storage
 - **CloudWatch**: Logging and monitoring
+- **AWS Batch**: Innovation pipeline processing
+
+### Current Infrastructure
+
+#### API Gateways
+1. **Main API**: zi612qxxv0 (production stage)
+   - Handles plan generation, research reports
+   - 10+ Lambda functions attached
+
+2. **Pipeline API**: 9hv22ga3uh (prod stage)
+   - Handles innovation pipeline via AWS Batch
+   - 2 Lambda functions (submit, logs)
+
+#### DynamoDB Tables
+1. **ResearchReports**: Research data with AI summaries
+   - Key fields: reportId, objective, processingTimeMs
+   
+2. **PlanGenerationJobs-production**: Async job tracking
+   - TTL enabled (30 days)
+
+#### S3 Buckets
+1. **color-code-research-results-984906149037**: Research reports
+2. **pipeline-data-984906149037-us-east-1**: Pipeline data
 
 ## Architecture
 
@@ -516,7 +542,18 @@ aws secretsmanager update-secret \
   --region us-east-1
 ```
 
-## Deployment Guide
+## 🚀 Deployment Guide
+
+### ⚠️ CRITICAL: AWS Account Selection
+
+**ALWAYS use MVP account (984906149037):**
+```bash
+# Verify you're using the correct profile
+aws sts get-caller-identity --profile mvp
+# Should show Account: "984906149037"
+```
+
+**NEVER use personal account (418272766513)!**
 
 ### Prerequisites
 

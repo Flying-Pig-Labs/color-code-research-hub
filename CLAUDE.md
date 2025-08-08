@@ -1,7 +1,7 @@
 # CLAUDE.md - Critical System Documentation
 
-> **Last Updated**: 2025-01-04
-> **Version**: 2.0.1
+> **Last Updated**: 2025-01-08
+> **Version**: 2.1.0
 > **Status**: Production
 
 ## 🚨🚨🚨 CRITICAL AWS ACCOUNT RULES - NEVER VIOLATE!!! 🚨🚨🚨
@@ -113,11 +113,16 @@ Ready when you are, handsome! 😘
 
 ### 🌐 Production System URLs (MVP Account: 984906149037)
 - **Frontend URL**: https://oceanstudio.io
-- **API Gateway**: https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production
+- **Main API Gateway**: https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production
+- **Pipeline API Gateway**: https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod (multi-step-llm-pipeline-api)
 - **AWS Region**: us-east-1
 - **CloudFormation Stack**: color-code-research-hub
-- **DynamoDB Table**: ResearchReports
-- **S3 Bucket**: color-code-research-results-984906149037
+- **DynamoDB Tables**: 
+  - ResearchReports (main research data with fields: reportId, objective, processingTimeMs, etc.)
+  - PlanGenerationJobs-production (async job tracking)
+- **S3 Buckets**:
+  - color-code-research-results-984906149037 (research reports)
+  - pipeline-data-984906149037-us-east-1 (pipeline processing)
 
 ### Phase Generation System (December 2024)
 The system generates project plans through a sophisticated 3-step LLM orchestration:
@@ -136,10 +141,16 @@ The system generates project plans through a sophisticated 3-step LLM orchestrat
    - Rate limit protection with exponential backoff
 
 ### API Endpoints Status
+
+#### Main API Gateway (zi612qxxv0)
 - ✅ **WORKING**: `/api/plan/generate-cli-plan` - Full orchestration, proper error handling
 - ✅ **WORKING**: `/api/research/reports` - Lists all research reports with AI summaries
 - ❌ **BROKEN**: `/api/plan/generate-phases` - 500 errors, fragile implementation
 - ❌ **INCOMPLETE**: `/api/plan/v2/generate-full-plan` - Only returns 2 placeholder epics
+
+#### Pipeline API Gateway (9hv22ga3uh) - Innovation Pipeline
+- ✅ **WORKING**: `POST /submit` - Submit innovation pipeline job (CORS fixed Jan 8)
+- ✅ **WORKING**: `GET /logs/{researchId}` - Poll for job status and logs
 
 ## THE FUNDAMENTAL PROBLEM
 
@@ -380,7 +391,70 @@ The deployment will:
 3. Check that each epic has a proper role assignment
 4. Check that Issue View shows all issues properly formatted
 
+## 🚀 Innovation Pipeline System (NEW - January 2025)
+
+### Overview
+The Innovation Pipeline is a multi-step LLM system that processes research reports to generate actionable innovation ideas and create GitHub repositories with structured issues.
+
+### Pipeline API Details
+**Base URL**: https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod
+
+#### POST /submit
+Submit a new pipeline job for processing:
+```json
+// Request
+{
+  "researchId": "report-2024-12-15-123456"
+}
+
+// Response (200 OK)
+{
+  "jobId": "12345678-1234-1234-1234-123456789abc",
+  "jobName": "pipeline-report123-20241215-143022",
+  "status": "SUBMITTED",
+  "message": "Pipeline job submitted successfully"
+}
+```
+
+#### GET /logs/{researchId}
+Poll for job status and logs:
+```json
+// Response
+{
+  "jobId": "uuid-string",
+  "researchId": "your-research-id",
+  "status": "SUBMITTED | RUNNING | SUCCEEDED | FAILED",
+  "createdAt": "2024-12-15T10:30:00",
+  "logs": [
+    {
+      "timestamp": 1702634400000,
+      "message": "Stage 1: Research Analysis started"
+    }
+  ],
+  "logStreamUrl": "https://console.aws.amazon.com/cloudwatch/..."
+}
+```
+
+### Frontend Integration
+- **Service**: `src/services/innovationPipelineService.ts`
+- **UI Component**: IDEATE button in ReportModal component
+- **Progress Tracking**: PipelineProgress component with real-time updates
+- **Polling Strategy**: 5-second intervals, 15-minute timeout
+
+### AWS Infrastructure
+- **Backend**: AWS Batch for containerized processing
+- **Lambda Functions**: `pipeline-submit-job`, `pipeline-get-logs`
+- **Processing Time**: 10-15 minutes typical
+- **S3 Storage**: pipeline-data-984906149037-us-east-1
+
 ## 📅 RECENT UPDATES (January 2025)
+
+### Critical Bug Fixes (January 8, 2025)
+- **✅ Pipeline API CORS Fixed**: Added proper CORS headers to Lambda responses
+- **✅ DynamoDB Field Mapping**: Fixed frontend to use correct fields:
+  - Target column: now displays `objective` field
+  - Duration column: now displays `processingTimeMs` converted to minutes/seconds
+- **✅ TypeScript Interfaces Updated**: Added missing fields to ResearchReport interface
 
 ### Critical Bug Fixes (January 4, 2025)
 - **✅ API Gateway URL Fixed**: Corrected frontend to use `zi612qxxv0` (deployed API Gateway) instead of non-existent `ojfpuao6c4`
@@ -408,7 +482,22 @@ The deployment will:
 
 ### Current Status
 - **✅ Research Reports System**: Fully functional with AI-generated summaries
+- **✅ Innovation Pipeline**: IDEATE button functional with proper CORS configuration
 - **✅ Frontend**: Live at https://oceanstudio.io with proper API connectivity
-- **✅ API Gateway**: Correctly deployed as `zi612qxxv0` in MVP account
+- **✅ Main API Gateway**: Correctly deployed as `zi612qxxv0` in MVP account
+- **✅ Pipeline API Gateway**: Deployed as `9hv22ga3uh` with AWS Batch backend
 - **⚠️ Plan Generation**: Demo mode (only Phase 1 epics) - line 214 in llm-orchestrator-service.js
 - **❌ Legacy Endpoints**: `/api/plan/generate-phases` still returns 500 errors
+
+## DynamoDB Schema Reference
+
+### ResearchReports Table
+Key fields used by the frontend:
+- `reportId` (String) - Unique identifier
+- `objective` (String) - Research target/objective displayed in Target column
+- `processingTimeMs` (Number) - Processing duration in milliseconds
+- `createdAt` (String) - ISO timestamp
+- `team` (String) - Team designation (red/black/white)
+- `processedSummary` (String) - AI-generated summary
+- `s3ReportKey` (String) - S3 key for full report
+- `username` (String) - User who created the report

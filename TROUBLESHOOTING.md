@@ -1,6 +1,36 @@
 # Troubleshooting Guide - Color Code Research Hub
 
+> **Last Updated**: January 8, 2025
+> **Version**: 2.1.0
+
 ## 🔍 Common Issues and Solutions
+
+## 🆕 Recent Fixes (January 2025)
+
+### Innovation Pipeline CORS Fix (Jan 8, 2025)
+**Issue**: IDEATE button failed with CORS errors
+**Root Cause**: Lambda functions missing CORS headers in responses
+**Solution**: Added CORS headers to all Lambda responses:
+```python
+headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
+}
+```
+
+### DynamoDB Field Mapping Fix (Jan 8, 2025)
+**Issue**: Target and Duration columns showing "N/A"
+**Root Cause**: Frontend looking for wrong field names
+**Solution**: Updated frontend to use correct DynamoDB fields:
+- Target: `report.objective` (was looking for metadata.vendorName)
+- Duration: `report.processingTimeMs` (was looking for pipelineDurationSeconds)
+
+### Research Not Found Error (Jan 8, 2025)
+**Issue**: Pipeline API returning 404 "Research not found"
+**Root Cause**: Backend validating if research exists before allowing job
+**Temporary Fix**: Remove validation check in Lambda
+**Proper Fix**: Create research record before submitting pipeline job
 
 ### Frontend Issues
 
@@ -168,7 +198,7 @@ aws logs tail /aws/lambda/color-code-research-hub-PlanOrchestratorFunction-rN76T
 
 3. Verify DynamoDB record:
 ```bash
-aws dynamodb get-item --table-name PlanGenerationJobs-production --key '{"jobId":{"S":"your-job-id"}}' --profile personal --region us-east-1
+aws dynamodb get-item --table-name PlanGenerationJobs-production --key '{"jobId":{"S":"your-job-id"}}' --profile mvp --region us-east-1
 ```
 
 #### 2. Missing Environment Variables
@@ -176,7 +206,7 @@ aws dynamodb get-item --table-name PlanGenerationJobs-production --key '{"jobId"
 
 **Check Lambda configuration**:
 ```bash
-aws lambda get-function-configuration --function-name color-code-research-hub-PlanOrchestratorFunction-XXX --profile personal --region us-east-1 | jq .Environment.Variables
+aws lambda get-function-configuration --function-name color-code-research-hub-PlanOrchestratorFunction-XXX --profile mvp --region us-east-1 | jq .Environment.Variables
 ```
 
 ### GitHub Integration Issues
@@ -195,28 +225,36 @@ aws lambda get-function-configuration --function-name color-code-research-hub-Pl
 ### View Lambda Logs
 ```bash
 # List all Lambda functions
-aws lambda list-functions --profile personal --region us-east-1 | jq '.Functions[].FunctionName' | grep color-code
+aws lambda list-functions --profile mvp --region us-east-1 | jq '.Functions[].FunctionName' | grep color-code
 
 # Get recent logs
-aws logs tail /aws/lambda/{function-name} --profile personal --region us-east-1 --since 10m
+aws logs tail /aws/lambda/{function-name} --profile mvp --region us-east-1 --since 10m
 
 # Search for errors
-aws logs tail /aws/lambda/{function-name} --profile personal --region us-east-1 --since 1h | grep -i error
+aws logs tail /aws/lambda/{function-name} --profile mvp --region us-east-1 --since 1h | grep -i error
 ```
 
 ### Check DynamoDB
 ```bash
 # Scan for recent jobs
-aws dynamodb scan --table-name PlanGenerationJobs-production --profile personal --region us-east-1 --limit 5
+aws dynamodb scan --table-name PlanGenerationJobs-production --profile mvp --region us-east-1 --limit 5
 
 # Get specific job
-aws dynamodb get-item --table-name PlanGenerationJobs-production --key '{"jobId":{"S":"job-id"}}' --profile personal --region us-east-1
+aws dynamodb get-item --table-name PlanGenerationJobs-production --key '{"jobId":{"S":"job-id"}}' --profile mvp --region us-east-1
+
+# Scan ResearchReports table
+aws dynamodb scan --table-name ResearchReports --profile mvp --region us-east-1 --limit 5
 ```
 
 ### Test API Endpoints
 ```bash
-# Health check
-curl https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/health
+# Health check (Main API)
+curl https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production/health
+
+# Test Pipeline API
+curl -X POST https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod/submit \
+  -H "Content-Type: application/json" \
+  -d '{"researchId": "test-123"}' -v
 
 # Start async job
 curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/api/plan/async/start \
