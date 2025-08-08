@@ -56,7 +56,7 @@ const Landing = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-blue-400 text-blue-300 hover:bg-blue-900/50 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
+                className="border-blue-400 text-gray-700 bg-blue-100/20 hover:bg-blue-100/30 hover:text-gray-800 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
               >
                 <Play className="mr-2 h-4 sm:h-5 w-4 sm:w-5" /> Watch 2-min Demo
               </Button>
@@ -73,7 +73,7 @@ const Landing = () => {
               <span className="text-2xl">🌊</span>
               <span className="text-white font-semibold text-lg" style={{ fontFamily: "'PT Sans', sans-serif" }}>Ocean Studio</span>
             </div>
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 300 }}>
               <span className="flex items-center gap-1">
                 Ford Prior
                 <a 
