@@ -4,6 +4,30 @@
 > **Version**: 2.1.0
 > **Status**: Production
 
+## 🛑 STOP: READ AND UNDERSTAND BEFORE ACTING! 🛑
+
+### MANDATORY FIRST STEP: COMPREHEND THE ACTUAL PROBLEM
+
+**BEFORE writing ANY code or suggesting ANY fixes:**
+
+1. **READ the ENTIRE user message** - They may have already solved the problem
+2. **ACCEPT test results as FACTS** - If user says "backend works", the backend WORKS
+3. **IDENTIFY the ACTUAL issue** - Don't invent problems that don't exist
+4. **FOCUS on what's ACTUALLY broken** - Not what you assume might be broken
+
+**🚨 RED FLAGS - When you see these, STOP and RE-READ:**
+- "The backend API is working" = DON'T touch the backend
+- "I tested with curl and it works" = The API is FINE
+- "The issue is [specific thing]" = Focus ONLY on that thing
+- "502 error but backend returns 200" = Frontend issue, NOT backend
+
+**Example of CATASTROPHIC FAILURE (what NOT to do):**
+- User: "Backend works perfectly (tested with curl), frontend shows 502 but it's actually getting 404 for invalid ID"
+- ❌ WRONG: Start adding new API endpoints or fixing backend code
+- ✅ RIGHT: Acknowledge the frontend is sending wrong data, backend is fine
+
+**The Golden Rule:** If the user has already debugged and identified the issue, don't go hunting for different problems. Trust their analysis.
+
 ## 🚨🚨🚨 CRITICAL AWS ACCOUNT RULES - NEVER VIOLATE!!! 🚨🚨🚨
 
 ### 🔴 ABSOLUTE MANDATORY RULE: ONLY DEPLOY TO MVP ACCOUNT (984906149037)
