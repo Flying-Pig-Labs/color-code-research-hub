@@ -8,10 +8,9 @@
 
 import { toast } from 'sonner';
 
-// Force use of new API Gateway for innovation pipeline in production
-const PIPELINE_API_BASE = window.location.hostname === 'oceanstudio.io' 
-  ? 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production'
-  : (import.meta.env.VITE_INNOVATION_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'https://nke1jc944d.execute-api.us-east-1.amazonaws.com/production');
+// Use AWS Batch Pipeline API for innovation pipeline
+// The API Gateway at 9hv22ga3uh provides the multi-step LLM pipeline running on AWS Batch
+const PIPELINE_API_BASE = import.meta.env.VITE_BATCH_PIPELINE_URL || 'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
 
 export interface StartPipelineRequest {
   researchDocId: string;
@@ -20,8 +19,9 @@ export interface StartPipelineRequest {
 
 export interface StartPipelineResponse {
   jobId: string;
-  status: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
-  message: string;
+  jobName: string;
+  status: string;
+  message?: string;
   estimatedCompletion?: string;
   estimatedTotalMinutes?: number;
   metadata?: {
@@ -37,6 +37,23 @@ export interface PipelineStage {
   estimatedMinutes: number;
 }
 
+// AWS Batch Log Entry
+export interface BatchLogEntry {
+  timestamp: number; // Unix timestamp in milliseconds
+  message: string;
+}
+
+// AWS Batch Job Status Response from /logs/{researchId}
+export interface BatchJobStatus {
+  jobId: string;
+  researchId: string;
+  status: 'SUBMITTED' | 'PENDING' | 'RUNNABLE' | 'STARTING' | 'RUNNING' | 'SUCCEEDED' | 'FAILED';
+  createdAt: string;
+  logs: BatchLogEntry[];
+  logStreamUrl?: string;
+}
+
+// Adapted interface for UI compatibility
 export interface PipelineJobStatus {
   jobId: string;
   status: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
@@ -64,13 +81,15 @@ export interface PipelineJobStatus {
   completedAt?: string;
   actualDurationMinutes?: number;
   error?: string;
+  // Raw batch status for debugging
+  batchStatus?: BatchJobStatus;
 }
 
 class InnovationPipelineService {
   /**
-   * Start a new innovation pipeline job
+   * Start a new innovation pipeline job using AWS Batch
    * @param researchDocId - The ID of the research document to process
-   * @param username - The username for the job (defaults to 'fprior')
+   * @param username - The username for the job (not used by Batch API)
    * @returns Promise with job details
    */
   async startPipeline(
@@ -78,42 +97,44 @@ class InnovationPipelineService {
     username: string = 'user'
   ): Promise<StartPipelineResponse> {
     try {
-      const response = await fetch(`${PIPELINE_API_BASE}/start-pipeline`, {
+      const response = await fetch(`${PIPELINE_API_BASE}/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          researchDocId,
-          username,
+          researchId: researchDocId, // Batch API expects 'researchId' not 'researchDocId'
         }),
       });
 
       const data = await response.json();
 
-      // Handle 409 Conflict - job already exists
-      if (response.status === 409) {
-        toast.info('A pipeline is already running for this research', {
-          description: `Stage ${data.currentStage}: ${data.stageName} (${Math.round(data.overallProgress)}%)`,
-        });
-        return {
-          jobId: data.existingJobId,
-          status: data.status,
-          message: data.error || 'Pipeline already running for this research document',
-          estimatedCompletion: new Date(Date.now() + data.estimatedRemainingMinutes * 60000).toISOString(),
-          estimatedTotalMinutes: data.estimatedTotalMinutes,
-          metadata: data.metadata,
-        };
-      }
-
       if (!response.ok) {
+        // Handle specific error cases
+        if (response.status === 409) {
+          toast.info('A pipeline job may already be running for this research', {
+            description: 'Check the status to see current progress',
+          });
+        }
         throw new Error(
           data?.error || data?.message || `Failed to start pipeline: ${response.statusText}`
         );
       }
       
-      // Expected response format for new job (202 Accepted)
-      return data;
+      // AWS Batch API returns: { jobId, jobName, status }
+      // Adapt to expected format
+      return {
+        jobId: data.jobId,
+        jobName: data.jobName,
+        status: data.status,
+        message: `Pipeline job ${data.jobName} submitted successfully`,
+        estimatedTotalMinutes: 15, // AWS Batch pipelines typically take 10-15 minutes
+        metadata: {
+          researchDocId: researchDocId,
+          startedAt: new Date().toISOString(),
+          username: username,
+        },
+      };
     } catch (error) {
       console.error('Error starting innovation pipeline:', error);
       throw error;
@@ -121,13 +142,15 @@ class InnovationPipelineService {
   }
 
   /**
-   * Check the status of a pipeline job
-   * @param jobId - The job ID to check
-   * @returns Promise with job status
+   * Check the status of a pipeline job using AWS Batch logs endpoint
+   * Note: We need the researchId, not the jobId for the Batch API
+   * @param researchIdOrJobId - The research ID (for Batch) or job ID (for compatibility)
+   * @returns Promise with job status adapted for UI
    */
-  async checkJobStatus(jobId: string): Promise<PipelineJobStatus> {
+  async checkJobStatus(researchIdOrJobId: string): Promise<PipelineJobStatus> {
     try {
-      const response = await fetch(`${PIPELINE_API_BASE}/status/${jobId}`, {
+      // For AWS Batch, we need to use the research ID in the logs endpoint
+      const response = await fetch(`${PIPELINE_API_BASE}/logs/${researchIdOrJobId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -136,15 +159,18 @@ class InnovationPipelineService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
+        if (response.status === 404) {
+          throw new Error('No job found for this research');
+        }
         throw new Error(
-          errorData?.message || `Failed to check job status: ${response.statusText}`
+          errorData?.error || errorData?.message || `Failed to check job status: ${response.statusText}`
         );
       }
 
-      const data = await response.json();
+      const batchData: BatchJobStatus = await response.json();
       
-      // Return the full response from backend
-      return data;
+      // Convert AWS Batch status to UI-compatible format
+      return this.adaptBatchStatusToUI(batchData);
     } catch (error) {
       console.error('Error checking job status:', error);
       throw error;
@@ -152,18 +178,178 @@ class InnovationPipelineService {
   }
 
   /**
+   * Adapt AWS Batch status response to UI-compatible format
+   */
+  private adaptBatchStatusToUI(batchStatus: BatchJobStatus): PipelineJobStatus {
+    // Map Batch status to UI status
+    let uiStatus: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+    switch (batchStatus.status) {
+      case 'SUBMITTED':
+      case 'PENDING':
+      case 'RUNNABLE':
+        uiStatus = 'QUEUED';
+        break;
+      case 'STARTING':
+      case 'RUNNING':
+        uiStatus = 'RUNNING';
+        break;
+      case 'SUCCEEDED':
+        uiStatus = 'COMPLETED';
+        break;
+      case 'FAILED':
+        uiStatus = 'FAILED';
+        break;
+      default:
+        uiStatus = 'QUEUED';
+    }
+
+    // Parse logs to estimate progress
+    const logMessages = batchStatus.logs.map(l => l.message);
+    const currentStage = this.detectCurrentStage(logMessages);
+    const overallProgress = this.calculateProgress(batchStatus.status, currentStage);
+    
+    // Calculate elapsed time
+    const startTime = new Date(batchStatus.createdAt).getTime();
+    const elapsedMs = Date.now() - startTime;
+    const elapsedMinutes = Math.floor(elapsedMs / 60000);
+
+    return {
+      jobId: batchStatus.jobId,
+      status: uiStatus,
+      currentStage: currentStage,
+      stageName: this.getStageName(currentStage),
+      stageProgress: this.getStageProgress(currentStage, logMessages),
+      overallProgress: overallProgress,
+      estimatedTotalMinutes: 15, // 10-15 minutes typical
+      elapsedMinutes: elapsedMinutes,
+      estimatedRemainingMinutes: Math.max(0, 15 - elapsedMinutes),
+      estimatedRemaining: `${Math.max(0, 15 - elapsedMinutes)} minutes`,
+      metadata: {
+        researchDocId: batchStatus.researchId,
+        startedAt: batchStatus.createdAt,
+        username: 'user',
+        jobId: batchStatus.jobId,
+      },
+      stages: this.generateStages(currentStage),
+      results: {
+        githubRepoUrl: this.extractGitHubUrl(logMessages),
+        githubRepoName: this.extractGitHubRepoName(logMessages),
+        issuesCreated: this.countIssuesCreated(logMessages),
+        analysisResults: null,
+      },
+      completedAt: uiStatus === 'COMPLETED' ? new Date().toISOString() : undefined,
+      actualDurationMinutes: uiStatus === 'COMPLETED' ? elapsedMinutes : undefined,
+      error: uiStatus === 'FAILED' ? this.extractError(logMessages) : undefined,
+      batchStatus: batchStatus, // Include raw status for debugging
+    };
+  }
+
+  // Helper methods for parsing logs and extracting information
+  private detectCurrentStage(logs: string[]): number {
+    // Look for stage indicators in logs
+    for (let i = logs.length - 1; i >= 0; i--) {
+      const log = logs[i].toLowerCase();
+      if (log.includes('stage 5') || log.includes('github')) return 5;
+      if (log.includes('stage 4') || log.includes('innovation')) return 4;
+      if (log.includes('stage 3') || log.includes('analysis')) return 3;
+      if (log.includes('stage 2') || log.includes('processing')) return 2;
+      if (log.includes('stage 1') || log.includes('starting')) return 1;
+    }
+    return 1;
+  }
+
+  private getStageName(stage: number): string {
+    const stages = [
+      'Initialization',
+      'Research Analysis',
+      'Innovation Ideation',
+      'GitHub Setup',
+      'Issue Creation',
+    ];
+    return stages[Math.min(stage - 1, stages.length - 1)] || 'Processing';
+  }
+
+  private getStageProgress(stage: number, logs: string[]): number {
+    // Estimate progress within current stage based on log patterns
+    return Math.min(100, (logs.length % 20) * 5);
+  }
+
+  private calculateProgress(status: string, stage: number): number {
+    if (status === 'SUCCEEDED') return 100;
+    if (status === 'FAILED') return 0;
+    if (status === 'SUBMITTED' || status === 'PENDING') return 0;
+    // Each stage represents 20% of progress
+    return Math.min(95, stage * 20);
+  }
+
+  private generateStages(currentStage: number): PipelineStage[] {
+    const stageNames = [
+      'Research Analysis',
+      'Innovation Ideation', 
+      'Concept Development',
+      'GitHub Repository Setup',
+      'Issue Creation',
+    ];
+
+    return stageNames.map((name, index) => ({
+      name,
+      status: index < currentStage - 1 ? 'completed' : 
+              index === currentStage - 1 ? 'running' : 'pending',
+      estimatedMinutes: 3,
+    }));
+  }
+
+  private extractGitHubUrl(logs: string[]): string | null {
+    for (const log of logs) {
+      const match = log.match(/https:\/\/github\.com\/[\w-]+\/[\w-]+/);
+      if (match) return match[0];
+    }
+    return null;
+  }
+
+  private extractGitHubRepoName(logs: string[]): string | null {
+    const url = this.extractGitHubUrl(logs);
+    if (url) {
+      const parts = url.split('/');
+      return parts[parts.length - 1];
+    }
+    return null;
+  }
+
+  private countIssuesCreated(logs: string[]): number {
+    let count = 0;
+    for (const log of logs) {
+      if (log.toLowerCase().includes('issue created') || 
+          log.toLowerCase().includes('created issue')) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  private extractError(logs: string[]): string {
+    for (let i = logs.length - 1; i >= 0; i--) {
+      if (logs[i].toLowerCase().includes('error') || 
+          logs[i].toLowerCase().includes('failed')) {
+        return logs[i];
+      }
+    }
+    return 'Pipeline failed - check logs for details';
+  }
+
+  /**
    * Poll for job completion
-   * @param jobId - The job ID to poll
+   * @param researchIdOrJobId - The research ID (for AWS Batch) or job ID to poll
    * @param onProgress - Callback for progress updates
-   * @param maxAttempts - Maximum polling attempts (default: 30 for ~25 minutes)
-   * @param pollInterval - Interval between polls in ms (default: 30000 for 30 seconds)
+   * @param maxAttempts - Maximum polling attempts (default: 180 for ~15 minutes with 5s intervals)
+   * @param pollInterval - Interval between polls in ms (default: 5000 for 5 seconds as recommended)
    * @returns Promise with final job status
    */
   async pollJobCompletion(
-    jobId: string,
+    researchIdOrJobId: string,
     onProgress?: (status: PipelineJobStatus) => void,
-    maxAttempts: number = 50, // 50 * 30s = 25 minutes
-    pollInterval: number = 30000 // 30 seconds
+    maxAttempts: number = 180, // 180 * 5s = 15 minutes
+    pollInterval: number = 5000 // 5 seconds as recommended for AWS Batch
   ): Promise<PipelineJobStatus> {
     let attempts = 0;
 
@@ -171,7 +357,7 @@ class InnovationPipelineService {
       attempts++;
       
       try {
-        const status = await this.checkJobStatus(jobId);
+        const status = await this.checkJobStatus(researchIdOrJobId);
         
         if (onProgress) {
           onProgress(status);
@@ -182,7 +368,7 @@ class InnovationPipelineService {
         }
 
         if (attempts >= maxAttempts) {
-          throw new Error('Pipeline job timed out after 25 minutes');
+          throw new Error('Pipeline job timed out after 15 minutes');
         }
 
         // Wait and poll again
