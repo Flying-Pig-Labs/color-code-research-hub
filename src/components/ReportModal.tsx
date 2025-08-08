@@ -9,7 +9,6 @@ import {
 } from '../services/reportService';
 import { innovationPipelineService } from '../services/innovationPipelineService';
 import { toast } from 'sonner';
-import PipelineProgress from './PipelineProgress';
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -38,21 +37,11 @@ export function ReportModal({
   const [report, setReport] = useState<ProcessedReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pipelineJobId, setPipelineJobId] = useState<string | null>(null);
-  const [showPipelineProgress, setShowPipelineProgress] = useState(false);
+  // Removed pipeline progress state - no longer showing modal
 
   useEffect(() => {
     if (isOpen && mode === 'full' && !report) {
       loadFullReport();
-    }
-    
-    // Check for existing pipeline job on mount
-    if (isOpen) {
-      const existingJobId = localStorage.getItem('innovationPipelineJobId');
-      if (existingJobId) {
-        setPipelineJobId(existingJobId);
-        setShowPipelineProgress(true);
-      }
     }
   }, [isOpen, mode, reportId]);
 
@@ -75,16 +64,14 @@ export function ReportModal({
     try {
       // Start the pipeline
       const response = await innovationPipelineService.startPipeline(reportId, 'user');
-      setPipelineJobId(response.jobId);
-      setShowPipelineProgress(true);
       
-      // Store jobId in localStorage for recovery
-      localStorage.setItem('innovationPipelineJobId', response.jobId);
+      // Don't show the progress modal - just show success notification
+      // The PipelineJobsTable will track the job
       
-      // Success message
+      // Success message with more details
       toast.success('Innovation pipeline started!', {
-        description: `Job ${response.jobName} submitted successfully. Processing will take approximately 10-15 minutes.`,
-        duration: 5000,
+        description: `Job ${response.jobName} is now running. Check the Pipeline Jobs table to monitor progress. Processing takes approximately 10-15 minutes.`,
+        duration: 8000,
       });
     } catch (err) {
       console.error('Error starting innovation pipeline:', err);
@@ -105,37 +92,13 @@ export function ReportModal({
     }
   };
   
-  const handlePipelineComplete = (repoUrl: string) => {
-    toast.success('Innovation ideas generated!', {
-      description: 'Your GitHub repository is ready',
-      action: {
-        label: 'View on GitHub',
-        onClick: () => window.open(repoUrl, '_blank')
-      },
-      duration: 10000,
-    });
-  };
-  
-  const handlePipelineError = (error: string) => {
-    toast.error('Pipeline failed', {
-      description: error,
-    });
-    setShowPipelineProgress(false);
-    setPipelineJobId(null);
-  };
-  
-  const handleRetryPipeline = () => {
-    setShowPipelineProgress(false);
-    setPipelineJobId(null);
-    handleIdeate();
-  };
+  // Removed pipeline handlers - no longer needed since we don't show the modal
 
   if (!isOpen) return null;
 
   const isPreview = mode === 'preview';
   const title = reportData?.title || report?.metadata?.title || 'Research Report';
   const summary = reportData?.summary || report?.metadata?.summary || 'No summary available';
-  const isShowingPipeline = showPipelineProgress && pipelineJobId;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -157,15 +120,8 @@ export function ReportModal({
         </div>
 
         {/* Content */}
-        <div className={`p-6 ${!isPreview && !isShowingPipeline && 'overflow-y-auto max-h-[calc(90vh-180px)]'}`}>
-          {isShowingPipeline ? (
-            // Pipeline Progress View
-            <PipelineProgress 
-              jobId={pipelineJobId!}
-              onComplete={handlePipelineComplete}
-              onError={handlePipelineError}
-            />
-          ) : isPreview ? (
+        <div className={`p-6 ${!isPreview && 'overflow-y-auto max-h-[calc(90vh-180px)]'}`}>
+          {isPreview ? (
             // Preview Mode - Show 120-word summary
             <div className="space-y-4">
               <div>
@@ -330,17 +286,15 @@ export function ReportModal({
                 Close
               </button>
               <div className="flex space-x-3">
-                {/* IDEATE Button - Hidden when pipeline is showing */}
-                {!isShowingPipeline && (
-                  <button
-                    onClick={handleIdeate}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center transition-colors"
-                    title="Generate innovation ideas from this research"
-                  >
-                    <Lightbulb className="h-4 w-4 mr-2" />
-                    IDEATE
-                  </button>
-                )}
+                {/* IDEATE Button */}
+                <button
+                  onClick={handleIdeate}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center transition-colors"
+                  title="Generate innovation ideas from this research"
+                >
+                  <Lightbulb className="h-4 w-4 mr-2" />
+                  IDEATE
+                </button>
                 
                 <button
                   onClick={onViewFull}
