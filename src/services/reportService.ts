@@ -212,25 +212,27 @@ export function renderMarkdownToHtml(markdown: string): string {
   // Basic markdown to HTML conversion
   // For a production app, consider using a library like marked or remark
   let html = markdown
+    // Code blocks first (including language specifiers like ```markdown)
+    .replace(/```[\w]*\n([^`]+)```/gim, '<pre><code>$1</code></pre>')
+    .replace(/```([^`]+)```/gim, '<pre><code>$1</code></pre>')
+    // Inline code
+    .replace(/`([^`]+)`/gim, '<code>$1</code>')
     // Headers
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    // Bold
-    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-    .replace(/__(.*?)__/gim, '<strong>$1</strong>')
-    // Italic
-    .replace(/\*(.*)\*/gim, '<em>$1</em>')
-    .replace(/_(.*?)_/gim, '<em>$1</em>')
+    // Bold (fix to be non-greedy)
+    .replace(/\*\*([^*]+)\*\*/gim, '<strong>$1</strong>')
+    .replace(/__([^_]+)__/gim, '<strong>$1</strong>')
+    // Italic (fix to be non-greedy and avoid conflicts with lists)
+    .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/gim, '<em>$1</em>')
+    .replace(/(?<!_)_([^_\n]+)_(?!_)/gim, '<em>$1</em>')
     // Links
     .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     // Lists
     .replace(/^\* (.+)$/gim, '<li>$1</li>')
     .replace(/^\- (.+)$/gim, '<li>$1</li>')
     .replace(/^(\d+)\. (.+)$/gim, '<li>$1. $2</li>')
-    // Code blocks
-    .replace(/```([^`]+)```/gim, '<pre><code>$1</code></pre>')
-    .replace(/`([^`]+)`/gim, '<code>$1</code>')
     // Line breaks
     .replace(/\n\n/gim, '</p><p>')
     .replace(/\n/gim, '<br>');
@@ -238,6 +240,7 @@ export function renderMarkdownToHtml(markdown: string): string {
   // Wrap in paragraphs and handle lists
   html = '<p>' + html + '</p>';
   html = html.replace(/<\/p><p><li>/gim, '</p><ul><li>');
+  html = html.replace(/<\/li><br><li>/gim, '</li><li>');
   html = html.replace(/<\/li><p>/gim, '</li></ul><p>');
   html = html.replace(/<p><\/p>/gim, '');
   

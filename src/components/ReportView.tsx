@@ -131,9 +131,10 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
   };
 
   const scrollToSection = (sectionId: string) => {
-    const element = sectionRefs.current[sectionId];
-    if (element && contentRef.current) {
-      const offset = element.offsetTop - 80; // Account for header
+    // Try to find the element by ID first (for the title with the actual ID)
+    const titleElement = document.getElementById(sectionId);
+    if (titleElement && contentRef.current) {
+      const offset = titleElement.offsetTop - 100; // Account for header
       contentRef.current.scrollTo({
         top: offset,
         behavior: 'smooth'
