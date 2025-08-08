@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Circle, Loader2, AlertCircle, ExternalLink, Copy, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { innovationPipelineService } from '@/services/innovationPipelineService';
 
 interface PipelineProgressProps {
   jobId: string;
@@ -59,18 +60,16 @@ export const PipelineProgress = ({ jobId, onComplete, onError }: PipelineProgres
 
     const pollStatus = async () => {
       try {
-        // Use the correct Innovation Pipeline API Gateway URL (9hv22ga3uh)
-        // Fallback to main API Gateway if innovation API not configured
-        const apiBase = import.meta.env.VITE_INNOVATION_API_BASE_URL || 
-                       import.meta.env.VITE_API_BASE_URL || 
-                       'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
-          
-        const response = await fetch(`${apiBase}/status/${jobId}`);
+        // Poll the status endpoint as specified in the API contract
+        const apiBase = import.meta.env.VITE_API_BASE_URL || 
+                       'https://zi612qxxv0.execute-api.us-east-1.amazonaws.com/production';
+        
+        const response = await fetch(`${apiBase}/api/plan/async/status/${jobId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch status');
         }
-
+        
         const data = await response.json();
         
         // Update all state from backend response
