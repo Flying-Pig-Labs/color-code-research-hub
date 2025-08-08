@@ -245,44 +245,47 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
                   {(() => {
-                    // Primary method: Use processingTimeMs if available (most reliable)
-                    if (report.processingTimeMs && report.processingTimeMs > 0) {
-                      // processingTimeMs is already in milliseconds
-                      const totalSeconds = Math.floor(report.processingTimeMs / 1000);
-                      const minutes = Math.floor(totalSeconds / 60);
-                      const seconds = totalSeconds % 60;
-                      return <span className="font-mono">{minutes}m {seconds}s</span>;
-                    }
+                    // CORRECT APPROACH based on actual DynamoDB data:
+                    // 1. First try to calculate from createdAt to processingCompletedAt
+                    // 2. Only use processingTimeMs if timestamps are identical (meaning they weren't tracked properly)
                     
-                    // Fallback 1: Calculate from pipeline timestamps if available
-                    if (report.pipelineStartedAt && report.pipelineCompletedAt) {
-                      const startTime = new Date(report.pipelineStartedAt).getTime();
-                      const endTime = new Date(report.pipelineCompletedAt).getTime();
+                    if (report.createdAt && report.processingCompletedAt) {
+                      const startTime = new Date(report.createdAt).getTime();
+                      const endTime = new Date(report.processingCompletedAt).getTime();
                       const durationMs = endTime - startTime;
                       
-                      if (durationMs > 0) {
+                      // If timestamps are different and duration is reasonable, use it
+                      if (durationMs > 1000 && durationMs < 86400000) { // > 1 second and < 24 hours
                         const totalSeconds = Math.floor(durationMs / 1000);
+                        const minutes = Math.floor(totalSeconds / 60);
+                        const seconds = totalSeconds % 60;
+                        return <span className="font-mono">{minutes}m {seconds}s</span>;
+                      }
+                      
+                      // If timestamps are the same (or very close), fall back to processingTimeMs
+                      if (durationMs <= 1000 && report.processingTimeMs && report.processingTimeMs > 0) {
+                        const totalSeconds = Math.floor(report.processingTimeMs / 1000);
                         const minutes = Math.floor(totalSeconds / 60);
                         const seconds = totalSeconds % 60;
                         return <span className="font-mono">{minutes}m {seconds}s</span>;
                       }
                     }
                     
-                    // Fallback 2: Use pipelineDurationSeconds if available
-                    if (report.pipelineDurationSeconds && report.pipelineDurationSeconds > 0) {
-                      const minutes = Math.floor(report.pipelineDurationSeconds / 60);
-                      const seconds = report.pipelineDurationSeconds % 60;
+                    // Fallback: If we only have processingTimeMs (older records)
+                    if (report.processingTimeMs && report.processingTimeMs > 0) {
+                      const totalSeconds = Math.floor(report.processingTimeMs / 1000);
+                      const minutes = Math.floor(totalSeconds / 60);
+                      const seconds = totalSeconds % 60;
                       return <span className="font-mono">{minutes}m {seconds}s</span>;
                     }
                     
-                    // Fallback 3: Try processingCompletedAt with createdAt
-                    if (report.createdAt && report.processingCompletedAt) {
-                      const startTime = new Date(report.createdAt).getTime();
-                      const endTime = new Date(report.processingCompletedAt).getTime();
+                    // Last resort: Check for pipeline timestamps
+                    if (report.pipelineStartedAt && report.pipelineCompletedAt) {
+                      const startTime = new Date(report.pipelineStartedAt).getTime();
+                      const endTime = new Date(report.pipelineCompletedAt).getTime();
                       const durationMs = endTime - startTime;
                       
-                      // Only use if duration is reasonable (> 0 and < 24 hours)
-                      if (durationMs > 0 && durationMs < 86400000) {
+                      if (durationMs > 0) {
                         const totalSeconds = Math.floor(durationMs / 1000);
                         const minutes = Math.floor(totalSeconds / 60);
                         const seconds = totalSeconds % 60;
