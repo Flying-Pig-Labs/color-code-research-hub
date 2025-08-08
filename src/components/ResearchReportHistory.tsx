@@ -241,10 +241,14 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  {report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A'}
+                  {report.objective || report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A'}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {report.pipelineDurationSeconds ? (
+                  {report.processingTimeMs ? (
+                    <span className="font-mono">
+                      {Math.floor(report.processingTimeMs / 1000 / 60)}m {Math.floor((report.processingTimeMs / 1000) % 60)}s
+                    </span>
+                  ) : report.pipelineDurationSeconds ? (
                     <span className="font-mono">
                       {Math.floor(report.pipelineDurationSeconds / 60)}m {Math.floor(report.pipelineDurationSeconds % 60)}s
                     </span>

@@ -423,6 +423,8 @@ export interface ResearchReport {
   processedSummary?: string;
   summaryWordCount?: number;
   downloadUrl?: string;
+  objective?: string;       // Research objective/target from DynamoDB
+  processingTimeMs?: number; // Processing duration in milliseconds from DynamoDB
   metadata?: {
     title?: string;
     vendorName?: string;

@@ -371,14 +371,16 @@ class ReportProcessingService {
 
     /**
      * Call OpenAI API as fallback when Claude/Bedrock rate limits
+     * Now includes retry logic with exponential backoff for rate limits
      * 
      * @async
      * @param {string} prompt - The prompt to send to OpenAI
      * @param {Object} secrets - API secrets object containing OPENAI_API_KEY
      * @param {string} responseType - Expected response type ('summary', 'format', or 'json')
+     * @param {number} retries - Number of retries to attempt (default: 5)
      * @returns {Promise<string|Object>} Response from OpenAI
      */
-    async callOpenAIFallback(prompt, secrets, responseType = 'json') {
+    async callOpenAIFallback(prompt, secrets, responseType = 'json', retries = 5) {
         console.log(`🔄 Falling back to OpenAI (${OPENAI_MODEL}) due to Claude rate limiting`);
         
         // Get OpenAI key from separate secret
@@ -409,42 +411,89 @@ class ReportProcessingService {
             throw new Error('OpenAI API key not found in secrets');
         }
 
-        try {
-            const response = await axios.post(
-                OPENAI_API_URL,
-                {
-                    model: OPENAI_MODEL,
-                    messages: [
-                        {
-                            role: 'user',
-                            content: prompt
-                        }
-                    ],
-                    temperature: 0.3,
-                    max_tokens: responseType === 'summary' ? 500 : 16384 // Higher limit for formatting
-                },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${openaiKey}`,
-                        'Content-Type': 'application/json'
+        // Retry loop with exponential backoff
+        for (let attempt = 0; attempt < retries; attempt++) {
+            try {
+                console.log(`🤖 OpenAI API call attempt ${attempt + 1}/${retries}`);
+                
+                const response = await axios.post(
+                    OPENAI_API_URL,
+                    {
+                        model: OPENAI_MODEL,
+                        messages: [
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        temperature: 0.3,
+                        max_tokens: responseType === 'summary' ? 500 : 16384 // Higher limit for formatting
                     },
-                    timeout: 30000 // 30 second timeout
-                }
-            );
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${openaiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 60000 // Increased to 60 seconds for retries
+                    }
+                );
 
-            const content = response.data.choices[0].message.content;
-            
-            // Return based on expected response type
-            if (responseType === 'json') {
-                return this.parseClaudeResponse(content); // Works for OpenAI too
-            } else {
-                // For summary and format, return plain text
-                return content;
+                const content = response.data.choices[0].message.content;
+                
+                // Success! Return based on expected response type
+                console.log(`✅ OpenAI API call succeeded on attempt ${attempt + 1}`);
+                if (responseType === 'json') {
+                    return this.parseClaudeResponse(content); // Works for OpenAI too
+                } else {
+                    // For summary and format, return plain text
+                    return content;
+                }
+            } catch (error) {
+                const errorMessage = error.response?.data?.error?.message || error.message;
+                const statusCode = error.response?.status;
+                
+                // Check if this is a rate limit error
+                const isRateLimit = statusCode === 429 || 
+                                   errorMessage?.includes('rate limit') ||
+                                   errorMessage?.includes('Rate limit') ||
+                                   errorMessage?.includes('TPM') ||
+                                   errorMessage?.includes('RPM');
+                
+                // Check if this is a timeout or temporary error
+                const isTemporary = error.code === 'ECONNABORTED' ||
+                                   error.message?.includes('timeout') ||
+                                   statusCode === 503 ||
+                                   statusCode === 502;
+                
+                const isRetryable = isRateLimit || isTemporary;
+                
+                if (isRetryable && attempt < retries - 1) {
+                    // Extract wait time from error message if available
+                    let waitTime = RETRY_BASE_DELAY * Math.pow(2, attempt); // Default exponential backoff
+                    
+                    // If rate limit error includes a retry-after suggestion, use it
+                    const retryAfterMatch = errorMessage?.match(/try again in (\d+\.?\d*)s/i);
+                    if (retryAfterMatch) {
+                        waitTime = Math.ceil(parseFloat(retryAfterMatch[1]) * 1000) + 1000; // Add 1s buffer
+                        console.log(`⏳ Rate limited. Waiting ${waitTime}ms as suggested by API`);
+                    } else {
+                        // Add jitter to prevent thundering herd
+                        const jitter = Math.random() * 2000; // Up to 2 seconds of jitter
+                        waitTime = Math.min(waitTime + jitter, 60000); // Cap at 60 seconds
+                        console.log(`⏳ ${isRateLimit ? 'Rate limited' : 'Temporary error'}. Waiting ${Math.round(waitTime)}ms before retry ${attempt + 2}/${retries}`);
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                } else {
+                    // Final attempt failed or error is not retryable
+                    console.error(`❌ OpenAI API call failed on attempt ${attempt + 1}:`, errorMessage);
+                    throw new Error(`OpenAI API error after ${attempt + 1} attempts: ${errorMessage}`);
+                }
             }
-        } catch (error) {
-            console.error('❌ OpenAI API call failed:', error.response?.data || error.message);
-            throw new Error(`OpenAI API error: ${error.response?.data?.error?.message || error.message}`);
         }
+        
+        // Should never reach here, but just in case
+        throw new Error(`Failed to complete OpenAI API call after ${retries} attempts`);
     }
 
     /**
