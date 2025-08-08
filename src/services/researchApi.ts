@@ -425,6 +425,7 @@ export interface ResearchReport {
   downloadUrl?: string;
   objective?: string;       // Research objective/target from DynamoDB
   processingTimeMs?: number; // Processing duration in milliseconds from DynamoDB
+  processingCompletedAt?: string; // Completion timestamp from DynamoDB
   metadata?: {
     title?: string;
     vendorName?: string;

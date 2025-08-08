@@ -244,17 +244,40 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   {report.objective || report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A'}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {report.processingTimeMs ? (
-                    <span className="font-mono">
-                      {Math.floor(report.processingTimeMs / 1000 / 60)}m {Math.floor((report.processingTimeMs / 1000) % 60)}s
-                    </span>
-                  ) : report.pipelineDurationSeconds ? (
-                    <span className="font-mono">
-                      {Math.floor(report.pipelineDurationSeconds / 60)}m {Math.floor(report.pipelineDurationSeconds % 60)}s
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
+                  {(() => {
+                    // Calculate duration from timestamps if available
+                    if (report.createdAt && report.processingCompletedAt) {
+                      const startTime = new Date(report.createdAt).getTime();
+                      const endTime = new Date(report.processingCompletedAt).getTime();
+                      const durationMs = endTime - startTime;
+                      
+                      if (durationMs >= 0) {
+                        const minutes = Math.floor(durationMs / 1000 / 60);
+                        const seconds = Math.floor((durationMs / 1000) % 60);
+                        return <span className="font-mono">{minutes}m {seconds}s</span>;
+                      }
+                    }
+                    
+                    // Fallback to processingTimeMs if timestamps not available or invalid
+                    if (report.processingTimeMs) {
+                      return (
+                        <span className="font-mono">
+                          {Math.floor(report.processingTimeMs / 1000 / 60)}m {Math.floor((report.processingTimeMs / 1000) % 60)}s
+                        </span>
+                      );
+                    }
+                    
+                    // Legacy fallback for pipelineDurationSeconds
+                    if (report.pipelineDurationSeconds) {
+                      return (
+                        <span className="font-mono">
+                          {Math.floor(report.pipelineDurationSeconds / 60)}m {Math.floor(report.pipelineDurationSeconds % 60)}s
+                        </span>
+                      );
+                    }
+                    
+                    return <span className="text-gray-400">-</span>;
+                  })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex space-x-2">
