@@ -56,7 +56,7 @@ const Landing = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-blue-400 text-gray-700 bg-blue-100/20 hover:bg-blue-100/30 hover:text-gray-800 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
+                className="border-blue-400 text-white bg-blue-600/20 hover:bg-blue-600/30 hover:text-white text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
               >
                 <Play className="mr-2 h-4 sm:h-5 w-4 sm:w-5" /> Watch 2-min Demo
               </Button>
