@@ -43,14 +43,21 @@ export const PipelineJobsTable = () => {
   const [refreshing, setRefreshing] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  // Fetch running jobs from API
+  // Fetch all jobs (running and completed) from API
   const fetchJobs = async () => {
     try {
       // Use the Pipeline API Gateway where these endpoints are deployed
       const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
                      'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
       
-      const response = await fetch(`${apiBase}/api/status/running`);
+      // Try to fetch all jobs, not just running ones
+      // If this endpoint doesn't exist, fall back to running endpoint
+      let response = await fetch(`${apiBase}/api/status/all`);
+      
+      if (!response.ok && response.status === 404) {
+        // Fallback to running endpoint if all doesn't exist
+        response = await fetch(`${apiBase}/api/status/running`);
+      }
       
       if (!response.ok) {
         // If endpoint doesn't exist yet, show empty state

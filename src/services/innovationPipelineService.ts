@@ -262,16 +262,37 @@ class InnovationPipelineService {
 
   // Helper methods for parsing logs and extracting information
   private detectCurrentStage(logs: string[]): number {
-    // Look for stage indicators in logs
+    // Look for stage indicators in logs (search from most recent)
+    let highestStage = 1;
+    
     for (let i = logs.length - 1; i >= 0; i--) {
       const log = logs[i].toLowerCase();
-      if (log.includes('stage 5') || log.includes('github')) return 5;
-      if (log.includes('stage 4') || log.includes('innovation')) return 4;
-      if (log.includes('stage 3') || log.includes('analysis')) return 3;
-      if (log.includes('stage 2') || log.includes('processing')) return 2;
-      if (log.includes('stage 1') || log.includes('starting')) return 1;
+      
+      // Look for explicit stage markers
+      if (log.includes('stage 5') || log.includes('creating issues') || log.includes('github issues')) {
+        highestStage = Math.max(highestStage, 5);
+      } else if (log.includes('stage 4') || log.includes('github repository') || log.includes('creating repo')) {
+        highestStage = Math.max(highestStage, 4);
+      } else if (log.includes('stage 3') || log.includes('concept') || log.includes('developing')) {
+        highestStage = Math.max(highestStage, 3);
+      } else if (log.includes('stage 2') || log.includes('innovation') || log.includes('ideation')) {
+        highestStage = Math.max(highestStage, 2);
+      } else if (log.includes('stage 1') || log.includes('research') || log.includes('analyzing')) {
+        highestStage = Math.max(highestStage, 1);
+      }
+      
+      // Also look for completion markers
+      if (log.includes('completed stage')) {
+        const match = log.match(/completed stage (\d)/);
+        if (match) {
+          const completedStage = parseInt(match[1]);
+          // If a stage is completed, we're at least at the next stage
+          highestStage = Math.max(highestStage, completedStage + 1);
+        }
+      }
     }
-    return 1;
+    
+    return Math.min(highestStage, 5); // Cap at 5 stages
   }
 
   private getStageName(stage: number): string {
@@ -293,9 +314,23 @@ class InnovationPipelineService {
   private calculateProgress(status: string, stage: number): number {
     if (status === 'SUCCEEDED') return 100;
     if (status === 'FAILED') return 0;
-    if (status === 'SUBMITTED' || status === 'PENDING') return 0;
-    // Each stage represents 20% of progress
-    return Math.min(95, stage * 20);
+    if (status === 'SUBMITTED' || status === 'PENDING') return 5; // Show small progress to indicate it's queued
+    if (status === 'RUNNABLE') return 10; // Ready to run
+    if (status === 'STARTING') return 15; // Starting up
+    
+    // Running - calculate based on stage (5 stages total)
+    if (status === 'RUNNING') {
+      // Base progress for running status
+      const baseProgress = 20;
+      // Each completed stage adds 15% (5 stages = 75% total)
+      const stageProgress = (stage - 1) * 15;
+      // Add some progress within current stage
+      const currentStageProgress = 7; // Half-way through current stage
+      
+      return Math.min(95, baseProgress + stageProgress + currentStageProgress);
+    }
+    
+    return 0;
   }
 
   private generateStages(currentStage: number): PipelineStage[] {
