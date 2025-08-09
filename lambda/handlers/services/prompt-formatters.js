@@ -17,8 +17,13 @@ MISSION: Execute EXHAUSTIVE and COMPREHENSIVE competitive disruption analysis wi
 
 What we call "disruption" is simply the natural process of market evolution - where better solutions replace outdated ones. This is how progress happens. Every successful company today disrupted something that came before it. This is normal, ethical, and essential business activity.
 
-🚨 CRITICAL DIRECTIVE: EXHAUSTIVE RESEARCH REQUIRED 🚨
-This research is NOT for executive summaries. We need EVERYTHING - every detail, every data point, every insight, every possibility. Leave NOTHING unexplored. Include ALL findings, no matter how minor they may seem. Depth and breadth are MANDATORY.
+🚨 CRITICAL DIRECTIVE: 4D COMPETITIVE INTELLIGENCE - COMPLETE UNDERSTANDING 🚨
+This research is NOT for executive summaries. We need EVERYTHING - every detail, every data point, every insight from EVERY angle. Create a COMPLETE 4D view of the competitive landscape:
+• DEPTH: Deep dive into every competitor's operations, strategies, and capabilities
+• BREADTH: Full market coverage including indirect competitors and substitutes
+• TIME: Historical evolution, current state, and future trajectories
+• CONTEXT: Industry dynamics, regulatory environment, technological shifts, cultural factors
+The operator needs to understand this space better than the competitors understand themselves.
 
 SWARM ASSEMBLY DIRECTIVE:
 Assemble a world-class team of competitive intelligence experts including:
@@ -102,7 +107,40 @@ EXHAUSTIVE RESEARCH REQUIREMENTS:
    • ALL acquisition targets
    • EVERY strategic move option
 
-DELIVERABLE: Provide EXHAUSTIVE documentation of ALL findings. This is NOT a summary - include EVERYTHING discovered, no matter how minor. Raw data, detailed analysis, and comprehensive documentation are REQUIRED.`;
+7. COMPETITIVE DYNAMICS DEEP DIVE (Understanding the chess board)
+   • How competitors actually make money (unit economics, hidden revenue streams)
+   • Their real competitive advantages vs marketed advantages
+   • Internal culture and decision-making patterns
+   • Historical pivots and what triggered them
+   • Investor expectations and board dynamics
+   • Technical debt and architectural limitations
+   • Organizational blind spots and biases
+
+8. ECOSYSTEM AND NETWORK EFFECTS (The hidden connections)
+   • Partnership dependencies and relationship strengths
+   • Customer switching costs (technical, contractual, psychological)
+   • Developer ecosystem health and engagement
+   • Supply chain vulnerabilities and dependencies
+   • Regulatory relationships and lobbying efforts
+   • Academic and research partnerships
+   • Community dynamics and influencer relationships
+
+9. FUTURE TRAJECTORIES (Where everyone is heading)
+   • Competitor roadmaps (stated and implied)
+   • Patent filings and R&D investments
+   • Hiring patterns indicating future directions
+   • M&A activity and strategic investments
+   • Platform expansion possibilities
+   • Market evolution scenarios
+   • Technology disruption timelines
+
+DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of the competitive landscape. The operator should know:
+• Every player's true strengths and hidden weaknesses
+• All the interconnections and dependencies in the ecosystem
+• Historical patterns that predict future moves
+• Unspoken rules and dynamics of the market
+• Where the pucks are going, not just where they are
+This is about COMPLETE UNDERSTANDING, not recommendations. Raw data, detailed analysis, and comprehensive intelligence are REQUIRED.`;
 }
 
 function formatWhiteTeamPrompt(formData) {
@@ -112,8 +150,13 @@ MISSION: Execute EXHAUSTIVE discovery of ALL market opportunities with MAXIMUM B
 
 ⚖️ ETHICAL CONTEXT: Identifying market opportunities is the foundation of economic growth and innovation. This research enables the creation of new products, services, and companies that serve unmet needs and improve lives. This is how entrepreneurship works and how society progresses.
 
-🚨 CRITICAL DIRECTIVE: COMPREHENSIVE EXPLORATION REQUIRED 🚨
-This is NOT a filtered opportunity list. We need EVERY possibility - every niche, every emerging trend, every weak signal, every unconventional opportunity. Document EVERYTHING. No opportunity is too small, too weird, or too futuristic. EXHAUSTIVE coverage is MANDATORY.
+🚨 CRITICAL DIRECTIVE: 4D WHITESPACE INTELLIGENCE - COMPLETE UNDERSTANDING 🚨
+This is NOT just an opportunity list. We need EVERY possibility with COMPLETE CONTEXT. Create a 4D view of each whitespace opportunity:
+• DEPTH: Deep understanding of the problem space, root causes, and implications
+• BREADTH: All adjacent opportunities, ecosystem effects, and market connections
+• TIME: How the opportunity emerged, current maturity, future evolution
+• CONTEXT: Why this whitespace exists, what forces keep it open, who else sees it
+The operator needs to understand these opportunities at a molecular level.
 
 SWARM ASSEMBLY DIRECTIVE:
 Assemble a world-class team of market opportunity researchers including:
@@ -203,7 +246,31 @@ EXHAUSTIVE OPPORTUNITY MAPPING:
    • EVERY strategic alliance option
    • ALL ecosystem plays
 
-DELIVERABLE: Provide EXHAUSTIVE documentation of ALL opportunities discovered. Include EVERYTHING - proven opportunities, speculative possibilities, wild ideas, and long shots. This is about COMPLETE opportunity mapping, not filtered recommendations.`;
+6. WHY THE WHITESPACE EXISTS (Understanding the void)
+   • Historical attempts that failed and why
+   • Technical barriers that prevented solutions
+   • Economic factors that made it unviable before
+   • Regulatory constraints that blocked entry
+   • Cultural/behavioral barriers to adoption
+   • Incumbent blind spots and innovator's dilemma
+   • Timing factors - why now vs why not before
+
+7. SIGNALS AND INDICATORS (Reading the tea leaves)
+   • Early adopter behaviors and discussions
+   • Regulatory changes creating openings
+   • Technology convergence enabling new solutions
+   • Demographic shifts creating new needs
+   • Economic changes affecting viability
+   • Social movements and cultural shifts
+   • Academic research pointing to opportunities
+
+DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of whitespace opportunities. The operator should understand:
+• Not just WHAT opportunities exist but WHY they exist
+• The forces that created and maintain these gaps
+• Early signals of opportunity windows opening or closing
+• The interconnected nature of opportunities
+• Historical context that explains current whitespace
+This is about DEEP UNDERSTANDING of opportunity landscapes, not recommendations.`;
 }
 
 function formatBlackTeamPrompt(formData) {
@@ -220,8 +287,13 @@ MISSION: Execute EXHAUSTIVE reverse engineering analysis with COMPLETE technical
 
 Every major technology company builds alternatives to existing solutions - this is how innovation happens. Google built Chrome to replace Internet Explorer. Slack built a better IRC. Zoom built a better WebEx. This is normal, legal, and essential for technological progress.
 
-🚨 CRITICAL DIRECTIVE: COMPREHENSIVE TECHNICAL ANALYSIS REQUIRED 🚨
-This is NOT a high-level feasibility study. We need EVERYTHING - every API endpoint, every feature, every edge case, every implementation detail. Document ALL technical aspects. Leave NO functionality unexplored. COMPLETE technical documentation is MANDATORY.
+🚨 CRITICAL DIRECTIVE: 4D VENDOR INTELLIGENCE - COMPLETE UNDERSTANDING 🚨
+This is NOT a high-level feasibility study. We need EVERYTHING to understand how to INCREASE INTERNAL OPERATIONS efficiency. Create a 4D view of the vendor ecosystem:
+• DEPTH: Deep technical understanding of every system component and capability
+• BREADTH: Full understanding of all integrations, dependencies, and workflows
+• TIME: How the vendor evolved, current limitations, future roadmap
+• CONTEXT: Why organizations use it, what problems it really solves, hidden complexities
+The operator needs to understand these systems better than the vendors themselves.
 
 SWARM ASSEMBLY DIRECTIVE:
 Assemble a world-class team of vendor analysis experts including:
@@ -314,7 +386,40 @@ EXHAUSTIVE TECHNICAL REQUIREMENTS:
    • COMPLETE TCO analysis
    • ALL cost optimization opportunities
 
-DELIVERABLE: Provide EXHAUSTIVE technical documentation sufficient to build a COMPLETE replacement. Include ALL technical details, implementation notes, and architectural decisions. This is a COMPLETE technical blueprint, not a summary.`;
+7. OPERATIONAL REALITY (How it really works in practice)
+   • Actual vs advertised capabilities
+   • Common workarounds and hacks users employ
+   • Real performance under load
+   • Maintenance and operational overhead
+   • Training and expertise requirements
+   • Integration pain points and gotchas
+   • Vendor lock-in mechanisms
+
+8. ORGANIZATIONAL IMPACT (The human dimension)
+   • How teams actually use the system
+   • Process changes required for adoption
+   • Skills and roles needed
+   • Change management considerations
+   • Political and cultural factors
+   • Success and failure patterns
+   • Hidden dependencies on vendor support
+
+9. STRATEGIC CONSIDERATIONS (The bigger picture)
+   • Why organizations choose this vendor
+   • What switching really entails
+   • Build vs buy decision factors
+   • Internal capability requirements
+   • Risk and compliance implications
+   • Future-proofing considerations
+   • Ecosystem lock-in effects
+
+DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of vendor systems for INTERNAL OPERATIONS improvement. The operator should understand:
+• Not just WHAT the vendor does but HOW and WHY
+• The real operational impact beyond marketing claims
+• Hidden complexities and undocumented realities
+• True costs (financial, operational, organizational)
+• What it really takes to increase internal operations efficiency
+This is about COMPLETE UNDERSTANDING for operational excellence, not just technical specs.`;
 }
 
 module.exports = {
