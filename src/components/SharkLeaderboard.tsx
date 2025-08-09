@@ -45,6 +45,7 @@ interface LeaderboardIdea {
   }>;
   createdAt?: string;
   state?: 'open' | 'closed';
+  medal?: string;
 }
 
 interface BuildResponse {
@@ -81,10 +82,32 @@ const SharkLeaderboard = () => {
       }
 
       const data = await response.json();
-      // Filter to only show ideas with scores and investments
-      const validIdeas = (data.ideas || []).filter((idea: LeaderboardIdea) => 
-        idea.sharkScore > 0 && (idea.investment || 0) > 0
+      
+      // Map the API response to the expected format
+      const mappedIdeas = (data.ideas || []).map((idea: any) => ({
+        rank: idea.rank,
+        issueNumber: idea.issue_number || idea.issueNumber,
+        issueTitle: idea.title || idea.issueTitle,
+        description: idea.description,
+        repository: idea.repository,
+        repositoryUrl: idea.repository ? `https://github.com/${idea.repository}` : undefined,
+        issueUrl: idea.github_url || idea.issueUrl,
+        labels: idea.labels || [],
+        investment: idea.investment_total || idea.investment || 0,
+        investmentDisplay: idea.investment_display || idea.investmentDisplay || '$0',
+        sharkScore: idea.score || idea.sharkScore || 0,
+        scoreBreakdown: idea.scoreBreakdown,
+        reviews: idea.reviews || [],
+        createdAt: idea.created_at || idea.createdAt,
+        state: idea.state || 'open',
+        medal: idea.medal
+      }));
+      
+      // Filter to only show ideas with valid scores
+      const validIdeas = mappedIdeas.filter((idea: LeaderboardIdea) => 
+        idea.sharkScore > 0
       );
+      
       setIdeas(validIdeas);
       setLastRefreshed(new Date());
     } catch (error) {
