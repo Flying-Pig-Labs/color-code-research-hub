@@ -13,16 +13,16 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-white group-[.toaster]:text-gray-900 group-[.toaster]:border-gray-200 group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-gray-600",
+            "group toast group-[.toaster]:bg-gray-900 group-[.toaster]:text-white group-[.toaster]:border-gray-700 group-[.toaster]:shadow-xl",
+          description: "group-[.toast]:text-gray-200",
           actionButton:
-            "group-[.toast]:bg-blue-600 group-[.toast]:text-white group-[.toast]:hover:bg-blue-700",
+            "group-[.toast]:bg-white group-[.toast]:text-gray-900 group-[.toast]:hover:bg-gray-100",
           cancelButton:
-            "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-700 group-[.toast]:hover:bg-gray-200",
-          success: "group-[.toaster]:bg-white group-[.toaster]:text-green-700 group-[.toaster]:border-green-200",
-          error: "group-[.toaster]:bg-white group-[.toaster]:text-red-700 group-[.toaster]:border-red-200",
-          warning: "group-[.toaster]:bg-white group-[.toaster]:text-yellow-700 group-[.toaster]:border-yellow-200",
-          info: "group-[.toaster]:bg-white group-[.toaster]:text-blue-700 group-[.toaster]:border-blue-200",
+            "group-[.toast]:bg-gray-700 group-[.toast]:text-gray-200 group-[.toast]:hover:bg-gray-600",
+          success: "group-[.toaster]:bg-green-600 group-[.toaster]:text-white group-[.toaster]:border-green-500",
+          error: "group-[.toaster]:bg-red-600 group-[.toaster]:text-white group-[.toaster]:border-red-500",
+          warning: "group-[.toaster]:bg-yellow-600 group-[.toaster]:text-white group-[.toaster]:border-yellow-500",
+          info: "group-[.toaster]:bg-blue-600 group-[.toaster]:text-white group-[.toaster]:border-blue-500",
         },
       }}
       {...props}
