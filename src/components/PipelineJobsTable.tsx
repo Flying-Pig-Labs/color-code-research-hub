@@ -326,7 +326,7 @@ export const PipelineJobsTable = () => {
                   </TableCell>
                   
                   <TableCell className="text-sm">
-                    {new Date(job.startTime).toLocaleString()}
+                    {formatDistanceToNow(new Date(job.startTime), { addSuffix: true })}
                   </TableCell>
                   
                   <TableCell className="text-sm">
