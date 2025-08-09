@@ -63,7 +63,27 @@ export const PipelineJobsTable = () => {
       }
       
       const data = await response.json();
-      setJobs(data.jobs || []);
+      const newJobs = data.jobs || [];
+      
+      // Merge new data with existing data, preserving fields that aren't returned
+      setJobs(prevJobs => {
+        return newJobs.map(newJob => {
+          const existingJob = prevJobs.find(j => j.jobId === newJob.jobId);
+          if (existingJob) {
+            // Merge, preserving existing values if new ones are undefined
+            return {
+              ...existingJob,
+              ...newJob,
+              currentStage: newJob.currentStage !== undefined ? newJob.currentStage : existingJob.currentStage,
+              overallProgress: newJob.overallProgress !== undefined ? newJob.overallProgress : existingJob.overallProgress,
+              elapsedMinutes: newJob.elapsedMinutes !== undefined ? newJob.elapsedMinutes : existingJob.elapsedMinutes,
+              issuesCreated: newJob.issuesCreated !== undefined ? newJob.issuesCreated : existingJob.issuesCreated,
+              error: newJob.error !== undefined ? newJob.error : existingJob.error
+            };
+          }
+          return newJob;
+        });
+      });
     } catch (error) {
       console.error('Error fetching pipeline jobs:', error);
       // Don't show error toast on initial load if API doesn't exist yet
@@ -91,20 +111,22 @@ export const PipelineJobsTable = () => {
       
       const data = await response.json();
       
-      // Update the job in our local state
+      // Update the job in our local state, preserving existing values if not provided
       setJobs(prevJobs => 
         prevJobs.map(job => 
           job.jobId === jobId 
             ? {
                 ...job,
-                status: data.status,
-                currentStage: data.currentStage,
-                overallProgress: data.overallProgress,
-                elapsedMinutes: data.elapsedMinutes,
-                endTime: data.endTime,
-                githubRepoUrl: data.results?.githubRepository?.url,
-                issuesCreated: data.results?.githubRepository?.issuesCreated,
-                error: data.error
+                status: data.status || job.status,
+                currentStage: data.currentStage !== undefined ? data.currentStage : job.currentStage,
+                overallProgress: data.overallProgress !== undefined ? data.overallProgress : job.overallProgress,
+                elapsedMinutes: data.elapsedMinutes !== undefined ? data.elapsedMinutes : job.elapsedMinutes,
+                endTime: data.endTime || job.endTime,
+                githubRepoUrl: data.results?.githubRepository?.url || job.githubRepoUrl,
+                issuesCreated: data.results?.githubRepository?.issuesCreated !== undefined 
+                  ? data.results.githubRepository.issuesCreated 
+                  : job.issuesCreated,
+                error: data.error !== undefined ? data.error : job.error
               }
             : job
         )
