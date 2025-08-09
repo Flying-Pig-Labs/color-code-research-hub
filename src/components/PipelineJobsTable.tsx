@@ -200,8 +200,13 @@ export const PipelineJobsTable = () => {
     }
   };
 
-  // Format duration
-  const formatDuration = (startTime: string, endTime?: string) => {
+  // Format duration - only show for completed jobs
+  const formatDuration = (startTime: string, endTime?: string, status: string) => {
+    // Only show duration for completed jobs (succeeded or failed)
+    if (status !== 'SUCCEEDED' && status !== 'FAILED') {
+      return '-';
+    }
+    
     if (endTime) {
       const start = new Date(startTime).getTime();
       const end = new Date(endTime).getTime();
@@ -209,11 +214,8 @@ export const PipelineJobsTable = () => {
       return `${minutes} min`;
     }
     
-    try {
-      return formatDistanceToNow(new Date(startTime), { addSuffix: false });
-    } catch {
-      return 'Running...';
-    }
+    // If status is completed but no endTime, something is wrong
+    return '-';
   };
 
   if (loading) {
@@ -330,7 +332,7 @@ export const PipelineJobsTable = () => {
                   </TableCell>
                   
                   <TableCell className="text-sm">
-                    {formatDuration(job.startTime, job.endTime)}
+                    {formatDuration(job.startTime, job.endTime, job.status)}
                   </TableCell>
                   
                   <TableCell>
