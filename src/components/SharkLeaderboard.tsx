@@ -138,19 +138,32 @@ const SharkLeaderboard = () => {
     try {
       setBuildingIdea(idea.issueNumber);
       
+      // The build API seems to need all the idea data
+      const buildPayload = {
+        id: `${idea.repository}#${idea.issueNumber}`,
+        issue_number: idea.issueNumber,
+        repository: idea.repository,
+        score: idea.sharkScore,
+        investment_display: idea.investmentDisplay || '$0',
+        investment_total: idea.investment || 0,
+        title: idea.issueTitle,
+        description: idea.description || '',
+      };
+      
+      console.log('Sending build request with payload:', buildPayload);
+      
       const response = await fetch('https://9y4n7ifoql.execute-api.us-east-1.amazonaws.com/prod/build', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          issueNumber: idea.issueNumber,
-          repository: idea.repository,
-        }),
+        body: JSON.stringify(buildPayload),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to build repository');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Build API error:', errorData);
+        throw new Error(errorData.error || 'Failed to build repository');
       }
 
       const data: BuildResponse = await response.json();
@@ -173,9 +186,12 @@ const SharkLeaderboard = () => {
       });
     } catch (error) {
       console.error('Error building repository:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create repository';
       toast({
-        title: "Error",
-        description: "Failed to create repository. Please try again.",
+        title: "Build Failed",
+        description: errorMessage === "'repository'" 
+          ? "The build API is having issues with the repository format. Please try again later."
+          : errorMessage,
         variant: "destructive",
       });
     } finally {
