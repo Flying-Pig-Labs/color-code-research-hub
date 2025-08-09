@@ -225,12 +225,14 @@ class InnovationPipelineService {
     // Parse logs to estimate progress
     const logMessages = batchStatus.logs.map(l => l.message);
     const currentStage = this.detectCurrentStage(logMessages);
-    const overallProgress = this.calculateProgress(batchStatus.status, currentStage);
     
     // Calculate elapsed time
     const startTime = new Date(batchStatus.createdAt).getTime();
     const elapsedMs = Date.now() - startTime;
     const elapsedMinutes = Math.floor(elapsedMs / 60000);
+    
+    // Pass elapsed minutes to calculateProgress for better estimation
+    const overallProgress = this.calculateProgressWithTime(batchStatus.status, currentStage, elapsedMinutes);
 
     return {
       jobId: batchStatus.jobId,
@@ -325,12 +327,40 @@ class InnovationPipelineService {
     if (status === 'RUNNING') {
       // Base progress for running status
       const baseProgress = 20;
-      // Each completed stage adds 15% (5 stages = 75% total)
+      // Each stage represents 15% of progress (5 stages = 75% total)
       const stageProgress = (stage - 1) * 15;
-      // Add some progress within current stage
-      const currentStageProgress = 7; // Half-way through current stage
+      // Fixed progress within stage
+      const currentStageProgress = 7;
       
       return Math.min(95, baseProgress + stageProgress + currentStageProgress);
+    }
+    
+    return 0;
+  }
+
+  private calculateProgressWithTime(status: string, stage: number, elapsedMinutes: number): number {
+    if (status === 'SUCCEEDED') return 100;
+    if (status === 'FAILED') return 0;
+    if (status === 'SUBMITTED' || status === 'PENDING') return 5;
+    if (status === 'RUNNABLE') return 10;
+    if (status === 'STARTING') return 15;
+    
+    // Running - use time-based estimation
+    if (status === 'RUNNING') {
+      // Assume 15 minutes total runtime
+      const expectedTotalMinutes = 15;
+      
+      // Time-based progress (up to 80%)
+      const timeProgress = Math.min(80, (elapsedMinutes / expectedTotalMinutes) * 80);
+      
+      // Stage-based adjustment (adds up to 15%)
+      const stageBonus = Math.min(15, stage * 3);
+      
+      // Combine time and stage progress
+      const totalProgress = Math.floor(timeProgress + stageBonus);
+      
+      // Cap at 95% to show it's still running
+      return Math.min(95, Math.max(20, totalProgress));
     }
     
     return 0;
