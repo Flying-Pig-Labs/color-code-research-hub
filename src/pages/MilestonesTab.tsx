@@ -44,8 +44,8 @@ const MilestonesTab = () => {
   const fetchMvpBuilderRepos = async () => {
     try {
       setLoading(true);
-      // Fetch mvp-builder-app repos
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/mvp-builder-app`, {
+      // Fetch ocean-studio-apps repos (where BUILD button creates new repos)
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/ocean-studio-apps`, {
         credentials: 'omit'
       });
       
@@ -59,7 +59,7 @@ const MilestonesTab = () => {
       console.error("Error fetching repos:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch MVP Builder repositories. Please check your GitHub token.",
+        description: "Failed to fetch Ocean Studio Apps repositories. Please check your GitHub token.",
         variant: "destructive",
       });
     } finally {
@@ -190,7 +190,7 @@ const MilestonesTab = () => {
                 <div>
                   <CardTitle className="text-2xl font-bold text-foreground">Select Repository</CardTitle>
                   <CardDescription className="text-muted-foreground mt-1">
-                    Choose a repository from mvp-builder-app to generate your project plan
+                    Choose a repository from ocean-studio-apps to generate your project plan
                   </CardDescription>
                 </div>
               </div>
