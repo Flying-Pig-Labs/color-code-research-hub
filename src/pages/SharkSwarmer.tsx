@@ -8,6 +8,7 @@ import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, CircleHelp,
 import { useToast } from '@/hooks/use-toast';
 import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
+import SharkLeaderboard from "@/components/SharkLeaderboard";
 
 interface GitHubRepo {
   id: number;
@@ -23,16 +24,23 @@ interface GitHubRepo {
 
 const SharkSwarmer = () => {
   const { toast } = useToast();
-  const [showHow, setShowHow] = useState(false);
+  const [activeTab, setActiveTab] = useState<'leaderboard' | 'ideas' | 'how'>('leaderboard');
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
   
-  // Toggle "How" section when hash changes
+  // Handle navigation changes
   useEffect(() => {
     const handleHashChange = () => {
-      setShowHow(window.location.hash === "#how");
+      const hash = window.location.hash.slice(1);
+      if (hash === 'how') {
+        setActiveTab('how');
+      } else if (hash === 'ideas') {
+        setActiveTab('ideas');
+      } else {
+        setActiveTab('leaderboard');
+      }
     };
     
     handleHashChange(); // Check initial hash
@@ -41,9 +49,9 @@ const SharkSwarmer = () => {
   }, []);
   
   const navItems = [
-    { path: "#", label: "Leaderboard", icon: Table, variant: "ghost" as const },
-    { path: "#", label: "Ideas", icon: Lightbulb, variant: "ghost" as const },
-    { path: "#how", label: "How", icon: CircleHelp, variant: "ghost" as const },
+    { path: "#leaderboard", label: "Leaderboard", icon: Table, variant: activeTab === 'leaderboard' ? "default" as const : "ghost" as const },
+    { path: "#ideas", label: "Ideas", icon: Lightbulb, variant: activeTab === 'ideas' ? "default" as const : "ghost" as const },
+    { path: "#how", label: "How", icon: CircleHelp, variant: activeTab === 'how' ? "default" as const : "ghost" as const },
   ];
 
   useEffect(() => {
@@ -124,194 +132,164 @@ const SharkSwarmer = () => {
         </div>
       </SectionWrapper>
 
-      {/* How It Works Section - Revealed on toggle */}
-      {showHow && (
-        <SectionWrapper className="py-8 bg-gradient-carmax-fade">
-          <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 max-w-4xl mx-auto">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-carmax-yellow/20">
-                  <AlertCircle className="h-6 w-6 text-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2 text-xl">How Shark Swarmer Works</h3>
-                  <div className="space-y-4 text-sm text-muted-foreground">
-                    {/* Content to be filled in later */}
-                    <p className="leading-relaxed">
-                      [How It Works content will be added here]
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </SectionWrapper>
-      )}
-
-      {/* Features Overview */}
-      <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">
+      {/* Tab Content */}
+      <SectionWrapper className="py-8 bg-gradient-carmax-fade relative">
         {/* Subtle fading background elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
           <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
         </div>
         
-        {/* Repository Selection */}
-        <div className="max-w-4xl mx-auto mb-8 relative z-10">
-          <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
-            <CardHeader className="border-b border-carmax-blue/10 bg-gradient-to-r from-carmax-yellow/5 to-carmax-blue/5">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-carmax-blue/10">
-                  <Github className="h-6 w-6 text-carmax-blue" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl font-bold text-foreground">Select Repository</CardTitle>
-                  <CardDescription className="text-muted-foreground mt-1">
-                    Choose a repository from ocean-studio-repos to evaluate with AI sharks
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex flex-col items-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-carmax-blue mb-4" />
-                  <p className="text-muted-foreground">Loading repositories...</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Search repositories..."
-                      className="pl-10 border-carmax-blue/20 focus:border-carmax-blue/40"
-                    />
+        <div className="max-w-6xl mx-auto relative z-10">
+          {/* Leaderboard Tab */}
+          {activeTab === 'leaderboard' && (
+            <SharkLeaderboard />
+          )}
+
+          {/* Ideas Tab */}
+          {activeTab === 'ideas' && (
+            <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20">
+              <CardHeader className="border-b border-carmax-blue/10 bg-gradient-to-r from-carmax-yellow/5 to-carmax-blue/5">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-carmax-blue/10">
+                    <Github className="h-6 w-6 text-carmax-blue" />
                   </div>
-                  <ScrollArea className="h-[400px] rounded-md border border-carmax-blue/20">
-                    <div className="p-4 space-y-3">
-                      {filteredRepos.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-8">
-                          No repositories found. Try adjusting your search.
-                        </p>
-                      ) : (
-                        filteredRepos.map((repo) => (
-                          <Card 
-                            key={repo.id} 
-                            className="cursor-pointer hover:shadow-md transition-all hover:border-carmax-blue/40 group"
-                            onClick={() => handleRepoSelect(repo)}
-                          >
-                            <CardContent className="p-4">
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <h3 className="font-semibold text-foreground group-hover:text-carmax-blue transition-colors truncate">
-                                      {repo.name}
-                                    </h3>
-                                    {repo.private ? (
-                                      <Lock className="h-3 w-3 text-muted-foreground" />
-                                    ) : (
-                                      <Globe className="h-3 w-3 text-muted-foreground" />
-                                    )}
-                                  </div>
-                                  {repo.description && (
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                      {repo.description}
-                                    </p>
-                                  )}
-                                  <div className="flex items-center gap-4 mt-2">
-                                    {repo.language && (
-                                      <Badge variant="secondary" className="text-xs">
-                                        {repo.language}
-                                      </Badge>
-                                    )}
-                                    <span className="text-xs text-muted-foreground">
-                                      Updated {new Date(repo.updated_at).toLocaleDateString()}
-                                    </span>
-                                  </div>
-                                </div>
-                                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-carmax-blue transition-colors flex-shrink-0 ml-4" />
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))
-                      )}
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-foreground">Select Repository</CardTitle>
+                    <CardDescription className="text-muted-foreground mt-1">
+                      Choose a repository from ocean-studio-repos to evaluate with AI sharks
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="flex flex-col items-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-carmax-blue mb-4" />
+                    <p className="text-muted-foreground">Loading repositories...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search repositories..."
+                        className="pl-10 border-carmax-blue/20 focus:border-carmax-blue/40"
+                      />
                     </div>
-                  </ScrollArea>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{filteredRepos.length} repositories found</span>
-                    <span>Organization: ocean-studio-repos</span>
+                    <ScrollArea className="h-[400px] rounded-md border border-carmax-blue/20">
+                      <div className="p-4 space-y-3">
+                        {filteredRepos.length === 0 ? (
+                          <p className="text-center text-muted-foreground py-8">
+                            No repositories found. Try adjusting your search.
+                          </p>
+                        ) : (
+                          filteredRepos.map((repo) => (
+                            <Card 
+                              key={repo.id} 
+                              className="cursor-pointer hover:shadow-md transition-all hover:border-carmax-blue/40 group"
+                              onClick={() => handleRepoSelect(repo)}
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <h3 className="font-semibold text-foreground group-hover:text-carmax-blue transition-colors truncate">
+                                        {repo.name}
+                                      </h3>
+                                      {repo.private ? (
+                                        <Lock className="h-3 w-3 text-muted-foreground" />
+                                      ) : (
+                                        <Globe className="h-3 w-3 text-muted-foreground" />
+                                      )}
+                                    </div>
+                                    {repo.description && (
+                                      <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {repo.description}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center gap-4 mt-2">
+                                      {repo.language && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          {repo.language}
+                                        </Badge>
+                                      )}
+                                      <span className="text-xs text-muted-foreground">
+                                        Updated {new Date(repo.updated_at).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-carmax-blue transition-colors flex-shrink-0 ml-4" />
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))
+                        )}
+                      </div>
+                    </ScrollArea>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{filteredRepos.length} repositories found</span>
+                      <span>Organization: ocean-studio-repos</span>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* How Tab */}
+          {activeTab === 'how' && (
+            <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 max-w-4xl mx-auto">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-lg bg-carmax-yellow/20">
+                    <AlertCircle className="h-6 w-6 text-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-4 text-xl">How Shark Swarmer Works</h3>
+                    <div className="space-y-4 text-muted-foreground">
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">1. AI Shark Evaluation</h4>
+                        <p className="leading-relaxed">
+                          Multiple AI "sharks" with different personas evaluate each idea, simulating a Shark Tank experience. Each shark has unique expertise and investment criteria.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">2. Comprehensive Scoring</h4>
+                        <p className="leading-relaxed">
+                          Ideas receive a composite Shark Score (0-100) based on investment amounts, confidence levels, and decision ratios. Higher scores indicate stronger investment potential.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">3. Investment Tracking</h4>
+                        <p className="leading-relaxed">
+                          Track total investment offers across all sharks. See which ideas attract the most funding and understand the reasoning behind each investment decision.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">4. One-Click Build</h4>
+                        <p className="leading-relaxed">
+                          Transform winning ideas into reality. Click the BUILD button to automatically create a new repository in ocean-studio-apps with a complete project structure and shark feedback.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">5. Real-Time Leaderboard</h4>
+                        <p className="leading-relaxed">
+                          View the top 10 ideas across all evaluated repositories. The leaderboard updates every 30 seconds, showing rankings, scores, and investment totals.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-          <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-carmax-blue/10">
-                  <Users className="h-6 w-6 text-carmax-blue" />
-                </div>
-                <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                  Agent Personas
-                </CardTitle>
-              </div>
-              <CardDescription className="text-sm text-muted-foreground">
-                Diverse AI Perspectives
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                Multiple AI agents with different viewpoints and expertise to evaluate your ideas from every angle.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-yellow/20 hover:border-carmax-yellow/40 hover:bg-carmax-yellow/5">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-carmax-yellow/10">
-                  <Target className="h-6 w-6 text-foreground" />
-                </div>
-                <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                  Idea Scoring
-                </CardTitle>
-              </div>
-              <CardDescription className="text-sm text-muted-foreground">
-                Systematic Evaluation
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                Data-driven scoring framework that evaluates ideas based on feasibility, impact, and innovation potential.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-carmax-blue/10">
-                  <Trophy className="h-6 w-6 text-carmax-blue" />
-                </div>
-                <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                  Best Selection
-                </CardTitle>
-              </div>
-              <CardDescription className="text-sm text-muted-foreground">
-                Smart Recommendations
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                AI-powered selection process that identifies the most promising ideas for implementation.
-              </p>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </SectionWrapper>
     </div>
