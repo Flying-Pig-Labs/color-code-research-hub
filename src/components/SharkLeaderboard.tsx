@@ -23,28 +23,28 @@ interface LeaderboardIdea {
   rank: number;
   issueNumber: number;
   issueTitle: string;
-  description: string;
+  description?: string;
   repository: string;
-  repositoryUrl: string;
+  repositoryUrl?: string;
   issueUrl: string;
-  labels: string[];
-  investment: number;
-  investmentDisplay: string;
+  labels?: string[];
+  investment?: number;
+  investmentDisplay?: string;
   sharkScore: number;
-  scoreBreakdown: {
+  scoreBreakdown?: {
     avgInvestment: number;
     avgConfidence: number;
     decisionRatio: number;
   };
-  reviews: Array<{
+  reviews?: Array<{
     shark: string;
     investment: number;
     confidence: number;
     decision: 'Invest' | 'Pass';
     reasoning: string;
   }>;
-  createdAt: string;
-  state: 'open' | 'closed';
+  createdAt?: string;
+  state?: 'open' | 'closed';
 }
 
 interface BuildResponse {
@@ -81,7 +81,11 @@ const SharkLeaderboard = () => {
       }
 
       const data = await response.json();
-      setIdeas(data.ideas || []);
+      // Filter to only show ideas with scores and investments
+      const validIdeas = (data.ideas || []).filter((idea: LeaderboardIdea) => 
+        idea.sharkScore > 0 && (idea.investment || 0) > 0
+      );
+      setIdeas(validIdeas);
       setLastRefreshed(new Date());
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
@@ -282,11 +286,11 @@ const SharkLeaderboard = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <p className="text-sm text-muted-foreground line-clamp-2">
-                              {idea.description}
+                              {idea.description || 'No description available'}
                             </p>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="max-w-md">{idea.description}</p>
+                            <p className="max-w-md">{idea.description || 'No description available'}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -294,7 +298,7 @@ const SharkLeaderboard = () => {
                     
                     <TableCell className="text-center">
                       <div className="flex flex-col items-center gap-1">
-                        <span className="font-bold text-lg">{idea.investmentDisplay}</span>
+                        <span className="font-bold text-lg">{idea.investmentDisplay || '$0'}</span>
                         <Badge variant="secondary" className="text-xs">
                           <DollarSign className="h-3 w-3 mr-1" />
                           Total
@@ -321,15 +325,15 @@ const SharkLeaderboard = () => {
                               <div className="space-y-1 text-xs">
                                 <div className="flex justify-between gap-4">
                                   <span>Avg Investment:</span>
-                                  <span className="font-mono">{idea.scoreBreakdown.avgInvestment.toFixed(1)}</span>
+                                  <span className="font-mono">{(idea.scoreBreakdown?.avgInvestment || 0).toFixed(1)}</span>
                                 </div>
                                 <div className="flex justify-between gap-4">
                                   <span>Avg Confidence:</span>
-                                  <span className="font-mono">{idea.scoreBreakdown.avgConfidence.toFixed(1)}</span>
+                                  <span className="font-mono">{(idea.scoreBreakdown?.avgConfidence || 0).toFixed(1)}</span>
                                 </div>
                                 <div className="flex justify-between gap-4">
                                   <span>Decision Ratio:</span>
-                                  <span className="font-mono">{idea.scoreBreakdown.decisionRatio.toFixed(1)}</span>
+                                  <span className="font-mono">{(idea.scoreBreakdown?.decisionRatio || 0).toFixed(1)}</span>
                                 </div>
                               </div>
                             </div>
@@ -378,7 +382,7 @@ const SharkLeaderboard = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Investment Pool</p>
                   <p className="text-2xl font-bold">
-                    ${(ideas.reduce((sum, idea) => sum + idea.investment, 0) / 1000000).toFixed(1)}M
+                    ${(ideas.reduce((sum, idea) => sum + (idea.investment || 0), 0) / 1000000).toFixed(1)}M
                   </p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-600" />
