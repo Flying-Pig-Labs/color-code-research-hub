@@ -21,11 +21,13 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { listResearchReports, ResearchReport } from '@/services/researchApi';
 
 interface PipelineJob {
   jobId: string;
   researchId: string;
   username?: string;
+  objective?: string; // Research objective/target from the original research report
   startTime: string;
   endTime?: string;
   status: 'SUBMITTED' | 'PENDING' | 'RUNNING' | 'SUCCEEDED' | 'FAILED';
@@ -42,6 +44,17 @@ export const PipelineJobsTable = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [researchReports, setResearchReports] = useState<ResearchReport[]>([]);
+
+  // Fetch research reports to get objectives
+  const fetchResearchReports = async () => {
+    try {
+      const reports = await listResearchReports(undefined, 100); // Get all recent reports
+      setResearchReports(reports);
+    } catch (error) {
+      console.error('Error fetching research reports:', error);
+    }
+  };
 
   // Fetch all jobs (running and completed) from API
   const fetchJobs = async () => {
@@ -66,14 +79,21 @@ export const PipelineJobsTable = () => {
       const newJobs = data.jobs || [];
       
       // Merge new data with existing data, preserving fields that aren't returned
+      // Also try to match objectives from research reports
       setJobs(prevJobs => {
         return newJobs.map(newJob => {
           const existingJob = prevJobs.find(j => j.jobId === newJob.jobId);
+          
+          // Try to find the research report for this job to get the objective
+          const matchingReport = researchReports.find(r => r.reportId === newJob.researchId);
+          const objective = matchingReport?.objective || existingJob?.objective;
+          
           if (existingJob) {
             // Merge, preserving existing values if new ones are undefined
             return {
               ...existingJob,
               ...newJob,
+              objective: objective || existingJob.objective,
               currentStage: newJob.currentStage !== undefined ? newJob.currentStage : existingJob.currentStage,
               overallProgress: newJob.overallProgress !== undefined ? newJob.overallProgress : existingJob.overallProgress,
               elapsedMinutes: newJob.elapsedMinutes !== undefined ? newJob.elapsedMinutes : existingJob.elapsedMinutes,
@@ -81,7 +101,10 @@ export const PipelineJobsTable = () => {
               error: newJob.error !== undefined ? newJob.error : existingJob.error
             };
           }
-          return newJob;
+          return {
+            ...newJob,
+            objective: objective
+          };
         });
       });
     } catch (error) {
@@ -143,7 +166,10 @@ export const PipelineJobsTable = () => {
 
   // Initial load
   useEffect(() => {
-    fetchJobs();
+    // Fetch research reports first, then jobs
+    fetchResearchReports().then(() => {
+      fetchJobs();
+    });
   }, []);
 
   // Auto-refresh every 10 seconds for running jobs
@@ -155,10 +181,14 @@ export const PipelineJobsTable = () => {
     );
     
     if (hasRunningJobs) {
-      const interval = setInterval(fetchJobs, 10000);
+      const interval = setInterval(() => {
+        fetchResearchReports().then(() => {
+          fetchJobs();
+        });
+      }, 10000);
       return () => clearInterval(interval);
     }
-  }, [jobs, autoRefresh]);
+  }, [jobs, autoRefresh, researchReports]);
 
   // Get status badge variant and icon - show actual AWS Batch status
   const getStatusBadge = (status: string) => {
@@ -261,7 +291,11 @@ export const PipelineJobsTable = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchJobs}
+            onClick={() => {
+              fetchResearchReports().then(() => {
+                fetchJobs();
+              });
+            }}
             className="gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -295,7 +329,11 @@ export const PipelineJobsTable = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchJobs}
+            onClick={() => {
+              fetchResearchReports().then(() => {
+                fetchJobs();
+              });
+            }}
             className="gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -310,6 +348,7 @@ export const PipelineJobsTable = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Research ID</TableHead>
+              <TableHead>Target</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Current Stage</TableHead>
               <TableHead>Start Time</TableHead>
@@ -328,6 +367,14 @@ export const PipelineJobsTable = () => {
                     {job.researchId.length > 20 
                       ? `${job.researchId.slice(0, 20)}...` 
                       : job.researchId}
+                  </TableCell>
+                  
+                  <TableCell className="text-sm" title={job.objective}>
+                    {job.objective ? (
+                      job.objective.length > 40 
+                        ? `${job.objective.slice(0, 40)}...` 
+                        : job.objective
+                    ) : '-'}
                   </TableCell>
                   
                   <TableCell>

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Research objective/target field to Pipeline Jobs table for better context (January 8, 2025)
+  - Shows what research each pipeline job is processing
+  - Fetches objectives from ResearchReports DynamoDB table
+  - Displays truncated objectives with full text on hover
+
+### Changed
 - Ideate button functionality to research report views (January 5, 2025)
 - S3 multi-tenant architecture for report storage
 - Comprehensive JSDoc documentation to core Lambda handlers and services
