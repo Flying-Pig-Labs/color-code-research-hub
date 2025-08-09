@@ -56,6 +56,12 @@ const getGitHubToken = async () => {
 
 // Make GitHub API request
 const makeGitHubRequest = (path, token) => {
+  console.log('Making GitHub API request:', {
+    path: path,
+    hasToken: !!token,
+    tokenLength: token ? token.length : 0
+  });
+  
   return new Promise((resolve, reject) => {
     const options = {
       hostname: 'api.github.com',
@@ -76,9 +82,21 @@ const makeGitHubRequest = (path, token) => {
       });
 
       res.on('end', () => {
+        console.log('GitHub API response:', {
+          statusCode: res.statusCode,
+          dataLength: data.length,
+          headers: res.headers
+        });
+        
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(JSON.parse(data));
+          try {
+            resolve(JSON.parse(data));
+          } catch (parseError) {
+            console.error('Failed to parse GitHub response:', data);
+            reject(new Error(`Failed to parse GitHub response: ${parseError.message}`));
+          }
         } else {
+          console.error('GitHub API error response:', data);
           reject(new Error(`GitHub API error: ${res.statusCode} ${data}`));
         }
       });
@@ -177,12 +195,37 @@ exports.handler = async (event) => {
     }
   } catch (error) {
     console.error('Error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      path: event.path,
+      method: event.httpMethod
+    });
+    
+    // Determine appropriate status code
+    let statusCode = 500;
+    let errorMessage = 'An internal server error occurred';
+    
+    if (error.message.includes('Configuration')) {
+      statusCode = 500;
+      errorMessage = 'Server configuration error';
+    } else if (error.message.includes('404')) {
+      statusCode = 404;
+      errorMessage = 'Repository or organization not found';
+    } else if (error.message.includes('401')) {
+      statusCode = 500; // Don't expose auth errors to client
+      errorMessage = 'Authentication error';
+    } else if (error.message.includes('403')) {
+      statusCode = 403;
+      errorMessage = 'Access denied to this resource';
+    }
     
     return {
-      statusCode: error.message.includes('Configuration') ? 500 : 400,
+      statusCode: statusCode,
       headers: corsHeaders,
       body: JSON.stringify({
-        error: error.message || 'An error occurred'
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       })
     };
   }
