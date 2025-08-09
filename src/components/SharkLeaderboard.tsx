@@ -138,35 +138,49 @@ const SharkLeaderboard = () => {
     try {
       setBuildingIdea(idea.issueNumber);
       
-      // The build API seems to need all the idea data
+      // Build API contract - only repository and issue_number are required
       const buildPayload = {
-        id: `${idea.repository}#${idea.issueNumber}`,
-        issue_number: idea.issueNumber,
-        repository: idea.repository,
-        score: idea.sharkScore,
-        investment_display: idea.investmentDisplay || '$0',
-        investment_total: idea.investment || 0,
-        title: idea.issueTitle,
-        description: idea.description || '',
+        repository: idea.repository,           // Required: Full repository name (owner/repo)
+        issue_number: idea.issueNumber,        // Required: GitHub issue number
+        // Optional fields for README generation
+        title: idea.issueTitle,                
+        score: idea.sharkScore,                
+        investment_display: idea.investmentDisplay || '$0',  
+        rank: idea.rank,                       
+        medal: idea.medal                      
       };
       
-      console.log('Sending build request with payload:', buildPayload);
+      console.log('BUILD button clicked for:', {
+        repository: idea.repository,
+        issueNumber: idea.issueNumber,
+        payload: buildPayload,
+        payloadString: JSON.stringify(buildPayload)
+      });
       
       const response = await fetch('https://9y4n7ifoql.execute-api.us-east-1.amazonaws.com/prod/build', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify(buildPayload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Build API error:', errorData);
-        throw new Error(errorData.error || 'Failed to build repository');
+      const responseText = await response.text();
+      console.log('Build API raw response:', responseText);
+      
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse response:', responseText);
+        throw new Error('Invalid response from build API');
       }
-
-      const data: BuildResponse = await response.json();
+      
+      if (!response.ok || !responseData.success) {
+        console.error('Build API error:', responseData);
+        throw new Error(responseData.error || 'Failed to build repository');
+      }
       
       toast({
         title: "Success! 🚀",
@@ -174,12 +188,12 @@ const SharkLeaderboard = () => {
           <div className="space-y-2">
             <p>New repository created successfully!</p>
             <a 
-              href={data.repository.html_url} 
+              href={responseData.repo_url || '#'} 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-blue-600 hover:underline"
             >
-              View Repository <ExternalLink className="h-3 w-3" />
+              View Repository: {responseData.repo_name || 'New Repo'} <ExternalLink className="h-3 w-3" />
             </a>
           </div>
         ),
@@ -187,11 +201,20 @@ const SharkLeaderboard = () => {
     } catch (error) {
       console.error('Error building repository:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create repository';
+      
+      // Provide specific error messages for known issues
+      let userMessage = errorMessage;
+      if (errorMessage.includes("'repository'")) {
+        userMessage = "The build API Lambda has a bug - it's not reading the 'repository' field from the request body correctly. The frontend is sending the data properly. This needs to be fixed in the Lambda handler.";
+      } else if (errorMessage.includes("'issue_number'")) {
+        userMessage = "The build API couldn't find the issue number. Please ensure the idea has a valid issue number.";
+      } else if (errorMessage.includes("Invalid response")) {
+        userMessage = "The build API returned an invalid response. Please check the Lambda function logs.";
+      }
+      
       toast({
         title: "Build Failed",
-        description: errorMessage === "'repository'" 
-          ? "The build API is having issues with the repository format. Please try again later."
-          : errorMessage,
+        description: userMessage,
         variant: "destructive",
       });
     } finally {
