@@ -138,39 +138,64 @@ export const PipelineJobsTable = () => {
     }
   }, [jobs, autoRefresh]);
 
-  // Get status badge variant and icon
+  // Get status badge variant and icon - show actual AWS Batch status
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'SUCCEEDED':
         return {
           variant: 'success' as const,
           icon: <CheckCircle2 className="h-3 w-3" />,
-          label: 'Completed'
+          label: 'SUCCEEDED',
+          className: 'bg-green-100 text-green-800 border-green-200'
         };
       case 'RUNNING':
         return {
           variant: 'default' as const,
           icon: <PlayCircle className="h-3 w-3" />,
-          label: 'Running'
+          label: 'RUNNING',
+          className: 'bg-blue-100 text-blue-800 border-blue-200'
         };
       case 'PENDING':
+        return {
+          variant: 'secondary' as const,
+          icon: <Clock className="h-3 w-3" />,
+          label: 'PENDING',
+          className: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+        };
       case 'SUBMITTED':
         return {
           variant: 'secondary' as const,
           icon: <Clock className="h-3 w-3" />,
-          label: 'Queued'
+          label: 'SUBMITTED',
+          className: 'bg-gray-100 text-gray-800 border-gray-200'
+        };
+      case 'RUNNABLE':
+        return {
+          variant: 'secondary' as const,
+          icon: <AlertCircle className="h-3 w-3" />,
+          label: 'RUNNABLE',
+          className: 'bg-indigo-100 text-indigo-800 border-indigo-200'
+        };
+      case 'STARTING':
+        return {
+          variant: 'default' as const,
+          icon: <Loader2 className="h-3 w-3 animate-spin" />,
+          label: 'STARTING',
+          className: 'bg-cyan-100 text-cyan-800 border-cyan-200'
         };
       case 'FAILED':
         return {
           variant: 'destructive' as const,
           icon: <XCircle className="h-3 w-3" />,
-          label: 'Failed'
+          label: 'FAILED',
+          className: 'bg-red-100 text-red-800 border-red-200'
         };
       default:
         return {
           variant: 'outline' as const,
           icon: <Clock className="h-3 w-3" />,
-          label: status
+          label: status,
+          className: 'bg-gray-50 text-gray-600 border-gray-200'
         };
     }
   };
@@ -282,7 +307,10 @@ export const PipelineJobsTable = () => {
                   </TableCell>
                   
                   <TableCell>
-                    <Badge variant={statusBadge.variant} className="gap-1">
+                    <Badge 
+                      variant={statusBadge.variant} 
+                      className={`gap-1 ${statusBadge.className}`}
+                    >
                       {statusBadge.icon}
                       {statusBadge.label}
                     </Badge>
@@ -355,19 +383,31 @@ export const PipelineJobsTable = () => {
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="h-2 w-2 bg-green-500 rounded-full" />
-          <span>Completed</span>
+          <span>SUCCEEDED</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="h-2 w-2 bg-blue-500 rounded-full animate-pulse" />
-          <span>Running</span>
+          <span>RUNNING</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="h-2 w-2 bg-cyan-500 rounded-full" />
+          <span>STARTING</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="h-2 w-2 bg-indigo-500 rounded-full" />
+          <span>RUNNABLE</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="h-2 w-2 bg-yellow-500 rounded-full" />
+          <span>PENDING</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="h-2 w-2 bg-gray-400 rounded-full" />
-          <span>Queued</span>
+          <span>SUBMITTED</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="h-2 w-2 bg-red-500 rounded-full" />
-          <span>Failed</span>
+          <span>FAILED</span>
         </div>
       </div>
     </div>
