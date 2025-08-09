@@ -76,7 +76,7 @@ curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/a
     "content": "Test research query",
     "title": "Test",
     "model": "sonar-deep-research",
-    "reasoning_effort": "low"
+    "reasoning_effort": "high"
   }'
 ```
 

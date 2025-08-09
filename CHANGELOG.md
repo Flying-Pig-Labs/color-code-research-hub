@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - File-level documentation explaining the 3-step LLM orchestration process
 - Updated CLAUDE.md with current system architecture and recent changes
 - Created CHANGELOG.md for tracking project changes
+- Enhanced research prompts for 4D intelligence gathering (January 8, 2025)
+  - Red Team: Deep competitive dynamics and ecosystem analysis
+  - Black Team: Operational reality and organizational impact analysis
+  - White Team: Why whitespace exists and signals/indicators analysis
 
 ### Changed
 - Enhanced code documentation in `llm-orchestrator-service.js` with detailed JSDoc comments
@@ -21,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved function-level documentation for all major orchestration methods
 - Updated frontend to fetch all reports from DynamoDB instead of limited results
 - Show 'Processing Summary' status until AI summary is generated
+- **BREAKING**: Changed Perplexity API reasoning_effort from "low" to "high" for better research quality (January 8, 2025)
+- Refocused all research prompts on deep understanding rather than action plans (January 8, 2025)
 
 ### Fixed
 - Handle invalid date values in ResearchReportHistory to prevent RangeError (January 5, 2025)

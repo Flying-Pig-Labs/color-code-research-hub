@@ -59,7 +59,7 @@ Check that the following resources were created:
   "content": "Your research question or task",
   "title": "Optional title for the research",
   "model": "sonar-deep-research",
-  "reasoning_effort": "low",
+  "reasoning_effort": "high",
   "tags": ["optional", "tags"],
   "requester": "Optional requester name"
 }
@@ -77,7 +77,7 @@ Check that the following resources were created:
     "requester": "Unknown",
     "tags": [],
     "model": "sonar-deep-research",
-    "reasoning_effort": "low"
+    "reasoning_effort": "high"
   },
   "s3_location": "s3://color-code-research-results-{ACCOUNT_ID}/research/20240315_120000_abc12345.json",
   "model_used": "sonar-deep-research",
@@ -135,7 +135,7 @@ curl -X POST https://ojfpuao6c4.execute-api.us-east-1.amazonaws.com/production/a
     "content": "What are the latest developments in quantum computing?",
     "title": "Quantum Computing Research",
     "model": "sonar-deep-research",
-    "reasoning_effort": "low"
+    "reasoning_effort": "high"
   }'
 ```
 

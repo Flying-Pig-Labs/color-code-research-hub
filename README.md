@@ -24,9 +24,9 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 
 ### Key Capabilities
 
-- **🔴 Red Team**: Analyze competitors and identify market disruption opportunities
-- **⚫ Black Team**: Research third-party tools for internal replacement strategies  
-- **⚪ White Team**: Discover untapped market opportunities and whitespace
+- **🔴 Red Team**: 4D competitive intelligence - complete understanding of competitive landscape
+- **⚫ Black Team**: Vendor system intelligence for increasing internal operational efficiency  
+- **⚪ White Team**: Deep analysis of whitespace opportunities and why they exist
 
 ### Powered by Advanced AI
 
@@ -196,14 +196,14 @@ make install    # Install all dependencies
 
 ## 🎯 Research Teams
 
-### 🔴 Red Team - Market Disruption Analysis
+### 🔴 Red Team - Competitive Intelligence (4D Analysis)
 
-**Purpose**: Analyze competitor vulnerabilities and develop offensive market disruption strategies.
+**Purpose**: Create complete 4D understanding of competitive landscape for strategic decision-making.
 
 **How It Works**: 
-- You specify a **target company** to disrupt (e.g., "Carvana")
-- The AI analyzes market vulnerabilities and opportunities
-- Generates actionable strategies for market attack
+- You specify a **target company** to analyze comprehensively (e.g., "Carvana")
+- The AI provides deep intelligence across 4 dimensions: Depth, Breadth, Time, and Context
+- Delivers exhaustive understanding of competitive dynamics, ecosystem connections, and future trajectories
 
 **Custom Fields**:
 - `companyName` - Target competitor to disrupt
@@ -213,9 +213,9 @@ make install    # Install all dependencies
 - `investmentRange` - Capital deployment ($10K - $10M)
 - `disruptionStrategy` - Direct competition, differentiation, cost leadership
 
-### ⚫ Black Team - Internal Tool Replacement
+### ⚫ Black Team - Vendor Intelligence for Internal Operations
 
-**Purpose**: Explore replacing expensive third-party tools with internal solutions.
+**Purpose**: Deep 4D understanding of vendor systems to increase internal operational efficiency.
 
 **Custom Fields**:
 - `toolCategories` - Analytics, Development, Security, etc.
@@ -225,9 +225,9 @@ make install    # Install all dependencies
 - `techStackPreference` - Preferred technologies
 - `timeToMarket` - Implementation timeline
 
-### ⚪ White Team - Whitespace Discovery
+### ⚪ White Team - Whitespace Opportunity Intelligence
 
-**Purpose**: Discover untapped market opportunities and new product spaces.
+**Purpose**: 4D analysis of market gaps to understand WHY opportunities exist and their potential.
 
 **Custom Fields**:
 - `opportunityTypes` - Market gaps, technology disruptions
