@@ -50,14 +50,8 @@ export const PipelineJobsTable = () => {
       const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
                      'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
       
-      // Try to fetch all jobs, not just running ones
-      // If this endpoint doesn't exist, fall back to running endpoint
-      let response = await fetch(`${apiBase}/api/status/all`);
-      
-      if (!response.ok && response.status === 404) {
-        // Fallback to running endpoint if all doesn't exist
-        response = await fetch(`${apiBase}/api/status/running`);
-      }
+      // Use the running endpoint that exists
+      const response = await fetch(`${apiBase}/api/status/running`);
       
       if (!response.ok) {
         // If endpoint doesn't exist yet, show empty state
