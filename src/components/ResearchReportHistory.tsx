@@ -241,7 +241,11 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  {report.objective || report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A'}
+                  {(() => {
+                    const target = report.objective || report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A';
+                    // Remove " Research" suffix if present
+                    return target.endsWith(' Research') ? target.slice(0, -9) : target;
+                  })()}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
                   {(() => {
