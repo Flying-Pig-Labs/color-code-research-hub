@@ -73,7 +73,7 @@ export function ReportModal({
       
       // Success message with more details
       toast.success('Innovation pipeline started!', {
-        description: `Job ${response.jobName} is now running. Check the Pipeline Jobs table to monitor progress. Processing takes approximately 10-15 minutes.`,
+        description: `Job started. Scroll down to Pipeline Jobs table to see progress (it'll take ~20m).`,
         duration: 8000,
       });
     } catch (err) {
