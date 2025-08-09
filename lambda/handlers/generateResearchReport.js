@@ -74,7 +74,7 @@ function createStructuredReport(perplexityResponse, metadata, requestId) {
             companyName: metadata.companyName || null,
             tags: metadata.tags || [],
             model: metadata.model || 'sonar-deep-research',
-            reasoning_effort: metadata.reasoning_effort || 'low'
+            reasoning_effort: metadata.reasoning_effort || 'high'
         },
         request: {
             originalPrompt: metadata.originalPrompt || '',
@@ -710,7 +710,7 @@ exports.handler = async (event) => {
                 companyName: body.companyName || null,
                 tags: body.tags || [],
                 model,
-                reasoning_effort: body.reasoning_effort || 'low',
+                reasoning_effort: body.reasoning_effort || 'high',
                 originalPrompt: userContent
             };
 

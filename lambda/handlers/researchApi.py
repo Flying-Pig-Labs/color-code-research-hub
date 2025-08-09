@@ -845,7 +845,7 @@ def handler(event, context):
             # Support both 'content' and 'task' field names for backward compatibility
             user_content = body.get("content", body.get("task", ""))
             model = body.get("model", "sonar-deep-research")
-            reasoning_effort = body.get("reasoning_effort", "low")
+            reasoning_effort = body.get("reasoning_effort", "high")
 
             # Build comprehensive metadata for tracking and filtering
             # This metadata follows the report through the entire pipeline

@@ -86,7 +86,7 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
         content: request.task,
         title: request.companyName ? `${request.companyName} Research` : 'Research Request',
         model: 'sonar-deep-research',
-        reasoning_effort: 'low',
+        reasoning_effort: 'high',
         team: request.team || 'unknown',
         companyName: request.companyName,
         vendorName: request.vendorName
