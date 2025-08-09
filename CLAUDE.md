@@ -1,7 +1,7 @@
 # CLAUDE.md - Critical System Documentation
 
-> **Last Updated**: 2025-01-08
-> **Version**: 2.1.0
+> **Last Updated**: 2025-01-09
+> **Version**: 2.2.0
 > **Status**: Production
 
 ## 🛑 STOP: READ AND UNDERSTAND BEFORE ACTING! 🛑
@@ -175,6 +175,11 @@ The system generates project plans through a sophisticated 3-step LLM orchestrat
 #### Pipeline API Gateway (9hv22ga3uh) - Innovation Pipeline
 - ✅ **WORKING**: `POST /submit` - Submit innovation pipeline job (CORS fixed Jan 8)
 - ✅ **WORKING**: `GET /logs/{researchId}` - Poll for job status and logs
+
+#### Shark Swarm API Gateway (9y4n7ifoql) - Shark Tank Evaluation System (NEW!)
+- ✅ **WORKING**: `GET /leaderboard` - Returns top 10 ideas across all repositories with shark scores
+- ✅ **WORKING**: `POST /build` - Creates new repository in ocean-studio-apps with idea as README
+- ✅ **READY**: `POST /award-king` - Awards king status to winning idea (future feature)
 
 ## THE FUNDAMENTAL PROBLEM
 
@@ -471,7 +476,93 @@ Poll for job status and logs:
 - **Processing Time**: 10-15 minutes typical
 - **S3 Storage**: pipeline-data-984906149037-us-east-1
 
+## 🦈 Shark Swarm Leaderboard System (NEW - January 9, 2025)
+
+### Overview
+The Shark Swarm system provides AI-powered evaluation of innovation ideas using multiple "shark" personas that simulate a Shark Tank experience. Ideas are scored, ranked, and can be instantly transformed into new repositories.
+
+### Shark Swarm API Details
+**Base URL**: https://9y4n7ifoql.execute-api.us-east-1.amazonaws.com/prod
+
+#### GET /leaderboard
+Returns top 10 ideas across all evaluated repositories:
+```json
+{
+  "ideas": [
+    {
+      "rank": 1,
+      "issueNumber": 123,
+      "issueTitle": "AI-Powered Code Review System",
+      "description": "Automated code review using LLMs",
+      "repository": "ocean-studio-repos/innovation-hub",
+      "repositoryUrl": "https://github.com/ocean-studio-repos/innovation-hub",
+      "issueUrl": "https://github.com/ocean-studio-repos/innovation-hub/issues/123",
+      "labels": ["innovation", "ai", "automation"],
+      "investment": 2500000,
+      "investmentDisplay": "$2.5M",
+      "sharkScore": 92,
+      "scoreBreakdown": {
+        "avgInvestment": 85.5,
+        "avgConfidence": 88.0,
+        "decisionRatio": 90.0
+      },
+      "reviews": [...],
+      "state": "open"
+    }
+  ]
+}
+```
+
+#### POST /build
+Creates a new repository with the idea as README:
+```json
+// Request
+{
+  "issueNumber": 123,
+  "repository": "ocean-studio-repos/innovation-hub"
+}
+
+// Response
+{
+  "success": true,
+  "repository": {
+    "name": "ai-code-review-system",
+    "full_name": "ocean-studio-apps/ai-code-review-system",
+    "html_url": "https://github.com/ocean-studio-apps/ai-code-review-system",
+    "description": "AI-Powered Code Review System - Built from Shark Tank idea #123"
+  },
+  "message": "Repository created successfully"
+}
+```
+
+### Frontend Features
+- **Leaderboard Tab**: Top 10 ideas with scores, investments, and BUILD buttons
+- **Score System**: 0-100 composite metric with color coding:
+  - 🟢 HOT (80-100): Strong investment potential
+  - 🔵 STRONG (60-79): Good opportunity
+  - 🟡 MIXED (40-59): Some concerns
+  - 🟠 LIMITED (20-39): Significant issues
+  - 🔴 NO DEAL (0-19): Not recommended
+- **Medal System**: 🥇🥈🥉 for top 3 ideas
+- **Auto-Refresh**: Updates every 30 seconds
+- **One-Click Build**: Transform ideas into repositories instantly
+
+### UI Components
+- **Location**: `/src/components/SharkLeaderboard.tsx`
+- **Page**: `/src/pages/SharkSwarmer.tsx`
+- **URL**: https://oceanstudio.io/shark-swarmer
+
 ## 📅 RECENT UPDATES (January 2025)
+
+### Shark Swarm Leaderboard Implementation (January 9, 2025)
+- **✅ Leaderboard UI Created**: Full-featured React component with real-time data fetching
+- **✅ API Integration**: Connected to production Shark Swarm API (9y4n7ifoql)
+- **✅ BUILD Functionality**: One-click repository creation in ocean-studio-apps org
+- **✅ Score Visualization**: Color-coded scores with breakdown tooltips
+- **✅ Investment Display**: Formatted amounts ($2.5M, $500K, etc.)
+- **✅ Auto-Refresh**: 30-second polling for updated rankings
+- **✅ Tab Navigation**: Leaderboard, Ideas, and How tabs implemented
+- **✅ Summary Cards**: Total investment pool, average score, hot ideas count
 
 ### Critical Bug Fixes (January 8, 2025)
 - **✅ Pipeline API CORS Fixed**: Added proper CORS headers to Lambda responses
@@ -507,9 +598,11 @@ Poll for job status and logs:
 ### Current Status
 - **✅ Research Reports System**: Fully functional with AI-generated summaries
 - **✅ Innovation Pipeline**: IDEATE button functional with proper CORS configuration
+- **✅ Shark Swarm Leaderboard**: Live at https://oceanstudio.io/shark-swarmer with full API integration
 - **✅ Frontend**: Live at https://oceanstudio.io with proper API connectivity
 - **✅ Main API Gateway**: Correctly deployed as `zi612qxxv0` in MVP account
 - **✅ Pipeline API Gateway**: Deployed as `9hv22ga3uh` with AWS Batch backend
+- **✅ Shark Swarm API Gateway**: Deployed as `9y4n7ifoql` with leaderboard and BUILD endpoints
 - **⚠️ Plan Generation**: Demo mode (only Phase 1 epics) - line 214 in llm-orchestrator-service.js
 - **❌ Legacy Endpoints**: `/api/plan/generate-phases` still returns 500 errors
 
