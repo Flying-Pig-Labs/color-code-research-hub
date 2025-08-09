@@ -121,8 +121,15 @@ export async function fetchReportData(reportId: string): Promise<RawReportData> 
 export function processReportContent(rawContent: string): ReportSection[] {
   const sections: ReportSection[] = [];
   
+  // Strip markdown code fence wrapper if present
+  let content = rawContent;
+  if (content.startsWith('```markdown')) {
+    content = content.replace(/^```markdown\s*\n/, '');
+    content = content.replace(/\n```\s*$/, '');
+  }
+  
   // Split content by major headings (# or ##)
-  const contentLines = rawContent.split('\n');
+  const contentLines = content.split('\n');
   let currentSection: Partial<ReportSection> | null = null;
   let sectionOrder = 0;
   
