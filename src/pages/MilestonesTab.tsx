@@ -91,7 +91,12 @@ const MilestonesTab = () => {
             repository: repo.html_url,
             branch: 'main'
           },
-          readmeContent: `# ${repo.name}\n\n${repo.description || 'No description available'}`
+          readmeContent: `# ${repo.name}\n\n${repo.description || 'No description available'}`,
+          githubConfig: {
+            createIssues: true,
+            repository: repo.full_name,
+            token: null // Will use the token from AWS Secrets Manager
+          }
         })
       });
       

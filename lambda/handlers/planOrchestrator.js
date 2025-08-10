@@ -85,7 +85,7 @@ exports.handler = async (event) => {
         errors: job.errors
       });
       
-      // Call the existing planGeneratorV2 handler which handles all stages
+      // First generate the plan
       const generatorEvent = {
         body: JSON.stringify({
           projectInfo: input.metadata || {
@@ -99,12 +99,7 @@ exports.handler = async (event) => {
         path: '/api/plan/generate-cli-plan'
       };
       
-      // If GitHub issues should be created, set the appropriate path
-      if (input.githubConfig?.createIssues) {
-        generatorEvent.path = '/api/plan/v2/create-github-issues';
-      }
-      
-      console.log('Calling planGeneratorCLI handler...');
+      console.log('Calling planGeneratorCLI handler to generate plan...');
       const result = await planGeneratorCLI.handler(generatorEvent);
       
       if (result.statusCode !== 200) {
@@ -113,6 +108,31 @@ exports.handler = async (event) => {
       
       // Parse the results
       const generatedData = JSON.parse(result.body);
+      
+      // If GitHub issues should be created, call the create endpoint
+      if (input.githubConfig?.createIssues) {
+        console.log('Creating GitHub milestones and issues...');
+        
+        const githubEvent = {
+          body: JSON.stringify({
+            projectInfo: input.metadata,
+            readmeContent: input.readmeContent || '',
+            githubConfig: input.githubConfig,
+            projectPlan: generatedData
+          }),
+          path: '/api/plan/v2/create-github-issues'
+        };
+        
+        const githubResult = await planGeneratorCLI.handler(githubEvent);
+        
+        if (githubResult.statusCode !== 200) {
+          console.error('GitHub creation failed:', githubResult.body);
+          // Don't throw - just log the error and continue
+        } else {
+          const githubData = JSON.parse(githubResult.body);
+          console.log(`Created ${githubData.milestonesCreated} milestones and ${githubData.issuesCreated} issues`);
+        }
+      }
       
       // Update all stages as completed
       const completedTime = new Date().toISOString();

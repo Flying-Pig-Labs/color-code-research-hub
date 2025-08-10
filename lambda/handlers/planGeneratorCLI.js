@@ -18,6 +18,26 @@
 
 const { generateProjectPlan } = require('./services/llm-orchestrator-service.js');
 const { populateFormWithAI } = require('./services/form-populator-service.js');
+const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
+
+// Initialize Secrets Manager client
+const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
+
+// Get secrets from AWS Secrets Manager
+async function getSecrets() {
+  try {
+    const command = new GetSecretValueCommand({
+      SecretId: 'BlueOceanApiKeys7FCB6430-vLuzgQxqpLkB'
+    });
+    
+    const response = await secretsClient.send(command);
+    const secrets = JSON.parse(response.SecretString);
+    return secrets;
+  } catch (error) {
+    console.error('Failed to retrieve secrets:', error);
+    throw new Error('Unable to retrieve API credentials');
+  }
+}
 
 // CORS headers for all responses
 const corsHeaders = {
@@ -109,6 +129,130 @@ exports.handler = async (event) => {
           headers: corsHeaders,
           body: JSON.stringify({
             error: 'Failed to generate project plan',
+            message: error.message
+          })
+        };
+      }
+    }
+    
+    // Route: Create GitHub milestones and issues
+    else if (pathSegments.includes('create-github-issues')) {
+      const { projectInfo, readmeContent, githubConfig, projectPlan } = body;
+      
+      console.log('🚀 Creating GitHub milestones and issues...');
+      
+      if (!githubConfig || !githubConfig.repository) {
+        throw new Error('GitHub configuration with repository required');
+      }
+      
+      try {
+        // If we don't have a plan yet, generate it first
+        let plan = projectPlan;
+        if (!plan) {
+          plan = await generateProjectPlan(projectInfo, readmeContent);
+        }
+        
+        // Get GitHub token from secrets
+        const secrets = await getSecrets();
+        const githubToken = secrets.GITHUB_PAT;
+        
+        if (!githubToken) {
+          throw new Error('GitHub token not configured');
+        }
+        
+        // Parse repository owner and name
+        const [owner, repo] = githubConfig.repository.split('/');
+        
+        // Create milestones for ALL phases
+        const milestones = [];
+        for (const phase of plan.phases) {
+          const milestoneData = {
+            title: phase.title,
+            description: phase.description,
+            state: 'open'
+          };
+          
+          try {
+            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/milestones`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `token ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(milestoneData)
+            });
+            
+            if (!response.ok) {
+              const error = await response.text();
+              console.error(`Failed to create milestone: ${phase.title}`, error);
+              continue;
+            }
+            
+            const milestone = await response.json();
+            milestones.push({ phase: phase.id, number: milestone.number });
+            console.log(`✅ Created milestone: ${phase.title} (#${milestone.number})`);
+          } catch (error) {
+            console.error(`Error creating milestone for ${phase.title}:`, error);
+          }
+        }
+        
+        // Create issues ONLY for the FIRST phase (SplashPage)
+        const firstPhase = plan.phases[0];
+        const firstMilestone = milestones.find(m => m.phase === firstPhase.id);
+        let issuesCreated = 0;
+        
+        if (firstMilestone && firstPhase.issues) {
+          for (const issue of firstPhase.issues) {
+            const issueData = {
+              title: issue.title,
+              body: issue.description,
+              milestone: firstMilestone.number,
+              labels: ['auto-generated', firstPhase.id]
+            };
+            
+            try {
+              const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `token ${githubToken}`,
+                  'Accept': 'application/vnd.github.v3+json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(issueData)
+              });
+              
+              if (!response.ok) {
+                const error = await response.text();
+                console.error(`Failed to create issue: ${issue.title}`, error);
+                continue;
+              }
+              
+              issuesCreated++;
+              console.log(`✅ Created issue: ${issue.title}`);
+            } catch (error) {
+              console.error(`Error creating issue ${issue.title}:`, error);
+            }
+          }
+        }
+        
+        return {
+          statusCode: 200,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            success: true,
+            milestonesCreated: milestones.length,
+            issuesCreated: issuesCreated,
+            message: `Created ${milestones.length} milestones and ${issuesCreated} issues for the first phase`
+          })
+        };
+      } catch (error) {
+        console.error('GitHub creation error:', error);
+        return {
+          statusCode: 500,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            error: 'Failed to create GitHub milestones/issues',
             message: error.message
           })
         };

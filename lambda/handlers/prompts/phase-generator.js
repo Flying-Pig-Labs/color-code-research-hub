@@ -55,6 +55,8 @@ Return a JSON object with this structure:
       "suggestedRoles": ["Product Owner", "UX Researcher"]
     }
   ]
-}`;
+}
+
+IMPORTANT: Return ONLY valid JSON. All newlines within string values must be escaped as \\n. Do not include any explanatory text before or after the JSON.`;
 
 module.exports = { PHASE_GENERATOR_PROMPT };

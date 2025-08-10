@@ -262,11 +262,6 @@ Resources:
           Statement:
             - Effect: Allow
               Action:
-                - bedrock:InvokeModel
-              Resource: 
-                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
-            - Effect: Allow
-              Action:
                 - dynamodb:GetItem
                 - dynamodb:UpdateItem
                 - dynamodb:PutItem
@@ -278,6 +273,7 @@ Resources:
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:BlueOceanApiKeys7FCB6430-*
 
   # Get Job Status Function
   GetJobStatusFunction:

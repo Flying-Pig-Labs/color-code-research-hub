@@ -145,6 +145,8 @@ Return a JSON object with this structure:
 {
   "title": "[Role] Component: Specific deliverable",
   "body": "Full issue body following the template above"
-}`;
+}
+
+IMPORTANT: Return ONLY valid JSON. All newlines within string values must be escaped as \\n. Do not include any explanatory text before or after the JSON.`;
 
 module.exports = { ISSUE_FORMATTER_PROMPT };

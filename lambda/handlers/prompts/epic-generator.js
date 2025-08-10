@@ -67,17 +67,19 @@ Important guidelines:
 
 Important: Each epic should include a note about reviewing the CHANGELOG before implementation begins.
 
-Return a JSON object with this structure:
+Return a valid JSON object with this structure:
 {
   "phaseId": "{phaseId}",
   "roles": ["Product Owner", "Software Engineer", "Designer"],
   "epics": [
     {
       "title": "Clear, actionable epic title",
-      "description": "Detailed description of what needs to be done, why it's important, and what the deliverable will be. \n\n📋 Note for Agents or Agent Teams picking up this Epic: This work item was created before project work began; because implementation details change throughout a product development journey as new information comes to light, go back and review the project CHANGELOG to check for completed work, architectural decisions, and established patterns that may impact this epic's implementation approach.\n\n⚠️ CRITICAL: You have liberty to adjust technical implementation details based on what you find, but NEVER change the feature description, success criteria, or anything affecting user experience. Instead, add comments to this epic documenting your technical insights and integration approach. This courtesy check prevents integration bugs without altering product requirements.",
+      "description": "Detailed description of what needs to be done, why it's important, and what the deliverable will be. \\n\\n📋 Note for Agents or Agent Teams picking up this Epic: This work item was created before project work began; because implementation details change throughout a product development journey as new information comes to light, go back and review the project CHANGELOG to check for completed work, architectural decisions, and established patterns that may impact this epic's implementation approach.\\n\\n⚠️ CRITICAL: You have liberty to adjust technical implementation details based on what you find, but NEVER change the feature description, success criteria, or anything affecting user experience. Instead, add comments to this epic documenting your technical insights and integration approach. This courtesy check prevents integration bugs without altering product requirements.",
       "suggestedRole": "Product Owner"
     }
   ]
-}`;
+}
+
+IMPORTANT: Return ONLY valid JSON. All newlines within string values must be escaped as \\n. Do not include any explanatory text before or after the JSON.`;
 
 module.exports = { EPIC_GENERATOR_PROMPT };

@@ -20,11 +20,38 @@
  * @requires services/prompt-sanitizer
  */
 
-const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
+const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 const { PHASE_GENERATOR_PROMPT } = require('../prompts/phase-generator.js');
 const { EPIC_GENERATOR_PROMPT } = require('../prompts/epic-generator.js');
 const { ISSUE_FORMATTER_PROMPT } = require('../prompts/issue-formatter.js');
 const { buildSafePrompt } = require('./prompt-sanitizer.js');
+
+// Initialize Secrets Manager client
+const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
+
+// Cache for API key
+let cachedApiKey = null;
+
+/**
+ * Get Anthropic API key from AWS Secrets Manager
+ */
+async function getAnthropicApiKey() {
+  if (cachedApiKey) return cachedApiKey;
+  
+  try {
+    const command = new GetSecretValueCommand({
+      SecretId: 'BlueOceanApiKeys7FCB6430-vLuzgQxqpLkB'
+    });
+    
+    const response = await secretsClient.send(command);
+    const secrets = JSON.parse(response.SecretString);
+    cachedApiKey = secrets.ANTHROPIC_API_KEY;
+    return cachedApiKey;
+  } catch (error) {
+    console.error('Failed to retrieve Anthropic API key:', error);
+    throw new Error('Unable to retrieve API credentials');
+  }
+}
 
 // Detailed SplashPage Pre-Phase Requirements
 const SPLASHPAGE_PHASE_CONTEXT = `
@@ -145,10 +172,8 @@ S3 for static assets
 - Blog management interface
 `;
 
-const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
-
-// Claude model configuration - using the exact same model as CLI
-const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
+// Claude model configuration - using Claude 3.5 Sonnet for 8192 token output support
+const CLAUDE_MODEL = 'claude-3-5-sonnet-20241022';
 
 /**
  * Main orchestrator class that implements the 3-step LLM plan generation process
@@ -475,7 +500,7 @@ class LLMOrchestrator {
   }
 
   /**
-   * Call Claude API via AWS Bedrock with automatic retry on rate limits
+   * Call Claude API directly via Anthropic API with automatic retry on rate limits
    * Implements exponential backoff: 2s, 4s, 8s between retries
    * 
    * @async
@@ -486,32 +511,43 @@ class LLMOrchestrator {
    * @throws {Error} If non-rate-limit error occurs
    */
   async callClaude(prompt, retries = 3) {
-    const command = new InvokeModelCommand({
-      modelId: CLAUDE_MODEL_ID,
-      contentType: 'application/json',
-      accept: 'application/json',
-      body: JSON.stringify({
-        anthropic_version: "bedrock-2023-05-31",
-        max_tokens: 4096,
-        temperature: 0.7,
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ]
-      })
-    });
-
+    const apiKey = await getAnthropicApiKey();
+    
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        const response = await bedrock.send(command);
-        const responseData = JSON.parse(new TextDecoder().decode(response.body));
-        return responseData.content[0].text;
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: CLAUDE_MODEL,
+            max_tokens: 8192,  // Claude 3.5 Sonnet supports up to 8192 output tokens
+            temperature: 0.7,
+            messages: [
+              {
+                role: "user",
+                content: prompt
+              }
+            ]
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const error = new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+          error.status = response.status;
+          throw error;
+        }
+
+        const data = await response.json();
+        return data.content[0].text;
       } catch (error) {
-        const isRateLimit = error.message?.includes('Too many requests') || 
-                           error.message?.includes('rate limit') ||
-                           error.$metadata?.httpStatusCode === 429;
+        const isRateLimit = error.status === 429 || 
+                           error.message?.includes('Too many requests') || 
+                           error.message?.includes('rate limit');
         
         if (isRateLimit && attempt < retries - 1) {
           // Exponential backoff: 2s, 4s, 8s
@@ -540,6 +576,17 @@ class LLMOrchestrator {
    */
   extractJSON(content) {
     try {
+      // Remove any text before the first { or [
+      const jsonStart = Math.min(
+        content.indexOf('{') >= 0 ? content.indexOf('{') : Infinity,
+        content.indexOf('[') >= 0 ? content.indexOf('[') : Infinity
+      );
+      
+      if (jsonStart !== Infinity && jsonStart > 0) {
+        // Trim any explanatory text before JSON
+        content = content.substring(jsonStart);
+      }
+
       // First, try to parse the entire response as JSON
       try {
         const parsed = JSON.parse(content);
@@ -562,10 +609,53 @@ class LLMOrchestrator {
         return Array.isArray(parsed) ? { phases: parsed } : parsed;
       }
 
-      // Try to find raw JSON object
+      // Try to find raw JSON object - make sure we get the complete object
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        let cleanJson = jsonMatch[0]
+        let cleanJson = jsonMatch[0];
+        
+        // Balance braces - ensure we have the complete JSON
+        let braceCount = 0;
+        let inString = false;
+        let escapeNext = false;
+        let endIndex = 0;
+        
+        for (let i = 0; i < cleanJson.length; i++) {
+          const char = cleanJson[i];
+          
+          if (escapeNext) {
+            escapeNext = false;
+            continue;
+          }
+          
+          if (char === '\\') {
+            escapeNext = true;
+            continue;
+          }
+          
+          if (char === '"' && !escapeNext) {
+            inString = !inString;
+            continue;
+          }
+          
+          if (!inString) {
+            if (char === '{') braceCount++;
+            if (char === '}') {
+              braceCount--;
+              if (braceCount === 0) {
+                endIndex = i + 1;
+                break;
+              }
+            }
+          }
+        }
+        
+        if (endIndex > 0) {
+          cleanJson = cleanJson.substring(0, endIndex);
+        }
+        
+        // Clean up common formatting issues
+        cleanJson = cleanJson
           .replace(/\n\s*\n/g, '\n')
           .replace(/,\s*}/g, '}')
           .replace(/,\s*]/g, ']');
@@ -587,7 +677,7 @@ class LLMOrchestrator {
       throw new Error('No JSON found in response');
     } catch (error) {
       console.error('Failed to extract JSON:', error);
-      console.error('Content sample:', content.substring(0, 200));
+      console.error('Content sample:', content.substring(0, 500));
       throw error;
     }
   }
