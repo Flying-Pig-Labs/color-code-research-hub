@@ -8,8 +8,10 @@ frontend:
     build:
       commands:
         - npm run build
+        - ls -la frontend/  # Debug: Check frontend directory contents
+        - ls -la frontend/dist || echo "dist directory not found"  # Debug: Check if dist exists
   artifacts:
-    baseDirectory: dist
+    baseDirectory: frontend/dist
     files:
       - '**/*'
   cache:
