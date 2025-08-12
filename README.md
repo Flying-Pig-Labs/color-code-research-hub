@@ -38,6 +38,21 @@ Color Code Research Hub is a sophisticated competitive intelligence platform tha
 
 ---
 
+## 🧱 Components
+
+- **Frontend**: React + Vite app under `src/` — see `src/README.md`.
+- **Local Backend**: Express dev API under `backend/` — see `backend/README.md`.
+- **Lambda Handlers**: Serverless functions under `lambda/handlers/` — see `lambda/handlers/README.md`.
+- **Infrastructure**: AWS SAM templates under `infrastructure/` — see `infrastructure/README.md`.
+- **Monitoring Dashboard**: Optional monitoring service under `monitoring-dashboard/` — see `monitoring-dashboard/README.md`.
+- **Agent Team Composer**: CLI and support code under `agent-team-composer/` — see `agent-team-composer/README.md`.
+- **Layers**: Shared dependencies for Lambdas under `layers/` — see `layers/python-dependencies/README.md`.
+- **Scripts**: Maintenance and data utilities under `scripts/` — see `scripts/README.md`.
+- **E2E Tests**: Playwright specs under `e2e/` — see `e2e/README.md`.
+- **Docs**: Full documentation under `docs/` — start with `docs/README.md`.
+
+---
+
 ## 🏗️ Architecture
 
 ### System Overview

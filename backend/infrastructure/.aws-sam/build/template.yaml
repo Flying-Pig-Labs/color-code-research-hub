@@ -1,0 +1,863 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Color Code Research Hub - AWS SAM Template for API Gateway and Lambda
+  Functions
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        GITHUB_ORG:
+          Ref: GitHubOrg
+        CLIENT_COMPANY_NAME:
+          Ref: ClientCompanyName
+Parameters:
+  GitHubOrg:
+    Type: String
+    Default: Flying-Pig-Labs
+    Description: GitHub organization name
+  ClientCompanyName:
+    Type: String
+    Default: Your Company
+    Description: Client company name
+Resources:
+  ReportProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName:
+        Fn::Sub: ${AWS::StackName}-ReportProcessingQueue
+      VisibilityTimeout: 960
+      MessageRetentionPeriod: 86400
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+          - ReportProcessingDLQ
+          - Arn
+        maxReceiveCount: 3
+  ReportProcessingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName:
+        Fn::Sub: ${AWS::StackName}-ReportProcessingDLQ
+      MessageRetentionPeriod: 1209600
+  PlanGenerationJobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PlanGenerationJobs
+      AttributeDefinitions:
+      - AttributeName: jobId
+        AttributeType: S
+      KeySchema:
+      - AttributeName: jobId
+        KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: Application
+        Value: color-code-research-hub
+  ResearchReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ResearchReports
+      AttributeDefinitions:
+      - AttributeName: reportId
+        AttributeType: S
+      - AttributeName: team
+        AttributeType: S
+      - AttributeName: createdAt
+        AttributeType: S
+      KeySchema:
+      - AttributeName: reportId
+        KeyType: HASH
+      GlobalSecondaryIndexes:
+      - IndexName: team-createdAt-index
+        KeySchema:
+        - AttributeName: team
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: Application
+        Value: color-code-research-hub
+  ResearchResultsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: color-code-research-results-${AWS::AccountId}
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+        - Id: DeleteOldResearchResults
+          Status: Enabled
+          ExpirationInDays: 90
+      Tags:
+      - Key: Application
+        Value: color-code-research-hub
+  ResearchHubApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: production
+      Cors:
+        AllowOrigin: '''*'''
+        AllowHeaders: '''Content-Type,Authorization,X-Api-Key,Accept'''
+        AllowMethods: '''GET,POST,OPTIONS,PUT,DELETE'''
+        MaxAge: '''86400'''
+      Auth:
+        ApiKeyRequired: false
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: HealthFunction
+      Handler: health.handler
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /health
+            Method: GET
+    Metadata:
+      SamResourceId: HealthFunction
+  GitHubReposFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GitHubReposFunction
+      Handler: githubRepos.handler
+      Environment:
+        Variables:
+          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          Resource:
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+      Events:
+        ListRepos:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/github/repos
+            Method: GET
+        ListOrgRepos:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/github/repos/{org}
+            Method: GET
+    Metadata:
+      SamResourceId: GitHubReposFunction
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+      - PolicyName: SecretsAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - secretsmanager:GetSecretValue
+            Resource: '*'
+  StartPlanGenerationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: StartPlanGenerationFunction
+      Handler: startPlanGeneration.handler
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME:
+            Ref: PlanGenerationJobsTable
+          ORCHESTRATOR_FUNCTION_NAME:
+            Ref: PlanOrchestratorFunction
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          Resource:
+            Fn::GetAtt:
+            - PlanGenerationJobsTable
+            - Arn
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          - lambda:InvokeAsync
+          Resource:
+            Fn::GetAtt:
+            - PlanOrchestratorFunction
+            - Arn
+      Events:
+        StartJob:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/plan/async/start
+            Method: POST
+    Metadata:
+      SamResourceId: StartPlanGenerationFunction
+  PlanOrchestratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PlanOrchestratorFunction
+      Handler: planOrchestrator.handler
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME:
+            Ref: PlanGenerationJobsTable
+          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
+          AWS_BEDROCK_REGION: us-east-1
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+          - dynamodb:PutItem
+          Resource:
+            Fn::GetAtt:
+            - PlanGenerationJobsTable
+            - Arn
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          Resource:
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:BlueOceanApiKeys7FCB6430-*
+    Metadata:
+      SamResourceId: PlanOrchestratorFunction
+  GetJobStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetJobStatusFunction
+      Handler: getJobStatus.handler
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME:
+            Ref: PlanGenerationJobsTable
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - dynamodb:GetItem
+          Resource:
+            Fn::GetAtt:
+            - PlanGenerationJobsTable
+            - Arn
+      Events:
+        GetStatus:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/plan/async/status/{jobId}
+            Method: GET
+    Metadata:
+      SamResourceId: GetJobStatusFunction
+  PythonDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: python-dependencies-layer
+      Description: Layer containing Python dependencies for report processing
+      ContentUri: PythonDependenciesLayer
+      CompatibleRuntimes:
+      - python3.11
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: python3.11
+      SamResourceId: PythonDependenciesLayer
+  ResearchApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ResearchApiFunction
+      Handler: researchApi.handler
+      Runtime: python3.11
+      Timeout: 900
+      MemorySize: 512
+      Environment:
+        Variables:
+          RESEARCH_BUCKET:
+            Ref: ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE:
+            Ref: ResearchReportsTable
+          REPORT_PROCESSING_FUNCTION_NAME:
+            Ref: ReportProcessingFunction
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          Resource:
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:perplexity-key-*
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:PutObjectAcl
+          - s3:GetObject
+          Resource:
+            Fn::Sub: ${ResearchResultsBucket.Arn}/*
+        - Effect: Allow
+          Action:
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:UpdateItem
+          Resource:
+          - Fn::GetAtt:
+            - ResearchReportsTable
+            - Arn
+          - Fn::Sub: ${ResearchReportsTable.Arn}/index/*
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          Resource:
+            Fn::GetAtt:
+            - ReportProcessingFunction
+            - Arn
+      Events:
+        ResearchEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research
+            Method: POST
+        OptionsResearch:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research
+            Method: OPTIONS
+        ResearchStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/status/{requestId}
+            Method: GET
+        OptionsResearchStatus:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/status/{requestId}
+            Method: OPTIONS
+        ResearchDownloadEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/download/{s3Key}
+            Method: GET
+        OptionsResearchDownload:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/download/{s3Key}
+            Method: OPTIONS
+        ResearchReportsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/reports
+            Method: GET
+        OptionsResearchReports:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/reports
+            Method: OPTIONS
+    Metadata:
+      SamResourceId: ResearchApiFunction
+  GenerateResearchReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GenerateResearchReportFunction
+      Handler: generateResearchReport.handler
+      Runtime: nodejs18.x
+      Timeout: 900
+      MemorySize: 1024
+      Environment:
+        Variables:
+          RESEARCH_BUCKET:
+            Ref: ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE:
+            Ref: ResearchReportsTable
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          Resource:
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:perplexity-key-*
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:PutObjectAcl
+          - s3:GetObject
+          Resource:
+            Fn::Sub: ${ResearchResultsBucket.Arn}/*
+        - Effect: Allow
+          Action:
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:UpdateItem
+          Resource:
+          - Fn::GetAtt:
+            - ResearchReportsTable
+            - Arn
+          - Fn::Sub: ${ResearchReportsTable.Arn}/index/*
+      Events:
+        EnhancedResearchEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/v2
+            Method: POST
+        OptionsEnhancedResearch:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/v2
+            Method: OPTIONS
+        EnhancedResearchStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/v2/status/{requestId}
+            Method: GET
+        OptionsEnhancedResearchStatus:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/v2/status/{requestId}
+            Method: OPTIONS
+        EnhancedResearchReportsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/v2/reports
+            Method: GET
+        OptionsEnhancedResearchReports:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/v2/reports
+            Method: OPTIONS
+    Metadata:
+      SamResourceId: GenerateResearchReportFunction
+  ResearchStreamProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ResearchStreamProcessorFunction
+      Handler: researchStreamProcessor.handler
+      Runtime: nodejs18.x
+      Timeout: 60
+      MemorySize: 256
+      Environment:
+        Variables:
+          REPORT_PROCESSING_QUEUE_URL:
+            Ref: ReportProcessingQueue
+          RESEARCH_REPORTS_TABLE:
+            Ref: ResearchReportsTable
+          RESEARCH_BUCKET:
+            Ref: ResearchResultsBucket
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - sqs:SendMessage
+          Resource:
+            Fn::GetAtt:
+            - ReportProcessingQueue
+            - Arn
+        - Effect: Allow
+          Action:
+          - dynamodb:DescribeStream
+          - dynamodb:GetRecords
+          - dynamodb:GetShardIterator
+          - dynamodb:ListStreams
+          Resource:
+          - Fn::Sub: ${ResearchReportsTable.Arn}/stream/*
+        - Effect: Allow
+          Action:
+          - dynamodb:UpdateItem
+          - dynamodb:GetItem
+          Resource:
+            Fn::GetAtt:
+            - ResearchReportsTable
+            - Arn
+        - Effect: Allow
+          Action:
+          - s3:GetObject
+          - s3:PutObject
+          Resource:
+            Fn::Sub: ${ResearchResultsBucket.Arn}/*
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          Resource:
+          - Fn::Sub: arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:perplexity-key*
+          - Fn::Sub: arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:openai_key*
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream:
+              Fn::GetAtt:
+              - ResearchReportsTable
+              - StreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+    Metadata:
+      SamResourceId: ResearchStreamProcessorFunction
+  ReportProcessingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ReportProcessingFunction
+      Handler: reportProcessor.handler
+      Runtime: nodejs18.x
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          REPORT_BUCKET:
+            Ref: ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE:
+            Ref: ResearchReportsTable
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          Resource:
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+          - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:PutObjectAcl
+          - s3:GetObject
+          - s3:ListBucket
+          Resource:
+          - Fn::Sub: ${ResearchResultsBucket.Arn}/*
+          - Fn::GetAtt:
+            - ResearchResultsBucket
+            - Arn
+        - Effect: Allow
+          Action:
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:UpdateItem
+          Resource:
+          - Fn::GetAtt:
+            - ResearchReportsTable
+            - Arn
+          - Fn::Sub: ${ResearchReportsTable.Arn}/index/*
+        - Effect: Allow
+          Action:
+          - bedrock:InvokeModel
+          Resource:
+          - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+          - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0
+        - Effect: Allow
+          Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+          Resource:
+            Fn::GetAtt:
+            - ReportProcessingQueue
+            - Arn
+      Events:
+        ProcessFromQueue:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - ReportProcessingQueue
+              - Arn
+            BatchSize: 1
+        ProcessReportEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/reports/process
+            Method: POST
+        OptionsProcessReport:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/reports/process
+            Method: OPTIONS
+        EnhanceReportEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/reports/enhance/{reportId}
+            Method: POST
+        OptionsEnhanceReport:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/reports/enhance/{reportId}
+            Method: OPTIONS
+        LogsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/logs
+            Method: GET
+        MetricsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/metrics
+            Method: GET
+        SystemStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/system/status
+            Method: GET
+        HealthEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/health
+            Method: GET
+        OptionsSwarmsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/swarms
+            Method: OPTIONS
+        OptionsSwarmDetailsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/swarms/{id}
+            Method: OPTIONS
+        OptionsLogsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/logs
+            Method: OPTIONS
+        OptionsMetricsEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/metrics
+            Method: OPTIONS
+        OptionsSystemStatusEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/system/status
+            Method: OPTIONS
+        OptionsHealthEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/claude-flow/health
+            Method: OPTIONS
+    Metadata:
+      SamResourceId: ReportProcessingFunction
+  GetReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetReportFunction
+      Handler: getReportHandler.handler
+      Runtime: nodejs18.x
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          RESEARCH_BUCKET:
+            Ref: ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE:
+            Ref: ResearchReportsTable
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - s3:GetObject
+          Resource:
+            Fn::Sub: ${ResearchResultsBucket.Arn}/*
+        - Effect: Allow
+          Action:
+          - dynamodb:GetItem
+          Resource:
+          - Fn::GetAtt:
+            - ResearchReportsTable
+            - Arn
+      Events:
+        GetReportEndpoint:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/reports/{reportId}
+            Method: GET
+        OptionsGetReport:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ResearchHubApi
+            Path: /api/research/reports/{reportId}
+            Method: OPTIONS
+    Metadata:
+      SamResourceId: GetReportFunction
+Outputs:
+  ApiGatewayUrl:
+    Description: API Gateway endpoint URL
+    Value:
+      Fn::Sub: https://${ResearchHubApi}.execute-api.${AWS::Region}.amazonaws.com/production
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-ApiUrl
+  JobsTableName:
+    Description: Name of the DynamoDB table for job tracking
+    Value:
+      Ref: PlanGenerationJobsTable
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-JobsTable
+  StartPlanGenerationFunctionArn:
+    Description: ARN of the Start Plan Generation Lambda function
+    Value:
+      Fn::GetAtt:
+      - StartPlanGenerationFunction
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-StartPlanFunction
+  PlanOrchestratorFunctionArn:
+    Description: ARN of the Plan Orchestrator Lambda function
+    Value:
+      Fn::GetAtt:
+      - PlanOrchestratorFunction
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-OrchestratorFunction
+  GetJobStatusFunctionArn:
+    Description: ARN of the Get Job Status Lambda function
+    Value:
+      Fn::GetAtt:
+      - GetJobStatusFunction
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-GetStatusFunction
+  ResearchResultsBucketName:
+    Description: Name of the S3 bucket for research results
+    Value:
+      Ref: ResearchResultsBucket
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-ResearchBucket
+  ReportProcessingFunctionArn:
+    Description: ARN of the Report Processing Lambda function
+    Value:
+      Fn::GetAtt:
+      - ReportProcessingFunction
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-ReportProcessingFunction
+  PythonDependenciesLayerArn:
+    Description: ARN of the Python Dependencies Lambda Layer
+    Value:
+      Ref: PythonDependenciesLayer
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-PythonDependenciesLayer
