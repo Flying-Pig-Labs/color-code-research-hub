@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "node frontend/scripts/start.js",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run"
+    "dev": "cd frontend && vite",
+    "build": "cd frontend && vite build",
+    "preview": "cd frontend && vite preview",
+    "test": "cd frontend && vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.18.0",

@@ -221,4 +221,3 @@ export async function listResearchReports(team?: string, limit: number = 50): Pr
 }
 
 export const formatBlackTeamPrompt = buildBlackTeamPrompt;
-}

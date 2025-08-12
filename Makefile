@@ -7,10 +7,10 @@
 help:
 	@echo "Available commands:"
 	@echo "  make all      - Install dependencies, start servers, and open browser"
-    @echo "  make start    - Start frontend and open browser"
-    @echo "  make web      - Start only the web server"
+	@echo "  make start    - Start frontend and open browser"
+	@echo "  make web      - Start only the web server"
 	@echo "  make test     - Run unit tests (vitest)"
-    @echo "  make test     - Run unit tests"
+	@echo "  make lambda-build-prompts - Copy prompts for Lambda build"
 	@echo "  make lambda   - Deploy Lambda functions to AWS"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make clean    - Kill all related processes"
@@ -72,13 +72,13 @@ test:
 
 # Build-only: copy backend prompts into handlers for SAM packaging
 lambda-build-prompts:
-    @echo "📤 Copying prompts into handlers for build..."
-    @cd backend/infrastructure && ./copy-prompts-for-build.sh
+	@echo "📤 Copying prompts into handlers for build..."
+	@cd backend/infrastructure && ./copy-prompts-for-build.sh
 
 # Deploy Lambda functions
 lambda:
-    @echo "🚀 Deploying Lambda functions to AWS..."
-    @cd backend/infrastructure && ./deploy.sh
+	@echo "🚀 Deploying Lambda functions to AWS..."
+	@cd backend/infrastructure && ./deploy.sh
 
 # Install dependencies
 install:

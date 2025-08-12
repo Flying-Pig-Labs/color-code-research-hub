@@ -145,3 +145,7 @@ infrastructure/.aws-sam/
 
 # AWS SAM CLI source (accidentally added)
 aws-sam-cli-src/
+
+.claude-flow/*
+.swarm/*
+memory
