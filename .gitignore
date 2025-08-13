@@ -138,7 +138,11 @@ test-results/
 playwright-report/
 test-results.xml
 agent-team-composer/
+
+# AWS SAM build artifacts (IMPORTANT: Never commit these!)
+backend/infrastructure/.aws-sam/
 infrastructure/.aws-sam/
+.aws-sam/
 
 .claude-flow
 .claude-flow/*
