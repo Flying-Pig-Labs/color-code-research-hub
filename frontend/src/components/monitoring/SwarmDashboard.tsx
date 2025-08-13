@@ -1,3 +1,14 @@
+/**
+ * @fileoverview Real-time swarm coordination dashboard for AI agent monitoring.
+ * 
+ * Comprehensive monitoring interface for AI swarm operations providing real-time
+ * visibility into agent activities, task progress, system metrics, and performance
+ * analytics. Central command center for swarm coordination and management.
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

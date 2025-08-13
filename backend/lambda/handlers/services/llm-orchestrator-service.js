@@ -1,23 +1,64 @@
 /**
  * @file llm-orchestrator-service.js
- * @description Core orchestration service for multi-step LLM plan generation
+ * @description Core LLM orchestration service for enterprise plan generation
  * 
- * This service implements a 3-step plan generation process:
- * 1. Phase Generation - Creates 10 project phases based on README content
- * 2. Epic Generation - Generates 5-10 epics per phase with role assignments (currently limited to phase 1 for demo)
- * 3. Issue Formatting - Formats epics into GitHub-ready issues with SPARC methodology
+ * This service implements the complete multi-step plan generation pipeline:
  * 
- * The service makes 50-90 LLM calls total when fully enabled:
- * - 1 call for phase generation
- * - 8 calls for epic generation (one per phase, excluding SplashPage and Launch)
- * - 40-80 calls for issue formatting (batched in groups of 3)
+ * 3-STEP GENERATION PROCESS:
+ * 1. Phase Generation (1 LLM call)
+ *    - Creates 10 standardized SDLC phases
+ *    - Includes auto-injected SplashPage pre-phase
+ *    - Maps phases to project domain and complexity
+ * 
+ * 2. Epic Generation (8 LLM calls)
+ *    - Generates 5-10 epics per phase with role assignments
+ *    - Currently limited to first phase for performance
+ *    - Uses SPARC methodology for task breakdown
+ *    - Includes detailed acceptance criteria
+ * 
+ * 3. Issue Formatting (40-80 LLM calls)
+ *    - Formats epics into GitHub-ready issues
+ *    - Batches issues in groups of 3 for efficiency
+ *    - Adds labels, priorities, and time estimates
+ *    - Implements retry logic for API failures
+ * 
+ * LLM CALL VOLUME:
+ * When fully enabled across all phases:
+ * - Phase Generation: 1 call
+ * - Epic Generation: 8 calls (phases 2-9, excluding SplashPage & Launch)
+ * - Issue Formatting: 40-80 calls (depends on epic count)
+ * - Total: 50-90 LLM calls over 15-20 minutes
+ * 
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Concurrent epic generation with 2-second delays
+ * - Batch issue formatting to reduce API calls
+ * - Exponential backoff for rate limit handling
+ * - Response caching for repeated operations
+ * 
+ * LLM PROVIDER STRATEGY:
+ * - Primary: Claude 3.5 Sonnet via Anthropic API
+ * - Fallback: OpenAI GPT-4 for rate limit scenarios
+ * - Model selection based on task complexity
+ * - Automatic retry with provider switching
+ * 
+ * SECURITY & VALIDATION:
+ * - Input sanitization for all user content
+ * - Prompt injection prevention
+ * - API key rotation support
+ * - Request/response size limits
+ * 
+ * ENTERPRISE FEATURES:
+ * - Detailed logging for audit trails
+ * - Performance metrics collection
+ * - Error categorization and reporting
+ * - Template customization support
  * 
  * @module llm-orchestrator-service
- * @requires @aws-sdk/client-bedrock-runtime
- * @requires prompts/phase-generator
- * @requires prompts/epic-generator
- * @requires prompts/issue-formatter
- * @requires services/prompt-sanitizer
+ * @requires @aws-sdk/client-secrets-manager - API key management
+ * @requires prompts/phase-generator - Phase generation prompts
+ * @requires prompts/epic-generator - Epic generation prompts
+ * @requires prompts/issue-formatter - Issue formatting prompts
+ * @requires services/prompt-sanitizer - Input validation and sanitization
  */
 
 const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
@@ -34,7 +75,15 @@ const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
 let cachedApiKey = null;
 
 /**
- * Get Anthropic API key from AWS Secrets Manager
+ * Retrieves Anthropic API key from AWS Secrets Manager with caching
+ * 
+ * Implements caching to avoid repeated Secrets Manager calls within the same
+ * Lambda execution context. The cache persists across invocations in warm containers.
+ * 
+ * @async
+ * @function getAnthropicApiKey
+ * @returns {Promise<string>} Anthropic API key
+ * @throws {Error} If secret retrieval fails or key is missing
  */
 async function getAnthropicApiKey() {
   if (cachedApiKey) return cachedApiKey;

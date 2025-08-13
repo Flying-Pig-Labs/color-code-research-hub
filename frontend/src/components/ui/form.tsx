@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Form component system integrated with React Hook Form.
+ * Provides form components with built-in validation, error handling, and accessibility.
+ * @author Color Code Research Hub Team - UI Components
+ */
+
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"

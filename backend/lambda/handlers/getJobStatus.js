@@ -1,3 +1,47 @@
+/**
+ * @file getJobStatus.js
+ * @description Job status polling endpoint for async plan generation
+ * 
+ * This Lambda function provides real-time status updates for plan generation jobs:
+ * 1. Retrieves job record from DynamoDB by jobId
+ * 2. Maps backend stage names to frontend-friendly names
+ * 3. Calculates progress percentage and completion status
+ * 4. Returns current stage, results, and error information
+ * 
+ * POLLING PATTERN:
+ * Frontend polls this endpoint every 3 seconds during generation:
+ * GET /api/plan/async/status/{jobId}
+ * 
+ * Progress tracking through job stages:
+ * - parseReadme → "Form Analysis"
+ * - populateForm → "Form Analysis" 
+ * - generatePhases → "Phase Generation"
+ * - epicGeneration → "Epic Generation"
+ * - issueFormatting → "Issue Formatting"
+ * - createGitHubIssues → "GitHub Creation"
+ * 
+ * STATUS TRANSITIONS:
+ * INITIATED → PROCESSING → COMPLETED/FAILED
+ * 
+ * RESPONSE MAPPING:
+ * Backend uses 'COMPLETED' but frontend expects 'completed' (lowercase)
+ * Backend stores 'results' but frontend expects 'result' (singular)
+ * 
+ * ERROR SCENARIOS:
+ * - 400: Missing jobId parameter
+ * - 404: Job not found in DynamoDB
+ * - 500: DynamoDB query errors
+ * 
+ * PERFORMANCE:
+ * - Simple DynamoDB GetItem operation
+ * - 30 second timeout sufficient
+ * - Minimal memory requirements
+ * 
+ * @module getJobStatus
+ * @requires @aws-sdk/client-dynamodb - DynamoDB client
+ * @requires @aws-sdk/lib-dynamodb - Document client for simplified operations
+ */
+
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand } = require('@aws-sdk/lib-dynamodb');
 
@@ -10,6 +54,67 @@ const docClient = DynamoDBDocumentClient.from(dynamoClient, {
 
 const JOBS_TABLE_NAME = process.env.JOBS_TABLE_NAME;
 
+/**
+ * Lambda handler for job status polling
+ * 
+ * Retrieves and formats job status for frontend consumption.
+ * Maps backend data structures to frontend expected format.
+ * 
+ * PATH PARAMETERS:
+ * - jobId: The unique job identifier from startPlanGeneration
+ * 
+ * RESPONSE STRUCTURE (Success - 200):
+ * {
+ *   jobId: 'job-xyz123-abc789',
+ *   status: 'processing|completed|failed', // lowercase for frontend
+ *   stage: 'Current Stage Name', // human-readable stage name
+ *   progress: 75, // percentage complete (0-100)
+ *   completedStages: ['Form Analysis', 'Phase Generation'], // completed stages list
+ *   issuesCreated: 0, // GitHub issues created count
+ *   totalIssues: 45, // total issues in generated plan
+ *   createdAt: '2024-01-01T00:00:00.000Z',
+ *   updatedAt: '2024-01-01T00:05:30.000Z',
+ *   errors: [], // array of error objects
+ *   result?: { // only included when status = 'completed'
+ *     phases: [...], // generated SDLC phases
+ *     githubIssues: [...], // created GitHub issues
+ *     metadata: { ... } // project metadata
+ *   },
+ *   error?: 'Error message' // only included when status = 'failed'
+ * }
+ * 
+ * RESPONSE STRUCTURE (Not Found - 404):
+ * {
+ *   error: 'Not Found',
+ *   message: 'Job {jobId} not found'
+ * }
+ * 
+ * RESPONSE STRUCTURE (Bad Request - 400):
+ * {
+ *   error: 'Bad Request',
+ *   message: 'Job ID is required'
+ * }
+ * 
+ * STAGE NAME MAPPING:
+ * Backend stages are mapped to user-friendly names:
+ * - populateForm → "Form Analysis"
+ * - generatePhases → "Phase Generation" 
+ * - epicGeneration → "Epic Generation"
+ * - issueFormatting → "Issue Formatting"
+ * - createGitHubIssues → "GitHub Creation"
+ * 
+ * PROGRESS CALCULATION:
+ * Progress = (completed + skipped stages) / total stages * 100
+ * Rounds to nearest integer percentage.
+ * 
+ * @async
+ * @function handler
+ * @param {Object} event - API Gateway event
+ * @param {Object} event.pathParameters - URL path parameters
+ * @param {string} event.pathParameters.jobId - Job ID to query
+ * @returns {Promise<Object>} Lambda response with job status
+ * @throws {Error} If DynamoDB query fails
+ */
 exports.handler = async (event) => {
   console.log('Event:', JSON.stringify(event, null, 2));
   

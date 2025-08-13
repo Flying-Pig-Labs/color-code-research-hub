@@ -1,7 +1,34 @@
+/**
+ * @fileoverview Landing page for Color Code Research Hub.
+ * 
+ * Public-facing marketing page that introduces the platform's AI-powered
+ * go-to-market capabilities. Features Ocean Studio branding, value proposition,
+ * and call-to-action elements to drive user engagement.
+ * 
+ * Key Features:
+ * - Responsive ASCII art branding
+ * - Animated background gradients
+ * - Clear value proposition messaging
+ * - Prominent login access
+ * - Professional contact information
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, LogIn, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Landing page component providing marketing introduction to the platform.
+ * 
+ * Serves as the public entry point for new users, showcasing the platform's
+ * capabilities and guiding users toward authentication. Features responsive
+ * design and professional branding elements.
+ * 
+ * @returns {JSX.Element} Complete landing page with branding and navigation
+ */
 const Landing = () => {
   const navigate = useNavigate();
 

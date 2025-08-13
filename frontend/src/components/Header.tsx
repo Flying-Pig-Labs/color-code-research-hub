@@ -1,23 +1,74 @@
+/**
+ * @fileoverview Reusable header component for page navigation and branding.
+ * 
+ * Flexible header component that provides consistent branding, navigation,
+ * and system status across different sections of the application. Supports
+ * customizable titles, navigation items, and health monitoring.
+ * 
+ * Features:
+ * - Customizable title and subtitle text
+ * - Icon support with emoji or components
+ * - Flexible navigation items with theming
+ * - Optional health check integration
+ * - Responsive design for mobile and desktop
+ * - Active route highlighting
+ * 
+ * Used across:
+ * - Team-specific pages (Red/Black/White)
+ * - Dashboard and main navigation
+ * - Specialized tool interfaces
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Shield, Target, Bug, Lightbulb, FileText, LucideIcon } from "lucide-react";
 import { HealthCheck } from "@/components/HealthCheck";
 
+/**
+ * Interface for navigation item configuration.
+ * Defines structure for header navigation buttons.
+ */
 interface NavItem {
+  /** Navigation path or hash */
   path: string;
+  /** Display label for the navigation item */
   label: string;
+  /** Lucide icon for visual identification */
   icon: LucideIcon;
+  /** Optional styling variant for theming */
   variant?: "red-team" | "black-team" | "white-team" | "ghost";
 }
 
+/**
+ * Props interface for the Header component.
+ * Provides customization options for different page contexts.
+ */
 interface HeaderProps {
+  /** Main header title (defaults to "Wayfinder") */
   title?: string;
+  /** Subtitle or description text */
   subtitle?: string;
+  /** Icon emoji or identifier */
   icon?: string;
+  /** Array of navigation items */
   navItems?: NavItem[];
+  /** Whether to display health check component */
   showHealthCheck?: boolean;
 }
 
+/**
+ * Reusable header component for consistent page navigation and branding.
+ * 
+ * Provides flexible header structure with customizable content, navigation,
+ * and system status monitoring. Automatically highlights active routes and
+ * maintains responsive design across device sizes.
+ * 
+ * @param {HeaderProps} props - Header configuration and content options
+ * @returns {JSX.Element} Complete header with navigation and status elements
+ */
 const Header = ({ 
   title = "Wayfinder",
   subtitle = "Cross-Discipline Intelligence",

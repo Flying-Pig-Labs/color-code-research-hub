@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Reusable button component with multiple variants and accessibility features.
+ * 
+ * Built on Radix UI with class-variance-authority for consistent styling and behavior.
+ * Supports multiple visual variants, sizes, and states with smooth animations.
+ * 
+ * @author Color Code Research Hub Team - UI Components
+ * @version 1.0.0
+ */
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"

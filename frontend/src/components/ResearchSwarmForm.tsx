@@ -1,3 +1,29 @@
+/**
+ * @fileoverview Advanced research form component for Red Team swarm coordination.
+ * 
+ * Comprehensive form interface for configuring and launching Red Team research
+ * operations. Handles complex multi-field data collection including market analysis,
+ * competitive intelligence, and disruption strategy parameters.
+ * 
+ * Form Categories:
+ * - Company Analysis: Target company and focus areas
+ * - Market Scope: Geographic and demographic targeting
+ * - Timeline & Investment: Resource allocation parameters
+ * - Competition: Market intensity and positioning
+ * - Strategy: Disruption approach and industry verticals
+ * 
+ * Features:
+ * - Multi-step form validation
+ * - Real-time API integration
+ * - Unique repository ID generation
+ * - GitHub repository creation
+ * - Error handling and user feedback
+ * - Environment-aware operation
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,10 +44,24 @@ import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
 import { submitResearch, formatRedTeamPrompt } from "@/services/researchApi";
 
+/**
+ * Props interface for the ResearchSwarmForm component.
+ */
 interface ResearchSwarmFormProps {
+  /** Trigger element (typically a button) to open the form dialog */
   children: React.ReactNode;
 }
 
+/**
+ * Advanced research form component for Red Team operations.
+ * 
+ * Provides comprehensive data collection interface for market research,
+ * competitive analysis, and disruption strategy planning. Integrates with
+ * GitHub for repository creation and API services for research execution.
+ * 
+ * @param {ResearchSwarmFormProps} props - Component props
+ * @returns {JSX.Element} Dialog-based form with multi-category data collection
+ */
 const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   const [open, setOpen] = useState(false);
   const [companyName, setCompanyName] = useState("");

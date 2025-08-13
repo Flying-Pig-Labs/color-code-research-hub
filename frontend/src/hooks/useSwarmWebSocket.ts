@@ -1,23 +1,64 @@
+/**
+ * @fileoverview WebSocket hook for real-time swarm coordination and monitoring.
+ * 
+ * Provides real-time communication with AI swarm coordinator via WebSocket connection.
+ * Handles automatic reconnection, event filtering, and comprehensive logging for
+ * swarm operations including agent assignments, progress updates, and completions.
+ * 
+ * Features:
+ * - Automatic reconnection with configurable intervals
+ * - Event filtering by swarm ID and type
+ * - Structured event logging with severity levels
+ * - Connection state management
+ * - Error handling and recovery
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { useEffect, useRef, useState, useCallback } from 'react';
 
+/**
+ * Interface defining swarm event structure from WebSocket messages.
+ * Represents real-time updates from the swarm coordination system.
+ */
 interface SwarmEvent {
+  /** Event type identifier */
   type: string;
+  /** Associated swarm identifier (optional) */
   swarmId?: string;
+  /** Swarm objective description (optional) */
   objective?: string;
+  /** Current status of the swarm/agent (optional) */
   status?: string;
+  /** Event timestamp */
   timestamp: string;
+  /** Human-readable event message (optional) */
   message?: string;
+  /** Specific agent identifier (optional) */
   agentId?: string;
+  /** Log severity level (optional) */
   level?: 'info' | 'debug' | 'warn' | 'error';
+  /** Additional event metadata (optional) */
   metadata?: any;
 }
 
+/**
+ * Configuration options for the WebSocket hook.
+ * Provides customizable behavior for connection management and event handling.
+ */
 interface UseSwarmWebSocketOptions {
+  /** Enable automatic reconnection on disconnect */
   autoReconnect?: boolean;
+  /** Milliseconds between reconnection attempts */
   reconnectInterval?: number;
+  /** Callback for incoming events */
   onEvent?: (event: SwarmEvent) => void;
+  /** Callback for successful connection */
   onConnect?: () => void;
+  /** Callback for disconnection */
   onDisconnect?: () => void;
+  /** Callback for connection errors */
   onError?: (error: Event) => void;
 }
 

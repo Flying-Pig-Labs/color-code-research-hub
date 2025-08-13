@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Tab navigation component system for content organization.
+ * Built on Radix UI Tabs primitives with consistent styling and animations.
+ * @author Color Code Research Hub Team - UI Components
+ */
+
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 

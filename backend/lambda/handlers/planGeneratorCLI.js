@@ -1,19 +1,56 @@
 /**
  * @file planGeneratorCLI.js
- * @description Lambda handler for the CLI plan generation endpoint
+ * @description Core plan generation Lambda handler with multiple endpoints
  * 
- * This handler implements the working plan generation logic that:
- * - Generates 10 phases (including auto-injected SplashPage)
- * - Creates 5-10 epics per phase (currently limited to phase 1)
- * - Formats epics into GitHub issues with SPARC methodology
+ * This is the main plan generation handler that implements multiple endpoints:
  * 
- * Endpoints:
- * - POST /api/plan/generate-cli-plan - Generate full project plan
- * - POST /api/plan/populate-form - Auto-populate form fields from README
+ * ENDPOINTS SUPPORTED:
+ * 1. /api/plan/generate-cli-plan - Full project plan generation
+ * 2. /api/plan/populate-form - AI-powered form field population
+ * 3. /api/plan/create-github-issues - GitHub milestone/issue creation
+ * 4. /api/plan/generate-full-plan - Legacy UI-compatible plan generation
+ * 
+ * PLAN GENERATION PROCESS:
+ * The handler orchestrates a multi-step LLM process:
+ * 1. Phase Generation (1 LLM call) - Creates 10 SDLC phases
+ * 2. Epic Generation (8 LLM calls) - Generates 5-10 epics per phase
+ * 3. Issue Formatting (40-80 LLM calls) - Formats epics into GitHub issues
+ * Total: 50-90 LLM calls taking 15-20 minutes
+ * 
+ * GITHUB INTEGRATION:
+ * - Creates milestones for ALL generated phases
+ * - Creates issues ONLY for the first phase (SplashPage)
+ * - Uses GitHub REST API v3 with PAT authentication
+ * - Handles API rate limits and error conditions gracefully
+ * 
+ * LLM ORCHESTRATION:
+ * - Primary: Claude 3.5 Sonnet via AWS Bedrock
+ * - Fallback: OpenAI GPT-4 for rate limit scenarios
+ * - Uses structured prompts from prompts/ directory
+ * - Implements retry logic with exponential backoff
+ * 
+ * SECURITY FEATURES:
+ * - Input sanitization via prompt-sanitizer service
+ * - API keys stored in AWS Secrets Manager
+ * - CORS headers for browser security
+ * - Request size limits and timeout protections
+ * 
+ * PERFORMANCE CHARACTERISTICS:
+ * - Timeout: 30 seconds (API Gateway limit)
+ * - Memory: 1024MB for LLM response processing
+ * - Concurrent execution: No reserved concurrency
+ * - Cold start: ~2-3 seconds with dependencies
+ * 
+ * ERROR HANDLING:
+ * - Graceful LLM API failures with fallbacks
+ * - GitHub API error handling (continues on failure)
+ * - Input validation with descriptive error messages
+ * - Detailed error logging for debugging
  * 
  * @module planGeneratorCLI
- * @requires services/llm-orchestrator-service
- * @requires services/form-populator-service
+ * @requires services/llm-orchestrator-service - Core LLM orchestration
+ * @requires services/form-populator-service - AI form population
+ * @requires @aws-sdk/client-secrets-manager - API key management
  */
 
 const { generateProjectPlan } = require('./services/llm-orchestrator-service.js');
@@ -24,6 +61,19 @@ const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client
 const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
 
 // Get secrets from AWS Secrets Manager
+/**
+ * Retrieves API keys from AWS Secrets Manager
+ * 
+ * Fetches all required API keys from the centralized secrets store:
+ * - ANTHROPIC_API_KEY: For Claude LLM access
+ * - OPENAI_API_KEY: For GPT fallback access
+ * - GITHUB_PAT: For GitHub API operations
+ * 
+ * @async
+ * @function getSecrets
+ * @returns {Promise<Object>} Object containing all API keys
+ * @throws {Error} If secrets retrieval fails
+ */
 async function getSecrets() {
   try {
     const command = new GetSecretValueCommand({
@@ -48,15 +98,52 @@ const corsHeaders = {
 };
 
 /**
- * AWS Lambda handler function
- * Routes requests to appropriate services based on path
+ * AWS Lambda handler function - Multi-endpoint router
+ * 
+ * Routes requests to appropriate services based on URL path segments.
+ * Implements multiple plan generation and GitHub integration endpoints.
+ * 
+ * ROUTING LOGIC:
+ * - populate-form → AI-powered form field population
+ * - generate-cli-plan → Full project plan generation using LLM orchestration
+ * - create-github-issues → GitHub milestone and issue creation
+ * - generate-full-plan → Legacy UI-compatible plan format
+ * 
+ * CORS HANDLING:
+ * Automatically handles OPTIONS preflight requests with proper CORS headers.
+ * 
+ * AUTHENTICATION:
+ * Uses AWS Secrets Manager for API key retrieval.
+ * No user authentication required (public endpoints).
+ * 
+ * RATE LIMITING:
+ * Implements LLM provider fallbacks:
+ * - Claude API rate limits → automatic OpenAI fallback
+ * - GitHub API rate limits → graceful error handling
+ * 
+ * TIMEOUT STRATEGY:
+ * - 30s Lambda timeout for API Gateway compatibility
+ * - Async operations offloaded to planOrchestrator
+ * - Quick validation and immediate response for long operations
+ * 
+ * ERROR RESPONSE FORMAT:
+ * {
+ *   error: 'Error category',
+ *   message: 'Detailed error description'
+ * }
+ * 
+ * SUCCESS RESPONSE FORMAT:
+ * Varies by endpoint - see individual route documentation.
  * 
  * @async
+ * @function handler
  * @param {Object} event - AWS Lambda event object
  * @param {string} event.httpMethod - HTTP method (POST, OPTIONS)
- * @param {string} event.path - Request path
+ * @param {string} event.path - Request path for routing
  * @param {string} event.body - JSON request body
+ * @param {Object} event.pathParameters - URL path parameters
  * @returns {Promise<Object>} Lambda response with statusCode, headers, and body
+ * @throws {Error} If routing fails or invalid endpoint requested
  */
 exports.handler = async (event) => {
   // Handle OPTIONS request for CORS
@@ -72,7 +159,8 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body);
     const pathSegments = event.path.split('/').filter(Boolean);
     
-    // Route: Populate form fields using AI
+    // ROUTE: /api/plan/populate-form
+    // Auto-populate form fields from README content using AI
     if (pathSegments.includes('populate-form')) {
       const { readmeContent, existingData } = body;
       

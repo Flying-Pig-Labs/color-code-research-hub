@@ -1,3 +1,44 @@
+/**
+ * @file planOrchestrator.js
+ * @description Main orchestration Lambda function for async plan generation workflow
+ * 
+ * This is the core orchestrator that manages the complete plan generation process:
+ * 1. Receives job invocation from startPlanGeneration handler
+ * 2. Updates job status to PROCESSING in DynamoDB
+ * 3. Calls planGeneratorCLI to generate the full project plan
+ * 4. Optionally creates GitHub milestones and issues if configured
+ * 5. Updates job with final results and COMPLETED status
+ * 
+ * PERFORMANCE CHARACTERISTICS:
+ * - Timeout: 900 seconds (15 minutes) - configured in template.yaml
+ * - Memory: 3008MB for optimal performance with large LLM responses
+ * - Reserved Concurrency: 5 to prevent resource exhaustion
+ * - Makes 50-90 LLM calls total when generating full plans
+ * 
+ * AWS INTEGRATIONS:
+ * - DynamoDB: Reads/updates job records in PlanGenerationJobs table
+ * - Lambda: Invokes planGeneratorCLI handler for plan generation
+ * - Secrets Manager: API keys passed through to downstream functions
+ * 
+ * ERROR HANDLING:
+ * - Gracefully handles plan generation failures
+ * - Updates job status to FAILED with error details
+ * - Marks individual stages as failed with timestamps
+ * - Continues execution even if GitHub creation fails
+ * 
+ * STAGE TRACKING:
+ * The orchestrator manages these job stages:
+ * - parseReadme: Extract project metadata
+ * - populateForm: Auto-populate form fields
+ * - generatePhases: Create SDLC phases
+ * - createGitHubIssues: Create milestones and issues (optional)
+ * 
+ * @module planOrchestrator
+ * @requires @aws-sdk/client-dynamodb - DynamoDB client for job tracking
+ * @requires @aws-sdk/lib-dynamodb - Document client for simplified operations
+ * @requires ./planGeneratorCLI - Core plan generation logic
+ */
+
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 const planGeneratorCLI = require('./planGeneratorCLI');
@@ -11,6 +52,20 @@ const docClient = DynamoDBDocumentClient.from(dynamoClient, {
 
 const JOBS_TABLE_NAME = process.env.JOBS_TABLE_NAME;
 
+/**
+ * Updates job status and stages in DynamoDB with atomic operations
+ * 
+ * @async
+ * @function updateJobStatus
+ * @param {string} jobId - Unique job identifier
+ * @param {Object} updates - Status updates to apply
+ * @param {string} updates.status - Job status: INITIATED, PROCESSING, COMPLETED, FAILED
+ * @param {Object} updates.stages - Stage status object with timestamps
+ * @param {Object} updates.results - Generation results (phases, issues, metadata)
+ * @param {Array} updates.errors - Array of error objects with timestamps
+ * @throws {Error} If DynamoDB update fails
+ * @returns {Promise<void>}
+ */
 async function updateJobStatus(jobId, updates) {
   const timestamp = new Date().toISOString();
   
@@ -40,6 +95,55 @@ async function updateJobStatus(jobId, updates) {
   }
 }
 
+/**
+ * Lambda handler for plan orchestration
+ * 
+ * Orchestrates the complete plan generation workflow:
+ * 1. Retrieves job from DynamoDB using jobId
+ * 2. Updates job status to PROCESSING
+ * 3. Calls planGeneratorCLI to generate project plan
+ * 4. Optionally creates GitHub milestones and issues
+ * 5. Updates job with final results
+ * 
+ * EVENT STRUCTURE:
+ * {
+ *   jobId: 'job-<timestamp>-<random>',
+ *   input: {
+ *     metadata: { title, description, domain, ... },
+ *     readmeContent: 'README.md content',
+ *     githubConfig: { repository, createIssues: boolean },
+ *     teamFields: { additional form data }
+ *   }
+ * }
+ * 
+ * RESPONSE STRUCTURE:
+ * {
+ *   statusCode: 200,
+ *   body: JSON.stringify({
+ *     jobId: 'job-id',
+ *     status: 'COMPLETED',
+ *     results: {
+ *       phases: [...], // Generated SDLC phases with epics/issues
+ *       githubIssues: [...], // Created GitHub issues (if enabled)
+ *       metadata: { ... } // Extracted project metadata
+ *     }
+ *   })
+ * }
+ * 
+ * ERROR SCENARIOS:
+ * - Job not found: Updates job to FAILED and throws error
+ * - Plan generation fails: Marks stages as failed, stores error details
+ * - GitHub creation fails: Logs error but continues (non-blocking)
+ * - DynamoDB errors: Attempts to update status, then throws
+ * 
+ * @async
+ * @function handler
+ * @param {Object} event - Lambda event from startPlanGeneration invocation
+ * @param {string} event.jobId - Job ID to process
+ * @param {Object} event.input - Complete job input data
+ * @returns {Promise<Object>} Lambda response with statusCode and body
+ * @throws {Error} If job not found or critical processing fails
+ */
 exports.handler = async (event) => {
   console.log('Orchestrator Event v2:', JSON.stringify(event, null, 2));
   

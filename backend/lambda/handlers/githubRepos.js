@@ -1,3 +1,68 @@
+/**
+ * @file githubRepos.js
+ * @description GitHub repository management and integration handler
+ * 
+ * This Lambda function provides GitHub repository operations for the plan generation system:
+ * 
+ * CORE FUNCTIONALITY:
+ * - Repository listing and validation
+ * - Branch enumeration and verification
+ * - Repository metadata extraction
+ * - GitHub API integration with authentication
+ * 
+ * AUTHENTICATION:
+ * - Uses GitHub Personal Access Token (PAT) from AWS Secrets Manager
+ * - Supports both organization and personal repositories
+ * - Implements token caching for performance
+ * - Handles authentication errors gracefully
+ * 
+ * API ENDPOINTS SUPPORTED:
+ * - List user repositories (with pagination)
+ * - Get repository details and metadata
+ * - List repository branches
+ * - Validate repository access permissions
+ * 
+ * GITHUB API INTEGRATION:
+ * - REST API v3 for maximum compatibility
+ * - Rate limit handling with retry logic
+ * - Pagination support for large repository lists
+ * - Error handling for private/inaccessible repos
+ * 
+ * RESPONSE FORMATTING:
+ * Returns repository data in standardized format:
+ * {
+ *   name: 'repo-name',
+ *   full_name: 'owner/repo-name',
+ *   description: 'Repository description',
+ *   private: boolean,
+ *   branches: ['main', 'develop', ...],
+ *   default_branch: 'main',
+ *   permissions: { admin: boolean, push: boolean, pull: boolean }
+ * }
+ * 
+ * SECURITY CONSIDERATIONS:
+ * - Token stored in AWS Secrets Manager
+ * - CORS headers for browser security
+ * - Input validation for repository names
+ * - Error messages sanitized to prevent information disclosure
+ * 
+ * PERFORMANCE FEATURES:
+ * - Token caching across Lambda invocations
+ * - Efficient API calls with minimal data transfer
+ * - Timeout handling for slow GitHub responses
+ * - Connection pooling for multiple API calls
+ * 
+ * ERROR HANDLING:
+ * - 401: Invalid or expired GitHub token
+ * - 403: Rate limit exceeded or insufficient permissions
+ * - 404: Repository not found or inaccessible
+ * - 500: GitHub API errors or network issues
+ * 
+ * @module githubRepos
+ * @requires @aws-sdk/client-secrets-manager - GitHub token retrieval
+ * @requires https - HTTP client for GitHub API calls
+ */
+
 const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 const https = require('https');
 
@@ -7,6 +72,17 @@ const secretsClient = new SecretsManagerClient({ region: process.env.AWS_REGION 
 let cachedSecrets = null;
 let cachedGitHubToken = null;
 
+/**
+ * Retrieves GitHub and other API secrets from AWS Secrets Manager
+ * 
+ * Fetches the main secrets bundle containing GitHub PAT and other credentials.
+ * Implements caching to avoid repeated Secrets Manager calls.
+ * 
+ * @async
+ * @function getSecrets
+ * @returns {Promise<Object>} Object containing all API secrets
+ * @throws {Error} If secrets retrieval fails
+ */
 const getSecrets = async () => {
   if (cachedSecrets) {
     return cachedSecrets;
@@ -26,7 +102,17 @@ const getSecrets = async () => {
   }
 };
 
-// Get GitHub PAT from Secrets Manager
+/**
+ * Retrieves GitHub Personal Access Token from dedicated secret
+ * 
+ * Gets GitHub PAT from a dedicated secret store with fallback logic.
+ * Implements token validation and caching for performance.
+ * 
+ * @async
+ * @function getGitHubToken
+ * @returns {Promise<string>} GitHub Personal Access Token
+ * @throws {Error} If token retrieval fails or token is invalid
+ */
 const getGitHubToken = async () => {
   if (cachedGitHubToken) {
     return cachedGitHubToken;

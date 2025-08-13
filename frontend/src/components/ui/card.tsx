@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Card component system for content organization and layout.
+ * 
+ * Provides consistent card-based layout components including Card, CardHeader,
+ * CardTitle, CardDescription, CardContent, and CardFooter for structured content display.
+ * 
+ * @author Color Code Research Hub Team - UI Components
+ * @version 1.0.0
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

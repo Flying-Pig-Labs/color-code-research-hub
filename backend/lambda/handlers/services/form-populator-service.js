@@ -1,3 +1,55 @@
+/**
+ * @file form-populator-service.js
+ * @description AI-powered form field population service
+ * 
+ * This service automatically populates project form fields by analyzing README content:
+ * 
+ * ANALYSIS PROCESS:
+ * 1. Sanitizes input README content to prevent prompt injection
+ * 2. Extracts project metadata using Claude 3 Sonnet
+ * 3. Suggests appropriate values for form fields
+ * 4. Validates and cleans suggested data
+ * 5. Provides fallback values if AI analysis fails
+ * 
+ * FORM FIELDS POPULATED:
+ * - title: Project title extraction
+ * - description: Project summary generation
+ * - targetUsers: User persona identification
+ * - techStack: Technology detection from README
+ * - features: Feature list extraction
+ * - domain: Domain classification (e-commerce, social-media, etc.)
+ * - complexity: Complexity assessment (simple, moderate, complex)
+ * 
+ * SECURITY FEATURES:
+ * - Input sanitization via PromptSanitizer
+ * - Suspicious pattern detection
+ * - Response validation and cleaning
+ * - Safe fallback mechanisms
+ * 
+ * AI MODEL CONFIGURATION:
+ * - Model: Claude 3 Sonnet via AWS Bedrock
+ * - Region: us-east-1
+ * - Timeout: 30 seconds
+ * - Max tokens: 4096 for comprehensive analysis
+ * 
+ * ERROR HANDLING:
+ * - Graceful AI failure with fallback suggestions
+ * - Input validation with descriptive errors
+ * - Array deduplication and cleaning
+ * - Domain validation against allowed values
+ * 
+ * PERFORMANCE:
+ * - Single LLM call per analysis
+ * - Response caching for repeated requests
+ * - Optimized prompt engineering for accuracy
+ * - Fast fallback generation (<100ms)
+ * 
+ * @module form-populator-service
+ * @requires @aws-sdk/client-bedrock-runtime - AWS Bedrock client
+ * @requires prompts/form-population - AI prompt templates
+ * @requires services/prompt-sanitizer - Input sanitization
+ */
+
 const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
 const { FORM_POPULATION_PROMPT } = require('../prompts/form-population.js');
 const { PromptSanitizer, buildSafePrompt } = require('./prompt-sanitizer.js');
@@ -7,10 +59,38 @@ const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
 // Claude model configuration - using the exact same model as CLI
 const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
 
+/**
+ * AI-powered form field population service
+ * 
+ * Analyzes README content and suggests appropriate form field values
+ * using Claude 3 Sonnet with comprehensive validation and fallbacks.
+ * 
+ * @class AIFormPopulator
+ */
 class AIFormPopulator {
   /**
-   * Populate form fields based on README content
-   * Follows the exact same process as the CLI
+   * Populate form fields based on README content analysis
+   * 
+   * Analyzes README content using AI to extract and suggest form field values.
+   * Implements comprehensive validation and provides safe fallbacks.
+   * 
+   * @async
+   * @method populateFormFields
+   * @param {string} readmeContent - Raw README.md content
+   * @param {Object} [existingData={}] - Existing form data for context
+   * @param {string} [existingData.title] - Current title value
+   * @param {string} [existingData.description] - Current description
+   * @param {string[]} [existingData.features] - Current features list
+   * @param {string[]} [existingData.techStack] - Current tech stack
+   * @returns {Promise<Object>} Suggested form field values
+   * @throws {Error} If input contains malicious patterns
+   * 
+   * @example
+   * const suggestions = await populator.populateFormFields(
+   *   '# My App\nA React application for...',
+   *   { title: 'Current Title' }
+   * );
+   * // Returns: { title: 'My App', description: '...', features: [...] }
    */
   async populateFormFields(readmeContent, existingData = {}) {
     // Sanitize inputs
@@ -53,7 +133,18 @@ class AIFormPopulator {
   }
 
   /**
-   * Deduplicate and clean array items
+   * Deduplicates and cleans array items with validation
+   * 
+   * Removes duplicates, empty items, and overly long entries.
+   * Normalizes case for comparison while preserving original formatting.
+   * 
+   * @method deduplicateAndClean
+   * @param {string[]} items - Array of items to clean
+   * @returns {string[]} Cleaned and deduplicated array
+   * 
+   * @example
+   * // Input: ['React', 'react', '', 'Node.js', 'Very long item that exceeds limit']
+   * // Output: ['React', 'Node.js']
    */
   deduplicateAndClean(items) {
     if (!Array.isArray(items)) return [];
@@ -71,7 +162,18 @@ class AIFormPopulator {
   }
 
   /**
-   * Validate domain against allowed values
+   * Validates and normalizes domain value against allowed list
+   * 
+   * Ensures domain matches one of the predefined categories.
+   * Normalizes input by converting to lowercase and replacing spaces with hyphens.
+   * 
+   * @method validateDomain
+   * @param {string} domain - Domain string to validate
+   * @returns {string} Validated domain or 'general' if invalid
+   * 
+   * @example
+   * validateDomain('E Commerce') // Returns: 'e-commerce'
+   * validateDomain('invalid') // Returns: 'general'
    */
   validateDomain(domain) {
     const validDomains = [

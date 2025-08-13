@@ -1,3 +1,26 @@
+/**
+ * @fileoverview Main dashboard page for the Wayfinder tab (formerly Research).
+ * 
+ * Central hub for research team coordination featuring team selection cards,
+ * pipeline job monitoring, and historical report access. Implements hash-based
+ * navigation for seamless switching between team overview and how-to content.
+ * 
+ * Features:
+ * - Three research teams (Red, Black, White) with distinct capabilities
+ * - Real-time pipeline job status monitoring
+ * - Research report history and access
+ * - Responsive CarMax-themed design
+ * - Hash-based navigation between sections
+ * 
+ * Teams Overview:
+ * - Red Team: Market disruption and competitive analysis
+ * - Black Team: Deep technical research and vulnerability assessment  
+ * - White Team: Go-to-market strategy and user adoption
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import SectionWrapper from "@/components/SectionWrapper";
@@ -8,6 +31,15 @@ import { Target, Bug, Lightbulb, CircleHelp, ShipWheel } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
+/**
+ * Main dashboard page component for research team coordination.
+ * 
+ * Provides team selection interface, job monitoring, and navigation
+ * between different functional areas. Uses hash-based routing for
+ * smooth transitions between content sections.
+ * 
+ * @returns {JSX.Element} Complete dashboard interface with team cards and monitoring
+ */
 const Index = () => {
   const [showHow, setShowHow] = useState(false);
   

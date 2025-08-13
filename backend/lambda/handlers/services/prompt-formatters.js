@@ -1,8 +1,101 @@
 /**
- * Prompt formatters for different team types
- * Converted from TypeScript frontend implementation
+ * @file prompt-formatters.js
+ * @description Team-specific prompt formatting service for research operations
+ * 
+ * This service provides specialized prompt formatting for the three research teams,
+ * each optimized for their specific analysis methodology and objectives:
+ * 
+ * RESEARCH TEAM SPECIALIZATIONS:
+ * 
+ * 🔴 RED TEAM - Competitive Disruption Analysis
+ * - Exhaustive competitive intelligence gathering
+ * - Market disruption strategy identification
+ * - Deep competitor analysis and weakness assessment
+ * - Strategic opportunity mapping
+ * - Ethical competitive research methodologies
+ * 
+ * ⚪ WHITE TEAM - Technical Implementation Analysis  
+ * - Technical feasibility assessment
+ * - Implementation pathway analysis
+ * - Technology stack evaluation
+ * - Resource requirement estimation
+ * - Risk mitigation planning
+ * 
+ * ⚫ BLACK TEAM - Risk Assessment and Security Analysis
+ * - Comprehensive risk identification
+ * - Security vulnerability assessment
+ * - Threat modeling and mitigation
+ * - Compliance and regulatory analysis
+ * - Crisis scenario planning
+ * 
+ * PROMPT ENGINEERING APPROACH:
+ * - Multi-expert swarm simulation for comprehensive analysis
+ * - Structured collaboration protocols for thorough coverage
+ * - Specific data collection directives for each team type
+ * - Evidence-based analysis requirements
+ * - Ethical guidelines embedded in all prompts
+ * 
+ * COMMON FEATURES ACROSS ALL TEAMS:
+ * - Exhaustive research directives
+ * - Multi-perspective analysis requirements
+ * - Evidence documentation standards
+ * - Collaboration protocol specifications
+ * - Output formatting guidelines
+ * 
+ * PROMPT STRUCTURE:
+ * 1. Mission Statement and Context
+ * 2. Ethical Guidelines and Boundaries
+ * 3. Swarm Assembly Directives
+ * 4. Collaboration Protocols
+ * 5. Research Methodologies
+ * 6. Output Formatting Requirements
+ * 7. Quality Assurance Standards
+ * 
+ * INTEGRATION POINTS:
+ * - Used by reportProcessor.js for team-specific formatting
+ * - Called by generateResearchReport.js for prompt generation
+ * - Supports dynamic variable substitution
+ * - Maintains consistency across research operations
+ * 
+ * @module prompt-formatters
  */
 
+/**
+ * Formats Red Team competitive analysis prompt
+ * 
+ * Generates comprehensive competitive disruption analysis prompt for the Red Team.
+ * Focuses on ethical competitive intelligence gathering and market analysis.
+ * 
+ * ANALYSIS SCOPE:
+ * - Complete competitive landscape mapping
+ * - Market disruption opportunity identification
+ * - Competitor strength/weakness analysis
+ * - Strategic positioning assessment
+ * - Innovation gap analysis
+ * 
+ * RESEARCH METHODOLOGY:
+ * - 4D Competitive Intelligence (Depth, Breadth, Time, Context)
+ * - Multi-source data collection and verification
+ * - Financial and technical analysis integration
+ * - Customer research and market validation
+ * - Strategic opportunity synthesis
+ * 
+ * @function formatRedTeamPrompt
+ * @param {Object} formData - Research parameters and target information
+ * @param {string} [formData.targetCompany] - Primary target company name
+ * @param {string} [formData.companyName] - Alternative company name field
+ * @param {string} [formData.industry] - Industry sector for analysis
+ * @param {string[]} [formData.competitors] - Known competitor list
+ * @param {string} [formData.marketSegment] - Specific market segment
+ * @returns {string} Formatted Red Team research prompt
+ * 
+ * @example
+ * const prompt = formatRedTeamPrompt({
+ *   targetCompany: 'Example Corp',
+ *   industry: 'SaaS',
+ *   competitors: ['CompetitorA', 'CompetitorB']
+ * });
+ */
 function formatRedTeamPrompt(formData) {
   return `🔴 RED TEAM RESEARCH SWARM - EXHAUSTIVE COMPETITIVE DISRUPTION ANALYSIS 🔴
 

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Modal dialog component system for overlays and forms.
+ * Built on Radix UI Dialog primitives with consistent styling and animations.
+ * @author Color Code Research Hub Team - UI Components
+ */
+
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"

@@ -1,3 +1,78 @@
+/**
+ * @file reportProcessor.js
+ * @description Research report post-processing and storage handler
+ * 
+ * This Lambda function handles the processing and storage of research reports generated
+ * by the research teams. It provides comprehensive report management functionality:
+ * 
+ * CORE FUNCTIONALITY:
+ * - Post-processing of raw research responses
+ * - Content cleaning and formatting (removes <think> blocks)
+ * - Team-specific prompt formatting for research requests
+ * - S3 storage for report persistence
+ * - DynamoDB metadata management and indexing
+ * - Report retrieval and URL generation
+ * 
+ * SUPPORTED RESEARCH TEAMS:
+ * - Red Team: Competitive analysis and market research
+ * - White Team: Technical feasibility and implementation analysis
+ * - Black Team: Risk assessment and security evaluation
+ * 
+ * REPORT PROCESSING PIPELINE:
+ * 1. Receives raw research response from AI providers
+ * 2. Strips AI reasoning blocks (<think> tags) for clean output
+ * 3. Formats content based on team-specific requirements
+ * 4. Generates unique report ID and metadata
+ * 5. Stores full content in S3 bucket
+ * 6. Saves metadata and indexes in DynamoDB
+ * 7. Returns processed report with access URLs
+ * 
+ * STORAGE ARCHITECTURE:
+ * - S3 Bucket: color-code-research-results-984906149037
+ * - Folder Structure: /reports/{team}/{year}/{month}/{reportId}.json
+ * - DynamoDB Table: ResearchReports (metadata and indexing)
+ * - Presigned URLs: For secure report access
+ * 
+ * CONTENT CLEANING:
+ * - Removes AI reasoning blocks (<think>...</think>)
+ * - Sanitizes HTML content for safe display
+ * - Preserves markdown formatting and structure
+ * - Maintains citation links and references
+ * 
+ * METADATA MANAGEMENT:
+ * - Report ID generation with UUID v4
+ * - Team categorization and tagging
+ * - Timestamp tracking for organization
+ * - Search indexing for content discovery
+ * - TTL configuration for automatic cleanup
+ * 
+ * SECURITY FEATURES:
+ * - Presigned URL generation for secure access
+ * - Content sanitization to prevent XSS
+ * - Access control through IAM policies
+ * - Audit logging for report access
+ * 
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Efficient S3 multipart uploads for large reports
+ * - DynamoDB batch operations for metadata
+ * - Connection pooling for AWS services
+ * - Memory optimization for Lambda execution
+ * 
+ * ERROR HANDLING:
+ * - S3 upload failures with retry logic
+ * - DynamoDB consistency issues handling
+ * - Content parsing error recovery
+ * - Partial success scenarios (S3 success, DynamoDB failure)
+ * 
+ * @module reportProcessor
+ * @requires @aws-sdk/client-s3 - Report storage in S3
+ * @requires @aws-sdk/s3-request-presigner - Secure URL generation
+ * @requires @aws-sdk/client-dynamodb - Metadata storage
+ * @requires @aws-sdk/lib-dynamodb - Simplified DynamoDB operations
+ * @requires uuid - Unique ID generation
+ * @requires services/prompt-formatters - Team-specific prompt formatting
+ */
+
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
@@ -13,9 +88,20 @@ const dynamodb = DynamoDBDocumentClient.from(dynamoClient);
 const S3_BUCKET = process.env.REPORT_BUCKET || 'color-code-research-results-984906149037';
 
 /**
- * Strip <think> blocks from LLM output to clean up the content
- * @param {string} content - Raw content from LLM
- * @returns {string} - Cleaned content without think blocks
+ * Strips AI reasoning blocks from LLM output for clean presentation
+ * 
+ * Removes <think>...</think> blocks that contain AI internal reasoning.
+ * These blocks are useful for AI processing but not needed in final reports.
+ * Handles nested think blocks and preserves all other content formatting.
+ * 
+ * @function strip_think_blocks
+ * @param {string} content - Raw content from LLM with potential think blocks
+ * @returns {string} Cleaned content without think blocks
+ * 
+ * @example
+ * const raw = 'Here is my analysis. <think>Let me reason about this...</think> My conclusion.';
+ * const clean = strip_think_blocks(raw);
+ * // Returns: 'Here is my analysis.  My conclusion.'
  */
 function strip_think_blocks(content) {
   if (!content || typeof content !== 'string') {
@@ -27,10 +113,32 @@ function strip_think_blocks(content) {
 }
 
 /**
- * Format prompt based on team type and form data
- * @param {string} team - Team type (red, white, black)
- * @param {object} formData - Form data for prompt generation
- * @returns {string} - Formatted prompt
+ * Formats research prompts based on team type and form data
+ * 
+ * Each team has specialized prompt formatting for their specific analysis type:
+ * - Red Team: Competitive analysis and market disruption
+ * - White Team: Technical implementation and feasibility
+ * - Black Team: Risk assessment and security evaluation
+ * 
+ * @function formatPromptForTeam
+ * @param {string} team - Team type identifier ('red', 'white', 'black')
+ * @param {Object} formData - Form data containing research parameters
+ * @param {string} [formData.targetCompany] - Company name for analysis
+ * @param {string} [formData.companyName] - Alternative company name field
+ * @param {string} [formData.industry] - Industry sector
+ * @param {string} [formData.productCategory] - Product category
+ * @param {string[]} [formData.competitors] - List of known competitors
+ * @param {string} [formData.timeframe] - Research timeframe
+ * @returns {string} Formatted prompt ready for AI processing
+ * 
+ * @throws {Error} If team type is not recognized
+ * 
+ * @example
+ * const prompt = formatPromptForTeam('red', {
+ *   targetCompany: 'Example Corp',
+ *   industry: 'SaaS',
+ *   competitors: ['CompetitorA', 'CompetitorB']
+ * });
  */
 function formatPromptForTeam(team, formData) {
   // Import the existing prompt formatters from researchApi

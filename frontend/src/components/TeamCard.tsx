@@ -1,18 +1,62 @@
+/**
+ * @fileoverview Reusable team selection card component with theme-based styling.
+ * 
+ * Interactive card component for displaying research team capabilities and
+ * navigation. Features hover animations, theme-based color schemes, and
+ * consistent design patterns across all team types.
+ * 
+ * Team Types:
+ * - Red Team: Market disruption and competitive analysis
+ * - Black Team: Technical research and vulnerability assessment
+ * - White Team: Go-to-market strategy and user adoption
+ * 
+ * Features:
+ * - Theme-aware styling with distinct color schemes
+ * - Smooth hover animations and transitions
+ * - Icon integration with consistent spacing
+ * - Responsive design for mobile and desktop
+ * - Accessible navigation patterns
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Props interface for the TeamCard component.
+ * Defines the structure and theming options for team cards.
+ */
 interface TeamCardProps {
+  /** Team name displayed as card title */
   title: string;
+  /** Detailed team description and capabilities */
   description: string;
+  /** Primary focus area or expertise */
   focus: string;
+  /** Navigation path when card is clicked */
   path: string;
+  /** Lucide icon component for visual identification */
   icon: LucideIcon;
+  /** CSS variant for styling (legacy, use theme instead) */
   variant: "red-team" | "black-team" | "white-team";
+  /** Theme color scheme for consistent styling */
   theme: "red" | "black" | "white";
 }
 
+/**
+ * Team selection card component with theme-based styling and navigation.
+ * 
+ * Displays team information in an interactive card format with hover effects,
+ * theme-appropriate colors, and smooth navigation transitions. Used primarily
+ * on the main dashboard for team selection.
+ * 
+ * @param {TeamCardProps} props - Component configuration and content
+ * @returns {JSX.Element} Styled, interactive team selection card
+ */
 const TeamCard = ({ title, description, focus, path, icon: Icon, variant, theme }: TeamCardProps) => {
   const navigate = useNavigate();
 

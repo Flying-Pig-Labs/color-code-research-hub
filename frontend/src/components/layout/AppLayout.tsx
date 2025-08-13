@@ -1,3 +1,25 @@
+/**
+ * @fileoverview Main application layout component for the Color Code Research Hub.
+ * 
+ * Provides the primary navigation structure and visual design for all authenticated pages.
+ * Features a tab-based navigation system with four main sections:
+ * 
+ * 🌌 Wayfinder - Research coordination and team management
+ * 🦈 Shark Swarmer - AI swarm coordination and monitoring  
+ * 🪸 Reef Builder - Project planning and milestone management
+ * 🌋 Archipelago - Build and deployment management (disabled)
+ * 
+ * The layout includes:
+ * - ASCII art header with Ocean Studio branding
+ * - Responsive tab navigation with active state management
+ * - Automatic route-to-tab synchronization
+ * - Logout functionality with session cleanup
+ * - Consistent theming and backdrop effects
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -5,52 +27,94 @@ import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Props interface for the AppLayout component.
+ * 
+ * @interface AppLayoutProps
+ * @property {React.ReactNode} children - Page content to render within the layout
+ */
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
+/**
+ * Main application layout component providing navigation and page structure.
+ * 
+ * Manages the tab-based navigation system and synchronizes active tab state
+ * with the current route. Handles user logout and provides consistent
+ * layout structure across all authenticated pages.
+ * 
+ * @param {AppLayoutProps} props - Component props
+ * @param {React.ReactNode} props.children - Page content to render
+ * @returns {JSX.Element} Complete application layout with navigation
+ */
 const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+  
+  // Track which tab is currently active based on the route
   const [activeTab, setActiveTab] = useState("wayfinder");
 
+  /**
+   * Handle user logout process.
+   * Clears authentication state and navigates to landing page.
+   */
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  // Map routes to tab values
+  /**
+   * Synchronize active tab with current route.
+   * Maps URL paths to corresponding tab values to keep navigation in sync
+   * with browser history and direct URL access.
+   */
   useEffect(() => {
+    // Reef Builder tab - Project planning and milestones
     if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/reef-builder")) {
       setActiveTab("reef-builder");
-    } else if (location.pathname.startsWith("/build") || location.pathname.startsWith("/archipelago")) {
+    } 
+    // Archipelago tab - Build and deployment (currently disabled)
+    else if (location.pathname.startsWith("/build") || location.pathname.startsWith("/archipelago")) {
       setActiveTab("archipelago");
-    } else if (location.pathname.startsWith("/shark-swarmer")) {
+    } 
+    // Shark Swarmer tab - AI coordination
+    else if (location.pathname.startsWith("/shark-swarmer")) {
       setActiveTab("shark-swarmer");
-    } else if (location.pathname.startsWith("/home") || location.pathname.startsWith("/red-team") || 
+    } 
+    // Wayfinder tab - Research teams, reports, and main dashboard
+    else if (location.pathname.startsWith("/home") || location.pathname.startsWith("/red-team") || 
                location.pathname.startsWith("/black-team") || location.pathname.startsWith("/white-team") ||
                location.pathname.startsWith("/reports") || location.pathname.startsWith("/demo/reports")) {
       setActiveTab("wayfinder");
-    } else {
+    } 
+    // Default to wayfinder for unmatched routes
+    else {
       setActiveTab("wayfinder");
     }
   }, [location.pathname]);
 
+  /**
+   * Handle tab navigation when user clicks on a tab.
+   * Updates active tab state and navigates to the appropriate route.
+   * 
+   * @param {string} value - The tab value that was selected
+   */
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     switch (value) {
       case "wayfinder":
-        navigate("/home");
+        navigate("/home"); // Main dashboard and research teams
         break;
       case "shark-swarmer":
-        navigate("/shark-swarmer");
+        navigate("/shark-swarmer"); // AI swarm coordination
         break;
       case "reef-builder":
-        navigate("/milestones");
+        navigate("/milestones"); // Project planning and milestones
         break;
       case "archipelago":
-        navigate("/build");
+        navigate("/build"); // Build and deployment (disabled)
         break;
     }
   };

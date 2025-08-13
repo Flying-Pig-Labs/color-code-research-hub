@@ -1,3 +1,30 @@
+/**
+ * @fileoverview Advanced report viewer component for research output visualization.
+ * 
+ * Comprehensive report display interface that handles markdown rendering,
+ * metadata visualization, and user interactions for research reports.
+ * Supports both URL-based and prop-based report loading with full
+ * error handling and user feedback.
+ * 
+ * Features:
+ * - Markdown to HTML rendering with syntax highlighting
+ * - Responsive design with mobile-friendly navigation
+ * - Metadata display (timestamps, authors, tags)
+ * - Export functionality for reports
+ * - Loading states and error handling
+ * - Navigation breadcrumbs and back functionality
+ * - Side sheet for mobile navigation
+ * 
+ * Report Sources:
+ * - Research team outputs (Red/Black/White teams)
+ * - AI-generated analysis and insights
+ * - Pipeline processing results
+ * - External data integration outputs
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -21,10 +48,25 @@ import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 
+/**
+ * Props interface for the ReportView component.
+ * Supports both URL parameter and direct prop-based report loading.
+ */
 interface ReportViewProps {
+  /** Optional report ID to load directly (overrides URL parameter) */
   reportId?: string;
 }
 
+/**
+ * Advanced report viewer component for research output visualization.
+ * 
+ * Handles the complete report viewing experience including data fetching,
+ * processing, rendering, and user interactions. Supports both URL-based
+ * navigation and direct component embedding.
+ * 
+ * @param {ReportViewProps} props - Component configuration
+ * @returns {JSX.Element} Complete report viewer interface
+ */
 export function ReportView({ reportId: propReportId }: ReportViewProps) {
   const { reportId: paramReportId } = useParams<{ reportId: string }>();
   const navigate = useNavigate();

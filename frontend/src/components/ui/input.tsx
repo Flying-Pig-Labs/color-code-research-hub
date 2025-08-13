@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Form input component with consistent styling and accessibility.
+ * 
+ * Provides styled input component with focus states, validation styling,
+ * and responsive design. Built with React forwardRef for proper form integration.
+ * 
+ * @author Color Code Research Hub Team - UI Components
+ * @version 1.0.0
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

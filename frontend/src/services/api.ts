@@ -1,16 +1,47 @@
-// API Service Module for Backend Communication
+/**
+ * @fileoverview Core API service module for backend communication in Color Code Research Hub.
+ * 
+ * Provides a comprehensive API client with error handling, timeout management, and polling
+ * capabilities for research job workflows. Supports both local development and production
+ * AWS API Gateway endpoints.
+ * 
+ * Key Features:
+ * - Type-safe API error handling with specific error types
+ * - Automatic timeout management and request abortion
+ * - CORS-compliant request configuration
+ * - Exponential backoff polling for long-running jobs
+ * - Environment-aware configuration
+ * - User-friendly error notifications via toast system
+ * 
+ * API Endpoints:
+ * - Health check and environment detection
+ * - Team management and field definitions
+ * - Research job submission and status tracking
+ * - Results retrieval and polling
+ * 
+ * @author Color Code Research Hub Team
+ * @version 1.0.0
+ */
+
 import { toast } from "sonner";
 
-// Get configuration from environment variables
-// Default: empty string to require explicit configuration of API base in dev
-// In production, set VITE_API_BASE_URL to your API Gateway URL
+/**
+ * Environment-based API configuration.
+ * Supports both local development (localhost:3001) and production (AWS API Gateway).
+ */
+// Primary API base URL - supports both gateway and direct URLs
 const API_BASE_URL = (import.meta.env.VITE_API_GATEWAY_URL || import.meta.env.VITE_API_BASE_URL || '').trim();
+// Optional API key for authenticated endpoints
 const API_KEY = import.meta.env.VITE_API_KEY || '';
-// SQS integration - no webhook needed
-const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '300000'); // 5 minutes
-const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL || '2000'); // 2 seconds
+// Request timeout - 5 minutes for long-running operations
+const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '300000'); 
+// Polling interval for job status checks - 2 seconds
+const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL || '2000');
 
-// API client configuration with CORS support
+/**
+ * Default API client configuration with CORS support.
+ * Headers are applied to all requests unless overridden.
+ */
 const apiClient = {
   headers: {
     'Content-Type': 'application/json',
@@ -19,16 +50,29 @@ const apiClient = {
   },
 };
 
-// Error types for better error handling
+/**
+ * Enumeration of API error types for type-safe error handling.
+ * Enables specific error handling strategies based on error category.
+ */
 export enum ApiErrorType {
+  /** Network connectivity issues (server unreachable) */
   NETWORK_ERROR = 'NETWORK_ERROR',
+  /** Cross-origin request policy violations */
   CORS_ERROR = 'CORS_ERROR',
+  /** Request timeout or server taking too long */
   TIMEOUT_ERROR = 'TIMEOUT_ERROR',
+  /** Authentication/authorization failures */
   AUTH_ERROR = 'AUTH_ERROR',
+  /** Server-side errors (4xx/5xx responses) */
   SERVER_ERROR = 'SERVER_ERROR',
+  /** Unexpected or unclassified errors */
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 }
 
+/**
+ * Custom error class for API-related errors with enhanced metadata.
+ * Provides structured error information for better error handling and user feedback.
+ */
 export class ApiError extends Error {
   constructor(
     public type: ApiErrorType,
@@ -40,10 +84,20 @@ export class ApiError extends Error {
   }
 }
 
-// Helper function to handle API errors
+/**
+ * Centralized error handler that converts raw errors into structured ApiError instances.
+ * 
+ * Analyzes error types and provides user-friendly error messages with actionable guidance.
+ * Essential for providing consistent error handling across all API calls.
+ * 
+ * @param {any} error - Raw error from fetch or other API operations
+ * @throws {ApiError} Structured error with type classification and details
+ * @returns {never} Always throws - this function never returns normally
+ */
 function handleApiError(error: any): never {
   console.error('API Error:', error);
 
+  // Network connectivity errors (server unreachable)
   if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
     throw new ApiError(
       ApiErrorType.NETWORK_ERROR,
@@ -52,6 +106,7 @@ function handleApiError(error: any): never {
     );
   }
 
+  // Request timeout errors
   if (error.name === 'AbortError') {
     throw new ApiError(
       ApiErrorType.TIMEOUT_ERROR,
@@ -60,7 +115,7 @@ function handleApiError(error: any): never {
     );
   }
 
-  // Check for CORS errors (these often manifest as network errors)
+  // CORS policy errors (often manifest as network errors)
   if (error.message?.includes('CORS') || error.message?.includes('cross-origin')) {
     throw new ApiError(
       ApiErrorType.CORS_ERROR,
@@ -69,6 +124,7 @@ function handleApiError(error: any): never {
     );
   }
 
+  // Fallback for unclassified errors
   throw new ApiError(
     ApiErrorType.UNKNOWN_ERROR,
     error.message || 'An unexpected error occurred',
@@ -76,14 +132,37 @@ function handleApiError(error: any): never {
   );
 }
 
-// Create an AbortController with timeout
+/**
+ * Creates an AbortController with automatic timeout.
+ * 
+ * Provides request cancellation capability to prevent hanging requests
+ * and ensure responsive user experience.
+ * 
+ * @param {number} timeout - Timeout duration in milliseconds (default: API_TIMEOUT)
+ * @returns {AbortController} Controller that will abort the request after timeout
+ */
 function createTimeoutController(timeout: number = API_TIMEOUT): AbortController {
   const controller = new AbortController();
   setTimeout(() => controller.abort(), timeout);
   return controller;
 }
 
-// Generic fetch wrapper with error handling
+/**
+ * Generic fetch wrapper with comprehensive error handling and timeout management.
+ * 
+ * Provides a consistent interface for all API calls with:
+ * - Automatic timeout handling
+ * - CORS-compliant configuration  
+ * - Structured error handling
+ * - Response validation
+ * - Type-safe return values
+ * 
+ * @template T - Expected response type
+ * @param {string} url - API endpoint URL
+ * @param {RequestInit} options - Fetch options (method, body, headers, etc.)
+ * @returns {Promise<T>} Parsed JSON response
+ * @throws {ApiError} Structured error with type classification
+ */
 async function fetchWithErrorHandling<T>(
   url: string,
   options: RequestInit = {}

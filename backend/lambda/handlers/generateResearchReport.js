@@ -1,3 +1,74 @@
+/**
+ * @file generateResearchReport.js
+ * @description Research report generation handler using Perplexity AI
+ * 
+ * This Lambda function handles research report generation for the three research teams:
+ * 
+ * RESEARCH TEAMS SUPPORTED:
+ * - Red Team: Competitive analysis and market research
+ * - White Team: Technical feasibility and implementation research  
+ * - Black Team: Risk assessment and security research
+ * 
+ * PROCESSING WORKFLOW:
+ * 1. Receives research request with team-specific prompts
+ * 2. Calls Perplexity AI API for deep research analysis
+ * 3. Processes and structures the research response
+ * 4. Stores results in S3 bucket for persistence
+ * 5. Saves metadata to DynamoDB for querying
+ * 6. Returns structured report with analysis
+ * 
+ * PERPLEXITY AI INTEGRATION:
+ * - Model: sonar-deep-research for comprehensive analysis
+ * - Async API pattern for long-running research
+ * - Reasoning effort: high for detailed insights
+ * - Citation support for source verification
+ * 
+ * DATA STORAGE ARCHITECTURE:
+ * - S3 Bucket: color-code-research-results-984906149037
+ * - DynamoDB Table: ResearchReports (metadata and indexing)
+ * - TTL: Automatic cleanup after retention period
+ * - Multi-tenant support with team-based organization
+ * 
+ * STRUCTURED REPORT FORMAT:
+ * {
+ *   id: 'uuid',
+ *   timestamp: 'ISO date',
+ *   metadata: { title, team, requester, tags, model },
+ *   request: { originalPrompt, processingTime, tokens },
+ *   content: { summary, fullText, wordCount, sections },
+ *   analysis: { keyFindings, recommendations, riskAssessment, actionItems },
+ *   sources: [{ title, url, snippet }],
+ *   performance: { responseTime, tokenUsage, modelVersion }
+ * }
+ * 
+ * SECURITY FEATURES:
+ * - API key management via AWS Secrets Manager
+ * - Input sanitization using DOMPurify
+ * - Request/response size limits
+ * - Error handling with detailed logging
+ * 
+ * PERFORMANCE OPTIMIZATIONS:
+ * - API key caching for warm Lambda containers
+ * - Efficient S3 multipart uploads for large reports
+ * - DynamoDB batch operations for metadata
+ * - Markdown processing with marked library
+ * 
+ * ERROR SCENARIOS:
+ * - Perplexity API failures: Retry with exponential backoff
+ * - S3 upload errors: Fallback to DynamoDB storage
+ * - DynamoDB errors: Continue with S3-only storage
+ * - Timeout handling: Return partial results
+ * 
+ * @module generateResearchReport
+ * @requires @aws-sdk/client-secrets-manager - API key retrieval
+ * @requires @aws-sdk/client-s3 - Report storage
+ * @requires @aws-sdk/client-dynamodb - Metadata storage
+ * @requires axios - HTTP client for Perplexity API
+ * @requires marked - Markdown processing
+ * @requires isomorphic-dompurify - Content sanitization
+ * @requires uuid - Unique ID generation
+ */
+
 const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { DynamoDBClient, PutItemCommand, GetItemCommand, QueryCommand, ScanCommand } = require('@aws-sdk/client-dynamodb');
@@ -22,7 +93,15 @@ const PERPLEXITY_SECRET_NAME = 'perplexity-key';
 let cachedApiKey = null;
 
 /**
- * Get Perplexity API key from AWS Secrets Manager
+ * Retrieves Perplexity AI API key from AWS Secrets Manager
+ * 
+ * Implements caching to avoid repeated API calls within the same Lambda context.
+ * Supports both JSON and plain text secret formats for flexibility.
+ * 
+ * @async
+ * @function getPerplexityApiKey
+ * @returns {Promise<string>} Perplexity API key
+ * @throws {Error} If secret retrieval fails or key is missing
  */
 async function getPerplexityApiKey() {
     if (cachedApiKey) return cachedApiKey;

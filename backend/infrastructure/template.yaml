@@ -1,6 +1,50 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Color Code Research Hub - AWS SAM Template for API Gateway and Lambda Functions
+Description: |
+  Color Code Research Hub - AWS SAM Template for API Gateway and Lambda Functions
+  
+  This CloudFormation template deploys the complete backend infrastructure for the
+  Color Code Research Hub, including:
+  
+  CORE COMPONENTS:
+  - API Gateway with CORS configuration for frontend integration
+  - Lambda functions for plan generation, research, and GitHub operations
+  - DynamoDB tables for job tracking and research metadata
+  - S3 buckets for report storage and static assets
+  - SQS queues for asynchronous processing workflows
+  
+  LAMBDA FUNCTIONS:
+  - HealthFunction: Basic health check endpoint
+  - GitHubReposFunction: GitHub repository management
+  - StartPlanGenerationFunction: Async job initiation (30s timeout)
+  - PlanOrchestratorFunction: Long-running orchestration (900s timeout, 3008MB)
+  - GetJobStatusFunction: Job status polling endpoint
+  - PlanGeneratorV2Function: Optimized sync plan generation
+  - PlanGeneratorCLIFunction: Full CLI logic implementation
+  - GenerateResearchReportFunction: Research report generation
+  - ReportProcessorFunction: Research report post-processing
+  
+  STORAGE ARCHITECTURE:
+  - PlanGenerationJobs table: Async job tracking with TTL
+  - ResearchReports table: Research metadata with team indexing
+  - ResearchResultsBucket: S3 storage for reports with lifecycle management
+  
+  SECURITY FEATURES:
+  - IAM roles with least privilege access
+  - Secrets Manager integration for API keys
+  - S3 bucket encryption and public access blocking
+  - VPC configuration for Lambda functions (optional)
+  
+  PERFORMANCE OPTIMIZATIONS:
+  - Reserved concurrency for critical functions
+  - Memory optimization per function type
+  - SQS dead letter queues for error handling
+  - CloudWatch monitoring and alerting
+  
+  DEPLOYMENT:
+  Deploy with: sam build && sam deploy --guided
+  Region: us-east-1 (required for Bedrock access)
+  Stack Name: color-code-research-hub
 
 Globals:
   Function:
@@ -43,6 +87,8 @@ Resources:
       MessageRetentionPeriod: 1209600  # 14 days
 
   # DynamoDB Table for Plan Generation Jobs
+  # Stores async job state, progress tracking, and results
+  # TTL enabled for automatic cleanup after 24 hours
   PlanGenerationJobsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -64,6 +110,8 @@ Resources:
           Value: color-code-research-hub
 
   # DynamoDB Table for Research Reports Metadata
+  # Stores research report metadata with team-based indexing
+  # Supports multi-tenant architecture with TTL cleanup
   ResearchReportsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -100,6 +148,8 @@ Resources:
   # SQS Queue for Research Requests
 
   # S3 Bucket for Research Results
+  # Stores full research reports with versioning and encryption
+  # Lifecycle policy deletes reports after 90 days
   ResearchResultsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -124,7 +174,9 @@ Resources:
         - Key: Application
           Value: color-code-research-hub
 
-  # API Gateway
+  # API Gateway - Main REST API
+  # Handles all HTTP requests with CORS support
+  # Routes to appropriate Lambda functions
   ResearchHubApi:
     Type: AWS::Serverless::Api
     Properties:
