@@ -21,18 +21,17 @@
  * @requires ./prompt-sanitizer
  */
 
-const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const axios = require('axios');
 
 // AWS clients
-const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
 const s3 = new S3Client({ region: 'us-east-1' });
 const dynamodb = new DynamoDBClient({ region: 'us-east-1' });
 
 // Configuration constants
-const CLAUDE_MODEL_ID = 'anthropic.claude-3-5-sonnet-20240620-v1:0';
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const CLAUDE_MODEL = 'claude-3-5-sonnet-20241022';  // Latest version with 8192 token support
 const OPENAI_MODEL = 'gpt-4o';
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 const SUMMARY_WORD_TARGET = 120;
@@ -294,6 +293,7 @@ class ReportProcessingService {
 
     /**
      * Call Claude API with automatic retry logic for rate limits
+     * Now uses native Anthropic API instead of Bedrock for full 8192 token support
      * 
      * @async
      * @param {string} prompt - The prompt to send to Claude
@@ -303,30 +303,41 @@ class ReportProcessingService {
      * @returns {Promise<string|Object>} Response from Claude
      */
     async callClaudeWithRetry(prompt, secrets, responseType = 'json', retries = MAX_RETRIES) {
-        const command = new InvokeModelCommand({
-            modelId: CLAUDE_MODEL_ID,
-            contentType: 'application/json',
-            accept: 'application/json',
-            body: JSON.stringify({
-                anthropic_version: "bedrock-2023-05-31",
-                max_tokens: responseType === 'summary' ? 500 : 8192, // Claude has lower max than GPT-4
-                temperature: 0.3, // Lower temperature for more consistent structured output
-                messages: [
-                    {
-                        role: "user",
-                        content: prompt
-                    }
-                ]
-            })
-        });
+        // Get Anthropic API key
+        const anthropicKey = secrets.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY;
+        if (!anthropicKey) {
+            console.log('⚠️ Anthropic API key not found, falling back to OpenAI');
+            return this.callOpenAIFallback(prompt, secrets, responseType, retries);
+        }
 
         for (let attempt = 0; attempt < retries; attempt++) {
             try {
-                console.log(`🤖 Claude API call attempt ${attempt + 1}/${retries}`);
+                console.log(`🤖 Claude API call attempt ${attempt + 1}/${retries} (Native Anthropic API)`);
                 
-                const response = await bedrock.send(command);
-                const responseData = JSON.parse(new TextDecoder().decode(response.body));
-                const content = responseData.content[0].text;
+                const response = await axios.post(
+                    ANTHROPIC_API_URL,
+                    {
+                        model: CLAUDE_MODEL,
+                        max_tokens: responseType === 'summary' ? 500 : 8192, // Full 8192 token support!
+                        temperature: 0.3,
+                        messages: [
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ]
+                    },
+                    {
+                        headers: {
+                            'x-api-key': anthropicKey,
+                            'anthropic-version': '2023-06-01',
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 60000 // 60 seconds
+                    }
+                );
+
+                const content = response.data.content[0].text;
 
                 // Return based on expected response type
                 if (responseType === 'json') {
@@ -337,18 +348,15 @@ class ReportProcessingService {
                 }
 
             } catch (error) {
-                // Enhanced rate limit detection
-                const isRateLimit = error.message?.includes('Too many requests') || 
+                // Enhanced rate limit detection for Anthropic API
+                const isRateLimit = error.response?.status === 429 ||
+                                   error.response?.status === 529 || // Anthropic overloaded
                                    error.message?.includes('rate limit') ||
-                                   error.message?.includes('ThrottlingException') ||
-                                   error.message?.includes('throttled') ||
-                                   error.$metadata?.httpStatusCode === 429 ||
-                                   error.name === 'ThrottlingException' ||
-                                   error.name === 'TooManyRequestsException';
+                                   error.message?.includes('Too many requests');
                 
                 const isRetryable = isRateLimit || 
-                                   error.$metadata?.httpStatusCode === 503 || // Service unavailable
-                                   error.$metadata?.httpStatusCode === 502;    // Bad gateway
+                                   error.response?.status === 503 || // Service unavailable
+                                   error.response?.status === 502;    // Bad gateway
                 
                 if (isRetryable && attempt < retries - 1) {
                     // Calculate wait time with jitter to avoid thundering herd
@@ -359,14 +367,21 @@ class ReportProcessingService {
                     console.log(`⏳ ${isRateLimit ? 'Rate limited' : 'Service error'}, waiting ${Math.round(waitTime)}ms before retry ${attempt + 2}/${retries}`);
                     await new Promise(resolve => setTimeout(resolve, waitTime));
                 } else {
-                    console.error(`❌ Claude API call failed on attempt ${attempt + 1}:`, error);
+                    console.error(`❌ Claude API call failed on attempt ${attempt + 1}:`, error.response?.data || error.message);
+                    
+                    // If all Claude attempts failed, try OpenAI as fallback
+                    if (attempt === retries - 1) {
+                        console.log('🔄 All Claude attempts failed, falling back to OpenAI');
+                        return this.callOpenAIFallback(prompt, secrets, responseType, retries);
+                    }
                     throw error;
                 }
             }
         }
         
-        // If we've exhausted all retries, throw an error
-        throw new Error(`Failed to complete Claude API call after ${retries} attempts due to rate limiting`);
+        // If we've exhausted all retries, fall back to OpenAI
+        console.log('🔄 Claude API rate limited after all retries, falling back to OpenAI');
+        return this.callOpenAIFallback(prompt, secrets, responseType, retries);
     }
 
     /**

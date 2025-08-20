@@ -27,10 +27,10 @@
  * - Safe fallback mechanisms
  * 
  * AI MODEL CONFIGURATION:
- * - Model: Claude 3 Sonnet via AWS Bedrock
- * - Region: us-east-1
- * - Timeout: 30 seconds
+ * - Model: Claude 3.5 Sonnet via native Anthropic API
  * - Max tokens: 4096 for comprehensive analysis
+ * - Timeout: 30 seconds
+ * - Full 8192 token support available
  * 
  * ERROR HANDLING:
  * - Graceful AI failure with fallback suggestions
@@ -45,19 +45,18 @@
  * - Fast fallback generation (<100ms)
  * 
  * @module form-populator-service
- * @requires @aws-sdk/client-bedrock-runtime - AWS Bedrock client
+ * @requires axios - HTTP client for Anthropic API
  * @requires prompts/form-population - AI prompt templates
  * @requires services/prompt-sanitizer - Input sanitization
  */
 
-const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
+const axios = require('axios');
 const { FORM_POPULATION_PROMPT } = require('../prompts/form-population.js');
 const { PromptSanitizer, buildSafePrompt } = require('./prompt-sanitizer.js');
 
-const bedrock = new BedrockRuntimeClient({ region: 'us-east-1' });
-
-// Claude model configuration - using the exact same model as CLI
-const CLAUDE_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
+// Native Anthropic API configuration
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const CLAUDE_MODEL = 'claude-3-5-sonnet-20241022';
 
 /**
  * AI-powered form field population service
@@ -202,16 +201,20 @@ class AIFormPopulator {
   }
 
   /**
-   * Call Claude API using Bedrock
+   * Call Claude API using native Anthropic API
    */
   async callClaude(prompt) {
-    const command = new InvokeModelCommand({
-      modelId: CLAUDE_MODEL_ID,
-      contentType: 'application/json',
-      accept: 'application/json',
-      body: JSON.stringify({
-        anthropic_version: "bedrock-2023-05-31",
-        max_tokens: 2048,
+    // Get API key from environment
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    if (!anthropicKey) {
+      throw new Error('ANTHROPIC_API_KEY not configured');
+    }
+
+    const response = await axios.post(
+      ANTHROPIC_API_URL,
+      {
+        model: CLAUDE_MODEL,
+        max_tokens: 4096, // Increased from 2048 for better analysis
         temperature: 0.7,
         messages: [
           {
@@ -219,12 +222,18 @@ class AIFormPopulator {
             content: prompt
           }
         ]
-      })
-    });
+      },
+      {
+        headers: {
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01',
+          'Content-Type': 'application/json'
+        },
+        timeout: 30000 // 30 seconds
+      }
+    );
 
-    const response = await bedrock.send(command);
-    const responseData = JSON.parse(new TextDecoder().decode(response.body));
-    return responseData.content[0].text;
+    return response.data.content[0].text;
   }
 
   /**
