@@ -285,7 +285,29 @@ DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDI
 • Where the pucks are going, not just where they are
 • The unthinkable moves that would shatter everything
 • The biological and psychological forces driving competition
-This is about COMPLETE UNDERSTANDING through both analytical and creative lenses. Raw data, detailed analysis, contrarian perspectives, and provocative scenarios are REQUIRED.`;
+This is about COMPLETE UNDERSTANDING through both analytical and creative lenses. Raw data, detailed analysis, contrarian perspectives, and provocative scenarios are REQUIRED.
+
+═══════════════════════════════════════════════════════════════════════════
+🔴 CREATIVE DIVERGENCE DIRECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+In addition to standard competitive intelligence, generate at least two counterfactual disruption scenarios (e.g., "What if the top competitor never existed?" or "What if a stealth startup suddenly stole all demand?").
+
+Include a fictional "rogue disruptor" profile: invent a stealth company, its strategy, and how it would destabilize the market overnight.
+
+Apply ecological or psychological analogies: map competitive dynamics to predator–prey relationships, warfare strategy, or human cognitive biases.
+
+Output one wildcard artifact (short fable, comic-strip style storyboard, or dystopian future vignette) that dramatizes a disruption scenario.
+
+═══════════════════════════════════════════════════════════════════════════
+🌐 GLOBAL NOVELTY ENHANCERS
+═══════════════════════════════════════════════════════════════════════════
+
+Each swarm must include one contrarian persona (comedian, saboteur, philosopher) whose role is to undermine safe answers.
+
+Insights must be triangulated across past (historical analogy), present (orthodox analysis), and future (counterfactual or sci-fi horizon).
+
+Each swarm must output at least one "wildcard artifact" in an unexpected form (short story, poem, allegory, storyboard).`;
 }
 
 function formatWhiteTeamPrompt(formData) {
@@ -493,7 +515,31 @@ DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDI
 • Inverted, borrowed, and collision-based opportunity spaces
 • Emotional and taboo markets waiting to emerge
 • Science fiction opportunities with present-day roots
-This is about DEEP UNDERSTANDING through conventional and wildly unconventional lenses. Find opportunities in hatred, absurdity, impossibility, and dreams.`;
+This is about DEEP UNDERSTANDING through conventional and wildly unconventional lenses. Find opportunities in hatred, absurdity, impossibility, and dreams.
+
+═══════════════════════════════════════════════════════════════════════════
+⚪ CREATIVE DIVERGENCE DIRECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+Go beyond unmet needs: also identify "inverted demands" — things customers currently reject that could signal hidden opportunity.
+
+Frame whitespace analysis through at least one borrowed lens (e.g., philosopher, urban planner, poet). Clearly label which lens you used.
+
+Provide at least one science-fiction horizon scenario (20–50 years out) with near-term signals that point toward it.
+
+Include category mashups: propose at least 3 "collision markets" (e.g., fintech × pet care).
+
+Deliver a "ghost market" profile: describe a market that should exist but doesn't due to regulation, taboo, or oversight.
+
+═══════════════════════════════════════════════════════════════════════════
+🌐 GLOBAL NOVELTY ENHANCERS
+═══════════════════════════════════════════════════════════════════════════
+
+Each swarm must include one contrarian persona (comedian, saboteur, philosopher) whose role is to undermine safe answers.
+
+Insights must be triangulated across past (historical analogy), present (orthodox analysis), and future (counterfactual or sci-fi horizon).
+
+Each swarm must output at least one "wildcard artifact" in an unexpected form (short story, poem, allegory, storyboard).`;
 }
 
 function formatBlackTeamPrompt(formData) {
@@ -721,7 +767,31 @@ DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDI
 • Emotional triggers that drive replacement decisions
 • Shadow strategies for stealth replacement
 • The open source alternative that haunts vendor nightmares
-This is about COMPLETE UNDERSTANDING through analytical, emotional, and subversive lenses. Dissect the vendor like an anthropologist, a therapist, and a revolutionary.`;
+This is about COMPLETE UNDERSTANDING through analytical, emotional, and subversive lenses. Dissect the vendor like an anthropologist, a therapist, and a revolutionary.
+
+═══════════════════════════════════════════════════════════════════════════
+⚫ CREATIVE DIVERGENCE DIRECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+Alongside standard analysis, generate an "Evil Twin" profile of the incumbent: describe how they might lock in customers with dark patterns — then invert those into opportunities.
+
+Use archaeological metaphors: treat the vendor's architecture as an excavation site, describing "artifacts," "ruins," and "fossils" that reveal hidden weaknesses.
+
+Include at least one customer betrayal fantasy: a vivid narrative where a customer abandons the vendor in a dramatic way, revealing pain points.
+
+Provide a shadow migration plan: stealthy, incremental paths that could displace the vendor before they notice.
+
+Conjure a fictional open-source fork: describe its ethos, killer features, and community dynamics that would make it irresistible.
+
+═══════════════════════════════════════════════════════════════════════════
+🌐 GLOBAL NOVELTY ENHANCERS
+═══════════════════════════════════════════════════════════════════════════
+
+Each swarm must include one contrarian persona (comedian, saboteur, philosopher) whose role is to undermine safe answers.
+
+Insights must be triangulated across past (historical analogy), present (orthodox analysis), and future (counterfactual or sci-fi horizon).
+
+Each swarm must output at least one "wildcard artifact" in an unexpected form (short story, poem, allegory, storyboard).`;
 }
 
 module.exports = {
