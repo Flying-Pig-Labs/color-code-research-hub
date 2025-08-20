@@ -250,6 +250,10 @@ exports.handler = async (event) => {
         
         // Parse repository owner and name
         const [owner, repo] = githubConfig.repository.split('/');
+        console.log(`📍 Creating GitHub resources for: ${owner}/${repo}`);
+        console.log(`📍 GitHub token present: ${!!githubToken}`);
+        console.log(`📍 GitHub token first 10 chars: ${githubToken?.substring(0, 10)}...`);
+        console.log(`📍 Total phases to process: ${plan.phases?.length || 0}`);
         
         // Create milestones for ALL phases
         const milestones = [];
@@ -264,16 +268,31 @@ exports.handler = async (event) => {
             const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/milestones`, {
               method: 'POST',
               headers: {
-                'Authorization': `token ${githubToken}`,
+                'Authorization': githubToken.startsWith('ghp_') ? `Bearer ${githubToken}` : `token ${githubToken}`,
                 'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-GitHub-Api-Version': '2022-11-28'
               },
               body: JSON.stringify(milestoneData)
             });
             
             if (!response.ok) {
-              const error = await response.text();
-              console.error(`Failed to create milestone: ${phase.title}`, error);
+              const errorText = await response.text();
+              console.error(`❌ Failed to create milestone: ${phase.title}`);
+              console.error(`   Status: ${response.status}`);
+              console.error(`   Error: ${errorText}`);
+              console.error(`   URL: https://api.github.com/repos/${owner}/${repo}/milestones`);
+              
+              // Check for common errors
+              if (response.status === 404) {
+                console.error(`   ⚠️ Repository not found or no access: ${owner}/${repo}`);
+              } else if (response.status === 401) {
+                console.error(`   ⚠️ GitHub token is invalid or expired`);
+              } else if (response.status === 403) {
+                console.error(`   ⚠️ GitHub token lacks necessary permissions`);
+              } else if (response.status === 422) {
+                console.error(`   ⚠️ Validation failed - check milestone data`);
+              }
               continue;
             }
             
@@ -290,7 +309,13 @@ exports.handler = async (event) => {
         const firstMilestone = milestones.find(m => m.phase === firstPhase.id);
         let issuesCreated = 0;
         
+        console.log(`📍 First phase: ${firstPhase?.title || 'NONE'}`);
+        console.log(`📍 First phase ID: ${firstPhase?.id || 'NONE'}`);
+        console.log(`📍 First phase has issues: ${firstPhase?.issues?.length || 0}`);
+        console.log(`📍 First milestone found: ${!!firstMilestone} ${firstMilestone ? `(#${firstMilestone.number})` : ''}`);
+        
         if (firstMilestone && firstPhase.issues) {
+          console.log(`📍 Creating ${firstPhase.issues.length} issues for first phase`);
           for (const issue of firstPhase.issues) {
             const issueData = {
               title: issue.title,
@@ -303,16 +328,19 @@ exports.handler = async (event) => {
               const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
                 method: 'POST',
                 headers: {
-                  'Authorization': `token ${githubToken}`,
+                  'Authorization': githubToken.startsWith('ghp_') ? `Bearer ${githubToken}` : `token ${githubToken}`,
                   'Accept': 'application/vnd.github.v3+json',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  'X-GitHub-Api-Version': '2022-11-28'
                 },
                 body: JSON.stringify(issueData)
               });
               
               if (!response.ok) {
-                const error = await response.text();
-                console.error(`Failed to create issue: ${issue.title}`, error);
+                const errorText = await response.text();
+                console.error(`❌ Failed to create issue: ${issue.title}`);
+                console.error(`   Status: ${response.status}`);
+                console.error(`   Error: ${errorText}`);
                 continue;
               }
               
@@ -331,7 +359,14 @@ exports.handler = async (event) => {
             success: true,
             milestonesCreated: milestones.length,
             issuesCreated: issuesCreated,
-            message: `Created ${milestones.length} milestones and ${issuesCreated} issues for the first phase`
+            message: `Created ${milestones.length} milestones and ${issuesCreated} issues for the first phase`,
+            details: {
+              repository: `${owner}/${repo}`,
+              phasesProcessed: plan.phases?.length || 0,
+              milestonesCreated: milestones.length,
+              issuesCreated: issuesCreated,
+              firstPhase: firstPhase?.title || 'NONE'
+            }
           })
         };
       } catch (error) {
