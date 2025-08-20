@@ -63,98 +63,47 @@ const RedTeam = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card className="border-gray-200 hover:border-red-team/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">🎭</span>
               </div>
-              <CardTitle className="text-red-team">Unfair Playbook</CardTitle>
+              <CardTitle className="text-gray-900">Unfair Playbook</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 What would Amazon do to kill Google tomorrow? Which "partnership" is actually a Trojan horse? The taboo strategies that would instantly flip the market.
               </p>
             </CardContent>
           </Card>
           
-          <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
+          <Card className="border-gray-200 hover:border-red-team/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">🦁</span>
               </div>
-              <CardTitle className="text-red-team">Predator-Prey Maps</CardTitle>
+              <CardTitle className="text-gray-900">Predator-Prey Maps</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 Who's the apex predator? The wounded gazelle? Which companies hunt in packs? Map competitors to ecosystem roles that reveal true market dynamics.
               </p>
             </CardContent>
           </Card>
           
-          <Card className="border-red-team/20 hover:border-red-team/40 transition-colors">
+          <Card className="border-gray-200 hover:border-red-team/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">🌀</span>
               </div>
-              <CardTitle className="text-red-team">Counterfactuals</CardTitle>
+              <CardTitle className="text-gray-900">Counterfactuals</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 What if the top 3 competitors never existed? If the leader vanished overnight? Design phantom disruptors that trigger chaos cascades in the market.
               </p>
             </CardContent>
-          </Card>
-        </div>
-        
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Research Methodologies</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Our systematic approach to competitive disruption analysis
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="text-center border-red-team/20">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-red-team/10">
-                  <Target className="h-8 w-8 text-red-team" />
-                </div>
-              </div>
-              <CardTitle className="text-red-team">Competitive Mapping</CardTitle>
-              <CardDescription>
-                Comprehensive mapping of competitive landscape and market positioning
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="text-center border-red-team/20">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-red-team/10">
-                  <TrendingUp className="h-8 w-8 text-red-team" />
-                </div>
-              </div>
-              <CardTitle className="text-red-team">Market Analysis</CardTitle>
-              <CardDescription>
-                Deep dive analysis of market trends and competitive dynamics
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="text-center border-red-team/20">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-red-team/10">
-                  <BarChart3 className="h-8 w-8 text-red-team" />
-                </div>
-              </div>
-              <CardTitle className="text-red-team">Strategic Modeling</CardTitle>
-              <CardDescription>
-                Advanced modeling of disruption scenarios and strategic responses
-              </CardDescription>
-            </CardHeader>
           </Card>
         </div>
       </SectionWrapper>

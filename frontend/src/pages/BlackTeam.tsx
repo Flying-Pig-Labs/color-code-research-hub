@@ -63,10 +63,10 @@ const BlackTeam = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card className="border-gray-300 hover:border-gray-400 transition-colors bg-white">
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card className="border-gray-300 hover:border-gray-500 transition-all hover:shadow-xl bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">😈</span>
               </div>
               <CardTitle className="text-gray-900">Evil Twin Lock-ins</CardTitle>
@@ -78,9 +78,9 @@ const BlackTeam = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-gray-300 hover:border-gray-400 transition-colors bg-white">
+          <Card className="border-gray-300 hover:border-gray-500 transition-all hover:shadow-xl bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">🏛️</span>
               </div>
               <CardTitle className="text-gray-900">5-Layer Archaeology</CardTitle>
@@ -92,9 +92,9 @@ const BlackTeam = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-gray-300 hover:border-gray-400 transition-colors bg-white">
+          <Card className="border-gray-300 hover:border-gray-500 transition-all hover:shadow-xl bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">🥷</span>
               </div>
               <CardTitle className="text-gray-900">Shadow Migrations</CardTitle>
@@ -104,57 +104,6 @@ const BlackTeam = () => {
                 Trojan horse features that secretly replace core functions. Department-by-department conquest. API wrappers that hollow out vendors. Stealth until it's too late.
               </p>
             </CardContent>
-          </Card>
-        </div>
-        
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Engineering Methodologies</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Our systematic approach to vendor replacement engineering
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="text-center border-gray-300 bg-white hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-gray-100">
-                  <Bug className="h-8 w-8 text-gray-900" />
-                </div>
-              </div>
-              <CardTitle className="text-gray-900">System Analysis</CardTitle>
-              <CardDescription className="text-gray-600">
-                Comprehensive reverse engineering and system architecture analysis
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="text-center border-gray-300 bg-white hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-gray-100">
-                  <Code className="h-8 w-8 text-gray-900" />
-                </div>
-              </div>
-              <CardTitle className="text-gray-900">Code Engineering</CardTitle>
-              <CardDescription className="text-gray-600">
-                Advanced code analysis and alternative implementation development
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="text-center border-gray-300 bg-white hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-gray-100">
-                  <Wrench className="h-8 w-8 text-gray-900" />
-                </div>
-              </div>
-              <CardTitle className="text-gray-900">Implementation</CardTitle>
-              <CardDescription className="text-gray-600">
-                Strategic implementation planning and migration pathway development
-              </CardDescription>
-            </CardHeader>
           </Card>
         </div>
       </SectionWrapper>

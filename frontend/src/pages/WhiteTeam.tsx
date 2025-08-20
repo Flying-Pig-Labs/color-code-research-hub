@@ -63,98 +63,47 @@ const WhiteTeam = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card className="border-white-team-accent/20 hover:border-white-team-accent/40 transition-colors">
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card className="border-gray-200 hover:border-white-team-accent/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">👻</span>
               </div>
-              <CardTitle className="text-white-team-dark">Ghost Markets</CardTitle>
+              <CardTitle className="text-gray-900">Ghost Markets</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 Markets that should exist but don't. Taboo services with massive latent demand. Things everyone wants but no one admits. We excavate these buried opportunities.
               </p>
             </CardContent>
           </Card>
           
-          <Card className="border-white-team-accent/20 hover:border-white-team-accent/40 transition-colors">
+          <Card className="border-gray-200 hover:border-white-team-accent/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">🔄</span>
               </div>
-              <CardTitle className="text-white-team-dark">Inverted Demands</CardTitle>
+              <CardTitle className="text-gray-900">Inverted Demands</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 What people actively hate = hidden opportunity. Products universally despised but unavoidable. The "I hate that I need this" category reveals gold mines.
               </p>
             </CardContent>
           </Card>
           
-          <Card className="border-white-team-accent/20 hover:border-white-team-accent/40 transition-colors">
+          <Card className="border-gray-200 hover:border-white-team-accent/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-3 shadow-md">
                 <span className="text-white text-lg">💥</span>
               </div>
-              <CardTitle className="text-white-team-dark">Improbable Mashups</CardTitle>
+              <CardTitle className="text-gray-900">Improbable Mashups</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 Skincare meets cybersecurity? Dating meets supply chain? We explore category collisions that shouldn't work but might create billion-dollar markets.
               </p>
             </CardContent>
-          </Card>
-        </div>
-        
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Research Methodologies</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Our systematic approach to white space identification and opportunity development
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="text-center border-white-team-accent/30">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-white-team-accent/20">
-                  <Lightbulb className="h-8 w-8 text-white-team-dark" />
-                </div>
-              </div>
-              <CardTitle className="text-white-team-dark">Opportunity Mapping</CardTitle>
-              <CardDescription>
-                Comprehensive mapping of market gaps and unexplored opportunities
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="text-center border-white-team-accent/30">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-white-team-accent/20">
-                  <Sparkles className="h-8 w-8 text-white-team-dark" />
-                </div>
-              </div>
-              <CardTitle className="text-white-team-dark">Innovation Research</CardTitle>
-              <CardDescription>
-                Advanced research methodologies for product innovation and development
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="text-center border-white-team-accent/30">
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-white-team-accent/20">
-                  <Map className="h-8 w-8 text-white-team-dark" />
-                </div>
-              </div>
-              <CardTitle className="text-white-team-dark">Strategic Planning</CardTitle>
-              <CardDescription>
-                Strategic positioning and go-to-market planning for new opportunities
-              </CardDescription>
-            </CardHeader>
           </Card>
         </div>
       </SectionWrapper>
