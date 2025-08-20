@@ -270,7 +270,8 @@ class ReportProcessingService {
     }
 
     /**
-     * Format report using OpenAI API (Claude removed due to token limits)
+     * Format report using Claude with continuation support for long reports
+     * Falls back to OpenAI if Claude fails
      * 
      * @async
      * @param {Object} config - Generation configuration
@@ -279,16 +280,38 @@ class ReportProcessingService {
      * @returns {Promise<string>} Formatted markdown report
      */
     async formatReport(config) {
-        // Limit content size but don't over-sanitize it
-        const contentToFormat = config.content.substring(0, 45000);
+        // Don't limit content - let continuation handle it
+        const contentToFormat = config.content;
         
         // Build prompt without aggressive sanitization that removes content
         const prompt = FORMAT_REPORT_PROMPT.replace('{content}', contentToFormat);
 
-        // Always use OpenAI for better token limits
-        console.log('🤖 Using OpenAI for report formatting');
-        const response = await this.callOpenAIFallback(prompt, config.secrets, 'format');
-        return response.trim();
+        try {
+            // Try Claude first with continuation support for long reports
+            console.log('🤖 Using Claude with continuation support for report formatting');
+            const response = await this.callClaudeWithContinuation(
+                prompt, 
+                config.secrets, 
+                'format', 
+                5 // Allow up to 5 continuations (can handle ~40k tokens)
+            );
+            
+            // Extract content from response
+            const content = typeof response === 'string' ? response : response.content;
+            return content.trim();
+            
+        } catch (error) {
+            console.log('⚠️ Claude formatting failed, falling back to OpenAI with continuation', error.message);
+            // Fall back to OpenAI with continuation support
+            const response = await this.callOpenAIWithContinuation(
+                prompt, 
+                config.secrets, 
+                'format', 
+                3 // Allow up to 3 continuations for OpenAI (~48k tokens)
+            );
+            const content = typeof response === 'string' ? response : response.content;
+            return content.trim();
+        }
     }
 
     /**
@@ -338,12 +361,22 @@ class ReportProcessingService {
                 );
 
                 const content = response.data.content[0].text;
+                const stopReason = response.data.stop_reason;
 
+                // For continuation support, return full response with metadata
+                if (responseType === 'format' || responseType === 'full') {
+                    return {
+                        content: content,
+                        stop_reason: stopReason,
+                        usage: response.data.usage
+                    };
+                }
+                
                 // Return based on expected response type
                 if (responseType === 'json') {
                     return this.parseClaudeResponse(content);
                 } else {
-                    // For summary and format, return plain text
+                    // For summary, return plain text
                     return content;
                 }
 
@@ -382,6 +415,263 @@ class ReportProcessingService {
         // If we've exhausted all retries, fall back to OpenAI
         console.log('🔄 Claude API rate limited after all retries, falling back to OpenAI');
         return this.callOpenAIFallback(prompt, secrets, responseType, retries);
+    }
+
+    /**
+     * Detect if a response was truncated due to token limits
+     * 
+     * @param {Object} response - API response object
+     * @param {string} content - Response content text
+     * @returns {boolean} True if response was truncated
+     */
+    detectTruncation(response, content) {
+        // Check for explicit truncation indicators
+        if (response?.stop_reason === 'max_tokens' || 
+            response?.finish_reason === 'length') {
+            return true;
+        }
+
+        // Heuristic checks for truncation
+        const lastChar = content.trim().slice(-1);
+        const endsWithPunctuation = ['.', '!', '?', '"', "'", ')', ']', '}'].includes(lastChar);
+        
+        // Check for incomplete markdown
+        const openCodeBlocks = (content.match(/```/g) || []).length % 2 !== 0;
+        const openBoldMarkers = (content.match(/\*\*/g) || []).length % 2 !== 0;
+        
+        // Check for incomplete JSON
+        const openBraces = (content.match(/\{/g) || []).length;
+        const closeBraces = (content.match(/\}/g) || []).length;
+        const incompleteJSON = openBraces > closeBraces;
+        
+        // Check for incomplete lists
+        const lastLine = content.trim().split('\n').pop();
+        const incompleteBullet = /^[-*]\s+[^.!?]*$/.test(lastLine);
+        
+        return !endsWithPunctuation || openCodeBlocks || openBoldMarkers || 
+               incompleteJSON || incompleteBullet;
+    }
+
+    /**
+     * Generate a continuation prompt to resume from truncation point
+     * 
+     * @param {string} previousContent - The truncated content
+     * @param {string} originalPrompt - The original prompt
+     * @returns {string} Continuation prompt
+     */
+    generateContinuationPrompt(previousContent, originalPrompt) {
+        // Get last 500 characters for context
+        const contextLength = 500;
+        const lastContext = previousContent.slice(-contextLength);
+        
+        return `You are continuing a response that was cut off due to length limits.
+
+## Original Request:
+${originalPrompt.slice(0, 500)}...
+
+## Last ${contextLength} characters of previous response:
+...${lastContext}
+
+## Instructions:
+1. Continue EXACTLY from where the previous response ended
+2. Do NOT repeat any content that was already written
+3. Do NOT add any introduction or transition text
+4. Simply continue writing as if there was no interruption
+5. Maintain the same formatting style and structure
+
+Continue from the next word/character:`;
+    }
+
+    /**
+     * Call Claude API with automatic continuation for long responses
+     * 
+     * @async
+     * @param {string} prompt - The prompt to send
+     * @param {Object} secrets - API secrets object
+     * @param {string} responseType - Expected response type
+     * @param {number} maxContinuations - Maximum continuation attempts (default: 5)
+     * @returns {Promise<string>} Complete response with continuations
+     */
+    async callClaudeWithContinuation(prompt, secrets, responseType = 'format', maxContinuations = 5) {
+        let fullContent = '';
+        let currentPrompt = prompt;
+        let continuationCount = 0;
+        
+        console.log('🚀 Starting Claude API call with continuation support');
+        
+        while (continuationCount <= maxContinuations) {
+            try {
+                // Call Claude API
+                const response = await this.callClaudeWithRetry(
+                    currentPrompt, 
+                    secrets, 
+                    responseType, 
+                    MAX_RETRIES
+                );
+                
+                // Extract text content based on response type
+                let content = '';
+                if (typeof response === 'string') {
+                    content = response;
+                } else if (response?.content) {
+                    content = response.content;
+                } else if (response?.text) {
+                    content = response.text;
+                } else {
+                    content = JSON.stringify(response);
+                }
+                
+                // Append to full content
+                fullContent += content;
+                
+                // Check if response was truncated
+                const wasTruncated = this.detectTruncation(response, content);
+                
+                if (!wasTruncated) {
+                    console.log(`✅ Response complete after ${continuationCount + 1} part(s)`);
+                    break;
+                }
+                
+                if (continuationCount >= maxContinuations) {
+                    console.log(`⚠️ Reached maximum continuations (${maxContinuations})`);
+                    break;
+                }
+                
+                // Generate continuation prompt
+                console.log(`📝 Response truncated, generating continuation ${continuationCount + 2}/${maxContinuations + 1}`);
+                currentPrompt = this.generateContinuationPrompt(fullContent, prompt);
+                continuationCount++;
+                
+                // Small delay to avoid rate limits
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+            } catch (error) {
+                console.error(`❌ Error during continuation ${continuationCount + 1}:`, error);
+                
+                // If we have partial content, return it
+                if (fullContent.length > 0) {
+                    console.log('⚠️ Returning partial content due to error');
+                    return fullContent;
+                }
+                
+                throw error;
+            }
+        }
+        
+        return fullContent;
+    }
+
+    /**
+     * Call OpenAI API with automatic continuation for long responses
+     * 
+     * @async
+     * @param {string} prompt - The prompt to send
+     * @param {Object} secrets - API secrets object
+     * @param {string} responseType - Expected response type
+     * @param {number} maxContinuations - Maximum continuation attempts (default: 3)
+     * @returns {Promise<string>} Complete response with continuations
+     */
+    async callOpenAIWithContinuation(prompt, secrets, responseType = 'format', maxContinuations = 3) {
+        let fullContent = '';
+        let currentPrompt = prompt;
+        let continuationCount = 0;
+        
+        console.log('🚀 Starting OpenAI API call with continuation support');
+        
+        // Get OpenAI key
+        let openaiKey;
+        if (secrets.OPENAI_API_KEY) {
+            openaiKey = secrets.OPENAI_API_KEY;
+        } else {
+            try {
+                const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
+                const secretsClient = new SecretsManagerClient({ region: 'us-east-1' });
+                const command = new GetSecretValueCommand({ SecretId: 'openai_key' });
+                const response = await secretsClient.send(command);
+                
+                try {
+                    const secretData = JSON.parse(response.SecretString);
+                    openaiKey = secretData.openai_key || secretData.OPENAI_API_KEY || response.SecretString;
+                } catch (parseError) {
+                    openaiKey = response.SecretString;
+                }
+            } catch (error) {
+                throw new Error(`Failed to retrieve OpenAI API key: ${error.message}`);
+            }
+        }
+        
+        if (!openaiKey) {
+            throw new Error('OpenAI API key not found in secrets');
+        }
+        
+        while (continuationCount <= maxContinuations) {
+            try {
+                console.log(`🤖 OpenAI API continuation ${continuationCount + 1}/${maxContinuations + 1}`);
+                
+                const response = await axios.post(
+                    OPENAI_API_URL,
+                    {
+                        model: OPENAI_MODEL,
+                        messages: [
+                            {
+                                role: 'user',
+                                content: currentPrompt
+                            }
+                        ],
+                        temperature: 0.3,
+                        max_tokens: 16384 // OpenAI supports 16k output tokens
+                    },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${openaiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 60000
+                    }
+                );
+                
+                const content = response.data.choices[0].message.content;
+                const finishReason = response.data.choices[0].finish_reason;
+                
+                // Append to full content
+                fullContent += content;
+                
+                // Check if response was truncated
+                const wasTruncated = finishReason === 'length' || 
+                                   this.detectTruncation({finish_reason: finishReason}, content);
+                
+                if (!wasTruncated) {
+                    console.log(`✅ OpenAI response complete after ${continuationCount + 1} part(s)`);
+                    break;
+                }
+                
+                if (continuationCount >= maxContinuations) {
+                    console.log(`⚠️ Reached maximum OpenAI continuations (${maxContinuations})`);
+                    break;
+                }
+                
+                // Generate continuation prompt
+                console.log(`📝 OpenAI response truncated, generating continuation ${continuationCount + 2}/${maxContinuations + 1}`);
+                currentPrompt = this.generateContinuationPrompt(fullContent, prompt);
+                continuationCount++;
+                
+                // Small delay to avoid rate limits
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+            } catch (error) {
+                console.error(`❌ OpenAI error during continuation ${continuationCount + 1}:`, error.response?.data || error.message);
+                
+                // If we have partial content, return it
+                if (fullContent.length > 0) {
+                    console.log('⚠️ Returning partial OpenAI content due to error');
+                    return fullContent;
+                }
+                
+                throw error;
+            }
+        }
+        
+        return fullContent;
     }
 
     /**
