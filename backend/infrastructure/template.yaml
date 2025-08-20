@@ -1,50 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: |
-  Color Code Research Hub - AWS SAM Template for API Gateway and Lambda Functions
-  
-  This CloudFormation template deploys the complete backend infrastructure for the
-  Color Code Research Hub, including:
-  
-  CORE COMPONENTS:
-  - API Gateway with CORS configuration for frontend integration
-  - Lambda functions for plan generation, research, and GitHub operations
-  - DynamoDB tables for job tracking and research metadata
-  - S3 buckets for report storage and static assets
-  - SQS queues for asynchronous processing workflows
-  
-  LAMBDA FUNCTIONS:
-  - HealthFunction: Basic health check endpoint
-  - GitHubReposFunction: GitHub repository management
-  - StartPlanGenerationFunction: Async job initiation (30s timeout)
-  - PlanOrchestratorFunction: Long-running orchestration (900s timeout, 3008MB)
-  - GetJobStatusFunction: Job status polling endpoint
-  - PlanGeneratorV2Function: Optimized sync plan generation
-  - PlanGeneratorCLIFunction: Full CLI logic implementation
-  - GenerateResearchReportFunction: Research report generation
-  - ReportProcessorFunction: Research report post-processing
-  
-  STORAGE ARCHITECTURE:
-  - PlanGenerationJobs table: Async job tracking with TTL
-  - ResearchReports table: Research metadata with team indexing
-  - ResearchResultsBucket: S3 storage for reports with lifecycle management
-  
-  SECURITY FEATURES:
-  - IAM roles with least privilege access
-  - Secrets Manager integration for API keys
-  - S3 bucket encryption and public access blocking
-  - VPC configuration for Lambda functions (optional)
-  
-  PERFORMANCE OPTIMIZATIONS:
-  - Reserved concurrency for critical functions
-  - Memory optimization per function type
-  - SQS dead letter queues for error handling
-  - CloudWatch monitoring and alerting
-  
-  DEPLOYMENT:
-  Deploy with: sam build && sam deploy --guided
-  Region: us-east-1 (required for Bedrock access)
-  Stack Name: color-code-research-hub
+Description: >
+  Color Code Research Hub - Competitive intelligence platform with three specialized AI research teams
+  (Red/Black/White) for market disruption analysis, vendor replacement, and whitespace discovery.
+  Features 20+ Lambda functions, DynamoDB tables, API Gateway, and integration with Perplexity AI
+  for deep research. Deploy to us-east-1 with stack name: color-code-research-hub
 
 Globals:
   Function:
