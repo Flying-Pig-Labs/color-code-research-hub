@@ -75,10 +75,11 @@ interface StatusCheckResponse {
 
 // Use API Gateway proxy to avoid CORS/private network issues
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-// Prompts (moved to frontend/prompts)
-import { buildRedTeamPrompt } from '../../prompts/red-team';
-import { buildWhiteTeamPrompt } from '../../prompts/white-team';
-import { buildBlackTeamPrompt } from '../../prompts/black-team';
+// Import the ENHANCED prompts with all creative divergence directives
+// @ts-ignore - JS module import
+import { RED_TEAM_PROMPT } from '../../prompts/red-team';
+import { WHITE_TEAM_PROMPT } from '../../prompts/white-team';
+import { BLACK_TEAM_PROMPT } from '../../prompts/black-team';
 
 export async function submitResearch(request: ResearchRequest): Promise<ResearchResponse> {
   try {
@@ -163,9 +164,25 @@ export async function checkResearchStatus(requestId: string): Promise<ResearchRe
   }
 }
 
-export const formatRedTeamPrompt = buildRedTeamPrompt;
+// Export prompt formatting functions that use the enhanced prompts
+export const formatRedTeamPrompt = (formData: any) => {
+  return RED_TEAM_PROMPT
+    .replace('{{targetCompany}}', formData.targetCompany || formData.companyName || 'Not specified')
+    .replace('{{analysisFocus}}', formData.analysisFocus ? formData.analysisFocus.map((focus: string) => `• ${focus}`).join('\n') : '• Comprehensive competitive analysis');
+};
 
-export const formatWhiteTeamPrompt = buildWhiteTeamPrompt;
+export const formatWhiteTeamPrompt = (formData: any) => {
+  return WHITE_TEAM_PROMPT
+    .replace('{{companyName}}', formData.companyName || 'Not specified')
+    .replace('{{opportunityTypes}}', formData.opportunityTypes ? formData.opportunityTypes.map((type: string) => `• ${type}`).join('\n') : '• All opportunity types')
+    .replace('{{targetCustomerSize}}', formData.targetCustomerSize ? formData.targetCustomerSize.map((size: string) => `• ${size}`).join('\n') : '• All customer segments')
+    .replace('{{businessModelPreference}}', formData.businessModelPreference ? formData.businessModelPreference.map((model: string) => `• ${model}`).join('\n') : '• Open to all business models')
+    .replace('{{technicalApproach}}', formData.technicalApproach || 'Technology-agnostic')
+    .replace('{{marketEntrySpeed}}', formData.marketEntrySpeed || 'Standard')
+    .replace('{{competitiveLandscape}}', formData.competitiveLandscape || 'Moderate competition')
+    .replace('{{minimumOpportunitySize}}', formData.minimumOpportunitySize || 'No minimum threshold')
+    .replace('{{successMetrics}}', formData.successMetrics ? formData.successMetrics.map((metric: string, index: number) => `${index + 1}. ${metric}`).join('\n') : '1. Market potential\n2. Technical feasibility\n3. Competitive advantage');
+};
 
 export interface ResearchReport {
   reportId: string;
@@ -224,4 +241,14 @@ export async function listResearchReports(team?: string, limit: number = 50): Pr
   }
 }
 
-export const formatBlackTeamPrompt = buildBlackTeamPrompt;
+// Use the ENHANCED Black Team prompt with creative divergence
+export const formatBlackTeamPrompt = (formData: any) => {
+  return BLACK_TEAM_PROMPT
+    .replace('{{companyName}}', formData.companyName || 'Not specified')
+    .replace('{{targetVendor}}', formData.targetVendor || formData.vendorName || 'Not specified')
+    .replace('{{existingTools}}', formData.existingTools ? formData.existingTools.join(', ') : 'No specific tools identified')
+    .replace('{{toolCategories}}', formData.toolCategories ? formData.toolCategories.map((category: string) => `• ${category}`).join('\n') : '• Comprehensive tool replacement')
+    .replace('{{informationSources}}', formData.informationSources ? Object.entries(formData.informationSources).filter(([_, enabled]) => enabled).map(([source]) => `• ${source.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}`).join('\n') : '• Standard public information sources')
+    .replace('{{implementationComplexity}}', formData.implementationComplexity || 'Medium')
+    .replace('{{replacementSuccessMetrics}}', formData.replacementSuccessMetrics ? formData.replacementSuccessMetrics.slice(0, 3).join(', ') : 'Performance, Cost, Features');
+};

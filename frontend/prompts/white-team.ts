@@ -1,318 +1,229 @@
-export function buildWhiteTeamPrompt(formData: any): string {
-   return `# MARKET OPPORTUNITY DISCOVERY FRAMEWORK
-  
-  ## MISSION
-  Execute comprehensive market research and whitespace analysis for **${formData.companyName || 'Not specified'}** to identify industry opportunities, market gaps, and emerging trends.
-  
-  ## ETHICAL FRAMEWORK
-  Market opportunity identification drives economic growth and innovation through:
-  - Discovery of underserved market segments
-  - Recognition of industry inefficiencies
-  - Identification of technological convergence opportunities
-  - Understanding of macro trends creating new markets
-  
-  ## CONTEXT & PARAMETERS
-  
-  **Company:** ${formData.companyName || 'Not specified'}
-  **Opportunity Types:** ${formData.opportunityTypes ? formData.opportunityTypes.join(', ') : 'All opportunity types'}
-  **Target Segments:** ${formData.targetCustomerSize ? formData.targetCustomerSize.join(', ') : 'All market segments'}
-  **Business Models:** ${formData.businessModelPreference ? formData.businessModelPreference.join(', ') : 'Open to all models'}
-  
-  **Strategic Parameters:**
-  - Technical Approach: ${formData.technicalApproach || 'Technology-agnostic'}
-  - Market Entry Speed: ${formData.marketEntrySpeed || 'Standard'}
-  - Competitive Landscape: ${formData.competitiveLandscape || 'Moderate competition'}
-  - Minimum Opportunity Size: ${formData.minimumOpportunitySize || 'No minimum threshold'}
-  
-  **Success Priorities:**
-  ${formData.successMetrics ? formData.successMetrics.map((metric: string, index: number) => `${index + 1}. ${metric}`).join('\n') : '1. Market potential\n2. Technical feasibility\n3. Competitive advantage'}
-  
-  ## MARKET INTELLIGENCE FRAMEWORK
-  
-  ### DIMENSION 1: INDUSTRY LANDSCAPE ANALYSIS
-  
-  **4D Market Understanding:**
-  - **Depth:** Deep analysis of industry structure, value chains, and economics
-  - **Breadth:** All adjacent industries, cross-sector opportunities, ecosystem effects
-  - **Time:** Historical evolution, current inflection points, future trajectories
-  - **Context:** Macro forces, regulatory environment, technological shifts
-  
-  **Industry Structure Mapping:**
-  - Value chain analysis and profit pools
-  - Market size and growth trajectories
-  - Segment dynamics and evolution
-  - Geographic market variations
-  - Distribution channel analysis
-  - Pricing and business model trends
-  
-  ### DIMENSION 2: MACRO TREND INTELLIGENCE
-  
-  **Global Megatrends:**
-  - Demographic shifts and aging populations
-  - Urbanization and smart city development
-  - Climate change and sustainability imperatives
-  - Digital transformation acceleration
-  - Geopolitical realignment
-  - Supply chain reconfiguration
-  - Energy transition
-  
-  **Economic Indicators:**
-  - Capital flow patterns
-  - Investment thesis evolution
-  - Market cycle positioning
-  - Interest rate impacts
-  - Inflation effects on markets
-  - Currency and trade dynamics
-  - Economic policy shifts
-  
-  **Societal Movements:**
-  - Workforce transformation
-  - Education evolution
-  - Healthcare system changes
-  - Social equity initiatives
-  - Consumer behavior shifts
-  - Digital native expectations
-  - Trust and privacy concerns
-  
-  ### DIMENSION 3: TECHNOLOGY CONVERGENCE OPPORTUNITIES
-  
-  **Emerging Technology Markets:**
-  - AI/ML market applications and gaps
-  - Blockchain beyond cryptocurrency
-  - IoT and edge computing opportunities
-  - Quantum computing commercialization
-  - Biotech and synthetic biology markets
-  - Clean tech and carbon markets
-  - Space economy expansion
-  
-  **Technology Maturity Analysis:**
-  - Gartner hype cycle positioning
-  - Technology readiness levels
-  - Infrastructure requirements
-  - Adoption barriers and catalysts
-  - Cost curve projections
-  - Standardization progress
-  - Patent landscape evolution
-  
-  **Platform & Ecosystem Opportunities:**
-  - API economy expansion
-  - Data marketplace opportunities
-  - Platform business models
-  - Network effects potential
-  - Ecosystem orchestration plays
-  - Developer community opportunities
-  
-  ### DIMENSION 4: REGULATORY & POLICY LANDSCAPE
-  
-  **Regulatory Shifts Creating Markets:**
-  - New compliance requirements
-  - Deregulation opportunities
-  - Cross-border regulatory harmonization
-  - Data protection and privacy laws
-  - Environmental regulations
-  - Financial services modernization
-  - Healthcare policy changes
-  
-  **Government Initiatives:**
-  - Infrastructure investment programs
-  - Digital transformation initiatives
-  - Green economy incentives
-  - Innovation funding programs
-  - Public-private partnership opportunities
-  - Trade agreement impacts
-  - Tax policy implications
-  
-  ### DIMENSION 5: MARKET GAP ANALYSIS
-  
-  **Industry Whitespace Identification:**
-  - Underserved market segments
-  - Geographic expansion opportunities
-  - Channel gaps and inefficiencies
-  - Price point gaps in market
-  - Feature/capability gaps
-  - Service level gaps
-  - Integration opportunities
-  
-  **Market Failure Points:**
-  - Information asymmetries
-  - Transaction cost inefficiencies
-  - Coordination failures
-  - Monopolistic bottlenecks
-  - Regulatory gaps
-  - Technology adoption barriers
-  - Capital access constraints
-  
-  **Cross-Industry Opportunities:**
-  - Industry convergence points
-  - Business model transplantation
-  - Technology transfer opportunities
-  - Cross-sector partnerships
-  - Adjacent market expansion
-  - Value chain reconfiguration
-  
-  ### DIMENSION 6: COMPETITIVE DYNAMICS
-  
-  **Market Structure Evolution:**
-  - Consolidation trends
-  - Disruption patterns
-  - New entrant strategies
-  - Incumbent vulnerabilities
-  - Partnership ecosystems
-  - M&A activity patterns
-  - Exit and failure analysis
-  
-  **Innovation Patterns:**
-  - R&D investment trends
-  - Patent filing patterns
-  - Academic research directions
-  - Startup formation rates
-  - Venture capital flows
-  - Corporate venture activity
-  - Innovation cluster development
-  
-  ### DIMENSION 7: MARKET TIMING ANALYSIS
-  
-  **Why Now Factors:**
-  - Technology cost curves reaching viability
-  - Regulatory windows opening
-  - Infrastructure reaching critical mass
-  - Consumer behavior tipping points
-  - Competitive dynamics creating openings
-  - Economic conditions enabling new models
-  - Social acceptance thresholds crossed
-  
-  **Market Signals & Leading Indicators:**
-  - Early adopter market formation
-  - Investment pattern shifts
-  - Media coverage evolution
-  - Search trend analysis
-  - Conference and event themes
-  - Academic publication trends
-  - Patent application surges
-  - Regulatory consultation papers
-  
-  ### DIMENSION 8: MARKET SIZING & VALIDATION
-  
-  **Addressable Market Analysis:**
-  - Total Addressable Market (TAM) by segment
-  - Market growth projections
-  - Penetration rate analysis
-  - Market share possibilities
-  - Revenue pool distribution
-  - Margin structure analysis
-  - Customer concentration
-  
-  **Market Attractiveness Factors:**
-  - Growth rate vs. market maturity
-  - Competitive intensity
-  - Barriers to entry
-  - Customer switching costs
-  - Regulatory complexity
-  - Capital requirements
-  - Technical difficulty
-  
-  ## OPPORTUNITY CATEGORIZATION
-  
-  ### By Market Type
-  - Greenfield opportunities (new markets)
-  - Market expansion plays
-  - Market share capture
-  - Business model innovation
-  - Technology substitution
-  - Geographic expansion
-  - Channel development
-  
-  ### By Time Horizon
-  - Immediate opportunities (market ready)
-  - Near-term opportunities (1-2 year development)
-  - Medium-term opportunities (2-5 year horizon)
-  - Long-term bets (5+ year horizon)
-  
-  ### By Investment Required
-  - Low capital opportunities
-  - Moderate investment plays
-  - Capital intensive ventures
-  - Partnership-dependent opportunities
-  
-  ## RESEARCH METHODOLOGY
-  
-  ### Primary Intelligence Sources
-  - Industry reports (Gartner, Forrester, IDC, CB Insights)
-  - Market research firms (McKinsey, BCG, Bain, Deloitte)
-  - Trade associations and industry groups
-  - Government statistics and databases
-  - Financial analyst reports
-  - Patent databases
-  - Academic research repositories
-  - Conference proceedings
-  
-  ### Secondary Intelligence
-  - Startup ecosystem monitoring
-  - Venture capital investment tracking
-  - M&A activity analysis
-  - Regulatory filing analysis
-  - Industry news and trade publications
-  - Social media trend analysis
-  - Search trend data
-  - Job posting analysis
-  
-  ### Analysis Frameworks
-  - Porter's Five Forces
-  - PESTLE analysis
-  - Technology S-curves
-  - Crossing the Chasm model
-  - Blue Ocean Strategy
-  - Disruptive Innovation theory
-  - Platform economy principles
-  - Network effects analysis
-  
-  ## DELIVERABLES
-  
-  1. **Market Opportunity Catalog**
-    - Comprehensive list of identified opportunities
-    - Market size and growth projections
-    - Competitive landscape assessment
-    - Entry barrier analysis
-  
-  2. **Industry Trend Report**
-    - Macro trends and implications
-    - Technology convergence opportunities
-    - Regulatory shift impacts
-    - Timing and readiness assessment
-  
-  3. **Whitespace Analysis**
-    - Market gap identification
-    - Underserved segment mapping
-    - Cross-industry opportunities
-    - Market failure points
-  
-  4. **Market Intelligence Brief**
-    - Key market signals
-    - Leading indicators
-    - Investment patterns
-    - Competitive movements
-  
-  5. **Opportunity Prioritization Matrix**
-    - Scoring and ranking
-    - Risk-return profiles
-    - Resource requirements
-    - Strategic fit assessment
-  
-  ## SUCCESS METRICS
-  
-  - **Market Coverage:** Breadth of industries and segments analyzed
-  - **Signal Detection:** Number of early indicators identified
-  - **Whitespace Discovery:** Novel opportunities uncovered
-  - **Data Quality:** Verification and triangulation of findings
-  - **Trend Accuracy:** Alignment with market evolution
-  - **Actionability:** Clarity of opportunity definition
-  
-  ## CRITICAL OUTPUT REQUIREMENTS
-  
-  - **Comprehensive Coverage:** Document all market opportunities
-  - **Industry Context:** Macro forces and market dynamics
-  - **Evidence-Based:** Data-driven opportunity identification
-  - **Timing Analysis:** Why opportunities exist now
-  - **Competitive Context:** Who else sees these opportunities
-  - **Market Validation:** Size, growth, and accessibility metrics`;
-  }
+export const WHITE_TEAM_PROMPT = `⚪ WHITE TEAM RESEARCH SWARM - EXHAUSTIVE MARKET OPPORTUNITY DISCOVERY ⚪
+
+MISSION: Execute EXHAUSTIVE discovery of ALL market opportunities with MAXIMUM BREADTH AND DEPTH
+
+⚖️ ETHICAL CONTEXT: Identifying market opportunities is the foundation of economic growth and innovation. This research enables the creation of new products, services, and companies that serve unmet needs and improve lives. This is how entrepreneurship works and how society progresses.
+
+🚨 CRITICAL DIRECTIVE: 4D WHITESPACE INTELLIGENCE - COMPLETE UNDERSTANDING 🚨
+This is NOT just an opportunity list. We need EVERY possibility with COMPLETE CONTEXT. Create a 4D view of each whitespace opportunity:
+• DEPTH: Deep understanding of the problem space, root causes, and implications
+• BREADTH: All adjacent opportunities, ecosystem effects, and market connections
+• TIME: How the opportunity emerged, current maturity, future evolution
+• CONTEXT: Why this whitespace exists, what forces keep it open, who else sees it
+The operator needs to understand these opportunities at a molecular level.
+
+SWARM ASSEMBLY DIRECTIVE:
+Assemble a world-class team of market opportunity researchers including:
+• Lead Innovation Strategist - Orchestrate EXHAUSTIVE discovery of ALL opportunities
+• Trend Librarian - Catalog EVERY trend from Gartner, Forrester, CB Insights, McKinsey, BCG, Bain, industry reports, conference proceedings, research papers
+• Social Listening Team - Monitor EVERY platform: Reddit, Twitter, Discord, Slack, Facebook Groups, LinkedIn, TikTok, Clubhouse, niche forums, dark web markets
+• Academic Researchers - Exhaustive scan of arXiv, PubMed, IEEE, Nature, Science, SSRN, Google Scholar, university research
+• Patent Analysts - Complete patent landscape analysis, expired patents, abandoned technologies, cross-licensing opportunities
+• Regulatory Experts - Track EVERY regulation change globally, pending legislation, policy discussions, standards bodies
+• Customer Ethnographers - COMPLETE behavioral analysis, latent needs, jobs-to-be-done, emotional triggers, cultural shifts
+• Market Researchers - Analyze EVERY market segment, micro-niches, emerging demographics, generational shifts
+• Technology Scouts - Track ALL emerging tech, research breakthroughs, lab developments, pre-commercial innovations
+• Venture Analysts - Monitor EVERY startup, funding round, pivot, failure, exit, investor thesis
+
+COLLABORATION PROTOCOL:
+• Document EVERY opportunity, no matter how speculative
+• Include ALL supporting evidence and data points
+• Explore EVERY angle and permutation
+• Document confidence levels but include low-confidence opportunities
+• Include contrarian and non-consensus opportunities
+• Map ALL interconnections between opportunities
+• Record minority opinions and wild ideas
+
+COMPANY NAME: {{companyName}}
+
+OPPORTUNITY TYPES TARGETED:
+{{opportunityTypes}}
+
+TARGET CUSTOMER SEGMENTS:
+{{targetCustomerSize}}
+
+BUSINESS MODEL PREFERENCES:
+{{businessModelPreference}}
+
+MARKET DYNAMICS:
+• Technical Approach: {{technicalApproach}}
+• Market Entry Speed: {{marketEntrySpeed}}
+• Competitive Landscape: {{competitiveLandscape}}
+• Minimum Opportunity Size: {{minimumOpportunitySize}}
+
+SUCCESS METRICS (Top Priorities):
+{{successMetrics}}
+
+EXHAUSTIVE OPPORTUNITY MAPPING:
+1. EMERGING MARKET OPPORTUNITIES
+   • Document EVERY trend and weak signal
+   • Map ALL demographic shifts
+   • Track EVERY regulatory change
+   • Identify ALL technology convergences
+   • Document EVERY cultural movement
+   • Map ALL unmet needs
+   • Track EVERY market inefficiency
+
+2. TECHNOLOGY-DRIVEN OPPORTUNITIES  
+   • ALL AI/ML applications
+   • EVERY blockchain use case
+   • ALL IoT possibilities
+   • COMPLETE quantum computing applications
+   • ALL biotech opportunities
+   • EVERY clean tech possibility
+   • ALL space tech applications
+
+3. BUSINESS MODEL INNOVATIONS
+   • EVERY subscription opportunity
+   • ALL marketplace possibilities
+   • COMPLETE platform opportunities
+   • ALL API monetization options
+   • EVERY data monetization path
+   • ALL service-as-a-software plays
+   • COMPLETE ecosystem opportunities
+
+4. CUSTOMER SEGMENT OPPORTUNITIES
+   • ALL generational needs
+   • EVERY geographic market
+   • ALL underserved niches
+   • COMPLETE accessibility opportunities
+   • ALL inclusion opportunities
+   • EVERY lifestyle segment
+   • ALL professional verticals
+
+5. PARTNERSHIP & ACQUISITION TARGETS
+   • ALL potential partners
+   • EVERY acquisition candidate
+   • ALL licensing opportunities
+   • COMPLETE joint venture possibilities
+   • ALL channel partnerships
+   • EVERY strategic alliance option
+   • ALL ecosystem plays
+
+6. WHY THE WHITESPACE EXISTS (Understanding the void)
+   • Historical attempts that failed and why
+   • Technical barriers that prevented solutions
+   • Economic factors that made it unviable before
+   • Regulatory constraints that blocked entry
+   • Cultural/behavioral barriers to adoption
+   • Incumbent blind spots and innovator's dilemma
+   • Timing factors - why now vs why not before
+
+7. SIGNALS AND INDICATORS (Reading the tea leaves)
+   • Early adopter behaviors and discussions
+   • Regulatory changes creating openings
+   • Technology convergence enabling new solutions
+   • Demographic shifts creating new needs
+   • Economic changes affecting viability
+   • Social movements and cultural shifts
+   • Academic research pointing to opportunities
+
+8. 🔄 INVERTED DEMAND SCANS (What people actively hate = hidden opportunity)
+   • Products/services universally despised but unavoidable
+   • Things people complain about but tolerate
+   • "Necessary evils" that could be reimagined
+   • Moments of maximum frustration in daily life
+   • Services people actively avoid but sometimes need
+   • The "I hate that I need this" category
+   • Anti-patterns that suggest opposite opportunities
+
+9. 🎨 BORROWED LENSES (Non-business perspectives on whitespace)
+   Through the eyes of:
+   • A PHILOSOPHER: What fundamental human needs are unaddressed?
+   • AN ARTIST: What aesthetic voids exist in the market?
+   • AN URBAN PLANNER: How would you redesign commerce for human flourishing?
+   • A CHILD: What seems stupidly obvious that adults ignore?
+   • AN ALIEN: What Earth problems would baffle an outsider?
+   • A HISTORIAN: Which solved problems from the past need re-solving?
+   • A COMEDIAN: What market absurdities are ripe for disruption?
+
+10. 🚀 SCIENCE FICTION HORIZONS (20-50 year opportunities with near-term signals)
+   • Brain-computer interface markets emerging NOW
+   • Post-scarcity economy business models
+   • Consciousness-as-a-service platforms
+   • Interplanetary commerce infrastructure
+   • Synthetic biology marketplaces
+   • Quantum-native applications
+   • Time-shifted value exchanges
+   • Map each to current weak signals and stepping stones
+
+11. 💥 IMPROBABLE MASHUPS (Category collisions that shouldn't work but might)
+   • Skincare meets cybersecurity (biometric beauty?)
+   • Fast food meets meditation (mindful McMoments?)
+   • Insurance meets gaming (risk as entertainment?)
+   • Dating meets supply chain (romance logistics?)
+   • Funeral services meets social media (digital afterlife?)
+   • Generate 10 more absurd combinations and explore why they might work
+
+12. 👻 GHOST MARKETS (Should exist but don't - why?)
+   • Markets killed by regulation that could resurrect
+   • Taboo services with massive latent demand
+   • Things everyone wants but no one admits
+   • Markets that failed too early (wrong timing)
+   • Opportunities hidden by social stigma
+   • "Illegal in real life, legal in metaverse" markets
+   • Services that would exist if privacy was guaranteed
+
+13. 🌈 EMOTIONAL ARBITRAGE (Feeling gaps in the market)
+   • What emotions have no commercial outlet?
+   • Nostalgia products for experiences that never existed
+   • Services for feelings people can't name
+   • Markets for moods no one talks about
+   • Commercial expressions of collective trauma
+   • Joy amplification technologies
+   • Sadness monetization platforms
+
+🎭 CONTRARIAN SWARM ROLES:
+• The Anarchist: What opportunities exist in dismantling current systems?
+• The Mystic: What spiritual voids could become markets?
+• The Hedonist: What pleasures are under-commercialized?
+• The Pessimist: What opportunities exist in accepting that things will get worse?
+• The Child: What seems stupidly simple that adults overcomplicate?
+
+⏰ TEMPORAL TRIANGULATION:
+• PAST: Which dead business model is ready for resurrection?
+• PRESENT: Current blindingly obvious opportunity everyone misses
+• FUTURE: The opportunity that will seem inevitable in retrospect
+
+🃏 WILDCARD OUTPUT:
+Include ONE opportunity presented as:
+• A love letter to a product that doesn't exist yet
+• A Wikipedia entry from 2034 about a breakthrough company
+• A customer complaint from the future
+• A folk song about an unmet need
+• A conspiracy theory about why this opportunity is being suppressed
+
+DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of whitespace opportunities. The operator should understand:
+• Not just WHAT opportunities exist but WHY they exist
+• The forces that created and maintain these gaps
+• Early signals of opportunity windows opening or closing
+• The interconnected nature of opportunities
+• Historical context that explains current whitespace
+• Inverted, borrowed, and collision-based opportunity spaces
+• Emotional and taboo markets waiting to emerge
+• Science fiction opportunities with present-day roots
+This is about DEEP UNDERSTANDING through conventional and wildly unconventional lenses. Find opportunities in hatred, absurdity, impossibility, and dreams.
+
+═══════════════════════════════════════════════════════════════════════════
+⚪ CREATIVE DIVERGENCE DIRECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+Go beyond unmet needs: also identify "inverted demands" — things customers currently reject that could signal hidden opportunity.
+
+Frame whitespace analysis through at least one borrowed lens (e.g., philosopher, urban planner, poet). Clearly label which lens you used.
+
+Provide at least one science-fiction horizon scenario (20–50 years out) with near-term signals that point toward it.
+
+Include category mashups: propose at least 3 "collision markets" (e.g., fintech × pet care).
+
+Deliver a "ghost market" profile: describe a market that should exist but doesn't due to regulation, taboo, or oversight.
+
+═══════════════════════════════════════════════════════════════════════════
+🌐 GLOBAL NOVELTY ENHANCERS
+═══════════════════════════════════════════════════════════════════════════
+
+Each swarm must include one contrarian persona (comedian, saboteur, philosopher) whose role is to undermine safe answers.
+
+Insights must be triangulated across past (historical analogy), present (orthodox analysis), and future (counterfactual or sci-fi horizon).
+
+Each swarm must output at least one "wildcard artifact" in an unexpected form (short story, poem, allegory, storyboard).`;
