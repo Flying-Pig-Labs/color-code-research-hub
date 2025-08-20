@@ -210,13 +210,23 @@ async function processResearchReport(requestData, options = {}) {
 
     // Use the report processing service instead of direct API call
     try {
+      // Extract the company name based on team type
+      let companyName = 'Research Report';
+      if (team === 'red') {
+        companyName = formData.targetCompany || formData.companyName || 'Competitive Analysis';
+      } else if (team === 'white') {
+        companyName = formData.companyName || 'Market Opportunity Discovery';
+      } else if (team === 'black') {
+        companyName = formData.targetVendor || formData.vendorName || formData.companyName || 'Vendor Replacement Analysis';
+      }
+      
       // Call the service which handles Bedrock/Claude integration
       const result = await reportService.processReport({
         reportId: requestId,
         rawContent: task,
         team: team,
         username: requestData.username || 'fprior', // Extract username or default
-        objective: requestData.objective || prompt,
+        objective: companyName, // Use company name as objective for display
         metadata: formData,
         secrets: {}, // Secrets will be loaded from environment
         timeoutMs: 30000 // 30 second timeout

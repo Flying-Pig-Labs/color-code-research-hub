@@ -170,7 +170,8 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
         task: researchPrompt,
         team: 'black',
         companyName: companyName || 'Not specified',
-        vendorName: targetVendor
+        vendorName: targetVendor,
+        targetVendor: targetVendor // Specifically for black team target display
       });
       
       // Store the request ID for tracking

@@ -172,17 +172,35 @@ exports.handler = async (event) => {
                             console.log(`Successfully stored Perplexity response for ${reportId}`);
                             
                             // Send to processing queue
+                            // Extract the company name based on team type for objective field
+                            let objectiveName = 'Research Report';
+                            if (team === 'red') {
+                                objectiveName = newImage.metadata?.M?.targetCompany?.S || 
+                                              newImage.metadata?.M?.companyName?.S || 
+                                              'Competitive Analysis';
+                            } else if (team === 'white') {
+                                objectiveName = newImage.metadata?.M?.companyName?.S || 
+                                              'Market Opportunity Discovery';
+                            } else if (team === 'black') {
+                                objectiveName = newImage.metadata?.M?.targetVendor?.S || 
+                                              newImage.metadata?.M?.vendorName?.S || 
+                                              newImage.metadata?.M?.companyName?.S || 
+                                              'Vendor Replacement Analysis';
+                            }
+                            
                             const messageBody = {
                                 reportId: reportId,
                                 rawContent: researchContent,
                                 team: team,
                                 username: userId,
-                                objective: newImage.metadata?.M?.title?.S || 'Research Report',
+                                objective: objectiveName, // Use company name as objective
                                 metadata: {
                                     title: newImage.metadata?.M?.title?.S,
                                     requester: newImage.metadata?.M?.requester?.S,
                                     vendorName: newImage.metadata?.M?.vendorName?.S,
                                     companyName: newImage.metadata?.M?.companyName?.S,
+                                    targetCompany: newImage.metadata?.M?.targetCompany?.S,
+                                    targetVendor: newImage.metadata?.M?.targetVendor?.S,
                                     model: newImage.metadata?.M?.model?.S,
                                     createdAt: newImage.createdAt?.S,
                                     completedAt: new Date().toISOString()

@@ -135,7 +135,8 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
         task: researchPrompt,
         team: 'red', // This is Red Team research
         companyName: companyName,
-        vendorName: companyName // Add vendor name for better tracking
+        vendorName: companyName, // Add vendor name for better tracking
+        targetCompany: companyName // Specifically for red team target display
       });
       
       toast.success(`Research swarm launched for ${companyName || 'Unknown Company'}!`, {

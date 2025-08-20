@@ -858,6 +858,8 @@ def handler(event, context):
                 "team": body.get("team", "unknown"),  # red/white/black team designation
                 "vendorName": body.get("vendorName"),  # For vendor assessment research
                 "companyName": body.get("companyName"),  # Client company context
+                "targetCompany": body.get("targetCompany"),  # Red team specific target
+                "targetVendor": body.get("targetVendor"),  # Black team specific target
             }
 
             # Validate required fields

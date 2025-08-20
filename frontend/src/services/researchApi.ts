@@ -3,6 +3,8 @@ interface ResearchRequest {
   team?: string;
   companyName?: string;
   vendorName?: string;
+  targetCompany?: string;  // For red team
+  targetVendor?: string;   // For black team
 }
 
 interface ResearchResponse {
@@ -93,7 +95,9 @@ export async function submitResearch(request: ResearchRequest): Promise<Research
         reasoning_effort: 'high',
         team: request.team || 'unknown',
         companyName: request.companyName,
-        vendorName: request.vendorName
+        vendorName: request.vendorName,
+        targetCompany: request.targetCompany, // For red team
+        targetVendor: request.targetVendor     // For black team
       }),
     });
 
