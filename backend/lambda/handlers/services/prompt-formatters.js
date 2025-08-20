@@ -227,13 +227,65 @@ EXHAUSTIVE RESEARCH REQUIREMENTS:
    • Market evolution scenarios
    • Technology disruption timelines
 
+10. 🎭 THE UNFAIR PLAYBOOK (Outrageous moves no one admits they're considering)
+   • What would Amazon do if they decided to kill Google tomorrow?
+   • Which competitor is secretly building a category killer right now?
+   • What stealth moves would YOU never see coming?
+   • Which "partnership" is actually a Trojan horse?
+   • What taboo strategy would instantly flip the market?
+   • Document the unthinkable plays that would rewrite all rules
+
+11. 🌀 COUNTERFACTUAL DISRUPTION SCENARIOS
+   • If the top 3 competitors never existed, who dominates and how?
+   • What if the industry leader disappeared overnight?
+   • Which underdog has a hidden path to total domination?
+   • What happens if all incumbents merge into one mega-entity?
+   • Which extinct company would destroy everyone if resurrected today?
+
+12. 🦁 PREDATOR-PREY DYNAMICS (Biological metaphors for market behavior)
+   • Map competitors to ecosystem roles: apex predator, scavenger, parasite, symbiont
+   • Which companies exhibit pack hunting behavior?
+   • Who's the wounded gazelle about to be taken down?
+   • What mimicry strategies are being used (Batesian vs Müllerian)?
+   • Document territorial marking and dominance displays
+   • Identify the keystone species whose removal would collapse the ecosystem
+
+13. 👻 THE PHANTOM DISRUPTOR (Design the nightmare competitor)
+   • Create a fictional stealth competitor launching tomorrow
+   • Their impossible-to-copy advantage
+   • Why no one sees them coming
+   • The chaos cascade they trigger in week 1, month 1, year 1
+   • Which incumbents die first and why
+   • The new market equilibrium after their arrival
+
+🎲 CONTRARIAN VOICES REQUIRED:
+Include perspectives from:
+• The Chaos Agent: What's the most destructive possible move?
+• The Philosopher: What fundamental assumptions are everyone missing?
+• The Comedian: What's hilariously obvious that no one will say?
+• The Time Traveler: What will seem stupid about today's strategies in 2034?
+
+⏰ TEMPORAL TRIANGULATION:
+• PAST: Which historical business war does this mirror? (e.g., railroad barons, browser wars)
+• PRESENT: Current orthodox analysis
+• FUTURE: Science fiction scenario that's closer than anyone thinks
+
+🃏 WILDCARD OUTPUT:
+Include ONE insight delivered as:
+• A dystopian fable about the industry's future
+• A mock obituary for a competitor (written from 2026)
+• A haiku capturing the market's essence
+• A conspiracy theory that might actually be true
+
 DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of the competitive landscape. The operator should know:
 • Every player's true strengths and hidden weaknesses
 • All the interconnections and dependencies in the ecosystem
 • Historical patterns that predict future moves
 • Unspoken rules and dynamics of the market
 • Where the pucks are going, not just where they are
-This is about COMPLETE UNDERSTANDING, not recommendations. Raw data, detailed analysis, and comprehensive intelligence are REQUIRED.`;
+• The unthinkable moves that would shatter everything
+• The biological and psychological forces driving competition
+This is about COMPLETE UNDERSTANDING through both analytical and creative lenses. Raw data, detailed analysis, contrarian perspectives, and provocative scenarios are REQUIRED.`;
 }
 
 function formatWhiteTeamPrompt(formData) {
@@ -357,13 +409,91 @@ EXHAUSTIVE OPPORTUNITY MAPPING:
    • Social movements and cultural shifts
    • Academic research pointing to opportunities
 
+8. 🔄 INVERTED DEMAND SCANS (What people actively hate = hidden opportunity)
+   • Products/services universally despised but unavoidable
+   • Things people complain about but tolerate
+   • "Necessary evils" that could be reimagined
+   • Moments of maximum frustration in daily life
+   • Services people actively avoid but sometimes need
+   • The "I hate that I need this" category
+   • Anti-patterns that suggest opposite opportunities
+
+9. 🎨 BORROWED LENSES (Non-business perspectives on whitespace)
+   Through the eyes of:
+   • A PHILOSOPHER: What fundamental human needs are unaddressed?
+   • AN ARTIST: What aesthetic voids exist in the market?
+   • AN URBAN PLANNER: How would you redesign commerce for human flourishing?
+   • A CHILD: What seems stupidly obvious that adults ignore?
+   • AN ALIEN: What Earth problems would baffle an outsider?
+   • A HISTORIAN: Which solved problems from the past need re-solving?
+   • A COMEDIAN: What market absurdities are ripe for disruption?
+
+10. 🚀 SCIENCE FICTION HORIZONS (20-50 year opportunities with near-term signals)
+   • Brain-computer interface markets emerging NOW
+   • Post-scarcity economy business models
+   • Consciousness-as-a-service platforms
+   • Interplanetary commerce infrastructure
+   • Synthetic biology marketplaces
+   • Quantum-native applications
+   • Time-shifted value exchanges
+   • Map each to current weak signals and stepping stones
+
+11. 💥 IMPROBABLE MASHUPS (Category collisions that shouldn't work but might)
+   • Skincare meets cybersecurity (biometric beauty?)
+   • Fast food meets meditation (mindful McMoments?)
+   • Insurance meets gaming (risk as entertainment?)
+   • Dating meets supply chain (romance logistics?)
+   • Funeral services meets social media (digital afterlife?)
+   • Generate 10 more absurd combinations and explore why they might work
+
+12. 👻 GHOST MARKETS (Should exist but don't - why?)
+   • Markets killed by regulation that could resurrect
+   • Taboo services with massive latent demand
+   • Things everyone wants but no one admits
+   • Markets that failed too early (wrong timing)
+   • Opportunities hidden by social stigma
+   • "Illegal in real life, legal in metaverse" markets
+   • Services that would exist if privacy was guaranteed
+
+13. 🌈 EMOTIONAL ARBITRAGE (Feeling gaps in the market)
+   • What emotions have no commercial outlet?
+   • Nostalgia products for experiences that never existed
+   • Services for feelings people can't name
+   • Markets for moods no one talks about
+   • Commercial expressions of collective trauma
+   • Joy amplification technologies
+   • Sadness monetization platforms
+
+🎭 CONTRARIAN SWARM ROLES:
+• The Anarchist: What opportunities exist in dismantling current systems?
+• The Mystic: What spiritual voids could become markets?
+• The Hedonist: What pleasures are under-commercialized?
+• The Pessimist: What opportunities exist in accepting that things will get worse?
+• The Child: What seems stupidly simple that adults overcomplicate?
+
+⏰ TEMPORAL TRIANGULATION:
+• PAST: Which dead business model is ready for resurrection?
+• PRESENT: Current blindingly obvious opportunity everyone misses
+• FUTURE: The opportunity that will seem inevitable in retrospect
+
+🃏 WILDCARD OUTPUT:
+Include ONE opportunity presented as:
+• A love letter to a product that doesn't exist yet
+• A Wikipedia entry from 2034 about a breakthrough company
+• A customer complaint from the future
+• A folk song about an unmet need
+• A conspiracy theory about why this opportunity is being suppressed
+
 DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of whitespace opportunities. The operator should understand:
 • Not just WHAT opportunities exist but WHY they exist
 • The forces that created and maintain these gaps
 • Early signals of opportunity windows opening or closing
 • The interconnected nature of opportunities
 • Historical context that explains current whitespace
-This is about DEEP UNDERSTANDING of opportunity landscapes, not recommendations.`;
+• Inverted, borrowed, and collision-based opportunity spaces
+• Emotional and taboo markets waiting to emerge
+• Science fiction opportunities with present-day roots
+This is about DEEP UNDERSTANDING through conventional and wildly unconventional lenses. Find opportunities in hatred, absurdity, impossibility, and dreams.`;
 }
 
 function formatBlackTeamPrompt(formData) {
@@ -506,13 +636,92 @@ EXHAUSTIVE TECHNICAL REQUIREMENTS:
    • Future-proofing considerations
    • Ecosystem lock-in effects
 
+10. 😈 THE EVIL TWIN ANALYSIS (How a malicious vendor would trap you)
+   • Design the most insidious lock-in strategy possible
+   • Hidden dependencies they'd embed everywhere
+   • The "Hotel California" features (can never leave)
+   • Psychological manipulation tactics in UX
+   • Data hostage scenarios and ransom points
+   • The slow boil: gradual capability reduction
+   • Now INVERT these to find replacement opportunities
+
+11. 🏛️ ARCHAEOLOGICAL EXCAVATION (Vendor as ruined civilization)
+   • LAYER 1 (Surface): What the marketing shows
+   • LAYER 2 (Artifacts): What the documentation reveals
+   • LAYER 3 (Foundations): Core architecture assumptions
+   • LAYER 4 (Fossils): Dead code and abandoned features
+   • LAYER 5 (Bedrock): Original design decisions they can't escape
+   • What do these layers reveal about weaknesses?
+   • Which "fossils" indicate evolutionary dead ends?
+
+12. 💔 CUSTOMER BETRAYAL FANTASIES (The breaking point scenarios)
+   • "The Day We Burned Our [Vendor] Licenses" - what triggered it?
+   • Public humiliation scenarios that force vendor abandonment
+   • The specific pain that makes CFOs approve replacement
+   • Customer revolt patterns and tipping points
+   • "Never again" moments that seal vendor fate
+   • The betrayal that turns advocates into enemies
+   • Map each scenario to replacement trigger strategies
+
+13. 🥷 SHADOW MIGRATION PATHS (Stealth replacement strategies)
+   • Trojan horse features that secretly replace core functions
+   • "Innocent" integrations that become the new platform
+   • Department-by-department conquest strategies
+   • The "parallel run that never ends" approach
+   • API wrapper strategies that hollow out the vendor
+   • "We're just augmenting" → full replacement pipeline
+   • Moves so subtle the vendor doesn't notice until too late
+
+14. 🍴 THE OPEN SOURCE FORK FANTASY
+   • If we forked this vendor tomorrow, what would we build?
+   • The manifesto that would attract contributors
+   • Core features the community would demand
+   • What we'd strip out immediately
+   • The governance model that ensures success
+   • How it becomes 10x better in 18 months
+   • The vendor's nightmare scenario come to life
+
+15. 🎪 VENDOR DEPENDENCY THEATER (The absurdist lens)
+   • Map vendor relationships to dysfunctional family dynamics
+   • Which vendor is the narcissistic parent?
+   • Who's the enabling codependent?
+   • The golden child features vs scapegoat functions
+   • Trauma bonding with terrible interfaces
+   • Stockholm syndrome in enterprise software
+   • How to stage an intervention
+
+🎭 CONTRARIAN REPLACEMENT PERSONAS:
+• The Arsonist: Burn it all down and start fresh
+• The Parasite: Slowly consume the vendor from within
+• The Shapeshifter: Become whatever the vendor isn't
+• The Time Traveler: Build what the vendor should have built 5 years ago
+• The Jester: Make the vendor look ridiculous by comparison
+
+⏰ TEMPORAL REPLACEMENT STRATEGIES:
+• PAST: Which defunct solution was actually better?
+• PRESENT: The replacement hiding in plain sight
+• FUTURE: The paradigm shift that makes vendor irrelevant
+
+🃏 WILDCARD OUTPUT:
+Include ONE insight delivered as:
+• A vendor's internal panic memo about your replacement
+• A shanty sung by engineers forced to use the vendor
+• The vendor's obituary written by a bitter ex-customer
+• A nature documentary narrating vendor ecosystem collapse
+• Conspiracy theory about why vendor still exists
+
 DELIVERABLE: Provide EXHAUSTIVE documentation creating a COMPLETE 4D UNDERSTANDING of vendor systems for INTERNAL OPERATIONS improvement. The operator should understand:
 • Not just WHAT the vendor does but HOW and WHY
 • The real operational impact beyond marketing claims
 • Hidden complexities and undocumented realities
 • True costs (financial, operational, organizational)
 • What it really takes to increase internal operations efficiency
-This is about COMPLETE UNDERSTANDING for operational excellence, not just technical specs.`;
+• Evil twin lock-in strategies and their inversions
+• Archaeological layers revealing fundamental weaknesses
+• Emotional triggers that drive replacement decisions
+• Shadow strategies for stealth replacement
+• The open source alternative that haunts vendor nightmares
+This is about COMPLETE UNDERSTANDING through analytical, emotional, and subversive lenses. Dissect the vendor like an anthropologist, a therapist, and a revolutionary.`;
 }
 
 module.exports = {
