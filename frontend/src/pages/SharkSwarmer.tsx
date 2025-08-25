@@ -138,7 +138,7 @@ const SharkSwarmer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header 
         title="Shark Swarmer"
         subtitle="Multi-Persona Refinement"
@@ -147,39 +147,27 @@ const SharkSwarmer = () => {
         showHealthCheck={false}
       />
       
-      {/* Hero Section with CarMax Fading */}
-      <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
-        {/* Decorative fading elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
-        </div>
-        
-        <div className="text-center max-w-4xl mx-auto relative z-10">
-          <div className="flex justify-center mb-6">
-            <span className="text-8xl">🦈</span>
+      {/* Clean, spacious hero section */}
+      <section className="py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="flex justify-center mb-8">
+            <span className="text-6xl animate-float">🦈</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground mb-6 leading-tight tracking-tight">
             Shark Swarmer
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-4 leading-relaxed max-w-4xl mx-auto font-light">
             Harness the power of diverse AI agent personas to systematically evaluate, score, and select the most promising ideas through multi-perspective analysis.
           </p>
         </div>
-      </SectionWrapper>
+      </section>
 
-      {/* Tab Content */}
-      <SectionWrapper className="py-8 bg-gradient-carmax-fade relative">
-        {/* Subtle fading background elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
-          <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
-        </div>
+      {/* Tab Content - Clean layout */}
+      <section className="py-8 lg:py-16">
+        <div className="max-w-6xl mx-auto px-6">
         
-        <div className="max-w-6xl mx-auto relative z-10">
           {/* Leaderboard Tab */}
           {activeTab === 'leaderboard' && (
             <SharkLeaderboard />
@@ -187,38 +175,38 @@ const SharkSwarmer = () => {
 
           {/* Ideas Tab */}
           {activeTab === 'ideas' && (
-            <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20">
-              <CardHeader className="border-b border-carmax-blue/10 bg-gradient-to-r from-carmax-yellow/5 to-carmax-blue/5">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-carmax-blue/10">
-                    <Github className="h-6 w-6 text-carmax-blue" />
+            <Card className="bg-card border-border shadow-card">
+              <CardHeader className="border-b border-border bg-gradient-subtle">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-accent/10">
+                    <Github className="h-6 w-6 text-accent" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl font-bold text-foreground">Select Repository</CardTitle>
+                    <CardTitle className="text-2xl font-heading font-bold text-foreground">Select Repository</CardTitle>
                     <CardDescription className="text-muted-foreground mt-1">
                       Choose a repository from ocean-studio-repos to evaluate with AI sharks
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-8">
                 {loading ? (
                   <div className="flex flex-col items-center py-12">
-                    <Loader2 className="h-8 w-8 animate-spin text-carmax-blue mb-4" />
+                    <Loader2 className="h-8 w-8 animate-spin text-accent mb-4" />
                     <p className="text-muted-foreground">Loading repositories...</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search repositories..."
-                        className="pl-10 border-carmax-blue/20 focus:border-carmax-blue/40"
+                        className="pl-10"
                       />
                     </div>
-                    <ScrollArea className="h-[400px] rounded-md border border-carmax-blue/20">
+                    <ScrollArea className="h-[400px] rounded-md border border-border">
                       <div className="p-4 space-y-3">
                         {filteredRepos.length === 0 ? (
                           <p className="text-center text-muted-foreground py-8">
@@ -228,14 +216,14 @@ const SharkSwarmer = () => {
                           filteredRepos.map((repo) => (
                             <Card 
                               key={repo.id} 
-                              className="cursor-pointer hover:shadow-md transition-all hover:border-carmax-blue/40 group"
+                              className="cursor-pointer hover:shadow-card transition-gentle hover:border-accent/20 group"
                               onClick={() => handleRepoSelect(repo)}
                             >
                               <CardContent className="p-4">
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
-                                      <h3 className="font-semibold text-foreground group-hover:text-carmax-blue transition-colors truncate">
+                                      <h3 className="font-semibold text-foreground group-hover:text-accent transition-gentle truncate">
                                         {repo.name}
                                       </h3>
                                       {repo.private ? (
@@ -260,7 +248,7 @@ const SharkSwarmer = () => {
                                       </span>
                                     </div>
                                   </div>
-                                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-carmax-blue transition-colors flex-shrink-0 ml-4" />
+                                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-accent transition-gentle flex-shrink-0 ml-4" />
                                 </div>
                               </CardContent>
                             </Card>
@@ -280,45 +268,45 @@ const SharkSwarmer = () => {
 
           {/* How Tab */}
           {activeTab === 'how' && (
-            <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 max-w-4xl mx-auto">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-carmax-yellow/20">
-                    <AlertCircle className="h-6 w-6 text-foreground" />
+            <Card className="bg-card border-border shadow-card max-w-4xl mx-auto">
+              <CardContent className="p-8">
+                <div className="flex items-start gap-6">
+                  <div className="p-3 rounded-lg bg-accent/10 flex-shrink-0">
+                    <AlertCircle className="h-6 w-6 text-accent" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground mb-4 text-xl">How Shark Swarmer Works</h3>
-                    <div className="space-y-4 text-muted-foreground">
+                    <h3 className="font-heading font-semibold text-foreground mb-6 text-2xl">How Shark Swarmer Works</h3>
+                    <div className="space-y-6 text-muted-foreground">
                       <div>
-                        <h4 className="font-semibold text-foreground mb-2">1. AI Shark Evaluation</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">1. AI Shark Evaluation</h4>
                         <p className="leading-relaxed">
                           Multiple AI "sharks" with different personas evaluate each idea, simulating a Shark Tank experience. Each shark has unique expertise and investment criteria.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold text-foreground mb-2">2. Comprehensive Scoring</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">2. Comprehensive Scoring</h4>
                         <p className="leading-relaxed">
                           Ideas receive a composite Shark Score (0-100) based on investment amounts, confidence levels, and decision ratios. Higher scores indicate stronger investment potential.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold text-foreground mb-2">3. Investment Tracking</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">3. Investment Tracking</h4>
                         <p className="leading-relaxed">
                           Track total investment offers across all sharks. See which ideas attract the most funding and understand the reasoning behind each investment decision.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold text-foreground mb-2">4. One-Click Build</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">4. One-Click Build</h4>
                         <p className="leading-relaxed">
                           Transform winning ideas into reality. Click the BUILD button to automatically create a new repository in ocean-studio-apps with a complete project structure and shark feedback.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold text-foreground mb-2">5. Real-Time Leaderboard</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">5. Real-Time Leaderboard</h4>
                         <p className="leading-relaxed">
                           View the top 10 ideas across all evaluated repositories. The leaderboard updates every 30 seconds, showing rankings, scores, and investment totals.
                         </p>
@@ -330,7 +318,7 @@ const SharkSwarmer = () => {
             </Card>
           )}
         </div>
-      </SectionWrapper>
+      </section>
     </div>
   );
 };

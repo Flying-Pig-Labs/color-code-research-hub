@@ -33,89 +33,88 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex flex-col relative">
-      {/* Subtle Login Icon - Top Right */}
+    <div className="min-h-screen bg-background flex flex-col relative">
+      {/* Clean login access - top right */}
       <button
         onClick={() => navigate("/login")}
-        className="absolute top-6 right-6 text-gray-500 hover:text-blue-400 transition-colors p-2 rounded-lg hover:bg-gray-800/30"
+        className="absolute top-6 right-6 text-muted-foreground hover:text-accent transition-gentle p-2 rounded-lg hover:bg-muted/50"
         aria-label="Login"
       >
         <LogIn className="h-5 w-5" />
       </button>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="container mx-auto">
-          <header className="bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6 overflow-x-auto">
-            <pre className="text-blue-400 text-[0.2rem] sm:text-[0.25rem] md:text-[0.3rem] lg:text-[0.375rem] xl:text-[0.5rem] font-mono text-center mx-auto whitespace-pre">
-{` ██████╗  ██████╗███████╗ █████╗ ███╗   ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ 
-██╔═══██╗██╔════╝██╔════╝██╔══██╗████╗  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗
-██║   ██║██║     █████╗  ███████║██╔██╗ ██║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║
-██║   ██║██║     ██╔══╝  ██╔══██║██║╚██╗██║    ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║
-╚██████╔╝╚██████╗███████╗██║  ██║██║ ╚████║    ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝
- ╚═════╝  ╚═════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝`}
-            </pre>
-            <p className="text-gray-400 text-center mt-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
+      {/* Main Content - Typography focused hero */}
+      <div className="flex-1 flex items-center justify-center px-6 py-16">
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Clean, sophisticated branding */}
+          <div className="mb-16">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-heading font-bold text-foreground mb-4 tracking-tight animate-float">
+              Ocean Studio
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               AI-Powered Go-To-Market Engine
             </p>
-          </header>
+          </div>
 
-          {/* Hero Content */}
-          <div className="text-center mt-12 max-w-5xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-blue-300 mb-6 leading-tight" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
+          {/* Hero Message - Swiss typography principles */}
+          <div className="space-y-8 mb-16">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-foreground leading-tight tracking-tight">
               In the era of fast fashion SaaS,<br className="hidden sm:block" />
-              conviction is everything.
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto px-4" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-              Deploy on-demand data science agent swarms to transform private data, public zeitgeist, & deep research 
+              <span className="font-semibold">conviction is everything.</span>
+            </h2>
+            
+            <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-light">
+              Deploy on-demand data science agent swarms to transform private data, public zeitgeist, and deep research 
               into GTM-ready ideas you rally behind.
             </p>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
-              <Button 
-                size="lg" 
-                className="bg-blue-600 hover:bg-blue-700 text-white text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto" 
-                onClick={() => navigate("/login")}
-              >
-                Request Beta Access <ArrowRight className="ml-2 h-4 sm:h-5 w-4 sm:w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-blue-400 text-white bg-blue-600/20 hover:bg-blue-600/30 hover:text-white text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
-              >
-                <Play className="mr-2 h-4 sm:h-5 w-4 sm:w-5" /> Watch 2-min Demo
-              </Button>
-            </div>
+          </div>
+          
+          {/* Clean CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="xl" 
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-gentle shadow-card hover:shadow-elevated"
+              onClick={() => navigate("/login")}
+            >
+              Request Beta Access 
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="xl" 
+              variant="outline" 
+              className="border-border text-foreground hover:bg-muted/50 font-medium transition-gentle"
+            >
+              <Play className="mr-2 h-5 w-5" /> 
+              Watch Demo
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="py-6 px-4 sm:px-6 border-t border-gray-800">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col sm:flex-row justify-between items-center text-gray-400 text-sm">
-            <div className="flex items-center space-x-2 mb-4 sm:mb-0">
+      {/* Clean, minimal footer */}
+      <footer className="py-8 px-6 border-t border-border">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-center text-muted-foreground">
+            <div className="flex items-center space-x-3 mb-4 sm:mb-0">
               <span className="text-2xl">🌊</span>
-              <span className="text-white font-semibold text-lg" style={{ fontFamily: "'PT Sans', sans-serif" }}>Ocean Studio</span>
+              <span className="text-foreground font-heading font-semibold text-lg">Ocean Studio</span>
             </div>
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 300 }}>
-              <span className="flex items-center gap-1">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right">
+              <span className="flex items-center gap-2">
                 Ford Prior
                 <a 
                   href="https://www.linkedin.com/in/ford-prior/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-gray-400 transition-colors inline-flex"
+                  className="text-muted-foreground hover:text-accent transition-gentle inline-flex"
                   aria-label="LinkedIn Profile"
                 >
-                  <Linkedin className="h-3 w-3" />
+                  <Linkedin className="h-4 w-4" />
                 </a>
               </span>
-              <span className="hidden sm:inline">•</span>
+              <span className="hidden sm:inline text-muted-foreground/50">•</span>
               <span>ford@flyingpig.ai</span>
-              <span className="hidden sm:inline">•</span>
+              <span className="hidden sm:inline text-muted-foreground/50">•</span>
               <span>Richmond, VA</span>
             </div>
           </div>

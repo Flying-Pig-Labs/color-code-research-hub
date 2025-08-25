@@ -60,49 +60,50 @@ interface TeamCardProps {
 const TeamCard = ({ title, description, focus, path, icon: Icon, variant, theme }: TeamCardProps) => {
   const navigate = useNavigate();
 
+  // Sophisticated, subtle theme styling - Swiss design principles
   const themeClasses = {
-    red: "border-red-team/20 hover:border-red-team/40 hover:bg-red-team-light/20",
-    black: "border-black-team/20 hover:border-black-team/40 hover:bg-black-team-light/20", 
-    white: "border-white-team-accent/30 hover:border-white-team-accent/60 hover:bg-white-team/40"
+    red: "border-border hover:border-red-team/30 hover:bg-red-team-light/5",
+    black: "border-border hover:border-black-team/30 hover:bg-black-team-light/5", 
+    white: "border-border hover:border-white-team/30 hover:bg-white-team-light/5"
+  };
+
+  const iconTheme = {
+    red: { bg: "bg-red-team/10", color: "text-red-team" },
+    black: { bg: "bg-black-team/10", color: "text-black-team" },
+    white: { bg: "bg-white-team/10", color: "text-white-team" }
   };
 
   return (
-    <Card className={`group cursor-pointer transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] ${themeClasses[theme]}`}>
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-3 mb-2">
-          <div className={`p-2 rounded-lg ${
-            theme === "red" ? "bg-red-team/10" :
-            theme === "black" ? "bg-black-team/10" :
-            "bg-white-team-accent/20"
-          }`}>
-            <Icon className={`h-6 w-6 ${
-              theme === "red" ? "text-red-team" :
-              theme === "black" ? "text-black-team" :
-              "text-white-team-dark"
-            }`} />
+    <Card 
+      className={`group cursor-pointer transition-gentle hover:shadow-elevated bg-card ${themeClasses[theme]}`}
+      onClick={() => navigate(path)}
+    >
+      <CardContent className="p-8">
+        {/* Clean header with generous spacing */}
+        <div className="flex items-start gap-4 mb-6">
+          <div className={`p-3 rounded-lg ${iconTheme[theme].bg} flex-shrink-0 transition-gentle group-hover:scale-105`}>
+            <Icon className={`h-6 w-6 ${iconTheme[theme].color}`} />
           </div>
-          <CardTitle className="text-xl group-hover:text-primary transition-colors">
-            {title}
-          </CardTitle>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-2xl font-heading font-semibold text-foreground mb-2 group-hover:text-accent transition-gentle">
+              {title}
+            </h3>
+            <p className="text-muted-foreground font-medium text-sm uppercase tracking-wider">
+              {description}
+            </p>
+          </div>
         </div>
-        <CardDescription className="text-sm text-muted-foreground">
-          {description}
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        <p className="text-sm text-foreground/80 mb-6 leading-relaxed">
+
+        {/* Clean, readable content with Swiss typography */}
+        <p className="text-foreground/80 mb-8 leading-relaxed text-base">
           {focus}
         </p>
         
-        <Button 
-          variant={variant}
-          className="w-full"
-          onClick={() => navigate(path)}
-        >
-          <Icon className="h-4 w-4 mr-2" />
-          Explore {title}
-        </Button>
+        {/* Subtle call-to-action that's integrated into the design */}
+        <div className="flex items-center text-muted-foreground group-hover:text-accent transition-gentle">
+          <span className="font-medium">Explore {title}</span>
+          <Icon className="h-4 w-4 ml-2 transform group-hover:translate-x-1 transition-gentle" />
+        </div>
       </CardContent>
     </Card>
   );

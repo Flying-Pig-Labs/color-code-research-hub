@@ -2,140 +2,136 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Import sophisticated typography - Inter for headings, system fonts for body */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Definition of the sophisticated design system - Swiss design principles
+Typography-focused with clean lines and minimal color palette.
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    /* CarMax Color Scheme - Pale Yellow and Baby Blue */
-    --background: 50 100% 96%;  /* Very pale yellow background */
-    --foreground: 215 25% 25%;  /* Dark blue-gray text */
+    /* Sophisticated Color System - Clean whites with charcoal/navy + electric blue accent */
+    --background: 0 0% 100%;  /* Pure white background for maximum clarity */
+    --foreground: 220 15% 15%;  /* Deep charcoal text */
 
-    --card: 50 90% 98%;
-    --card-foreground: 215 25% 25%;
+    --card: 0 0% 100%;  /* Clean white cards */
+    --card-foreground: 220 15% 15%;
 
-    --popover: 50 90% 98%;
-    --popover-foreground: 215 25% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 200 85% 70%;  /* Baby blue primary */
-    --primary-foreground: 50 100% 98%;
+    --primary: 220 25% 25%;  /* Sophisticated charcoal primary */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 50 80% 85%;  /* Pale yellow secondary */
-    --secondary-foreground: 215 25% 25%;
+    --secondary: 220 15% 96%;  /* Subtle gray secondary */
+    --secondary-foreground: 220 15% 15%;
 
-    --muted: 50 70% 92%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 220 10% 95%;  /* Very light gray for muted elements */
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 200 70% 85%;  /* Light baby blue accent */
-    --accent-foreground: 215 25% 25%;
+    --accent: 210 100% 55%;  /* Electric blue accent - the single bright color */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 50 50% 88%;
-    --input: 50 50% 88%;
-    --ring: 200 85% 70%;
+    --border: 220 10% 90%;  /* Subtle gray borders */
+    --input: 220 10% 96%;   /* Light input backgrounds */
+    --ring: 210 100% 55%;   /* Electric blue focus rings */
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;  /* Slightly smaller radius for cleaner look */
 
-    /* CarMax Brand Colors */
-    --carmax-yellow: 50 100% 88%;
-    --carmax-blue: 200 85% 70%;
-    --carmax-blue-dark: 200 85% 60%;
-    --carmax-yellow-light: 50 100% 95%;
+    /* Sophisticated accent variations */
+    --electric-blue: 210 100% 55%;
+    --electric-blue-light: 210 100% 90%;
+    --electric-blue-dark: 210 100% 45%;
 
-    /* Team Color Variants */
-    --red-team: 345 85% 55%;
-    --red-team-light: 330 70% 95%;
-    --red-team-dark: 345 90% 45%;
-    --red-team-pink: 320 60% 90%;
+    /* Refined team colors - more subtle but still distinct */
+    --red-team: 0 65% 50%;  /* Refined red */
+    --red-team-light: 0 65% 96%;
+    --red-team-dark: 0 65% 40%;
     
-    --black-team: 0 0% 0%;
-    --black-team-light: 0 0% 15%;
-    --black-team-dark: 0 0% 5%;
-    --black-team-bg: 0 0% 3%;
+    --black-team: 220 25% 25%;  /* Uses our sophisticated charcoal */
+    --black-team-light: 220 25% 95%;
+    --black-team-dark: 220 25% 15%;
     
-    --white-team: 60 10% 98%;
-    --white-team-accent: 45 15% 85%;
-    --white-team-dark: 45 10% 25%;
+    --white-team: 45 15% 50%;  /* Warm gray for white team */
+    --white-team-light: 45 15% 96%;
+    --white-team-dark: 45 15% 35%;
 
-    /* CarMax Gradients with Fading Effects */
-    --gradient-carmax-hero: linear-gradient(135deg, hsl(50 100% 96%) 0%, hsl(200 70% 90%) 50%, hsl(50 80% 88%) 100%);
-    --gradient-carmax-fade: linear-gradient(180deg, hsl(50 100% 96%) 0%, hsl(200 40% 95%) 100%);
-    --gradient-carmax-blue: linear-gradient(135deg, hsl(200 85% 70%), hsl(200 70% 80%));
-    --gradient-carmax-yellow: linear-gradient(135deg, hsl(50 100% 88%), hsl(50 80% 95%));
+    /* Minimal gradients - only for subtle depth */
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 10% 98%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(210 100% 55%) 0%, hsl(210 100% 65%) 100%);
     
-    /* Professional Gradients */
-    --gradient-corporate: linear-gradient(135deg, hsl(200 85% 70%), hsl(200 70% 80%));
-    --gradient-red: linear-gradient(135deg, hsl(345 85% 55%), hsl(330 70% 65%));
-    --gradient-black: linear-gradient(135deg, hsl(0 0% 0%), hsl(0 0% 8%));
-    --gradient-white: linear-gradient(135deg, hsl(60 10% 98%), hsl(45 15% 92%));
-    --gradient-red-pink: linear-gradient(135deg, hsl(345 85% 55%), hsl(320 60% 85%));
+    /* Clean shadows - Swiss design inspired */
+    --shadow-subtle: 0 1px 3px 0 hsl(220 15% 15% / 0.08);
+    --shadow-card: 0 4px 12px -2px hsl(220 15% 15% / 0.08);
+    --shadow-elevated: 0 8px 24px -4px hsl(220 15% 15% / 0.12);
 
-    /* Shadows */
-    --shadow-sm: 0 2px 8px -2px hsl(200 85% 70% / 0.1);
-    --shadow-md: 0 8px 24px -4px hsl(200 85% 70% / 0.15);
-    --shadow-lg: 0 16px 40px -8px hsl(200 85% 70% / 0.2);
-    --shadow-smooth-lg: 0 20px 60px -12px hsl(200 85% 70% / 0.25);
+    /* Smooth, invisible transitions */
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-gentle: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Typography scale - using Inter for sophisticated hierarchy */
+    --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    /* Sidebar (keep existing functionality) */
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 220 15% 15%;
+    --sidebar-primary: 220 25% 25%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 10% 95%;
+    --sidebar-accent-foreground: 220 25% 25%;
+    --sidebar-border: 220 10% 90%;
+    --sidebar-ring: 210 100% 55%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Sophisticated dark mode - deep navy with electric blue accents */
+    --background: 220 25% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 25% 10%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 25% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 220 25% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 20% 15%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 220 10% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 100% 65%;  /* Brighter electric blue in dark mode */
+    --accent-foreground: 220 25% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 20% 18%;
+    --input: 220 20% 15%;
+    --ring: 210 100% 65%;
+
+    /* Dark mode shadows */
+    --shadow-subtle: 0 1px 3px 0 hsl(220 25% 5% / 0.3);
+    --shadow-card: 0 4px 12px -2px hsl(220 25% 5% / 0.4);
+    --shadow-elevated: 0 8px 24px -4px hsl(220 25% 5% / 0.5);
+
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 210 100% 65%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 220 20% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 210 100% 65%;
   }
 }
 
@@ -146,19 +142,66 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Typography hierarchy using Inter */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 1.875rem;
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 500;
   }
 }
 
-/* Wave Animation for Landing Page */
-@keyframes wave {
-  0%, 100% {
+/* Subtle lift animation for cards - Swiss design inspired */
+@keyframes gentle-lift {
+  0% {
     transform: translateY(0);
+    box-shadow: var(--shadow-card);
+  }
+  100% {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+  }
+}
+
+.animate-gentle-lift {
+  animation: gentle-lift 0.2s ease-out forwards;
+}
+
+/* Remove the old wave animation but keep similar effect for landing page if needed */
+@keyframes subtle-float {
+  0%, 100% {
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-4px);
   }
 }
 
-.animate-wave {
-  animation: wave 6s ease-in-out infinite;
+.animate-float {
+  animation: subtle-float 4s ease-in-out infinite;
 }

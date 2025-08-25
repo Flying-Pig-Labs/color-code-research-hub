@@ -120,46 +120,65 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="container mx-auto p-4">
-        <header className="mb-8 bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6 overflow-x-auto relative">
+    <div className="min-h-screen bg-background">
+      {/* Clean, sophisticated header with typography focus */}
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm relative">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           {/* Logout Button - Positioned top-right */}
           <Button
             onClick={handleLogout}
             variant="ghost"
             size="sm"
-            className="absolute top-4 right-4 text-gray-400 hover:text-blue-400 hover:bg-gray-800/30"
+            className="absolute top-4 right-6 text-muted-foreground hover:text-accent transition-gentle"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Logout
           </Button>
           
-          <pre className="text-blue-400 text-[0.2rem] sm:text-[0.25rem] md:text-[0.3rem] lg:text-[0.375rem] xl:text-[0.5rem] font-mono text-center mx-auto whitespace-pre">
-{` ██████╗  ██████╗███████╗ █████╗ ███╗   ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ 
-██╔═══██╗██╔════╝██╔════╝██╔══██╗████╗  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗
-██║   ██║██║     █████╗  ███████║██╔██╗ ██║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║
-██║   ██║██║     ██╔══╝  ██╔══██║██║╚██╗██║    ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║
-╚██████╔╝╚██████╗███████╗██║  ██║██║ ╚████║    ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝
- ╚═════╝  ╚═════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝`}
-          </pre>
-          <p className="text-gray-400 text-center mt-4">
-            AI-Powered Go-To-Market Engine
-          </p>
-        </header>
+          {/* Clean, typography-focused branding */}
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-2 tracking-tight">
+              Ocean Studio
+            </h1>
+            <p className="text-muted-foreground font-light text-lg tracking-wide">
+              AI-Powered Go-To-Market Engine
+            </p>
+          </div>
+        </div>
+      </header>
 
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="flex justify-center gap-2 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 overflow-hidden p-2">
-            <TabsTrigger value="wayfinder" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              🌌 Wayfinder
+          {/* Clean, minimalist tab navigation */}
+          <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 mb-12 rounded-lg">
+            <TabsTrigger 
+              value="wayfinder" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
+            >
+              <span className="text-base mr-2">🌌</span>
+              Wayfinder
             </TabsTrigger>
-            <TabsTrigger value="shark-swarmer" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              🦈 Shark Swarmer
+            <TabsTrigger 
+              value="shark-swarmer" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
+            >
+              <span className="text-base mr-2">🦈</span>
+              Shark Swarmer
             </TabsTrigger>
-            <TabsTrigger value="reef-builder" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6">
-              🪸 Reef Builder
+            <TabsTrigger 
+              value="reef-builder" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
+            >
+              <span className="text-base mr-2">🪸</span>
+              Reef Builder
             </TabsTrigger>
-            <TabsTrigger value="archipelago" className="data-[state=active]:bg-blue-600/20 data-[state=active]:text-blue-300 text-sm md:text-base px-6" disabled>
-              🌋 Archipelago
+            <TabsTrigger 
+              value="archipelago" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium opacity-50 cursor-not-allowed" 
+              disabled
+            >
+              <span className="text-base mr-2">🌋</span>
+              Archipelago
             </TabsTrigger>
           </TabsList>
 

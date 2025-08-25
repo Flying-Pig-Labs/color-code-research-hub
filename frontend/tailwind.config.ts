@@ -62,50 +62,53 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// Sophisticated accent color system
+				'electric-blue': {
+					DEFAULT: 'hsl(var(--electric-blue))',
+					light: 'hsl(var(--electric-blue-light))',
+					dark: 'hsl(var(--electric-blue-dark))'
+				},
+				// Refined team colors - more subtle but still functional
 				'red-team': {
 					DEFAULT: 'hsl(var(--red-team))',
 					light: 'hsl(var(--red-team-light))',
-					dark: 'hsl(var(--red-team-dark))',
-					pink: 'hsl(var(--red-team-pink))'
+					dark: 'hsl(var(--red-team-dark))'
 				},
 				'black-team': {
 					DEFAULT: 'hsl(var(--black-team))',
 					light: 'hsl(var(--black-team-light))',
-					dark: 'hsl(var(--black-team-dark))',
-					bg: 'hsl(var(--black-team-bg))'
+					dark: 'hsl(var(--black-team-dark))'
 				},
 				'white-team': {
 					DEFAULT: 'hsl(var(--white-team))',
-					accent: 'hsl(var(--white-team-accent))',
+					light: 'hsl(var(--white-team-light))',
 					dark: 'hsl(var(--white-team-dark))'
-				},
-				'carmax': {
-					yellow: 'hsl(var(--carmax-yellow))',
-					blue: 'hsl(var(--carmax-blue))',
-					'blue-dark': 'hsl(var(--carmax-blue-dark))',
-					'yellow-light': 'hsl(var(--carmax-yellow-light))'
 				}
 			},
 			backgroundImage: {
-				'gradient-corporate': 'var(--gradient-corporate)',
-				'gradient-red': 'var(--gradient-red)',
-				'gradient-red-pink': 'var(--gradient-red-pink)',
-				'gradient-black': 'var(--gradient-black)',
-				'gradient-white': 'var(--gradient-white)',
-				'gradient-carmax-hero': 'var(--gradient-carmax-hero)',
-				'gradient-carmax-fade': 'var(--gradient-carmax-fade)',
-				'gradient-carmax-blue': 'var(--gradient-carmax-blue)',
-				'gradient-carmax-yellow': 'var(--gradient-carmax-yellow)'
+				// Simplified gradients - only essential ones
+				'gradient-subtle': 'var(--gradient-subtle)',
+				'gradient-accent': 'var(--gradient-accent)'
 			},
 			boxShadow: {
-				'smooth-sm': 'var(--shadow-sm)',
-				'smooth-md': 'var(--shadow-md)',
-				'smooth-lg': 'var(--shadow-lg)',
-				'smooth-xl': 'var(--shadow-smooth-lg)'
+				// Swiss-inspired clean shadows
+				'subtle': 'var(--shadow-subtle)',
+				'card': 'var(--shadow-card)',
+				'elevated': 'var(--shadow-elevated)'
+			},
+			fontFamily: {
+				'heading': 'var(--font-heading)',
+				'body': 'var(--font-body)'
 			},
 			transitionTimingFunction: {
+				// Swiss design inspired - subtle, almost invisible
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+				'gentle': 'cubic-bezier(0.25, 0.1, 0.25, 1)',
 				'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+			},
+			animation: {
+				'gentle-lift': 'gentle-lift 0.2s ease-out forwards',
+				'float': 'subtle-float 4s ease-in-out infinite'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

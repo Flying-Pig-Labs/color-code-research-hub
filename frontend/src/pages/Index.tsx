@@ -60,120 +60,113 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header 
         showHealthCheck={false}
         navItems={navItems}
       />
       
-      {/* Hero Section with CarMax Fading */}
-      <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
-        {/* Decorative fading elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
-        </div>
-        
-        <div className="text-center max-w-4xl mx-auto relative z-10">
-          <div className="flex justify-center mb-6">
-            <span className="text-8xl">🌌</span>
+      {/* Clean, spacious hero section - Swiss design principles */}
+      <section className="py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="flex justify-center mb-8">
+            <span className="text-6xl animate-float">🌌</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground mb-6 leading-tight tracking-tight">
             Wayfinder
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto font-light">
             Advanced competitive intelligence across three specialized domains.
           </p>
-          
         </div>
-      </SectionWrapper>
+      </section>
 
-      {/* How It Works Section - Revealed on toggle */}
+      {/* How It Works Section - Clean and spacious */}
       {showHow && (
-        <SectionWrapper className="py-8 bg-gradient-carmax-fade">
-          <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 max-w-4xl mx-auto">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-carmax-yellow/20">
-                  <AlertCircle className="h-6 w-6 text-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2 text-xl">How Wayfinder Works</h3>
-                  <div className="space-y-4 text-sm text-muted-foreground">
-                    {/* Content to be filled in later */}
-                    <p className="leading-relaxed">
-                      [How It Works content will be added here]
-                    </p>
+        <section className="py-16 bg-gradient-subtle">
+          <div className="max-w-4xl mx-auto px-6">
+            <Card className="bg-card border-border shadow-card">
+              <CardContent className="pt-8 p-8">
+                <div className="flex items-start gap-6">
+                  <div className="p-3 rounded-lg bg-accent/10 flex-shrink-0">
+                    <AlertCircle className="h-6 w-6 text-accent" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-semibold text-foreground mb-4 text-2xl">How Wayfinder Works</h3>
+                    <div className="space-y-4 text-muted-foreground">
+                      <p className="leading-relaxed text-lg">
+                        [How It Works content will be added here]
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </SectionWrapper>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       )}
 
-      {/* Teams Overview */}
-      <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">
-        {/* Subtle fading background elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
-          <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-          <TeamCard
-            title="Red Team"
-            description="Competitive Disruption Specialists"
-            focus="Focused on analyzing marketplace competitors and identifying disruption opportunities through strategic competitive intelligence and market positioning analysis."
-            path="/red-team"
-            icon={Target}
-            variant="red-team"
-            theme="red"
-          />
-          
-          <TeamCard
-            title="Black Team"
-            description="Vendor Replacement Engineers"
-            focus="Specialized in reverse engineering software solutions and identifying vendor replacement strategies through technical analysis and implementation pathways."
-            path="/black-team"
-            icon={Bug}
-            variant="black-team"
-            theme="black"
-          />
-          
-          <TeamCard
-            title="White Team"
-            description="Market Opportunity Researchers"
-            focus="Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research, so you can get to the puck before your competition."
-            path="/white-team"
-            icon={Lightbulb}
-            variant="white-team"
-            theme="white"
-          />
-        </div>
-      </SectionWrapper>
-
-      {/* Research History Section */}
-      <SectionWrapper className="py-12 bg-gradient-carmax-fade">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">Recent Research Reports</h2>
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <ResearchReportHistory limit={10} />
+      {/* Teams Overview - Clean grid with lots of breathing room */}
+      <section className="py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            <TeamCard
+              title="Red Team"
+              description="Competitive Disruption Specialists"
+              focus="Focused on analyzing marketplace competitors and identifying disruption opportunities through strategic competitive intelligence and market positioning analysis."
+              path="/red-team"
+              icon={Target}
+              variant="red-team"
+              theme="red"
+            />
+            
+            <TeamCard
+              title="Black Team"
+              description="Vendor Replacement Engineers"
+              focus="Specialized in reverse engineering software solutions and identifying vendor replacement strategies through technical analysis and implementation pathways."
+              path="/black-team"
+              icon={Bug}
+              variant="black-team"
+              theme="black"
+            />
+            
+            <TeamCard
+              title="White Team"
+              description="Market Opportunity Researchers"
+              focus="Dedicated to identifying competitive white space and developing new product opportunities through market gap analysis and innovation research, so you can get to the puck before your competition."
+              path="/white-team"
+              icon={Lightbulb}
+              variant="white-team"
+              theme="white"
+            />
           </div>
         </div>
-      </SectionWrapper>
+      </section>
 
-      {/* Pipeline Jobs Section */}
-      <SectionWrapper className="py-12 bg-gradient-carmax-fade">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <PipelineJobsTable />
-          </div>
+      {/* Research History Section - Clean, spacious layout */}
+      <section className="py-16 lg:py-20 bg-gradient-subtle">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-12 text-foreground">Recent Research Reports</h2>
+          <Card className="bg-card border-border shadow-card">
+            <CardContent className="p-8">
+              <ResearchReportHistory limit={10} />
+            </CardContent>
+          </Card>
         </div>
-      </SectionWrapper>
+      </section>
+
+      {/* Pipeline Jobs Section - Clean, consistent with rest of design */}
+      <section className="py-16 lg:py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <Card className="bg-card border-border shadow-card">
+            <CardContent className="p-8">
+              <PipelineJobsTable />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 };
