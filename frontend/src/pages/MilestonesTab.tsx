@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Milestone, Github, ChevronRight, Sparkles, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer } from 'lucide-react';
+import { Loader2, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
@@ -258,72 +258,6 @@ const MilestonesTab = () => {
             </CardContent>
           </Card>
 
-          
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5">
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-carmax-blue/10">
-                    <Milestone className="h-6 w-6 text-carmax-blue" />
-                  </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                    AI Milestones
-                  </CardTitle>
-                </div>
-                <CardDescription className="text-sm text-muted-foreground">
-                  Smart Project Phases
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  Automatically generates project milestones tailored to your repository structure and goals.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-yellow/20 hover:border-carmax-yellow/40 hover:bg-carmax-yellow/5">
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-carmax-yellow/10">
-                    <Sparkles className="h-6 w-6 text-foreground" />
-                  </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                    Epic Generation
-                  </CardTitle>
-                </div>
-                <CardDescription className="text-sm text-muted-foreground">
-                  Comprehensive Epics
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  Creates detailed epics and user stories based on your codebase analysis and project requirements.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group transition-all duration-300 hover:shadow-smooth-lg transform hover:scale-[1.02] border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5">
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-carmax-blue/10">
-                    <Github className="h-6 w-6 text-carmax-blue" />
-                  </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                    GitHub Ready
-                  </CardTitle>
-                </div>
-                <CardDescription className="text-sm text-muted-foreground">
-                  Issue Management
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  Exports formatted issues ready for GitHub, complete with labels and assignee recommendations.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
 
           {/* Backlog Generation History */}
           <div className="mt-16">
