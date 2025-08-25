@@ -10,7 +10,7 @@
  * The application features a multi-tab interface:
  * - Wayfinder Tab: Research coordination (Red/Black/White teams)
  * - Shark Swarmer Tab: Advanced AI swarm coordination
- * - Reef Builder Tab: Project planning and milestones
+ * - Build Tab: Project planning and milestones
  * - Archipelago Tab: Build and deployment management
  * 
  * @author Color Code Research Hub Team
@@ -51,7 +51,7 @@ import WhiteTeam from "./pages/WhiteTeam";
 // Page Components - Shark Swarmer Tab
 import SharkSwarmer from "./pages/SharkSwarmer";
 
-// Page Components - Reef Builder Tab (Planning/Milestones)
+// Page Components - Build Tab (Planning/Milestones)
 import MilestonesTab from "./pages/MilestonesTab";
 import MilestonesJobRunner from "./pages/MilestonesJobRunner";
 import MilestonesJobComplete from "./pages/MilestonesJobComplete";
@@ -122,7 +122,7 @@ const App = () => (
             {/* Real-time swarm monitoring and control interface */}
             <Route path="/shark-swarmer" element={<ProtectedRoute><AppLayout><SharkSwarmer /></AppLayout></ProtectedRoute>} />
             
-            {/* Reef Builder Tab Routes - Project planning and milestone management */}
+            {/* Build Tab Routes - Project planning and milestone management */}
             {/* Async job workflow: List → Runner → Complete */}
             <Route path="/milestones" element={<ProtectedRoute><AppLayout><MilestonesTab /></AppLayout></ProtectedRoute>} />
             <Route path="/milestones/:repo/:jobId" element={<ProtectedRoute><AppLayout><MilestonesJobRunner /></AppLayout></ProtectedRoute>} />

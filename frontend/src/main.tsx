@@ -4,7 +4,7 @@
  * 
  * The application provides a comprehensive research and development platform with:
  * - Multi-team collaboration (Red Team, Black Team, White Team)
- * - Project planning and milestone management (Reef Builder)
+ * - Project planning and milestone management (Build)
  * - Real-time monitoring and analytics
  * - AI-powered research automation
  * 

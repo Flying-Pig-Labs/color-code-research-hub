@@ -120,11 +120,11 @@ const MilestonesTab = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header 
-          title="Reef Builder"
+          title="Build"
           subtitle="Dynamic Backlog Generation"
-          icon="🪸"
+          icon="🔨"
           navItems={navItems}
           showHealthCheck={false}
         />
@@ -143,46 +143,18 @@ const MilestonesTab = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-carmax-fade flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header 
-        title="Reef Builder"
+        title="Build"
         subtitle="Dynamic Backlog Generation"
-        icon="🪸"
+        icon="🔨"
         navItems={navItems}
         showHealthCheck={false}
       />
       
-      {/* Hero Section with CarMax Fading */}
-      <SectionWrapper className="pt-8 pb-8 bg-gradient-carmax-hero relative overflow-hidden">
-        {/* Decorative fading elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-carmax-blue rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
-        </div>
-        
-        <div className="text-center max-w-4xl mx-auto relative z-10">
-          <div className="flex justify-center mb-6">
-            <span className="text-8xl">🪸</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
-            Reef Builder
-          </h1>
-          
-          <p className="text-xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto">
-            Transform your repository into a comprehensive project plan with AI-generated milestones, epics, and issues tailored to your codebase and vision.
-          </p>
-        </div>
-      </SectionWrapper>
 
       {/* Main Content */}
-      <SectionWrapper className="pt-4 bg-gradient-carmax-fade relative">
-        {/* Subtle fading background elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-carmax-blue rounded-full mix-blend-multiply filter blur-2xl"></div>
-          <div className="absolute bottom-10 left-10 w-64 h-64 bg-carmax-yellow rounded-full mix-blend-multiply filter blur-2xl"></div>
-        </div>
+      <SectionWrapper className="pt-8 bg-background relative">
         
         <div className="relative z-10">
           {/* Repository Selection */}

@@ -143,7 +143,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Clean, typography-focused Truffle branding with logo */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-4">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight" style={{ fontFamily: "'Courier New', monospace" }}>
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
                 Truffle
               </h1>
               <img 

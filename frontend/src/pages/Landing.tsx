@@ -55,7 +55,7 @@ const Landing = () => {
           {/* Clean, sophisticated Truffle branding */}
           <div className="mb-16">
             <div className="flex items-center justify-center gap-6 mb-6">
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight" style={{ fontFamily: "'Courier New', monospace" }}>
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight">
                 Truffle
               </h1>
               <img 
@@ -116,7 +116,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center text-muted-foreground">
             <div className="flex items-center space-x-3 mb-4 sm:mb-0">
-              <span className="text-foreground font-semibold text-lg" style={{ fontFamily: "'Courier New', monospace" }}>Truffle</span>
+              <span className="text-foreground font-semibold text-lg">Truffle</span>
               <img 
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
                 alt="Truffle Logo" 
