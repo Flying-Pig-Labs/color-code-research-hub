@@ -1,23 +1,23 @@
 /**
- * @fileoverview Main application layout component for the Color Code Research Hub.
+ * @fileoverview Main application layout component for Truffle.
  * 
  * Provides the primary navigation structure and visual design for all authenticated pages.
  * Features a tab-based navigation system with four main sections:
  * 
- * 🌌 Wayfinder - Research coordination and team management
- * 🦈 Shark Swarmer - AI swarm coordination and monitoring  
- * 🪸 Reef Builder - Project planning and milestone management
- * 🌋 Archipelago - Build and deployment management (disabled)
+ * 🔍 Research - Streamlined competitive intelligence and market research
+ * 💡 Ideate - AI-powered idea evaluation and refinement
+ * 📋 Plan - Project planning and milestone management
+ * 🔨 Build - Build and deployment management
  * 
  * The layout includes:
- * - ASCII art header with Ocean Studio branding
+ * - Clean typography-focused Truffle branding
  * - Responsive tab navigation with active state management
  * - Automatic route-to-tab synchronization
  * - Logout functionality with session cleanup
- * - Consistent theming and backdrop effects
+ * - Swiss design principles with sophisticated styling
  * 
- * @author Color Code Research Hub Team
- * @version 1.0.0
+ * @author Truffle Team
+ * @version 2.0.0
  */
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -54,7 +54,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { logout } = useAuth();
   
   // Track which tab is currently active based on the route
-  const [activeTab, setActiveTab] = useState("wayfinder");
+  const [activeTab, setActiveTab] = useState("research");
 
   /**
    * Handle user logout process.
@@ -71,27 +71,26 @@ const AppLayout = ({ children }: AppLayoutProps) => {
    * with browser history and direct URL access.
    */
   useEffect(() => {
-    // Reef Builder tab - Project planning and milestones
-    if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/reef-builder")) {
-      setActiveTab("reef-builder");
+    // Plan tab - Project planning and milestones
+    if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/plan")) {
+      setActiveTab("plan");
     } 
-    // Archipelago tab - Build and deployment (currently disabled)
-    else if (location.pathname.startsWith("/build") || location.pathname.startsWith("/archipelago")) {
-      setActiveTab("archipelago");
+    // Build tab - Build and deployment
+    else if (location.pathname.startsWith("/build")) {
+      setActiveTab("build");
     } 
-    // Shark Swarmer tab - AI coordination
-    else if (location.pathname.startsWith("/shark-swarmer")) {
-      setActiveTab("shark-swarmer");
+    // Ideate tab - AI idea evaluation (formerly Shark Swarmer)
+    else if (location.pathname.startsWith("/shark-swarmer") || location.pathname.startsWith("/ideate")) {
+      setActiveTab("ideate");
     } 
-    // Wayfinder tab - Research teams, reports, and main dashboard
-    else if (location.pathname.startsWith("/home") || location.pathname.startsWith("/red-team") || 
-               location.pathname.startsWith("/black-team") || location.pathname.startsWith("/white-team") ||
+    // Research tab - Combined research interface, reports, and main dashboard
+    else if (location.pathname.startsWith("/home") || location.pathname.startsWith("/research") || 
                location.pathname.startsWith("/reports") || location.pathname.startsWith("/demo/reports")) {
-      setActiveTab("wayfinder");
+      setActiveTab("research");
     } 
-    // Default to wayfinder for unmatched routes
+    // Default to research for unmatched routes
     else {
-      setActiveTab("wayfinder");
+      setActiveTab("research");
     }
   }, [location.pathname]);
 
@@ -104,17 +103,17 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     switch (value) {
-      case "wayfinder":
-        navigate("/home"); // Main dashboard and research teams
+      case "research":
+        navigate("/home"); // Main research dashboard
         break;
-      case "shark-swarmer":
-        navigate("/shark-swarmer"); // AI swarm coordination
+      case "ideate":
+        navigate("/shark-swarmer"); // AI idea evaluation
         break;
-      case "reef-builder":
+      case "plan":
         navigate("/milestones"); // Project planning and milestones
         break;
-      case "archipelago":
-        navigate("/build"); // Build and deployment (disabled)
+      case "build":
+        navigate("/build"); // Build and deployment
         break;
     }
   };
@@ -135,13 +134,16 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             Logout
           </Button>
           
-          {/* Clean, typography-focused branding */}
+          {/* Clean, typography-focused Truffle branding */}
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-2 tracking-tight">
-              Ocean Studio
-            </h1>
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <span className="text-4xl">🐷</span>
+              <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight">
+                Truffle
+              </h1>
+            </div>
             <p className="text-muted-foreground font-light text-lg tracking-wide">
-              AI-Powered Go-To-Market Engine
+              Sniff out your next big product
             </p>
           </div>
         </div>
@@ -149,36 +151,35 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          {/* Clean, minimalist tab navigation */}
+          {/* Clean, minimalist tab navigation - Truffle product development flow */}
           <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 mb-12 rounded-lg">
             <TabsTrigger 
-              value="wayfinder" 
+              value="research" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">🌌</span>
-              Wayfinder
+              <span className="text-base mr-2">🔍</span>
+              Research
             </TabsTrigger>
             <TabsTrigger 
-              value="shark-swarmer" 
+              value="ideate" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">🦈</span>
-              Shark Swarmer
+              <span className="text-base mr-2">💡</span>
+              Ideate
             </TabsTrigger>
             <TabsTrigger 
-              value="reef-builder" 
+              value="plan" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">🪸</span>
-              Reef Builder
+              <span className="text-base mr-2">📋</span>
+              Plan
             </TabsTrigger>
             <TabsTrigger 
-              value="archipelago" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium opacity-50 cursor-not-allowed" 
-              disabled
+              value="build" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">🌋</span>
-              Archipelago
+              <span className="text-base mr-2">🔨</span>
+              Build
             </TabsTrigger>
           </TabsList>
 

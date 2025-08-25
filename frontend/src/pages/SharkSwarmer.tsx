@@ -140,9 +140,9 @@ const SharkSwarmer = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
-        title="Shark Swarmer"
-        subtitle="Multi-Persona Refinement"
-        icon="🦈"
+        title="Ideate"
+        subtitle="AI-Powered Idea Evaluation"
+        icon="💡"
         navItems={navItems}
         showHealthCheck={false}
       />
@@ -151,15 +151,15 @@ const SharkSwarmer = () => {
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-8">
-            <span className="text-6xl animate-float">🦈</span>
+            <span className="text-6xl animate-float">💡</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground mb-6 leading-tight tracking-tight">
-            Shark Swarmer
+            Ideate
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-4 leading-relaxed max-w-4xl mx-auto font-light">
-            Harness the power of diverse AI agent personas to systematically evaluate, score, and select the most promising ideas through multi-perspective analysis.
+            Harness diverse AI perspectives to evaluate, score, and refine your product ideas through multi-angle analysis.
           </p>
         </div>
       </section>
@@ -275,40 +275,40 @@ const SharkSwarmer = () => {
                     <AlertCircle className="h-6 w-6 text-accent" />
                   </div>
                   <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-6 text-2xl">How Shark Swarmer Works</h3>
+                    <h3 className="font-heading font-semibold text-foreground mb-6 text-2xl">How Truffle Ideate Works</h3>
                     <div className="space-y-6 text-muted-foreground">
                       <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">1. AI Shark Evaluation</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">1. Multi-Perspective Evaluation</h4>
                         <p className="leading-relaxed">
-                          Multiple AI "sharks" with different personas evaluate each idea, simulating a Shark Tank experience. Each shark has unique expertise and investment criteria.
+                          Diverse AI evaluators with different expertise assess each idea from multiple angles - technical feasibility, market potential, competitive positioning, and more.
                         </p>
                       </div>
                       
                       <div>
                         <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">2. Comprehensive Scoring</h4>
                         <p className="leading-relaxed">
-                          Ideas receive a composite Shark Score (0-100) based on investment amounts, confidence levels, and decision ratios. Higher scores indicate stronger investment potential.
+                          Ideas receive detailed scores across key dimensions like market size, implementation complexity, competitive advantage, and investment potential. Higher scores indicate stronger opportunities.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">3. Investment Tracking</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">3. Insight Aggregation</h4>
                         <p className="leading-relaxed">
-                          Track total investment offers across all sharks. See which ideas attract the most funding and understand the reasoning behind each investment decision.
+                          Combine insights from all AI evaluators to understand consensus views, identify concerns, and surface the most promising aspects of each idea.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">4. One-Click Build</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">4. Development Recommendations</h4>
                         <p className="leading-relaxed">
-                          Transform winning ideas into reality. Click the BUILD button to automatically create a new repository in ocean-studio-apps with a complete project structure and shark feedback.
+                          Get specific recommendations for turning promising ideas into reality, including suggested next steps, potential challenges, and strategic approaches.
                         </p>
                       </div>
                       
                       <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">5. Real-Time Leaderboard</h4>
+                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">5. Real-Time Rankings</h4>
                         <p className="leading-relaxed">
-                          View the top 10 ideas across all evaluated repositories. The leaderboard updates every 30 seconds, showing rankings, scores, and investment totals.
+                          Track top-performing ideas across all evaluations with live rankings that update as new ideas are assessed and refined.
                         </p>
                       </div>
                     </div>

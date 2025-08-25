@@ -1,19 +1,19 @@
 /**
- * @fileoverview Landing page for Color Code Research Hub.
+ * @fileoverview Landing page for Truffle.
  * 
- * Public-facing marketing page that introduces the platform's AI-powered
- * go-to-market capabilities. Features Ocean Studio branding, value proposition,
+ * Public-facing marketing page that introduces Truffle's product discovery
+ * capabilities. Features clean Truffle pig branding, value proposition,
  * and call-to-action elements to drive user engagement.
  * 
  * Key Features:
- * - Responsive ASCII art branding
- * - Animated background gradients
- * - Clear value proposition messaging
- * - Prominent login access
+ * - Clean typography-focused branding with pig emoji
+ * - Swiss design principles with generous white space
+ * - Clear "sniff out products" value proposition
+ * - Prominent beta access request
  * - Professional contact information
  * 
- * @author Color Code Research Hub Team
- * @version 1.0.0
+ * @author Truffle Team
+ * @version 2.0.0
  */
 
 import { Button } from "@/components/ui/button";
@@ -46,26 +46,29 @@ const Landing = () => {
       {/* Main Content - Typography focused hero */}
       <div className="flex-1 flex items-center justify-center px-6 py-16">
         <div className="max-w-5xl mx-auto text-center">
-          {/* Clean, sophisticated branding */}
+          {/* Clean, sophisticated Truffle branding */}
           <div className="mb-16">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-heading font-bold text-foreground mb-4 tracking-tight animate-float">
-              Ocean Studio
-            </h1>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <span className="text-6xl md:text-7xl animate-float">🐷</span>
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-heading font-bold text-foreground tracking-tight">
+                Truffle
+              </h1>
+            </div>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
-              AI-Powered Go-To-Market Engine
+              Sniff out your next big product
             </p>
           </div>
 
           {/* Hero Message - Swiss typography principles */}
           <div className="space-y-8 mb-16">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-foreground leading-tight tracking-tight">
-              In the era of fast fashion SaaS,<br className="hidden sm:block" />
-              <span className="font-semibold">conviction is everything.</span>
+              The best products hide in plain sight.<br className="hidden sm:block" />
+              <span className="font-semibold">Let Truffle find them.</span>
             </h2>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-light">
-              Deploy on-demand data science agent swarms to transform private data, public zeitgeist, and deep research 
-              into GTM-ready ideas you rally behind.
+              Advanced AI research, idea evaluation, and product planning tools that help you discover 
+              and develop winning products before your competition.
             </p>
           </div>
           
@@ -96,8 +99,8 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center text-muted-foreground">
             <div className="flex items-center space-x-3 mb-4 sm:mb-0">
-              <span className="text-2xl">🌊</span>
-              <span className="text-foreground font-heading font-semibold text-lg">Ocean Studio</span>
+              <span className="text-2xl">🐷</span>
+              <span className="text-foreground font-heading font-semibold text-lg">Truffle</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right">
               <span className="flex items-center gap-2">
