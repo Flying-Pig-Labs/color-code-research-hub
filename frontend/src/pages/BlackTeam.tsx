@@ -4,7 +4,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 import BlackResearchSwarmForm from "@/components/BlackResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bug, Code, Wrench, Database, ArrowRight, Shield, Skull, Layers, KeyRound } from "lucide-react";
+import { Bug, Code, Wrench, Database, ArrowRight, Shield, Skull, Layers, KeyRound, Building } from "lucide-react";
 
 const BlackTeam = () => {
   return (
@@ -47,7 +47,7 @@ const BlackTeam = () => {
           <BlackResearchSwarmForm>
             <Button size="xl" className="gap-2 bg-white text-gray-900 hover:bg-gray-100 shadow-lg">
               <Bug className="h-5 w-5" />
-              ⚫ Launch Research Swarm
+              Launch Research Swarm
             </Button>
           </BlackResearchSwarmForm>
         </div>
@@ -67,7 +67,7 @@ const BlackTeam = () => {
           <Card className="border-gray-300 hover:border-gray-500 transition-all hover:shadow-xl bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">😈</span>
+                <Skull className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">Evil Twin Lock-ins</CardTitle>
             </CardHeader>
@@ -81,7 +81,7 @@ const BlackTeam = () => {
           <Card className="border-gray-300 hover:border-gray-500 transition-all hover:shadow-xl bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">🏛️</span>
+                <Building className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">5-Layer Archaeology</CardTitle>
             </CardHeader>

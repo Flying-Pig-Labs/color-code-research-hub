@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, CheckCircle, XCircle, AlertCircle, Send, LineChart, Activity } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, AlertCircle, Send, LineChart, Activity, RotateCcw, Square } from "lucide-react";
 import { claudeFlowClient } from '@/services/claudeFlowClient';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -84,11 +84,11 @@ const RunsDashboard = () => {
     };
     
     if (isPolling) {
-      setWsMessages(['🔄 Starting swarm monitoring...']);
+      setWsMessages(['Starting swarm monitoring...']);
       pollSwarmStatus(); // Initial poll
       pollInterval = setInterval(pollSwarmStatus, 3000); // Poll every 3 seconds
     } else {
-      setWsMessages(['⚠️ WebSocket not configured - using REST API polling when tasks are running']);
+      setWsMessages(['WebSocket not configured - using REST API polling when tasks are running']);
     }
     
     return () => {
@@ -106,7 +106,7 @@ const RunsDashboard = () => {
       // Stop polling after 2 minutes (adjust as needed)
       const stopTimeout = setTimeout(() => {
         setIsPolling(false);
-        setWsMessages(prev => [...prev, '⏹️ Stopped monitoring (timeout)']);
+        setWsMessages(prev => [...prev, 'Stopped monitoring (timeout)']);
       }, 120000);
       
       return () => clearTimeout(stopTimeout);
@@ -130,7 +130,7 @@ const RunsDashboard = () => {
       
       setExecutionId(response.executionId);
       toast.success(`Task submitted: ${response.executionId}`);
-      setWsMessages([`📤 Submitted task: ${response.executionId}`, '🔄 Starting swarm monitoring...']);
+      setWsMessages([`Submitted task: ${response.executionId}`, 'Starting swarm monitoring...']);
     } catch (error: any) {
       console.error('Task submission failed:', error);
       toast.error(`Failed to submit task: ${error.message}`);

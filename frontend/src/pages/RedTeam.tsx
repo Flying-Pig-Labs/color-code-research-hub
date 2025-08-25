@@ -4,7 +4,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 import ResearchSwarmForm from "@/components/ResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield, Flame, Clock, Ghost } from "lucide-react";
+import { Target, TrendingUp, Users, BarChart3, ArrowRight, Shield, Flame, Clock, Ghost, Drama, Tornado } from "lucide-react";
 
 const RedTeam = () => {
   return (
@@ -47,7 +47,7 @@ const RedTeam = () => {
           <ResearchSwarmForm>
             <Button variant="red-team" size="xl" className="gap-2">
               <Target className="h-5 w-5" />
-              🔴 Launch Research Swarm
+              Launch Research Swarm
             </Button>
           </ResearchSwarmForm>
         </div>
@@ -67,7 +67,7 @@ const RedTeam = () => {
           <Card className="border-gray-200 hover:border-red-team/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">🎭</span>
+                <Drama className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">Unfair Playbook</CardTitle>
             </CardHeader>
@@ -95,7 +95,7 @@ const RedTeam = () => {
           <Card className="border-gray-200 hover:border-red-team/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">🌀</span>
+                <Tornado className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">Counterfactuals</CardTitle>
             </CardHeader>

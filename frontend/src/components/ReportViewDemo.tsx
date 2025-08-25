@@ -3,6 +3,7 @@ import { ReportView } from './ReportView';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { ClipboardList } from 'lucide-react';
 
 // Mock report data for testing
 const mockReportData = {
@@ -616,7 +617,7 @@ This comprehensive white space analysis identifies untapped opportunities in the
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <span className="mr-2">📋</span>
+              <ClipboardList className="h-5 w-5 mr-2" />
               Report View Component Demo
             </CardTitle>
           </CardHeader>

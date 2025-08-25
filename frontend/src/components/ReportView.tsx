@@ -29,7 +29,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { ArrowLeft, Download, ExternalLink, Menu, X, Clock, User, Tag, Sparkles } from 'lucide-react';
+import { ArrowLeft, Download, ExternalLink, Menu, X, Clock, User, Tag, Sparkles, AlertTriangle } from 'lucide-react';
 import {
   fetchReportData,
   processReport,
@@ -508,7 +508,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                 <Card className="border-yellow-200 bg-yellow-50">
                   <CardHeader>
                     <CardTitle className="text-yellow-800 flex items-center">
-                      <span className="mr-2">⚠️</span>
+                      <AlertTriangle className="h-5 w-5 mr-2" />
                       Important Disclaimers
                     </CardTitle>
                   </CardHeader>

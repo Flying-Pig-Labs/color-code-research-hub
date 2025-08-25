@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Lightbulb, Loader2 } from "lucide-react";
+import { Lightbulb, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -282,7 +282,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white-team-dark">
             <Lightbulb className="h-5 w-5" />
-            ⚪ Launch Research Swarm
+            Launch Research Swarm
           </DialogTitle>
           <DialogDescription>
             Find untapped opportunities near your company's market.
@@ -631,7 +631,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
               onClick={handleReset}
               className="flex-1"
             >
-              ♻️ Reset
+              <RotateCcw className="h-4 w-4 mr-1" />Reset
             </Button>
           </div>
         </div>

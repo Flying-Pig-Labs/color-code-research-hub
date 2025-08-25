@@ -35,7 +35,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Target, Loader2 } from "lucide-react";
+import { Target, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -213,7 +213,7 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-team">
             <Target className="h-5 w-5" />
-            🔴 Launch Research Swarm
+            Launch Research Swarm
           </DialogTitle>
           <DialogDescription>
             Aim: Reverse-engineer or replace a key third-party vendor.
@@ -474,7 +474,7 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
               onClick={handleReset}
               className="flex-1"
             >
-              ♻️ Reset
+              <RotateCcw className="h-4 w-4 mr-1" />Reset
             </Button>
           </div>
         </div>

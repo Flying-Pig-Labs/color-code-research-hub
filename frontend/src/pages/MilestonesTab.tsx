@@ -130,7 +130,7 @@ const MilestonesTab = () => {
         <Header 
           title="Build"
           subtitle="Dynamic Backlog Generation"
-          icon="🔨"
+          icon={<Hammer className="h-6 w-6" />}
           navItems={navItems}
           showHealthCheck={false}
         />
@@ -153,7 +153,7 @@ const MilestonesTab = () => {
       <Header 
         title="Build"
         subtitle="Dynamic Backlog Generation"
-        icon="🔨"
+        icon={<Hammer className="h-6 w-6" />}
         navItems={navItems}
         showHealthCheck={false}
       />

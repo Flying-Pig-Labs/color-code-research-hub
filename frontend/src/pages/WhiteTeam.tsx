@@ -4,7 +4,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 import WhiteResearchSwarmForm from "@/components/WhiteResearchSwarmForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lightbulb, Compass, Sparkles, Map, ArrowRight, Shield } from "lucide-react";
+import { Lightbulb, Compass, Sparkles, Map, ArrowRight, Shield, Ghost, RotateCcw, Zap } from "lucide-react";
 
 const WhiteTeam = () => {
   return (
@@ -47,7 +47,7 @@ const WhiteTeam = () => {
           <WhiteResearchSwarmForm>
             <Button variant="white-team" size="xl" className="gap-2">
               <Lightbulb className="h-5 w-5" />
-              ⚪ Launch Research Swarm
+              Launch Research Swarm
             </Button>
           </WhiteResearchSwarmForm>
         </div>
@@ -67,7 +67,7 @@ const WhiteTeam = () => {
           <Card className="border-gray-200 hover:border-white-team-accent/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">👻</span>
+                <Ghost className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">Ghost Markets</CardTitle>
             </CardHeader>
@@ -81,7 +81,7 @@ const WhiteTeam = () => {
           <Card className="border-gray-200 hover:border-white-team-accent/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">🔄</span>
+                <RotateCcw className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">Inverted Demands</CardTitle>
             </CardHeader>
@@ -95,7 +95,7 @@ const WhiteTeam = () => {
           <Card className="border-gray-200 hover:border-white-team-accent/60 transition-all hover:shadow-lg bg-white">
             <CardHeader>
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-3 shadow-md">
-                <span className="text-white text-lg">💥</span>
+                <Zap className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-gray-900">Improbable Mashups</CardTitle>
             </CardHeader>

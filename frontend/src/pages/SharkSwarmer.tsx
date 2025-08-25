@@ -44,7 +44,7 @@ const SharkSwarmer = () => {
       <Header 
         title="Ideate"
         subtitle="AI-Powered Idea Evaluation"
-        icon="💡"
+        icon={<Lightbulb className="h-6 w-6" />}
         navItems={navItems}
         showHealthCheck={false}
       />

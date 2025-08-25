@@ -74,7 +74,7 @@ const Index = () => {
       <Header 
         title="Research"
         subtitle="Product Discovery Intelligence"
-        icon="🔍"
+        icon={<Search className="h-6 w-6" />}
         showHealthCheck={false}
         navItems={navItems}
       />

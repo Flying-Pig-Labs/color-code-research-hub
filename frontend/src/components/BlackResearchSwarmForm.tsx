@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { TagsInput } from "@/components/ui/tags-input";
-import { Bug, Loader2 } from "lucide-react";
+import { Bug, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { apiService, showApiError, ApiError, ResearchJob } from "@/services/api";
 import { useApiEnvironment } from "@/hooks/useApiEnvironment";
@@ -257,7 +257,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-gray-900">
             <Bug className="h-5 w-5" />
-            ⚫ Launch Research Swarm
+            Launch Research Swarm
           </DialogTitle>
           <DialogDescription className="text-gray-600">
             Explore replacing a third-party tool with internal software.
@@ -566,7 +566,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
               onClick={handleReset}
               className="flex-1 border-white/20 text-white hover:bg-white/10"
             >
-              ♻️ Reset
+              <RotateCcw className="h-4 w-4 mr-1" />Reset
             </Button>
           </div>
         </div>
