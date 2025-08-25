@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
+import { BacklogGenerationHistory } from "@/components/BacklogGenerationHistory";
 
 interface GitHubRepo {
   id: number;
@@ -322,6 +323,11 @@ const MilestonesTab = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Backlog Generation History */}
+          <div className="mt-16">
+            <BacklogGenerationHistory limit={20} />
           </div>
         </div>
       </SectionWrapper>
