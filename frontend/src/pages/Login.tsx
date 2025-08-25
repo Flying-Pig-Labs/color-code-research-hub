@@ -27,26 +27,30 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center px-4">
+    <div className="light min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo/Title */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <span className="text-4xl">🌊</span>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+              Truffle
+            </h1>
+            <img 
+              src="/logo-light.png"
+              alt="Truffle Logo" 
+              className="w-12 h-12 md:w-16 md:h-16"
+            />
           </div>
-          <h1 className="text-2xl text-blue-300" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-            Ocean Studio
-          </h1>
-          <p className="text-gray-400 mt-2 text-sm" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-            Beta Access Portal
+          <p className="text-muted-foreground text-lg tracking-wide">
+            Sniff out your next big product
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-gray-950/50 backdrop-blur-sm rounded-lg border border-gray-800/50 p-6">
+        <div className="bg-card border border-border rounded-lg shadow-card p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-gray-300 text-sm">
+              <Label htmlFor="username" className="text-foreground">
                 Username
               </Label>
               <Input
@@ -54,7 +58,7 @@ const Login = () => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="bg-gray-900/50 border-gray-700 text-white placeholder-gray-500 focus:border-blue-500"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-accent"
                 placeholder="Enter username"
                 required
                 autoFocus
@@ -62,7 +66,7 @@ const Login = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-300 text-sm">
+              <Label htmlFor="password" className="text-foreground">
                 Password
               </Label>
               <Input
@@ -70,32 +74,31 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-900/50 border-gray-700 text-white placeholder-gray-500 focus:border-blue-500"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-accent"
                 placeholder="Enter password"
                 required
               />
             </div>
 
             {error && (
-              <div className="text-red-400 text-sm text-center animate-pulse">
+              <div className="text-destructive text-sm text-center animate-pulse">
                 {error}
               </div>
             )}
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400 }}
+              className="w-full bg-accent hover:bg-accent/90 text-accent-foreground shadow-card hover:shadow-elevated transition-all"
             >
               <LogIn className="mr-2 h-4 w-4" />
-              Access Beta
+              Request Beta Access
             </Button>
           </form>
         </div>
 
         {/* Footer hint */}
-        <p className="text-center text-gray-500 text-xs mt-6" style={{ fontFamily: "'Cairo Play', sans-serif", fontWeight: 200 }}>
-          Invitation only • Richmond, VA
+        <p className="text-center text-muted-foreground text-sm mt-6">
+          Ford Prior • ford@flyingpig.ai • Richmond, VA
         </p>
       </div>
     </div>
