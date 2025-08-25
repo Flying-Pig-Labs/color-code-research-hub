@@ -24,7 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
+import { LogOut, Search, Lightbulb, ClipboardList, Hammer } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -174,28 +174,28 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               value="research" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">🔍</span>
+              <Search className="h-4 w-4 mr-2" />
               Research
             </TabsTrigger>
             <TabsTrigger 
               value="ideate" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">💡</span>
+              <Lightbulb className="h-4 w-4 mr-2" />
               Ideate
             </TabsTrigger>
             <TabsTrigger 
               value="plan" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">📋</span>
+              <ClipboardList className="h-4 w-4 mr-2" />
               Plan
             </TabsTrigger>
             <TabsTrigger 
               value="build" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
-              <span className="text-base mr-2">🔨</span>
+              <Hammer className="h-4 w-4 mr-2" />
               Build
             </TabsTrigger>
           </TabsList>

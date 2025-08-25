@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertCircle } from "lucide-react";
 
 /**
@@ -43,25 +44,19 @@ import { AlertCircle } from "lucide-react";
  * @returns {JSX.Element} Complete research interface with streamlined form
  */
 const Index = () => {
-  const [showHow, setShowHow] = useState(false);
+  const [howModalOpen, setHowModalOpen] = useState(false);
   const [forestDescription, setForestDescription] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [industryFocus, setIndustryFocus] = useState("");
   
-  // Toggle "How" section when hash changes
-  useEffect(() => {
-    const handleHashChange = () => {
-      setShowHow(window.location.hash === "#how");
-    };
-    
-    handleHashChange(); // Check initial hash
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-  
   const navItems = [
-    { path: "#", label: "Research", icon: Search, variant: "ghost" as const },
-    { path: "#how", label: "How", icon: CircleHelp, variant: "ghost" as const },
+    { 
+      path: "#", 
+      label: "How", 
+      icon: CircleHelp, 
+      variant: "ghost" as const,
+      onClick: () => setHowModalOpen(true)
+    },
   ];
 
   // Handle research form submission (hits Red Team API)
@@ -86,7 +81,6 @@ const Index = () => {
       
 
       {/* Streamlined Research Form - The main interface */}
-      {!showHow && (
         <section className="py-12 lg:py-20">
           <div className="max-w-4xl mx-auto px-6">
             <Card className="bg-card border-border shadow-card">
@@ -95,11 +89,8 @@ const Index = () => {
                   {/* Main "Describe the forest" field */}
                   <div>
                     <Label htmlFor="forest" className="text-lg font-heading font-semibold text-foreground mb-2 block">
-                      Describe the forest
+                      Launch a truffle hunt
                     </Label>
-                    <p className="text-muted-foreground mb-4 text-sm">
-                      Truffle Pig performs best with a lay of the land
-                    </p>
                     <Textarea
                       id="forest"
                       value={forestDescription}
@@ -155,49 +146,7 @@ const Index = () => {
             </Card>
           </div>
         </section>
-      )}
 
-      {/* How It Works Section - Clean and spacious */}
-      {showHow && (
-        <section className="py-16 bg-gradient-subtle">
-          <div className="max-w-4xl mx-auto px-6">
-            <Card className="bg-card border-border shadow-card">
-              <CardContent className="pt-8 p-8">
-                <div className="flex items-start gap-6">
-                  <div className="p-3 rounded-lg bg-accent/10 flex-shrink-0">
-                    <AlertCircle className="h-6 w-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-6 text-2xl">How Truffle Research Works</h3>
-                    <div className="space-y-6 text-muted-foreground">
-                      <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">1. Describe Your Forest</h4>
-                        <p className="leading-relaxed">
-                          Give Truffle a comprehensive view of your market landscape. The more context you provide about the competitive environment and opportunity space, the better insights you'll receive.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">2. AI-Powered Analysis</h4>
-                        <p className="leading-relaxed">
-                          Our advanced AI combines competitive intelligence techniques with market research to uncover hidden opportunities, competitive gaps, and strategic positioning insights.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h4 className="font-heading font-semibold text-foreground mb-3 text-lg">3. Actionable Intelligence</h4>
-                        <p className="leading-relaxed">
-                          Receive detailed reports with market analysis, competitor positioning, opportunity identification, and strategic recommendations you can act on immediately.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-      )}
 
       {/* Research History Section - Clean, spacious layout */}
       <section className="py-16 lg:py-20 bg-gradient-subtle">
@@ -210,6 +159,18 @@ const Index = () => {
           </Card>
         </div>
       </section>
+
+      {/* How Modal */}
+      <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>How Truffle Research Works</DialogTitle>
+          </DialogHeader>
+          <div className="p-6">
+            <p className="text-lg">Hello world</p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

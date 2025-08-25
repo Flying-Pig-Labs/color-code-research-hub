@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loader2, Milestone, Github, ChevronRight, Sparkles, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -30,11 +31,16 @@ const MilestonesTab = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [howModalOpen, setHowModalOpen] = useState(false);
   
   const navItems = [
-    { path: "#", label: "Reefs", icon: ShipWheel, variant: "ghost" as const },
-    { path: "#", label: "Repos", icon: Github, variant: "ghost" as const },
-    { path: "#", label: "How", icon: CircleHelp, variant: "ghost" as const },
+    { 
+      path: "#", 
+      label: "How", 
+      icon: CircleHelp, 
+      variant: "ghost" as const,
+      onClick: () => setHowModalOpen(true)
+    },
   ];
 
   useEffect(() => {
@@ -251,23 +257,6 @@ const MilestonesTab = () => {
             </CardContent>
           </Card>
 
-          {/* Info Card */}
-          <Card className="bg-carmax-yellow/10 border-carmax-yellow/30 mt-8">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-carmax-yellow/20">
-                  <AlertCircle className="h-6 w-6 text-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2">How it works</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Select a repository to generate a comprehensive backlog. The system will create milestones, 
-                    epics, and issues automatically using AI-powered processing. View live updates as your backlog is generated.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
           
           {/* Feature Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
@@ -336,6 +325,18 @@ const MilestonesTab = () => {
           </div>
         </div>
       </SectionWrapper>
+
+      {/* How Modal */}
+      <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>How Truffle Plan Works</DialogTitle>
+          </DialogHeader>
+          <div className="p-6">
+            <p className="text-lg">Hello world</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
