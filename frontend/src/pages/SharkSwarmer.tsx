@@ -147,25 +147,9 @@ const SharkSwarmer = () => {
         showHealthCheck={false}
       />
       
-      {/* Clean, spacious hero section */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="flex justify-center mb-8">
-            <span className="text-6xl animate-float">💡</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground mb-6 leading-tight tracking-tight">
-            Ideate
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground mb-4 leading-relaxed max-w-4xl mx-auto font-light">
-            Harness diverse AI perspectives to evaluate, score, and refine your product ideas through multi-angle analysis.
-          </p>
-        </div>
-      </section>
 
       {/* Tab Content - Clean layout */}
-      <section className="py-8 lg:py-16">
+      <section className="py-12 lg:py-20">
         <div className="max-w-6xl mx-auto px-6">
         
           {/* Leaderboard Tab */}

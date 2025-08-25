@@ -48,12 +48,9 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto text-center">
           {/* Clean, sophisticated Truffle branding */}
           <div className="mb-16">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <span className="text-6xl md:text-7xl animate-float">🐷</span>
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-heading font-bold text-foreground tracking-tight">
-                Truffle
-              </h1>
-            </div>
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight mb-6" style={{ fontFamily: "'Courier New', monospace" }}>
+              Truffle
+            </h1>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               Sniff out your next big product
             </p>
@@ -99,8 +96,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center text-muted-foreground">
             <div className="flex items-center space-x-3 mb-4 sm:mb-0">
-              <span className="text-2xl">🐷</span>
-              <span className="text-foreground font-heading font-semibold text-lg">Truffle</span>
+              <span className="text-foreground font-semibold text-lg" style={{ fontFamily: "'Courier New', monospace" }}>Truffle</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right">
               <span className="flex items-center gap-2">

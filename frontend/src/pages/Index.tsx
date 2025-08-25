@@ -85,26 +85,10 @@ const Index = () => {
         navItems={navItems}
       />
       
-      {/* Clean, spacious hero section with pig theming */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="flex justify-center mb-8">
-            <span className="text-6xl animate-float">🔍</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground mb-6 leading-tight tracking-tight">
-            Research
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground mb-4 leading-relaxed max-w-3xl mx-auto font-light">
-            Discover hidden product opportunities through comprehensive market intelligence.
-          </p>
-        </div>
-      </section>
 
       {/* Streamlined Research Form - The main interface */}
       {!showHow && (
-        <section className="py-8 lg:py-16">
+        <section className="py-12 lg:py-20">
           <div className="max-w-4xl mx-auto px-6">
             <Card className="bg-card border-border shadow-card">
               <CardContent className="p-8">
@@ -164,7 +148,7 @@ const Index = () => {
                       className="bg-accent hover:bg-accent/90 text-accent-foreground px-8"
                       disabled={!forestDescription.trim()}
                     >
-                      Start Research Hunt 🐷
+                      Start Research Hunt
                     </Button>
                   </div>
                 </form>
