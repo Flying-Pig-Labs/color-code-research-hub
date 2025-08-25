@@ -19,6 +19,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, LogIn, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/contexts/ThemeContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /**
  * Landing page component providing marketing introduction to the platform.
@@ -31,26 +33,37 @@ import { useNavigate } from "react-router-dom";
  */
 const Landing = () => {
   const navigate = useNavigate();
+  const { actualTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative">
-      {/* Clean login access - top right */}
-      <button
-        onClick={() => navigate("/login")}
-        className="absolute top-6 right-6 text-muted-foreground hover:text-accent transition-gentle p-2 rounded-lg hover:bg-muted/50"
-        aria-label="Login"
-      >
-        <LogIn className="h-5 w-5" />
-      </button>
+      {/* Top controls - Theme toggle and Login */}
+      <div className="absolute top-6 right-6 flex items-center gap-2">
+        <ThemeToggle />
+        <button
+          onClick={() => navigate("/login")}
+          className="text-muted-foreground hover:text-accent transition-gentle p-2 rounded-lg hover:bg-muted/50"
+          aria-label="Login"
+        >
+          <LogIn className="h-5 w-5" />
+        </button>
+      </div>
 
       {/* Main Content - Typography focused hero */}
       <div className="flex-1 flex items-center justify-center px-6 py-16">
         <div className="max-w-5xl mx-auto text-center">
           {/* Clean, sophisticated Truffle branding */}
           <div className="mb-16">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight mb-6" style={{ fontFamily: "'Courier New', monospace" }}>
-              Truffle
-            </h1>
+            <div className="flex items-center justify-center gap-6 mb-6">
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight" style={{ fontFamily: "'Courier New', monospace" }}>
+                Truffle
+              </h1>
+              <img 
+                src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                alt="Truffle Logo" 
+                className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28"
+              />
+            </div>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               Sniff out your next big product
             </p>
@@ -97,6 +110,11 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center text-muted-foreground">
             <div className="flex items-center space-x-3 mb-4 sm:mb-0">
               <span className="text-foreground font-semibold text-lg" style={{ fontFamily: "'Courier New', monospace" }}>Truffle</span>
+              <img 
+                src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                alt="Truffle Logo" 
+                className="w-6 h-6"
+              />
             </div>
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center sm:text-right">
               <span className="flex items-center gap-2">

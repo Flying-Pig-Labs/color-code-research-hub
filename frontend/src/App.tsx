@@ -32,6 +32,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
+// Theme Management
+import { ThemeProvider } from "@/contexts/ThemeContext";
+
 // Layout Components
 import AppLayout from "./components/layout/AppLayout";
 
@@ -93,13 +96,14 @@ const queryClient = new QueryClient();
  */
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      {/* Dual notification systems for different use cases */}
-      <Toaster /> {/* Form validation and user actions */}
-      <Sonner />  {/* Real-time updates and system notifications */}
-      
-      <BrowserRouter>
-        <AuthProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        {/* Dual notification systems for different use cases */}
+        <Toaster /> {/* Form validation and user actions */}
+        <Sonner />  {/* Real-time updates and system notifications */}
+        
+        <BrowserRouter>
+          <AuthProvider>
           <Routes>
             {/* Public Pages - No authentication required */}
             <Route path="/" element={<Landing />} />
@@ -142,9 +146,10 @@ const App = () => (
             {/* 404 Handler */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

@@ -26,6 +26,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /**
  * Props interface for the AppLayout component.
@@ -52,6 +54,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+  const { actualTheme } = useTheme();
   
   // Track which tab is currently active based on the route
   const [activeTab, setActiveTab] = useState("research");
@@ -123,22 +126,32 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Clean, sophisticated header with typography focus */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm relative">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          {/* Logout Button - Positioned top-right */}
-          <Button
-            onClick={handleLogout}
-            variant="ghost"
-            size="sm"
-            className="absolute top-4 right-6 text-muted-foreground hover:text-accent transition-gentle"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+          {/* Top controls - Theme toggle and Logout */}
+          <div className="absolute top-4 right-6 flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              onClick={handleLogout}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-accent transition-gentle"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
           
-          {/* Clean, typography-focused Truffle branding */}
+          {/* Clean, typography-focused Truffle branding with logo */}
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight" style={{ fontFamily: "'Courier New', monospace" }}>
-              Truffle
-            </h1>
+            <div className="flex items-center justify-center gap-4">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight" style={{ fontFamily: "'Courier New', monospace" }}>
+                Truffle
+              </h1>
+              <img 
+                src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                alt="Truffle Logo" 
+                className="w-12 h-12 md:w-16 md:h-16"
+              />
+            </div>
             <p className="text-muted-foreground font-light text-lg tracking-wide mt-2">
               Sniff out your next big product
             </p>
