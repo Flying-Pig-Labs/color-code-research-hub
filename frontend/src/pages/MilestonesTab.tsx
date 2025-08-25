@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer } from 'lucide-react';
+import { Loader2, Github, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
