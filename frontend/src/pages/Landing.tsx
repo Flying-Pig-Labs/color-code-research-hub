@@ -54,7 +54,10 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto text-center">
           {/* Clean, sophisticated Truffle branding */}
           <div className="mb-16">
-            <div className="flex items-center justify-center gap-6 mb-6">
+            <button 
+              onClick={() => navigate("/")}
+              className="flex items-center justify-center gap-6 mb-6 hover:opacity-80 transition-opacity"
+            >
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight">
                 Truffle
               </h1>
@@ -70,24 +73,12 @@ const Landing = () => {
                   console.log('Landing logo loaded successfully:', actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png');
                 }}
               />
-            </div>
+            </button>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               Sniff out your next big product
             </p>
           </div>
 
-          {/* Hero Message - Swiss typography principles */}
-          <div className="space-y-8 mb-16">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-foreground leading-tight tracking-tight">
-              The best products hide in plain sight.<br className="hidden sm:block" />
-              <span className="font-semibold">Let Truffle find them.</span>
-            </h2>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-light">
-              Advanced AI research, idea evaluation, and product planning tools that help you discover 
-              and develop winning products before your competition.
-            </p>
-          </div>
           
           {/* Clean CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
