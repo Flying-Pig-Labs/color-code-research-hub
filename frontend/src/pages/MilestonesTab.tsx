@@ -152,7 +152,7 @@ const MilestonesTab = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
-        title="Build"
+        title="Plan"
         subtitle="Dynamic Backlog Generation"
         icon={<Hammer className="h-6 w-6" />}
         navItems={navItems}
@@ -172,7 +172,7 @@ const MilestonesTab = () => {
                   <Github className="h-6 w-6 text-carmax-blue" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-foreground">Select Repository</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-foreground">Plan GTM</CardTitle>
                   <CardDescription className="text-muted-foreground mt-1">
                     Choose a repository from ocean-studio-apps to generate your project plan
                   </CardDescription>
