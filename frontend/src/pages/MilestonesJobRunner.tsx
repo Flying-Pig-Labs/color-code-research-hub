@@ -1,11 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Terminal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Player } from '@lottiefiles/react-lottie-player';
 
 interface JobStatus {
   jobId: string;
@@ -23,11 +20,8 @@ const MilestonesJobRunner = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [logs, setLogs] = useState<string[]>([]);
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
   const [isPolling, setIsPolling] = useState(true);
-  
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const pollIntervalRef = useRef<NodeJS.Timer | null>(null);
 
   // Poll job status
@@ -39,8 +33,6 @@ const MilestonesJobRunner = () => {
       const data = await response.json();
       setJobStatus(data);
       
-      // Update logs based on status
-      updateStatusLogs(data.status);
       
       // If job succeeded, navigate to complete screen
       if (data.status === 'COMPLETED') {
@@ -61,24 +53,6 @@ const MilestonesJobRunner = () => {
     }
   };
 
-  // Add status-based log messages
-  const updateStatusLogs = (status: string) => {
-    const statusMessages = {
-      'PENDING': 'Job submitted successfully. Waiting to start...',
-      'RUNNING': 'Processing request. Generating comprehensive project plan...',
-      'COMPLETED': 'Plan generation completed successfully!',
-      'FAILED': 'Job failed. Please check the error details above.'
-    };
-    
-    const message = statusMessages[status as keyof typeof statusMessages] || `Status: ${status}`;
-    const timestamp = new Date().toLocaleTimeString();
-    
-    setLogs(prev => {
-      const lastLog = prev[prev.length - 1];
-      if (lastLog && lastLog.includes(message)) return prev; // Avoid duplicates
-      return [...prev, `[${timestamp}] ${message}`];
-    });
-  };
 
   // Start polling on mount
   useEffect(() => {
@@ -133,47 +107,8 @@ const MilestonesJobRunner = () => {
             </Badge>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="flex justify-center py-8">
-            <Player
-              autoplay
-              loop
-              src="/animations/spinner.json"
-              style={{ height: '200px', width: '200px' }}
-            />
-          </div>
-        </CardContent>
       </Card>
 
-      {/* Terminal logs */}
-      <Card className="bg-gray-900">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Terminal className="h-5 w-5 text-green-400" />
-            <CardTitle className="text-green-400 text-lg">Job Logs</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ScrollArea className="h-[400px] w-full" ref={scrollAreaRef}>
-            <div className="p-4 font-mono text-sm">
-              {logs.length === 0 ? (
-                <div className="text-gray-500">Waiting for logs...</div>
-              ) : (
-                logs.map((log, index) => (
-                  <div key={index} className="text-gray-300 leading-relaxed">
-                    {log}
-                  </div>
-                ))
-              )}
-              {isPolling && logs.length > 0 && (
-                <div className="text-green-400 animate-pulse mt-2">
-                  <span className="inline-block">▊</span>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
 
       {/* Job metadata */}
       {jobStatus && (
