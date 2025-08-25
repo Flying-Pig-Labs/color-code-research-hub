@@ -239,11 +239,9 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
       // Extract the research ID (reportId is the correct field)
       const researchId = report.metadata.reportId;
       
-      // Get the team from metadata, default to 'red' if not specified
-      const team = report.metadata.team || 'red';
       
-      // Call the innovation pipeline API with the team parameter
-      const response = await innovationPipelineService.startPipeline(researchId, 'user', team);
+      // Call the innovation pipeline API
+      const response = await innovationPipelineService.startPipeline(researchId, 'user', 'general');
       
       // Show success message
       toast.success('Innovation pipeline started!', {
@@ -276,23 +274,6 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
     }
   };
 
-  const getTeamColor = (team: string) => {
-    switch (team) {
-      case 'red': return 'bg-red-100 text-red-800 border-red-200';
-      case 'black': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'white': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getTeamIcon = (team: string) => {
-    switch (team) {
-      case 'red': return '🔴';
-      case 'black': return '⚫';
-      case 'white': return '⚪';
-      default: return '📄';
-    }
-  };
 
   if (loading) {
     return (
@@ -341,7 +322,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
     );
   }
 
-  const disclaimers = report.metadata.disclaimers || getDefaultDisclaimers(report.metadata.team);
+  const disclaimers = report.metadata.disclaimers || getDefaultDisclaimers('general');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -361,7 +342,6 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
               </Button>
               
               <div className="flex items-center">
-                <span className="text-2xl mr-2">{getTeamIcon(report.metadata.team)}</span>
                 <div>
                   <h1 className="text-lg font-semibold text-gray-900 truncate max-w-md">
                     {report.metadata.title}
@@ -375,9 +355,6 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Badge className={getTeamColor(report.metadata.team)}>
-                {report.metadata.team.toUpperCase()} Team
-              </Badge>
               
               <Button
                 onClick={handleIdeate}
@@ -560,14 +537,6 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                       <div>
                         <span className="font-medium text-gray-700">Request ID:</span>
                         <span className="ml-2 text-gray-600 font-mono">{report.metadata.requestId}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-700">Team:</span>
-                        <span className="ml-2">
-                          <Badge className={getTeamColor(report.metadata.team)}>
-                            {report.metadata.team.toUpperCase()}
-                          </Badge>
-                        </span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-700">Generated:</span>

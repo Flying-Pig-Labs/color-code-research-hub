@@ -125,31 +125,6 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
     setModalMode('preview');
   };
 
-  const getTeamColor = (teamType: string) => {
-    switch (teamType) {
-      case 'red':
-        return 'text-red-700';
-      case 'black':
-        return 'text-gray-700';
-      case 'white':
-        return 'text-gray-600';
-      default:
-        return 'text-gray-500';
-    }
-  };
-
-  const getTeamBgColor = (teamType: string) => {
-    switch (teamType) {
-      case 'red':
-        return 'bg-red-50 border border-red-200';
-      case 'black':
-        return 'bg-gray-100 border border-gray-300';
-      case 'white':
-        return 'bg-gray-50 border border-gray-200';
-      default:
-        return 'bg-gray-50 border border-gray-200';
-    }
-  };
 
   // TODO: Future feature - Add delete functionality for individual reports
   // Implementation exists in scripts/delete-report.cjs
@@ -185,7 +160,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   if (reports.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>No research reports found{team ? ` for ${team} team` : ''}</p>
+        <p>No research reports found</p>
       </div>
     );
   }
@@ -194,7 +169,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-900">
-          Research History {team && <span className={getTeamColor(team)}>({team.toUpperCase()} Team)</span>}
+          Research History
         </h3>
         <button
           onClick={loadReports}
@@ -210,9 +185,6 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Team
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Target
@@ -234,11 +206,6 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     const date = new Date(report.createdAt);
                     return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'M/d/yyyy h:mma');
                   })()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTeamBgColor(report.team)} ${getTeamColor(report.team)}`}>
-                    {report.team ? report.team.toUpperCase() : 'N/A'}
-                  </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   {(() => {

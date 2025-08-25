@@ -138,16 +138,6 @@ export function ReportModal({
               {reportData && (
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-gray-500">Team:</span>
-                    <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium
-                      ${reportData.team === 'red' ? 'bg-red-100 text-red-800' : ''}
-                      ${reportData.team === 'black' ? 'bg-gray-900 text-white' : ''}
-                      ${reportData.team === 'white' ? 'bg-gray-100 text-gray-800' : ''}
-                    `}>
-                      {reportData.team?.toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
                     <span className="font-medium text-gray-500">Date:</span>
                     <span className="ml-2">
                       {reportData.createdAt ? new Date(reportData.createdAt).toLocaleDateString() : 'N/A'}
@@ -245,11 +235,7 @@ export function ReportModal({
                   {/* Metadata */}
                   <div className="border-t pt-6 mt-8">
                     <h4 className="font-semibold text-gray-900 mb-3">Report Information</h4>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium text-gray-500">Team:</span>
-                        <span className="ml-2">{report.metadata.team?.toUpperCase() || 'N/A'}</span>
-                      </div>
+                    <div className="grid grid-cols-1 gap-4 text-sm">
                       <div>
                         <span className="font-medium text-gray-500">Created:</span>
                         <span className="ml-2">{new Date(report.metadata.createdAt).toLocaleDateString()}</span>

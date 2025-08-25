@@ -153,7 +153,6 @@ describe('ResearchReportHistory', () => {
       });
 
       expect(screen.getByText('Research History')).toBeInTheDocument();
-      expect(screen.getByText('(RED Team)')).toBeInTheDocument();
     });
 
     it('should filter by white team', async () => {
@@ -163,7 +162,7 @@ describe('ResearchReportHistory', () => {
         expect(mockedResearchApi.listResearchReports).toHaveBeenCalledWith('white', 20);
       });
 
-      expect(screen.getByText('(WHITE Team)')).toBeInTheDocument();
+      expect(screen.getByText('Research History')).toBeInTheDocument();
     });
 
     it('should filter by black team', async () => {
@@ -173,7 +172,7 @@ describe('ResearchReportHistory', () => {
         expect(mockedResearchApi.listResearchReports).toHaveBeenCalledWith('black', 20);
       });
 
-      expect(screen.getByText('(BLACK Team)')).toBeInTheDocument();
+      expect(screen.getByText('Research History')).toBeInTheDocument();
     });
 
     it('should respect custom limit prop', async () => {
@@ -495,12 +494,11 @@ describe('ResearchReportHistory', () => {
       });
 
       const columnHeaders = screen.getAllByRole('columnheader');
-      expect(columnHeaders).toHaveLength(5);
+      expect(columnHeaders).toHaveLength(4);
       expect(columnHeaders[0]).toHaveTextContent('Date');
-      expect(columnHeaders[1]).toHaveTextContent('Team');
-      expect(columnHeaders[2]).toHaveTextContent('Target');
-      expect(columnHeaders[3]).toHaveTextContent('Summary');
-      expect(columnHeaders[4]).toHaveTextContent('Actions');
+      expect(columnHeaders[1]).toHaveTextContent('Target');
+      expect(columnHeaders[2]).toHaveTextContent('Duration');
+      expect(columnHeaders[3]).toHaveTextContent('Actions');
     });
 
     it('should have accessible loading spinner', () => {
