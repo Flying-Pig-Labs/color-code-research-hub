@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Github, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer } from 'lucide-react';
+import { Loader2, Github, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer, ChevronDown, ChevronUp, Target } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
@@ -33,6 +33,7 @@ const MilestonesTab = () => {
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [howModalOpen, setHowModalOpen] = useState(false);
+  const [backlogHistoryExpanded, setBacklogHistoryExpanded] = useState(false);
   
   const navItems = [
     { 
@@ -164,7 +165,42 @@ const MilestonesTab = () => {
       <SectionWrapper className="pt-8 bg-background relative">
         
         <div className="relative z-10">
-          {/* Repository Selection */}
+          <div className="space-y-6">
+            {/* Collapsible Backlog Generation History Section */}
+            <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
+              <CardHeader 
+                className="cursor-pointer hover:bg-carmax-blue/5 transition-all duration-300"
+                onClick={() => setBacklogHistoryExpanded(!backlogHistoryExpanded)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-carmax-blue/10">
+                      <Target className="h-5 w-5 text-carmax-blue" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg font-bold text-foreground">Plan Generation History</CardTitle>
+                      <CardDescription className="text-muted-foreground">
+                        Track completed and running plan generation jobs
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    {backlogHistoryExpanded ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </CardHeader>
+              {backlogHistoryExpanded && (
+                <CardContent className="pt-0">
+                  <BacklogGenerationHistory limit={20} />
+                </CardContent>
+              )}
+            </Card>
+
+            {/* Repository Selection */}
           <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
             <CardHeader className="border-b border-carmax-blue/10 bg-gradient-to-r from-carmax-yellow/5 to-carmax-blue/5">
               <div className="flex items-center gap-3">
@@ -257,11 +293,6 @@ const MilestonesTab = () => {
               </div>
             </CardContent>
           </Card>
-
-
-          {/* Backlog Generation History */}
-          <div className="mt-16">
-            <BacklogGenerationHistory limit={20} />
           </div>
         </div>
       </SectionWrapper>
