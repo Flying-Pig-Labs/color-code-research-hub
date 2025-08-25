@@ -25,7 +25,6 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { ResearchReportHistory } from "@/components/ResearchReportHistory";
-import { PipelineJobsTable } from "@/components/PipelineJobsTable";
 import { CircleHelp, Search, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -212,16 +211,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Pipeline Jobs Section - Clean, consistent with rest of design */}
-      <section className="py-16 lg:py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <Card className="bg-card border-border shadow-card">
-            <CardContent className="p-8">
-              <PipelineJobsTable />
-            </CardContent>
-          </Card>
-        </div>
-      </section>
     </div>
   );
 };

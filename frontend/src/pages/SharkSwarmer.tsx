@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, CircleHelp, Loader2, Github, ChevronRight, Search, Globe, Lock } from 'lucide-react';
+import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, CircleHelp, Loader2, Github, ChevronRight, Search, Globe, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
 import SharkLeaderboard from "@/components/SharkLeaderboard";
+import { PipelineJobsTable } from "@/components/PipelineJobsTable";
 
 interface GitHubRepo {
   id: number;
@@ -29,6 +30,7 @@ const SharkSwarmer = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
+  const [pipelineJobsExpanded, setPipelineJobsExpanded] = useState(false);
   
   // Handle navigation changes
   useEffect(() => {
@@ -154,7 +156,42 @@ const SharkSwarmer = () => {
         
           {/* Leaderboard Tab */}
           {activeTab === 'leaderboard' && (
-            <SharkLeaderboard />
+            <div className="space-y-6">
+              {/* Collapsible Pipeline Jobs Section */}
+              <Card className="bg-card border-border shadow-card">
+                <CardHeader 
+                  className="cursor-pointer hover:bg-muted/50 transition-gentle"
+                  onClick={() => setPipelineJobsExpanded(!pipelineJobsExpanded)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-accent/10">
+                        <Target className="h-5 w-5 text-accent" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg font-heading">Innovation Pipeline Jobs</CardTitle>
+                        <CardDescription>Track running ideation processes and outputs</CardDescription>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      {pipelineJobsExpanded ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </CardHeader>
+                {pipelineJobsExpanded && (
+                  <CardContent className="pt-0">
+                    <PipelineJobsTable />
+                  </CardContent>
+                )}
+              </Card>
+
+              {/* Leaderboard */}
+              <SharkLeaderboard />
+            </div>
           )}
 
           {/* Ideas Tab */}
