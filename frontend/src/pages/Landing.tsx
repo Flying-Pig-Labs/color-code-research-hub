@@ -62,6 +62,13 @@ const Landing = () => {
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
                 alt="Truffle Logo" 
                 className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28"
+                onError={(e) => {
+                  console.error('Landing logo failed to load:', e.currentTarget.src);
+                  console.log('Current theme:', actualTheme);
+                }}
+                onLoad={() => {
+                  console.log('Landing logo loaded successfully:', actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png');
+                }}
               />
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">

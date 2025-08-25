@@ -150,6 +150,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
                 alt="Truffle Logo" 
                 className="w-12 h-12 md:w-16 md:h-16"
+                onError={(e) => {
+                  console.error('Logo failed to load:', e.currentTarget.src);
+                  console.log('Current theme:', actualTheme);
+                }}
+                onLoad={() => {
+                  console.log('Logo loaded successfully:', actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png');
+                }}
               />
             </div>
             <p className="text-muted-foreground font-light text-lg tracking-wide mt-2">
