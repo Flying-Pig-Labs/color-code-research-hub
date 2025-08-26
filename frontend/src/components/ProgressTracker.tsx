@@ -59,12 +59,12 @@ export function ProgressTracker({
   return (
     <div className={`bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg border border-blue-200 dark:border-blue-800 ${className}`}>
       <div className="p-4">
-        {/* Header with credit notice */}
+        {/* Header with progress */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <span className="text-sm font-medium text-green-700 dark:text-green-400">
-              Credit reserved - Generation in progress
+            <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+            <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
+              Pipeline in progress
             </span>
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -134,18 +134,26 @@ export function ProgressTracker({
           </div>
         </div>
 
-        {/* Current status message */}
+        {/* Current status message with timestamp */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
           <div className="flex items-start gap-2">
             <div className="text-lg">
               {IDEATION_PIPELINE_STAGES[progress.currentStage]?.icon || '⚡'}
             </div>
             <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-mono text-gray-500 dark:text-gray-400">
+                  {new Date().toLocaleTimeString('en-US', { 
+                    hour12: false, 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                  })}
+                </span>
+                <span className="text-xs text-gray-400">-</span>
+              </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 {progress.currentMessage}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Credit will only be deducted when the report is successfully generated.
               </p>
             </div>
           </div>

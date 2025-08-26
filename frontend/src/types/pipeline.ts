@@ -39,13 +39,13 @@ export interface ProcessingJob {
   startTime?: number; // timestamp
 }
 
-// Pipeline stage definitions based on your timing data
+// Pipeline stage definitions with granular progress tracking
 export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
   {
     id: 'setup',
-    name: 'Initializing',
+    name: 'Initial Setup',
     icon: '🚀',
-    estimatedDuration: 2, // 2 seconds
+    estimatedDuration: 2, // 2 seconds - Fast
     startMessage: 'Initializing pipeline and loading secrets...',
     progressMessages: [
       {
@@ -58,7 +58,7 @@ export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
   },
   {
     id: 'research',
-    name: 'Analyzing',
+    name: 'Research Analysis',
     icon: '⚡',
     estimatedDuration: 16, // 16 seconds
     startMessage: 'Research analysis in progress...',
@@ -78,15 +78,15 @@ export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
   },
   {
     id: 'jtbd_reddit',
-    name: 'Researching',
+    name: 'JTBD & Reddit Discovery',
     icon: '🔍',
     estimatedDuration: 215, // 3m 35s
     startMessage: 'Extracting Jobs-to-be-Done from analysis...',
     progressMessages: [
       {
-        percentage: 10,
+        percentage: 5,
         message: 'Searching Reddit for user discussions (25 JTBDs)...',
-        timeOffset: 22
+        timeOffset: 11
       },
       {
         percentage: 40,
@@ -94,16 +94,16 @@ export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
         timeOffset: 86
       },
       {
-        percentage: 80,
+        percentage: 85,
         message: 'Analyzing user sentiment and patterns...',
-        timeOffset: 172
+        timeOffset: 183
       }
     ],
     completedMessage: 'Reddit analysis complete, found 487 discussions...'
   },
   {
     id: 'opportunity_zones',
-    name: 'Identifying',
+    name: 'Opportunity Zone Analysis',
     icon: '🧠',
     estimatedDuration: 733, // 12m 13s
     startMessage: 'Analyzing opportunity zones with AI clustering...',
@@ -111,7 +111,7 @@ export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
       {
         percentage: 15,
         message: 'Enriching zones with Perplexity market research...',
-        timeOffset: 110
+        timeOffset: 185
       },
       {
         percentage: 40,
@@ -128,7 +128,7 @@ export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
   },
   {
     id: 'product_ideas',
-    name: 'Generating',
+    name: 'Product Idea Generation',
     icon: '💡',
     estimatedDuration: 787, // 13m 7s
     startMessage: 'Generating innovative product ideas...',
@@ -152,11 +152,20 @@ export const IDEATION_PIPELINE_STAGES: PipelineStage[] = [
     completedMessage: 'Product portfolio ready, creating GitHub repository...'
   },
   {
-    id: 'finalize',
-    name: 'Finalizing',
+    id: 'quick_consolidation',
+    name: 'Quick Consolidation',
+    icon: '📋',
+    estimatedDuration: 1, // <1 second
+    startMessage: 'Consolidating innovation portfolio...',
+    progressMessages: [],
+    completedMessage: 'Consolidation complete, creating GitHub repository...'
+  },
+  {
+    id: 'github_creation',
+    name: 'GitHub Repository Creation',
     icon: '🎉',
     estimatedDuration: 1565, // 26m 5s
-    startMessage: 'Consolidating innovation portfolio...',
+    startMessage: 'Setting up GitHub repository...',
     progressMessages: [
       {
         percentage: 20,
