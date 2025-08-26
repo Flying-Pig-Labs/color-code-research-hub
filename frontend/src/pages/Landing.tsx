@@ -1,8 +1,8 @@
 /**
- * @fileoverview Landing page for Truffle.
+ * @fileoverview Landing page for Truflr.ai.
  * 
- * Public-facing marketing page that introduces Truffle's product discovery
- * capabilities. Features clean Truffle pig branding, value proposition,
+ * Public-facing marketing page that introduces Truflr.ai's product discovery
+ * capabilities. Features clean Truflr.ai pig branding, value proposition,
  * and call-to-action elements to drive user engagement.
  * 
  * Key Features:
@@ -12,7 +12,7 @@
  * - Prominent beta access request
  * - Professional contact information
  * 
- * @author Truffle Team
+ * @author Truflr.ai Team
  * @version 2.0.0
  */
 

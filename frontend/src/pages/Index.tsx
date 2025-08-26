@@ -1,5 +1,5 @@
 /**
- * @fileoverview Main Research page for Truffle.
+ * @fileoverview Main Research page for Truflr.ai.
  * 
  * Streamlined research interface featuring a single unified form that combines
  * competitive intelligence and market research. Implements hash-based navigation
@@ -18,7 +18,7 @@
  * - Product opportunity discovery  
  * - Strategic positioning insights
  * 
- * @author Truffle Team
+ * @author Truflr.ai Team
  * @version 2.0.0
  */
 

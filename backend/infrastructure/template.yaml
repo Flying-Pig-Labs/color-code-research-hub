@@ -313,6 +313,39 @@ Resources:
             Path: /api/plan/async/status/{jobId}
             Method: GET
 
+  # List Plan Generation Jobs Function
+  ListPlanJobsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: listPlanGenerationJobs.handler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+      Events:
+        ListJobs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/async/list
+            Method: GET
+        OptionsListJobs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /api/plan/async/list
+            Method: OPTIONS
+
   # Lambda Layer for Python Dependencies
   PythonDependenciesLayer:
     Type: AWS::Serverless::LayerVersion
