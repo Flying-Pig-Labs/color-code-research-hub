@@ -177,12 +177,17 @@ const Index = () => {
     G -.-> H["Strategic Opportunities"]
     H -.-> I["Validated Ideas"]
     I -.-> J["Innovation Portfolio"]
-    style A fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000
-    style B fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000
-    style C fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000
-    style D fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000
-    style E fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000
-    classDef outcome fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000
+    style A fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style B fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style C fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style D fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style E fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style F fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style G fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style H fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style I fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style J fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    classDef outcome fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
     class J outcome`}
                 id="ideation-flow"
               />
