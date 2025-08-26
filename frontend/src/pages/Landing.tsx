@@ -1,8 +1,8 @@
 /**
- * @fileoverview Landing page for Truflr.ai.
+ * @fileoverview Landing page for truflr.ai.
  * 
- * Public-facing marketing page that introduces Truflr.ai's product discovery
- * capabilities. Features clean Truflr.ai pig branding, value proposition,
+ * Public-facing marketing page that introduces truflr.ai's product discovery
+ * capabilities. Features clean truflr.ai pig branding, value proposition,
  * and call-to-action elements to drive user engagement.
  * 
  * Key Features:
@@ -12,7 +12,7 @@
  * - Prominent beta access request
  * - Professional contact information
  * 
- * @author Truflr.ai Team
+ * @author truflr.ai Team
  * @version 2.0.0
  */
 
@@ -63,7 +63,7 @@ const Landing = () => {
               </h1>
               <img 
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
-                alt="Truflr.ai Logo" 
+                alt="truflr.ai Logo" 
                 className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28"
                 onError={(e) => {
                   console.error('Landing logo failed to load:', e.currentTarget.src);
@@ -110,7 +110,7 @@ const Landing = () => {
               <span className="text-foreground font-semibold text-lg">truflr.ai</span>
               <img 
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
-                alt="Truflr.ai Logo" 
+                alt="truflr.ai Logo" 
                 className="w-6 h-6"
               />
             </div>

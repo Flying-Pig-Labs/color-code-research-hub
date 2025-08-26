@@ -95,7 +95,7 @@ const SharkSwarmer = () => {
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>How Truflr.ai Ideate Works</DialogTitle>
+            <DialogTitle>How truflr.ai Ideate Works</DialogTitle>
           </DialogHeader>
           <div className="p-6">
             <p className="text-lg">Hello world</p>

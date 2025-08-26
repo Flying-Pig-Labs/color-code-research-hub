@@ -137,7 +137,7 @@ const MilestonesTab = () => {
           showHealthCheck={false}
         />
         <div className="flex-1 flex items-center justify-center">
-          <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20">
+          <Card className="w-full max-w-md bg-card/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20">
             <CardContent className="pt-8 pb-8">
               <div className="flex flex-col items-center">
                 <Loader2 className="h-12 w-12 animate-spin text-carmax-blue mb-6" />
@@ -299,7 +299,7 @@ const MilestonesTab = () => {
 
       {/* How Modal */}
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>How truflr.ai Plan Works</DialogTitle>
           </DialogHeader>

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Main Research page for Truflr.ai.
+ * @fileoverview Main Research page for truflr.ai.
  * 
  * Streamlined research interface featuring a single unified form that combines
  * competitive intelligence and market research. Implements hash-based navigation
@@ -18,7 +18,7 @@
  * - Product opportunity discovery  
  * - Strategic positioning insights
  * 
- * @author Truflr.ai Team
+ * @author truflr.ai Team
  * @version 2.0.0
  */
 
@@ -164,7 +164,7 @@ const Index = () => {
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>How Truflr.ai Research Works</DialogTitle>
+            <DialogTitle>How truflr.ai Research Works</DialogTitle>
           </DialogHeader>
           <div className="p-6">
             <p className="text-lg">Hello world</p>
