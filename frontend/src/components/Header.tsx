@@ -40,6 +40,8 @@ interface NavItem {
   icon: LucideIcon;
   /** Optional styling variant for theming */
   variant?: "red-team" | "black-team" | "white-team" | "ghost";
+  /** Optional click handler for custom actions */
+  onClick?: () => void;
 }
 
 /**
@@ -113,7 +115,13 @@ const Header = ({
                     key={item.path}
                     variant={isActive ? item.variant : "ghost"}
                     size="sm"
-                    onClick={() => navigate(item.path)}
+                    onClick={() => {
+                      if (item.onClick) {
+                        item.onClick();
+                      } else {
+                        navigate(item.path);
+                      }
+                    }}
                     className="gap-2"
                   >
                     <Icon className="h-4 w-4" />
