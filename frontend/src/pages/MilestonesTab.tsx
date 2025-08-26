@@ -301,7 +301,7 @@ const MilestonesTab = () => {
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>How Truffle Plan Works</DialogTitle>
+            <DialogTitle>How Truflr.ai Plan Works</DialogTitle>
           </DialogHeader>
           <div className="p-6">
             <p className="text-lg">Hello world</p>
