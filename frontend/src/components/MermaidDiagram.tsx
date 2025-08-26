@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mermaid from 'mermaid';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface MermaidDiagramProps {
   chart: string;
@@ -8,34 +9,37 @@ interface MermaidDiagramProps {
 
 export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagramProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const { actualTheme } = useTheme();
 
   useEffect(() => {
+    const isDark = actualTheme === 'dark';
+    
     mermaid.initialize({
       startOnLoad: false,
       theme: 'base',
       themeVariables: {
-        primaryColor: '#ffffff',
-        primaryTextColor: '#000000',
-        primaryBorderColor: '#333333',
-        lineColor: '#333333',
-        secondaryColor: '#ffffff',
-        tertiaryColor: '#ffffff',
-        background: '#ffffff',
-        mainBkg: '#ffffff',
-        secondBkg: '#ffffff',
-        tertiaryTextColor: '#000000',
-        textColor: '#000000',
-        nodeTextColor: '#000000',
-        edgeLabelBackground: '#ffffff',
-        clusterBkg: '#ffffff',
-        clusterTextColor: '#000000',
+        primaryColor: isDark ? '#1f2937' : '#ffffff',
+        primaryTextColor: isDark ? '#ffffff' : '#000000',
+        primaryBorderColor: isDark ? '#6b7280' : '#333333',
+        lineColor: isDark ? '#9ca3af' : '#333333',
+        secondaryColor: isDark ? '#374151' : '#ffffff',
+        tertiaryColor: isDark ? '#374151' : '#ffffff',
+        background: isDark ? '#111827' : '#ffffff',
+        mainBkg: isDark ? '#1f2937' : '#ffffff',
+        secondBkg: isDark ? '#374151' : '#ffffff',
+        tertiaryTextColor: isDark ? '#ffffff' : '#000000',
+        textColor: isDark ? '#ffffff' : '#000000',
+        nodeTextColor: isDark ? '#ffffff' : '#000000',
+        edgeLabelBackground: isDark ? '#1f2937' : '#ffffff',
+        clusterBkg: isDark ? '#374151' : '#ffffff',
+        clusterTextColor: isDark ? '#ffffff' : '#000000',
         fontFamily: 'Arial, sans-serif',
         fontSize: '14px',
         fontWeight: 'bold',
-        // Force all text to be black
-        cScale0: '#000000',
-        cScale1: '#000000',
-        cScale2: '#000000',
+        // Force text colors based on theme
+        cScale0: isDark ? '#ffffff' : '#000000',
+        cScale1: isDark ? '#ffffff' : '#000000',
+        cScale2: isDark ? '#ffffff' : '#000000',
       },
     });
 
@@ -45,13 +49,14 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
           const { svg } = await mermaid.render(`${id}-${Date.now()}`, chart);
           ref.current.innerHTML = svg;
           
-          // Force all text to be black after rendering
+          // Force text colors based on theme after rendering
           const svgElement = ref.current.querySelector('svg');
           if (svgElement) {
+            const textColor = isDark ? '#ffffff' : '#000000';
             const allText = svgElement.querySelectorAll('text, tspan, .nodeLabel, .edgeLabel');
             allText.forEach((textElement: any) => {
-              textElement.style.fill = '#000000';
-              textElement.style.color = '#000000';
+              textElement.style.fill = textColor;
+              textElement.style.color = textColor;
               textElement.style.fontWeight = 'bold';
             });
           }
@@ -63,17 +68,19 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
     };
 
     renderDiagram();
-  }, [chart, id]);
+  }, [chart, id, actualTheme]);
 
+  const isDark = actualTheme === 'dark';
+  
   return (
     <div 
       ref={ref} 
       className="mermaid-container" 
       style={{
-        background: 'white',
-        color: 'black',
-        '--mermaid-text-color': '#000000',
-        '--mermaid-node-text-color': '#000000'
+        background: isDark ? '#111827' : 'white',
+        color: isDark ? 'white' : 'black',
+        '--mermaid-text-color': isDark ? '#ffffff' : '#000000',
+        '--mermaid-node-text-color': isDark ? '#ffffff' : '#000000'
       } as any}
     />
   );

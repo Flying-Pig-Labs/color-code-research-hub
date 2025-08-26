@@ -127,43 +127,28 @@ const SharkSwarmer = () => {
               />
             </div>
             
-            {/* Outcome Section */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="font-mono text-sm">
-                <div className="border-b border-gray-300 pb-2 mb-2">
-                  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-                </div>
-                <div className="text-center py-2">
-                  │  🚀 <strong>OUTCOME:</strong> From scattered market research to 10 prioritized, evidence-backed product opportunities in hours   │
-                </div>
-                <div className="border-t border-gray-300 pt-2">
-                  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-                </div>
-              </div>
-            </div>
-
             {/* Key Value Propositions */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold">Key Value Propositions:</h3>
-              <ul className="space-y-2 text-gray-700">
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4 dark:text-white">Key Value Propositions:</h3>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-stone-600">Speed:</span>
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Speed:</span>
                   <span>Hours vs. months of traditional market research</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-stone-600">Authenticity:</span>
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Authenticity:</span>
                   <span>Real user problems from Reddit conversations</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-stone-600">Intelligence:</span>
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Intelligence:</span>
                   <span>AI-powered strategic analysis with market validation</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-stone-600">Precision:</span>
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Precision:</span>
                   <span>Exactly 10 prioritized opportunities with implementation guidance</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-stone-600">Evidence:</span>
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Evidence:</span>
                   <span>Every idea backed by quantified user demand and competitive analysis</span>
                 </li>
               </ul>
