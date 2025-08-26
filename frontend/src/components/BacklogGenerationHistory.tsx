@@ -152,7 +152,7 @@ export function BacklogGenerationHistory({
         <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
           <GitBranch className="h-8 w-8 text-gray-400" />
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No backlog generation jobs found</h3>
+        <h3 className="text-lg font-medium text-foreground mb-2">No backlog generation jobs found</h3>
         <p className="text-gray-500 mb-4">
           {status ? `No jobs with status "${status}" found` : 'Start generating your first project backlog'}
         </p>
@@ -169,7 +169,7 @@ export function BacklogGenerationHistory({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-foreground">
           Backlog Generation History
           {status && (
             <span className="ml-2 text-sm font-normal text-gray-500">
@@ -187,10 +187,10 @@ export function BacklogGenerationHistory({
         </button>
       </div>
 
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-card shadow rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -215,9 +215,9 @@ export function BacklogGenerationHistory({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-border">
               {jobs.map((job) => (
-                <tr key={job.jobId} className="hover:bg-gray-50">
+                <tr key={job.jobId} className="hover:bg-muted/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       {getStatusIcon(job.status)}
@@ -227,7 +227,7 @@ export function BacklogGenerationHistory({
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 font-medium">
+                    <div className="text-sm text-foreground font-medium">
                       {job.projectTitle || 'Untitled Project'}
                     </div>
                     {job.error && (
@@ -237,14 +237,14 @@ export function BacklogGenerationHistory({
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center text-sm text-gray-900">
+                    <div className="flex items-center text-sm text-foreground">
                       <Github className="h-4 w-4 mr-2 text-gray-400" />
                       <span className="font-mono">
                         {job.repositoryName || 'N/A'}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                     <div className="flex items-center">
                       <Hash className="h-4 w-4 mr-1 text-gray-400" />
                       <span className="font-mono">
@@ -257,7 +257,7 @@ export function BacklogGenerationHistory({
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                     {(() => {
                       if (!job.createdAt) return 'N/A';
                       const date = new Date(job.createdAt);
@@ -287,7 +287,7 @@ export function BacklogGenerationHistory({
                         disabled={!job.repositoryName}
                         className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                           job.repositoryName
-                            ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 cursor-pointer'
+                            ? 'bg-muted/50 text-gray-700 hover:bg-gray-100 border border-gray-200 cursor-pointer'
                             : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
                         }`}
                         title={!job.repositoryName ? 'Repository not available' : 'View repository on GitHub'}

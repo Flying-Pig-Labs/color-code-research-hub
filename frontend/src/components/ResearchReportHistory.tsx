@@ -168,46 +168,46 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-foreground">
           Research History
         </h3>
         <button
           onClick={loadReports}
-          className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+          className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded-lg hover:bg-muted/80"
         >
           Refresh
         </button>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-muted/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Target
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Duration
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-card divide-y divide-border">
             {reports.map((report) => (
-              <tr key={report.reportId} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <tr key={report.reportId} className="hover:bg-muted/20">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                   {(() => {
                     if (!report.createdAt) return 'N/A';
                     const date = new Date(report.createdAt);
                     return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'M/d/yyyy h:mma');
                   })()}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900">
+                <td className="px-6 py-4 text-sm text-foreground">
                   {(() => {
                     const target = report.objective || report.metadata?.vendorName || report.metadata?.companyName || report.metadata?.title || report.vendorName || report.companyName || report.title || 'N/A';
                     // Remove " Research" suffix if present

@@ -59,7 +59,7 @@ const Landing = () => {
               className="flex items-center justify-center gap-6 mb-6 hover:opacity-80 transition-opacity"
             >
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight">
-                Truflr.ai
+                truflr.ai
               </h1>
               <img 
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
@@ -107,7 +107,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center text-muted-foreground">
             <div className="flex items-center space-x-3 mb-4 sm:mb-0">
-              <span className="text-foreground font-semibold text-lg">Truflr.ai</span>
+              <span className="text-foreground font-semibold text-lg">truflr.ai</span>
               <img 
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
                 alt="Truflr.ai Logo" 
