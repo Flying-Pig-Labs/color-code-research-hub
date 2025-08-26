@@ -149,16 +149,14 @@ const Index = () => {
 
 
       {/* Research History Section - Clean, spacious layout */}
-      <section className="py-16 lg:py-20 bg-gradient-subtle">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-12 text-foreground">Recent Research Reports</h2>
-          <Card className="bg-card border-border shadow-card">
-            <CardContent className="p-8">
-              <ResearchReportHistory limit={10} />
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      <div className="max-w-6xl mx-auto px-6">
+        <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-12 text-foreground">Recent Research Reports</h2>
+        <Card className="bg-card border-border shadow-card">
+          <CardContent className="p-8">
+            <ResearchReportHistory limit={10} />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* How Modal */}
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
