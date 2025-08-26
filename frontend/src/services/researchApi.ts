@@ -190,7 +190,7 @@ export interface ResearchReport {
   team: string;
   createdAt: string;
   requestId: string;
-  status?: 'pending' | 'processing' | 'completed' | 'failed'; // Add status for processing jobs
+  status?: 'pending' | 'processing' | 'completed' | 'failed' | 'submitted'; // Add status for processing jobs
   jobType?: 'research' | 'ideation'; // Add job type
   s3Prefix?: string;       // New: S3 folder prefix
   s3Files?: {             // New: individual file paths

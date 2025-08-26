@@ -32,7 +32,7 @@ export interface PipelineProgress {
 
 export interface ProcessingJob {
   jobId: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'submitted';
   createdAt: string;
   title: string;
   type: 'ideation' | 'research';

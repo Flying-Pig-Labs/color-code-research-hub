@@ -153,7 +153,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
 
   // Check if a report is currently processing
   const isProcessing = (report: ResearchReport): boolean => {
-    return report.status === 'processing' || report.status === 'pending';
+    return report.status === 'processing' || report.status === 'pending' || report.status === 'submitted';
   };
 
 

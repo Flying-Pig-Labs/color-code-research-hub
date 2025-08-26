@@ -49,7 +49,7 @@ export function ProgressTracker({
   }, [job.status, job.jobId, onComplete, onFailed]);
 
   // Don't render if job is not processing
-  if (job.status !== 'processing') {
+  if (job.status !== 'processing' && job.status !== 'pending' && job.status !== 'submitted') {
     return null;
   }
 
@@ -186,7 +186,7 @@ export function CompactProgressTracker({
     }
   }, [job.status, job.jobId, onComplete, onFailed]);
 
-  if (job.status !== 'processing') {
+  if (job.status !== 'processing' && job.status !== 'pending' && job.status !== 'submitted') {
     return null;
   }
 
