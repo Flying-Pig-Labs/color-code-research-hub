@@ -52,8 +52,8 @@ const MilestonesTab = () => {
   const fetchMvpBuilderRepos = async () => {
     try {
       setLoading(true);
-      // Fetch ocean-studio-apps repos (where BUILD button creates new repos)
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/ocean-studio-apps`, {
+      // Fetch truflr.ai repos (where BUILD button creates new repos)
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/truflr-ai`, {
         credentials: 'omit'
       });
       
@@ -67,7 +67,7 @@ const MilestonesTab = () => {
       console.error("Error fetching repos:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch Ocean Studio Apps repositories. Please check your GitHub token.",
+        description: "Failed to fetch truflr.ai repositories. Please check your GitHub token.",
         variant: "destructive",
       });
     } finally {
@@ -210,7 +210,7 @@ const MilestonesTab = () => {
                 <div>
                   <CardTitle className="text-2xl font-bold text-foreground">Plan GTM</CardTitle>
                   <CardDescription className="text-muted-foreground mt-1">
-                    Choose a repository from ocean-studio-apps to generate your project plan
+                    Choose a repository from truflr.ai to generate your project plan
                   </CardDescription>
                 </div>
               </div>
