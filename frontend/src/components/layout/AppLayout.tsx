@@ -160,7 +160,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               />
             </div>
             <p className="text-muted-foreground font-light text-lg tracking-wide mt-2">
-              Unearth go-to-market gold
+              root up go-to-market gold
             </p>
           </div>
         </div>

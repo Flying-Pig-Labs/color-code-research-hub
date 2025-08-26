@@ -42,7 +42,7 @@ const Login = () => {
             />
           </div>
           <p className="text-muted-foreground text-lg tracking-wide">
-            Unearth go-to-market gold
+            root up go-to-market gold
           </p>
         </div>
 
