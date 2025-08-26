@@ -29,9 +29,30 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
     try {
       setLoading(true);
       setError(null);
-      // Always fetch from API to get all reports including those with summaries
-      const data = await listResearchReports(team, limit);
-      setReports(data);
+      
+      // Get active jobs from localStorage
+      const localTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
+      const activeJobs = localTasks
+        .filter((task: any) => ['pending', 'processing', 'submitted'].includes(task.status))
+        .filter((task: any) => !team || task.team === team)
+        .map((task: any) => ({
+          reportId: task.research_id || task.requestId || task.id,
+          team: task.team || 'unknown',
+          createdAt: task.createdAt,
+          requestId: task.requestId,
+          title: task.vendorName || task.companyName || task.title || 'Research Job',
+          vendorName: task.vendorName,
+          companyName: task.companyName,
+          status: task.status,
+          jobType: task.jobType || 'research'
+        }));
+
+      // Get completed reports from API
+      const apiReports = await listResearchReports(team, limit);
+      
+      // Combine active jobs first, then completed reports
+      const allReports = [...activeJobs, ...apiReports];
+      setReports(allReports.slice(0, limit));
     } catch (err) {
       console.error('Failed to load reports:', err);
       setError('Failed to load research history');

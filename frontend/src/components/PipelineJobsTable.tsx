@@ -22,6 +22,8 @@ import {
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { listResearchReports, ResearchReport } from '@/services/researchApi';
+import { ProgressTracker } from './ProgressTracker';
+import { ProcessingJob } from '../types/pipeline';
 
 interface PipelineJob {
   jobId: string;
@@ -311,36 +313,125 @@ export const PipelineJobsTable = () => {
     );
   }
 
+  // Convert PipelineJob to ProcessingJob for progress tracker
+  const toProcessingJob = (job: PipelineJob): ProcessingJob => {
+    // Map AWS Batch statuses to progress tracker statuses
+    let status: 'pending' | 'processing' | 'completed' | 'failed' | 'submitted';
+    switch (job.status) {
+      case 'SUBMITTED':
+        status = 'submitted';
+        break;
+      case 'PENDING':
+        status = 'pending';
+        break;
+      case 'RUNNING':
+      case 'STARTING':
+        status = 'processing';
+        break;
+      case 'SUCCEEDED':
+        status = 'completed';
+        break;
+      case 'FAILED':
+        status = 'failed';
+        break;
+      default:
+        status = 'pending';
+    }
+    
+    return {
+      jobId: job.jobId,
+      status,
+      createdAt: job.startTime,
+      title: job.objective || 'Pipeline Job',
+      type: 'ideation',
+      startTime: new Date(job.startTime).getTime()
+    };
+  };
+
+  // Filter jobs for different sections
+  const activeJobs = jobs.filter(job => 
+    ['SUBMITTED', 'PENDING', 'RUNNING', 'STARTING'].includes(job.status)
+  );
+  const completedJobs = jobs.filter(job => 
+    ['SUCCEEDED', 'FAILED'].includes(job.status)
+  );
+
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Innovation Pipeline Jobs</h3>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            className="gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${autoRefresh ? 'animate-spin' : ''}`} />
-            {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              fetchResearchReports().then(() => {
-                fetchJobs();
-              });
-            }}
-            className="gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Refresh All
-          </Button>
+    <div className="space-y-6">
+      {/* Active Jobs with Enhanced Progress Display */}
+      {activeJobs.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Active Pipeline Jobs</h3>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAutoRefresh(!autoRefresh)}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${autoRefresh ? 'animate-spin' : ''}`} />
+                {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
+              </Button>
+            </div>
+          </div>
+          
+          {/* Enhanced Progress Cards */}
+          <div className="space-y-4">
+            {activeJobs.map((job) => (
+              <ProgressTracker
+                key={job.jobId}
+                job={toProcessingJob(job)}
+                onComplete={(jobId) => {
+                  toast.success('Pipeline job completed!');
+                  fetchJobs();
+                }}
+                onFailed={(jobId) => {
+                  toast.error('Pipeline job failed.');
+                  fetchJobs();
+                }}
+                className="w-full"
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Completed Jobs Table */}
+      {completedJobs.length > 0 && (
+        <div className="space-y-4">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">
+              {activeJobs.length > 0 ? 'Completed Pipeline Jobs' : 'Innovation Pipeline Jobs'}
+            </h3>
+            <div className="flex items-center gap-2">
+              {activeJobs.length === 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAutoRefresh(!autoRefresh)}
+                  className="gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${autoRefresh ? 'animate-spin' : ''}`} />
+                  {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  fetchResearchReports().then(() => {
+                    fetchJobs();
+                  });
+                }}
+                className="gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Refresh All
+              </Button>
+            </div>
+          </div>
 
       {/* Table */}
       <div className="border rounded-lg">
@@ -358,7 +449,7 @@ export const PipelineJobsTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {jobs.map((job) => {
+            {completedJobs.map((job) => {
               const statusBadge = getStatusBadge(job.status);
               
               return (
@@ -449,6 +540,35 @@ export const PipelineJobsTable = () => {
           </TableBody>
         </Table>
       </div>
+        </div>
+      )}
+
+      {/* Show empty state if no jobs at all */}
+      {activeJobs.length === 0 && completedJobs.length === 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Innovation Pipeline Jobs</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchResearchReports().then(() => {
+                  fetchJobs();
+                });
+              }}
+              className="gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
+          <div className="text-center p-8 text-muted-foreground border rounded-lg">
+            <AlertCircle className="h-8 w-8 mx-auto mb-3 text-muted-foreground/50" />
+            <p className="font-medium">No active pipeline jobs</p>
+            <p className="text-sm mt-2">Start a pipeline by clicking the IDEATE button on a research report</p>
+          </div>
+        </div>
+      )}
 
       {/* Status indicators */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
