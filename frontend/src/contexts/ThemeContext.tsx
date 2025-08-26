@@ -1,10 +1,10 @@
 /**
- * @fileoverview Theme context for dark/light mode support in Truffle.
+ * @fileoverview Theme context for dark/light mode support in truflr.ai.
  * 
  * Provides theme switching functionality across the application with
  * persistent storage and automatic system preference detection.
  * 
- * @author Truffle Team
+ * @author truflr.ai Team
  * @version 1.0.0
  */
 

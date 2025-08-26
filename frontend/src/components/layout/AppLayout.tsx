@@ -1,5 +1,5 @@
 /**
- * @fileoverview Main application layout component for Truffle.
+ * @fileoverview Main application layout component for truflr.ai.
  * 
  * Provides the primary navigation structure and visual design for all authenticated pages.
  * Features a tab-based navigation system with four main sections:
@@ -10,13 +10,13 @@
  * 🔨 Build - Build and deployment management
  * 
  * The layout includes:
- * - Clean typography-focused Truffle branding
+ * - Clean typography-focused truflr.ai branding
  * - Responsive tab navigation with active state management
  * - Automatic route-to-tab synchronization
  * - Logout functionality with session cleanup
  * - Swiss design principles with sophisticated styling
  * 
- * @author Truffle Team
+ * @author truflr.ai Team
  * @version 2.0.0
  */
 
@@ -140,15 +140,15 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </Button>
           </div>
           
-          {/* Clean, typography-focused Truffle branding with logo */}
+          {/* Clean, typography-focused truflr.ai branding with logo */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-4">
               <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-                Truffle
+                truflr.ai
               </h1>
               <img 
                 src={actualTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
-                alt="Truffle Logo" 
+                alt="truflr.ai Logo" 
                 className="w-12 h-12 md:w-16 md:h-16"
                 onError={(e) => {
                   console.error('Logo failed to load:', e.currentTarget.src);
@@ -160,7 +160,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               />
             </div>
             <p className="text-muted-foreground font-light text-lg tracking-wide mt-2">
-              Sniff out your next big product
+              Unearth go-to-market gold
             </p>
           </div>
         </div>
@@ -168,7 +168,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          {/* Clean, minimalist tab navigation - Truffle product development flow */}
+          {/* Clean, minimalist tab navigation - truflr.ai product development flow */}
           <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 mb-12 rounded-lg">
             <TabsTrigger 
               value="research" 

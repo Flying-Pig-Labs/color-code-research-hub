@@ -33,16 +33,16 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-4 mb-6">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-              Truffle
+              truflr.ai
             </h1>
             <img 
               src="/logo-light.png"
-              alt="Truffle Logo" 
+              alt="truflr.ai Logo" 
               className="w-12 h-12 md:w-16 md:h-16"
             />
           </div>
           <p className="text-muted-foreground text-lg tracking-wide">
-            Sniff out your next big product
+            Unearth go-to-market gold
           </p>
         </div>
 

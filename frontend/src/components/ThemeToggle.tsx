@@ -4,7 +4,7 @@
  * Provides a clean toggle button that cycles between light, dark, and system themes.
  * Uses appropriate icons and smooth transitions.
  * 
- * @author Truffle Team
+ * @author truflr.ai Team
  * @version 1.0.0
  */
 

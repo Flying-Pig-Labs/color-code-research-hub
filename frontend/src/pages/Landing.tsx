@@ -52,7 +52,7 @@ const Landing = () => {
       {/* Main Content - Typography focused hero */}
       <div className="flex-1 flex items-center justify-center px-6 py-16">
         <div className="max-w-5xl mx-auto text-center">
-          {/* Clean, sophisticated Truffle branding */}
+          {/* Clean, sophisticated truflr.ai branding */}
           <div className="mb-16">
             <button 
               onClick={() => navigate("/")}
