@@ -150,7 +150,6 @@ const Index = () => {
 
       {/* Research History Section - Clean, spacious layout */}
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-12 text-foreground">Recent Research Reports</h2>
         <Card className="bg-card border-border shadow-card">
           <CardContent className="p-8">
             <ResearchReportHistory limit={10} />
