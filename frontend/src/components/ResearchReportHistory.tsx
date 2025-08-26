@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ExternalLink, Eye } from 'lucide-react';
 import { ReportModal } from './ReportModal';
+import { CompactProgressTracker } from './ProgressTracker';
+import { ProcessingJob } from '../types/pipeline';
 
 interface ResearchReportHistoryProps {
   team?: 'red' | 'black' | 'white';
@@ -125,6 +127,35 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
     setModalMode('preview');
   };
 
+  // Convert ResearchReport to ProcessingJob for progress tracking
+  const toProcessingJob = (report: ResearchReport): ProcessingJob => ({
+    jobId: report.reportId,
+    status: report.status || 'completed',
+    createdAt: report.createdAt,
+    title: report.title || report.vendorName || report.companyName || 'Research Report',
+    type: report.jobType || 'research',
+    startTime: new Date(report.createdAt).getTime()
+  });
+
+  // Handle job completion
+  const handleJobComplete = (jobId: string) => {
+    // Refresh the reports to get updated status
+    loadReports();
+    toast.success('Job completed successfully!');
+  };
+
+  // Handle job failure
+  const handleJobFailed = (jobId: string) => {
+    // Refresh the reports to get updated status
+    loadReports();
+    toast.error('Job failed. Please try again.');
+  };
+
+  // Check if a report is currently processing
+  const isProcessing = (report: ResearchReport): boolean => {
+    return report.status === 'processing' || report.status === 'pending';
+  };
+
 
   // TODO: Future feature - Add delete functionality for individual reports
   // Implementation exists in scripts/delete-report.cjs
@@ -190,7 +221,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 Target
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Duration
+                Progress / Duration
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Actions
@@ -214,96 +245,129 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     return target.endsWith(' Research') ? target.slice(0, -9) : target;
                   })()}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {(() => {
-                    // FIX: Handle inconsistent timestamp formats from DynamoDB
-                    // Some timestamps have microseconds without Z, others have Z
-                    
-                    if (report.createdAt && report.processingCompletedAt) {
-                      // Normalize timestamps - ensure both are treated as UTC
-                      let startStr = report.createdAt;
-                      let endStr = report.processingCompletedAt;
-                      
-                      // If timestamp has microseconds (6 decimal places), truncate to milliseconds (3)
-                      if (startStr.includes('.') && !startStr.endsWith('Z')) {
-                        const parts = startStr.split('.');
-                        const decimals = parts[1].substring(0, 3);
-                        startStr = `${parts[0]}.${decimals}Z`;
-                      } else if (!startStr.endsWith('Z')) {
-                        startStr = `${startStr}Z`;
-                      }
-                      
-                      const startTime = new Date(startStr).getTime();
-                      const endTime = new Date(endStr).getTime();
-                      const durationMs = endTime - startTime;
-                      
-                      // If we have a valid positive duration, use it
-                      if (durationMs > 1000 && durationMs < 86400000) { // > 1 second and < 24 hours
-                        const totalSeconds = Math.floor(durationMs / 1000);
-                        const minutes = Math.floor(totalSeconds / 60);
-                        const seconds = totalSeconds % 60;
-                        return <span className="font-mono">{minutes}m {seconds}s</span>;
-                      }
-                      
-                      // If duration is invalid (negative or too small), use processingTimeMs
-                      if (report.processingTimeMs && report.processingTimeMs > 0) {
-                        const totalSeconds = Math.floor(report.processingTimeMs / 1000);
-                        const minutes = Math.floor(totalSeconds / 60);
-                        const seconds = totalSeconds % 60;
-                        return <span className="font-mono">{minutes}m {seconds}s</span>;
-                      }
-                    }
-                    
-                    // Fallback: If we only have processingTimeMs
-                    if (report.processingTimeMs && report.processingTimeMs > 0) {
-                      const totalSeconds = Math.floor(report.processingTimeMs / 1000);
-                      const minutes = Math.floor(totalSeconds / 60);
-                      const seconds = totalSeconds % 60;
-                      return <span className="font-mono">{minutes}m {seconds}s</span>;
-                    }
-                    
-                    return <span className="text-gray-400">-</span>;
-                  })()}
+                <td className="px-6 py-4">
+                  {isProcessing(report) ? (
+                    <CompactProgressTracker
+                      job={toProcessingJob(report)}
+                      onComplete={handleJobComplete}
+                      onFailed={handleJobFailed}
+                    />
+                  ) : (
+                    <div className="text-sm text-gray-500">
+                      {(() => {
+                        // FIX: Handle inconsistent timestamp formats from DynamoDB
+                        // Some timestamps have microseconds without Z, others have Z
+                        
+                        if (report.createdAt && report.processingCompletedAt) {
+                          // Normalize timestamps - ensure both are treated as UTC
+                          let startStr = report.createdAt;
+                          let endStr = report.processingCompletedAt;
+                          
+                          // If timestamp has microseconds (6 decimal places), truncate to milliseconds (3)
+                          if (startStr.includes('.') && !startStr.endsWith('Z')) {
+                            const parts = startStr.split('.');
+                            const decimals = parts[1].substring(0, 3);
+                            startStr = `${parts[0]}.${decimals}Z`;
+                          } else if (!startStr.endsWith('Z')) {
+                            startStr = `${startStr}Z`;
+                          }
+                          
+                          const startTime = new Date(startStr).getTime();
+                          const endTime = new Date(endStr).getTime();
+                          const durationMs = endTime - startTime;
+                          
+                          // If we have a valid positive duration, use it
+                          if (durationMs > 1000 && durationMs < 86400000) { // > 1 second and < 24 hours
+                            const totalSeconds = Math.floor(durationMs / 1000);
+                            const minutes = Math.floor(totalSeconds / 60);
+                            const seconds = totalSeconds % 60;
+                            return <span className="font-mono">{minutes}m {seconds}s</span>;
+                          }
+                          
+                          // If duration is invalid (negative or too small), use processingTimeMs
+                          if (report.processingTimeMs && report.processingTimeMs > 0) {
+                            const totalSeconds = Math.floor(report.processingTimeMs / 1000);
+                            const minutes = Math.floor(totalSeconds / 60);
+                            const seconds = totalSeconds % 60;
+                            return <span className="font-mono">{minutes}m {seconds}s</span>;
+                          }
+                        }
+                        
+                        // Fallback: If we only have processingTimeMs
+                        if (report.processingTimeMs && report.processingTimeMs > 0) {
+                          const totalSeconds = Math.floor(report.processingTimeMs / 1000);
+                          const minutes = Math.floor(totalSeconds / 60);
+                          const seconds = totalSeconds % 60;
+                          return <span className="font-mono">{minutes}m {seconds}s</span>;
+                        }
+                        
+                        return <span className="text-gray-400">-</span>;
+                      })()}
+                    </div>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handlePreview(report)}
-                      disabled={!report.processedSummary}
-                      className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
-                        report.processedSummary
-                          ? 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 cursor-pointer'
-                          : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
-                      }`}
-                      title={!report.processedSummary ? 'Summary not yet processed' : 'Preview summary'}
-                    >
-                      <Eye className="h-3 w-3 mr-1" />
-                      Preview
-                    </button>
-                    <Link
-                      to={`/reports/${report.reportId}`}
-                      className="inline-flex items-center px-3 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
-                    >
-                      <ExternalLink className="h-3 w-3 mr-1" />
-                      View
-                    </Link>
-                    <button
-                      onClick={() => handleDownload(report)}
-                      disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key}
-                      className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
-                        report.downloadUrl || report.s3Key || report.s3Files?.response || report.s3ReportKey || report.fullReportS3Key
-                          ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 cursor-pointer'
-                          : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
-                      }`}
-                      title={
-                        !report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key
-                          ? 'Download not available yet'
-                          : 'Download report'
-                      }
-                    >
-                      Download
-                    </button>
-                  </div>
+                  {isProcessing(report) ? (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          // TODO: Implement cancel functionality
+                          toast.info('Cancel functionality coming soon');
+                        }}
+                        className="inline-flex items-center px-3 py-1 rounded-lg transition-colors bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 cursor-pointer"
+                        title="Cancel job"
+                      >
+                        Cancel
+                      </button>
+                      <Link
+                        to={`/reports/${report.reportId}`}
+                        className="inline-flex items-center px-3 py-1 rounded-lg bg-gray-100 text-gray-500 border border-gray-200 transition-colors"
+                        title="Job still in progress"
+                      >
+                        <ExternalLink className="h-3 w-3 mr-1" />
+                        View
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handlePreview(report)}
+                        disabled={!report.processedSummary}
+                        className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
+                          report.processedSummary
+                            ? 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 cursor-pointer'
+                            : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
+                        }`}
+                        title={!report.processedSummary ? 'Summary not yet processed' : 'Preview summary'}
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Preview
+                      </button>
+                      <Link
+                        to={`/reports/${report.reportId}`}
+                        className="inline-flex items-center px-3 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
+                      >
+                        <ExternalLink className="h-3 w-3 mr-1" />
+                        View
+                      </Link>
+                      <button
+                        onClick={() => handleDownload(report)}
+                        disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key}
+                        className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
+                          report.downloadUrl || report.s3Key || report.s3Files?.response || report.s3ReportKey || report.fullReportS3Key
+                            ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 cursor-pointer'
+                            : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
+                        }`}
+                        title={
+                          !report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key
+                            ? 'Download not available yet'
+                            : 'Download report'
+                        }
+                      >
+                        Download
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

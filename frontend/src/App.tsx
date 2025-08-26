@@ -66,6 +66,7 @@ import NotFound from "./pages/NotFound";
 import SwarmDashboard from "./components/monitoring/SwarmDashboard";
 import { ReportView } from "./components/ReportView";
 import { ReportViewDemo } from "./components/ReportViewDemo";
+import { ProgressTrackerDemo } from "./components/ProgressTrackerDemo";
 
 /**
  * Global React Query client configuration.
@@ -137,6 +138,7 @@ const App = () => (
             {/* Report Viewer - Research output visualization */}
             <Route path="/reports/:reportId" element={<ProtectedRoute><AppLayout><ReportView /></AppLayout></ProtectedRoute>} />
             <Route path="/demo/reports" element={<ProtectedRoute><AppLayout><ReportViewDemo /></AppLayout></ProtectedRoute>} />
+            <Route path="/demo/progress" element={<ProtectedRoute><AppLayout><ProgressTrackerDemo /></AppLayout></ProtectedRoute>} />
             
             {/* Legacy Redirects - Maintain backward compatibility */}
             <Route path="/research" element={<Navigate to="/home" replace />} />
