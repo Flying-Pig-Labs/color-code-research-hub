@@ -167,7 +167,7 @@ const MilestonesTab = () => {
         <div className="relative z-10">
           <div className="space-y-6">
             {/* Collapsible Backlog Generation History Section */}
-            <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
+            <Card className="bg-card/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
               <CardHeader 
                 className="cursor-pointer hover:bg-carmax-blue/5 transition-all duration-300"
                 onClick={() => setBacklogHistoryExpanded(!backlogHistoryExpanded)}
@@ -201,7 +201,7 @@ const MilestonesTab = () => {
             </Card>
 
             {/* Repository Selection */}
-          <Card className="bg-white/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
+          <Card className="bg-card/90 backdrop-blur-sm shadow-smooth-lg border-carmax-blue/20 hover:border-carmax-blue/30 transition-all duration-300">
             <CardHeader className="border-b border-carmax-blue/10 bg-gradient-to-r from-carmax-yellow/5 to-carmax-blue/5">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-carmax-blue/10">
@@ -223,7 +223,7 @@ const MilestonesTab = () => {
                     placeholder="Search repositories..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 h-12 bg-white/80 border-carmax-blue/20 focus:border-carmax-blue focus:ring-2 focus:ring-carmax-blue/20 transition-all duration-300"
+                    className="pl-10 h-12 bg-background/80 border-carmax-blue/20 focus:border-carmax-blue focus:ring-2 focus:ring-carmax-blue/20 transition-all duration-300"
                   />
                 </div>
 
@@ -241,7 +241,7 @@ const MilestonesTab = () => {
                       filteredRepos.map((repo) => (
                         <Card
                           key={repo.id}
-                          className={`group cursor-pointer bg-white/80 border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5 shadow-smooth-md hover:shadow-smooth-lg transform hover:scale-[1.02] transition-all duration-300 ${submitting && selectedRepo?.id === repo.id ? 'opacity-50' : ''}`}
+                          className={`group cursor-pointer bg-card/80 border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5 shadow-smooth-md hover:shadow-smooth-lg transform hover:scale-[1.02] transition-all duration-300 ${submitting && selectedRepo?.id === repo.id ? 'opacity-50' : ''}`}
                           onClick={() => !submitting && handleRepoSelect(repo)}
                         >
                           <CardContent className="p-4">
