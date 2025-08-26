@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { Fish, Users, Target, Trophy, AlertCircle, Table, Lightbulb, CircleHelp, Loader2, Github, ChevronRight, Search, Globe, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SectionWrapper from "@/components/SectionWrapper";
@@ -93,12 +94,80 @@ const SharkSwarmer = () => {
 
       {/* How Modal */}
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>How truflr.ai Ideate Works</DialogTitle>
+            <DialogTitle>How truflr.ai Ideation Works</DialogTitle>
           </DialogHeader>
-          <div className="p-6">
-            <p className="text-lg">Hello world</p>
+          <div className="p-6 space-y-6">
+            {/* Mermaid Diagram */}
+            <div className="w-full overflow-x-auto">
+              <MermaidDiagram 
+                chart={`graph LR
+    A["📄 RESEARCH<br/>ANALYSIS<br/><br/>• Market docs<br/>• Claude insights<br/>• Key themes"] --> B["🔍 DISCOVERY<br/><br/>• Reddit mining<br/>• Pain discovery<br/>• Jobs-to-be-done<br/>• User problems"]
+    B --> C["🎯 ANALYSIS<br/><br/>• AI clustering<br/>• Zone scoring<br/>• Perplexity AI<br/>• Market intel"]
+    C --> D["💡 IDEATION<br/><br/>• 10 product concepts<br/>• Strategic fit<br/>• Evidence-based<br/>• Validated ideas"]
+    D --> E["📊 PORTFOLIO<br/><br/>• Market sizing<br/>• Risk analysis<br/>• Roadmaps<br/>• Exec summary"]
+    F["Raw Research Data"] -.-> G["Authentic User Needs"]
+    G -.-> H["Strategic Opportunities"]
+    H -.-> I["Validated Ideas"]
+    I -.-> J["Innovation Portfolio"]
+    style A fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style B fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style C fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style D fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style E fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    style F fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style G fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style H fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style I fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    style J fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
+    classDef outcome fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    class J outcome`}
+                id="ideation-flow"
+              />
+            </div>
+            
+            {/* Outcome Section */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="font-mono text-sm">
+                <div className="border-b border-gray-300 pb-2 mb-2">
+                  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+                </div>
+                <div className="text-center py-2">
+                  │  🚀 <strong>OUTCOME:</strong> From scattered market research to 10 prioritized, evidence-backed product opportunities in hours   │
+                </div>
+                <div className="border-t border-gray-300 pt-2">
+                  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+              </div>
+            </div>
+
+            {/* Key Value Propositions */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">Key Value Propositions:</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600">Speed:</span>
+                  <span>Hours vs. months of traditional market research</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600">Authenticity:</span>
+                  <span>Real user problems from Reddit conversations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600">Intelligence:</span>
+                  <span>AI-powered strategic analysis with market validation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600">Precision:</span>
+                  <span>Exactly 10 prioritized opportunities with implementation guidance</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600">Evidence:</span>
+                  <span>Every idea backed by quantified user demand and competitive analysis</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
