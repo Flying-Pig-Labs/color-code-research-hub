@@ -75,7 +75,7 @@ const Landing = () => {
               />
             </button>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
-              Sniff out your next big product
+              Unearth go-to-market gold
             </p>
           </div>
 
