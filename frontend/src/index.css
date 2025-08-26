@@ -11,7 +11,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Sophisticated Color System - Clean whites with charcoal/navy + electric blue accent */
+    /* Sophisticated Color System - Clean whites with charcoal/navy + light brown accent */
     --background: 0 0% 100%;  /* Pure white background for maximum clarity */
     --foreground: 220 15% 15%;  /* Deep charcoal text */
 
@@ -30,7 +30,7 @@ All colors MUST be HSL.
     --muted: 220 10% 95%;  /* Very light gray for muted elements */
     --muted-foreground: 220 10% 45%;
 
-    --accent: 210 100% 55%;  /* Electric blue accent - the single bright color */
+    --accent: 30 40% 60%;  /* Light brown accent - warm and sophisticated */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 75% 55%;
@@ -38,14 +38,14 @@ All colors MUST be HSL.
 
     --border: 220 10% 90%;  /* Subtle gray borders */
     --input: 220 10% 96%;   /* Light input backgrounds */
-    --ring: 210 100% 55%;   /* Electric blue focus rings */
+    --ring: 30 40% 60%;   /* Light brown focus rings */
 
     --radius: 0.5rem;  /* Slightly smaller radius for cleaner look */
 
     /* Sophisticated accent variations */
-    --electric-blue: 210 100% 55%;
-    --electric-blue-light: 210 100% 90%;
-    --electric-blue-dark: 210 100% 45%;
+    --light-brown: 30 40% 60%;
+    --light-brown-light: 30 40% 90%;
+    --light-brown-dark: 30 40% 45%;
 
     /* Refined team colors - more subtle but still distinct */
     --red-team: 0 65% 50%;  /* Refined red */
@@ -62,7 +62,7 @@ All colors MUST be HSL.
 
     /* Minimal gradients - only for subtle depth */
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 10% 98%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(210 100% 55%) 0%, hsl(210 100% 65%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(30 40% 60%) 0%, hsl(30 45% 65%) 100%);
     
     /* Clean shadows - Swiss design inspired */
     --shadow-subtle: 0 1px 3px 0 hsl(220 15% 15% / 0.08);
@@ -85,11 +85,11 @@ All colors MUST be HSL.
     --sidebar-accent: 220 10% 95%;
     --sidebar-accent-foreground: 220 25% 25%;
     --sidebar-border: 220 10% 90%;
-    --sidebar-ring: 210 100% 55%;
+    --sidebar-ring: 30 40% 60%;
   }
 
   .dark {
-    /* Sophisticated dark mode - deep navy with electric blue accents */
+    /* Sophisticated dark mode - deep navy with light brown accents */
     --background: 220 25% 8%;
     --foreground: 0 0% 95%;
 
@@ -108,7 +108,7 @@ All colors MUST be HSL.
     --muted: 220 15% 12%;
     --muted-foreground: 220 10% 65%;
 
-    --accent: 210 100% 65%;  /* Brighter electric blue in dark mode */
+    --accent: 30 45% 65%;  /* Slightly lighter brown in dark mode */
     --accent-foreground: 220 25% 8%;
 
     --destructive: 0 75% 55%;
@@ -116,7 +116,7 @@ All colors MUST be HSL.
 
     --border: 220 20% 18%;
     --input: 220 20% 15%;
-    --ring: 210 100% 65%;
+    --ring: 30 45% 65%;
 
     /* Dark mode shadows */
     --shadow-subtle: 0 1px 3px 0 hsl(220 25% 5% / 0.3);
@@ -125,12 +125,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 220 25% 10%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 210 100% 65%;
+    --sidebar-primary: 30 45% 65%;
     --sidebar-primary-foreground: 220 25% 8%;
     --sidebar-accent: 220 20% 15%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 220 20% 18%;
-    --sidebar-ring: 210 100% 65%;
+    --sidebar-ring: 30 45% 65%;
   }
 }
 
