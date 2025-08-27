@@ -33,7 +33,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertCircle } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';\nimport { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
@@ -197,6 +198,93 @@ const Index = () => {
                       </div>
                       
                       <form onSubmit={(e) => { e.preventDefault(); handleSubmitResearch(); }} className="space-y-8">
+
+                        {/* Core Configuration - applies to all research types */}
+                        <div className=\"border border-border rounded-lg p-6 bg-muted/20\">
+                          <h3 className=\"text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider\">Core Configuration</h3>
+                          
+                          {/* Investment Scale */}
+                          <div className=\"mb-6\">
+                            <Label className=\"font-medium text-foreground mb-3 block\">Investment Scale</Label>
+                            <div className=\"grid grid-cols-4 gap-2\">
+                              {[
+                                { value: 'seed', label: 'Seed', desc: '$0-1M' },
+                                { value: 'growth', label: 'Growth', desc: '$1-25M' },
+                                { value: 'scale', label: 'Scale', desc: '$25-100M' },
+                                { value: 'enterprise', label: 'Enterprise', desc: '$100M+' }
+                              ].map(option => (
+                                <button
+                                  key={option.value}
+                                  type=\"button\"
+                                  onClick={() => setInvestmentScale(option.value)}
+                                  className={`p-3 rounded-md border text-sm text-center transition-colors ${
+                                    investmentScale === option.value
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className=\"font-medium\">{option.label}</div>
+                                  <div className=\"text-xs text-muted-foreground\">{option.desc}</div>
+                                </button>
+                              ))}
+                            </div>
+                            <p className=\"text-xs text-muted-foreground mt-2\">Choose the investment size you're targeting.</p>
+                          </div>
+
+                          {/* Timeline */}
+                          <div className=\"mb-6\">
+                            <Label className=\"font-medium text-foreground mb-3 block\">Timeline</Label>
+                            <div className=\"flex gap-3\">
+                              {[
+                                { value: 'short-term', label: 'Short-term', icon: '⏱', desc: '<2 years' },
+                                { value: 'medium-term', label: 'Medium-term', icon: '📆', desc: '2-5 years' },
+                                { value: 'long-term', label: 'Long-term', icon: '🗓', desc: '5+ years' }
+                              ].map(option => (
+                                <button
+                                  key={option.value}
+                                  type=\"button\"
+                                  onClick={() => setTimeline(option.value)}
+                                  className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    timeline === option.value
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className=\"text-lg mb-1\">{option.icon}</div>
+                                  <div className=\"font-medium\">{option.label}</div>
+                                  <div className=\"text-xs text-muted-foreground\">{option.desc}</div>
+                                </button>
+                              ))}
+                            </div>
+                            <p className=\"text-xs text-muted-foreground mt-2\">Select your planning horizon.</p>
+                          </div>
+
+                          {/* Risk Profile */}
+                          <div className=\"mb-0\">
+                            <Label className=\"font-medium text-foreground mb-3 block\">Risk Profile</Label>
+                            <div className=\"flex gap-3\">
+                              {[
+                                { value: 'conservative', label: 'Conservative' },
+                                { value: 'moderate', label: 'Moderate' },
+                                { value: 'aggressive', label: 'Aggressive' }
+                              ].map(option => (
+                                <button
+                                  key={option.value}
+                                  type=\"button\"
+                                  onClick={() => setRiskProfile(option.value)}
+                                  className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    riskProfile === option.value
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  {option.label}
+                                </button>
+                              ))}
+                            </div>
+                            <p className=\"text-xs text-muted-foreground mt-2\">Adjust to reflect your risk appetite.</p>
+                          </div>
+                        </div>
 
                         {/* Dynamic form content based on research type */}
                         {researchType === "innovation" && (
