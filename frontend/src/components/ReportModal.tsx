@@ -104,67 +104,68 @@ export function ReportModal({
   const summary = reportData?.summary || report?.metadata?.summary || 'No summary available';
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className={`bg-white rounded-lg shadow-xl ${isPreview ? 'max-w-2xl' : 'max-w-4xl w-full max-h-[90vh]'} relative`}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl ${isPreview ? 'max-w-2xl w-full' : 'max-w-5xl w-full'} my-4 relative flex flex-col`} 
+           style={{ maxHeight: 'calc(100vh - 2rem)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <FileText className={`h-6 w-6 ${isPreview ? 'text-blue-600' : 'text-green-600'}`} />
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {isPreview ? 'Report Preview' : 'Full Report'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 transition-colors"
+            className="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200 transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
         {/* Content */}
-        <div className={`p-6 ${!isPreview && 'overflow-y-auto max-h-[calc(90vh-180px)]'}`}>
+        <div className={`flex-1 overflow-y-auto p-6 ${isPreview ? 'flex-shrink-0' : ''}`}>
           {isPreview ? (
             // Preview Mode - Show 120-word summary
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-sm font-medium text-blue-900 mb-2">Executive Summary (120 words)</p>
-                  <p className="text-gray-700 leading-relaxed">{summary}</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">Executive Summary (120 words)</p>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{summary}</p>
                 </div>
               </div>
               
               {reportData && (
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-gray-500">Date:</span>
-                    <span className="ml-2">
+                    <span className="font-medium text-gray-500 dark:text-gray-400">Date:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-200">
                       {reportData.createdAt ? new Date(reportData.createdAt).toLocaleDateString() : 'N/A'}
                     </span>
                   </div>
                   {reportData.vendorName && (
                     <div>
-                      <span className="font-medium text-gray-500">Vendor:</span>
-                      <span className="ml-2">{reportData.vendorName}</span>
+                      <span className="font-medium text-gray-500 dark:text-gray-400">Vendor:</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.vendorName}</span>
                     </div>
                   )}
                   {reportData.companyName && (
                     <div>
-                      <span className="font-medium text-gray-500">Company:</span>
-                      <span className="ml-2">{reportData.companyName}</span>
+                      <span className="font-medium text-gray-500 dark:text-gray-400">Company:</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.companyName}</span>
                     </div>
                   )}
                 </div>
               )}
               
               {/* IDEATE Info */}
-              <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="mt-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
                 <div className="flex items-start">
-                  <Lightbulb className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5" />
+                  <Lightbulb className="h-5 w-5 text-purple-600 dark:text-purple-400 mr-2 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-purple-900">Innovation Pipeline</p>
-                    <p className="text-sm text-purple-700 mt-1">
+                    <p className="text-sm font-medium text-purple-900 dark:text-purple-300">Innovation Pipeline</p>
+                    <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
                       Click <span className="font-semibold">IDEATE</span> to generate actionable innovation ideas 
                       from this research. The process takes approximately 22 minutes and creates a GitHub 
                       repository with detailed implementation plans.
@@ -265,12 +266,12 @@ export function ReportModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 flex-shrink-0">
           {isPreview ? (
             <>
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500"
               >
                 Close
               </button>
@@ -297,7 +298,7 @@ export function ReportModal({
           ) : (
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500"
             >
               Close
             </button>
