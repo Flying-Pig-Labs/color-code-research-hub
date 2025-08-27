@@ -267,14 +267,16 @@ const Index = () => {
                         </div>
 
                         {/* Page Container with Slide Transition */}
-                        <div className="relative overflow-hidden min-h-[400px]">
+                        <div className="relative overflow-hidden">
                           <div 
-                            className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
+                            className={`transition-transform duration-300 ease-in-out ${
                               currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
                             } ${isTransitioning ? 'pointer-events-none' : ''}`}
+                            style={{ minHeight: 'fit-content' }}
                           >
                             {/* Page 1: Use-Case Specific Configuration */}
-                            <div className="space-y-6">
+                            {currentFormPage === 1 && (
+                              <div className="space-y-6">
                               <div className="text-center mb-6">
                                 <h3 className="text-lg font-semibold text-foreground mb-2">Research Configuration</h3>
                                 <p className="text-sm text-muted-foreground">Tell us about your specific research needs</p>
@@ -748,15 +750,11 @@ const Index = () => {
                       </div>
                     </div>
                   )}
-                            </div>
-                          </div>
+                              </div>
+                            )}
 
                           {/* Page 2: Strategic Configuration */}
-                          <div 
-                            className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
-                              currentFormPage === 2 ? 'translate-x-0' : 'translate-x-full'
-                            } ${isTransitioning ? 'pointer-events-none' : ''}`}
-                          >
+                          {currentFormPage === 2 && (
                             <div className="space-y-6">
                               <div className="text-center mb-6">
                                 <h3 className="text-lg font-semibold text-foreground mb-2">Strategic Configuration</h3>
@@ -896,9 +894,8 @@ const Index = () => {
                             </button>
                           </div>
                         </div>
-
                             </div>
-                          </div>
+                          )}
                         </div>
 
                         {/* Navigation Controls */}
