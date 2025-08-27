@@ -284,15 +284,15 @@ const Index = () => {
                   )}
 
                         {/* Research topology selection - moved to bottom with special styling */}
-                        <div className="border-2 border-amber-300 dark:border-amber-600 rounded-lg p-6 bg-amber-50/30 dark:bg-amber-900/10">
+                        <div className="border-2 border-amber-300 dark:border-amber-600 rounded-lg p-6 bg-amber-50/30 dark:bg-amber-900/10 text-center">
                           <Label className="font-medium text-foreground mb-4 block">
                             research topology
                           </Label>
-                          <div className="flex gap-3">
+                          <div className="flex gap-3 justify-center">
                             <button
                               type="button"
                               onClick={() => setResearchTopology('hierarchical')}
-                              className={`px-4 py-2 rounded-md border transition-colors ${
+                              className={`px-3 py-2 rounded-md border transition-colors text-sm ${
                                 researchTopology === 'hierarchical'
                                   ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
                                   : 'bg-background border-border text-muted-foreground hover:bg-muted'
@@ -303,7 +303,7 @@ const Index = () => {
                             <button
                               type="button"
                               onClick={() => setResearchTopology('byzantine')}
-                              className={`px-4 py-2 rounded-md border transition-colors ${
+                              className={`px-3 py-2 rounded-md border transition-colors text-sm ${
                                 researchTopology === 'byzantine'
                                   ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
                                   : 'bg-background border-border text-muted-foreground hover:bg-muted'
@@ -314,7 +314,7 @@ const Index = () => {
                             <button
                               type="button"
                               onClick={() => setResearchTopology('federated')}
-                              className={`px-4 py-2 rounded-md border transition-colors ${
+                              className={`px-3 py-2 rounded-md border transition-colors text-sm ${
                                 researchTopology === 'federated'
                                   ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
                                   : 'bg-background border-border text-muted-foreground hover:bg-muted'
