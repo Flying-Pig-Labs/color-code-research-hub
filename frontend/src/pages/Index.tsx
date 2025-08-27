@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Tooltip,
   TooltipContent,
@@ -227,8 +228,8 @@ const Index = () => {
 
                   {/* Research topology selection */}
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Label htmlFor="topology" className="font-medium text-foreground">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Label className="font-medium text-foreground">
                         research topology
                       </Label>
                       <TooltipProvider>
@@ -246,59 +247,57 @@ const Index = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </div>
-                    <Select value={researchTopology} onValueChange={setResearchTopology}>
-                      <SelectTrigger className="text-base">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hierarchical">
-                          <div className="flex items-center gap-2">
-                            <span>Hierarchical</span>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <HelpCircle className="h-3 w-3 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Centralized command and control</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="byzantine">
-                          <div className="flex items-center gap-2">
-                            <span>Byzantine</span>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <HelpCircle className="h-3 w-3 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Fully decentralized and autonomous</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="federated">
-                          <div className="flex items-center gap-2">
-                            <span>Federated</span>
-                            <span className="text-xs text-amber-600 dark:text-amber-400">(recommended)</span>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <HelpCircle className="h-3 w-3 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Semi-autonomous units with coordinated integration</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <RadioGroup value={researchTopology} onValueChange={setResearchTopology} className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <RadioGroupItem value="hierarchical" id="hierarchical" />
+                        <Label htmlFor="hierarchical" className="flex items-center gap-2 cursor-pointer">
+                          <span>Hierarchical</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Centralized command and control</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <RadioGroupItem value="byzantine" id="byzantine" />
+                        <Label htmlFor="byzantine" className="flex items-center gap-2 cursor-pointer">
+                          <span>Byzantine</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Fully decentralized and autonomous</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <RadioGroupItem value="federated" id="federated" />
+                        <Label htmlFor="federated" className="flex items-center gap-2 cursor-pointer">
+                          <span>Federated</span>
+                          <span className="text-xs text-amber-600 dark:text-amber-400">(recommended)</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Semi-autonomous units with coordinated integration</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
 
                   {/* Additional fields for Innovation research type only */}
