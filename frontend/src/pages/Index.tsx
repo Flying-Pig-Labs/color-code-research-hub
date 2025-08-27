@@ -53,6 +53,11 @@ import {
  */
 const Index = () => {
   const [howModalOpen, setHowModalOpen] = useState(false);
+  
+  // Form page navigation state
+  const [currentFormPage, setCurrentFormPage] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
   // Research type and form state
   const [researchType, setResearchType] = useState("innovation");
   const [researchTopology, setResearchTopology] = useState("federated");
@@ -137,6 +142,43 @@ const Index = () => {
     console.log("Submitting research request:", formData);
   };
 
+  // Page navigation functions
+  const handleNextPage = () => {
+    if (!validatePage1()) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentFormPage(2);
+      setIsTransitioning(false);
+    }, 150);
+  };
+
+  const handlePrevPage = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentFormPage(1);
+      setIsTransitioning(false);
+    }, 150);
+  };
+
+  // Validation for Page 1 (use-case specific fields)
+  const validatePage1 = () => {
+    switch (researchType) {
+      case "innovation":
+        return forestDescription.trim() !== "";
+      case "medical-device":
+        return clinicalArea.trim() !== "";
+      case "private-equity":
+        return targetIndustry.trim() !== "";
+      case "city-revitalization":
+        return targetLocation.trim() !== "";
+      case "data-center":
+        return targetRegion.trim() !== "";
+      default:
+        return true;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
@@ -197,7 +239,46 @@ const Index = () => {
                         )}
                       </div>
                       
-                      <form onSubmit={(e) => { e.preventDefault(); handleSubmitResearch(); }} className="space-y-8">
+                      <form onSubmit={(e) => { e.preventDefault(); currentFormPage === 2 ? handleSubmitResearch() : handleNextPage(); }} className="space-y-8">
+
+                        {/* Progress Indicator */}
+                        <div className="flex items-center justify-center mb-8">
+                          <div className="flex items-center space-x-4">
+                            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                              currentFormPage >= 1 
+                                ? 'bg-stone-600 dark:bg-stone-400 text-white dark:text-black' 
+                                : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
+                            }`}>
+                              1
+                            </div>
+                            <div className={`h-1 w-16 rounded-full ${
+                              currentFormPage >= 2 
+                                ? 'bg-stone-600 dark:bg-stone-400' 
+                                : 'bg-stone-200 dark:bg-stone-700'
+                            }`} />
+                            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                              currentFormPage >= 2 
+                                ? 'bg-stone-600 dark:bg-stone-400 text-white dark:text-black' 
+                                : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
+                            }`}>
+                              2
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Page Container with Slide Transition */}
+                        <div className="relative overflow-hidden min-h-[400px]">
+                          <div 
+                            className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
+                              currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
+                            } ${isTransitioning ? 'pointer-events-none' : ''}`}
+                          >
+                            {/* Page 1: Use-Case Specific Configuration */}
+                            <div className="space-y-6">
+                              <div className="text-center mb-6">
+                                <h3 className="text-lg font-semibold text-foreground mb-2">Research Configuration</h3>
+                                <p className="text-sm text-muted-foreground">Tell us about your specific research needs</p>
+                              </div>
 
                         {/* Dynamic form content based on research type */}
                         {researchType === "innovation" && (
@@ -667,6 +748,20 @@ const Index = () => {
                       </div>
                     </div>
                   )}
+                            </div>
+                          </div>
+
+                          {/* Page 2: Strategic Configuration */}
+                          <div 
+                            className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
+                              currentFormPage === 2 ? 'translate-x-0' : 'translate-x-full'
+                            } ${isTransitioning ? 'pointer-events-none' : ''}`}
+                          >
+                            <div className="space-y-6">
+                              <div className="text-center mb-6">
+                                <h3 className="text-lg font-semibold text-foreground mb-2">Strategic Configuration</h3>
+                                <p className="text-sm text-muted-foreground">Configure investment parameters and research approach</p>
+                              </div>
 
                         {/* Core Configuration - applies to all research types */}
                         <div className="border border-border rounded-lg p-6 bg-muted/20">
@@ -802,21 +897,32 @@ const Index = () => {
                           </div>
                         </div>
 
-                        {/* Submit button */}
-                        <div className="flex justify-center pt-4">
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Navigation Controls */}
+                        <div className="flex justify-between items-center pt-6">
+                          {currentFormPage === 1 ? (
+                            <div></div>
+                          ) : (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={handlePrevPage}
+                              disabled={isTransitioning}
+                            >
+                              Back
+                            </Button>
+                          )}
+                          
                           <Button 
                             type="submit" 
                             size="lg"
                             className="bg-accent hover:bg-accent/90 text-accent-foreground px-8"
-                            disabled={
-                              (researchType === "innovation" && !forestDescription.trim()) ||
-                              (researchType === "medical-device" && !clinicalArea.trim()) ||
-                              (researchType === "private-equity" && !targetIndustry.trim()) ||
-                              (researchType === "city-revitalization" && !targetLocation.trim()) ||
-                              (researchType === "data-center" && !targetRegion.trim())
-                            }
+                            disabled={isTransitioning || (currentFormPage === 1 && !validatePage1())}
                           >
-                            start research hunt
+                            {currentFormPage === 1 ? 'Next' : 'Start Research Hunt'}
                           </Button>
                         </div>
                       </form>
