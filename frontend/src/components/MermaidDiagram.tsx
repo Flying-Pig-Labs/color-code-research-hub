@@ -102,8 +102,19 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
               node.style.strokeWidth = '2px';
             });
             
-            // Ensure SVG has proper viewBox and dimensions for text visibility
+            // Optimize SVG dimensions and remove excess whitespace
             svgElement.style.overflow = 'visible';
+            svgElement.style.display = 'block';
+            svgElement.style.maxWidth = '100%';
+            svgElement.style.height = 'auto';
+            
+            // Remove any internal padding/margins that create whitespace
+            const svgRect = svgElement.getBBox();
+            if (svgRect) {
+              svgElement.setAttribute('viewBox', `0 0 ${svgRect.width + 20} ${svgRect.height + 20}`);
+              svgElement.setAttribute('width', '100%');
+              svgElement.removeAttribute('height');
+            }
           }
         } catch (error) {
           console.error('Error rendering mermaid diagram:', error);
@@ -124,8 +135,7 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
       style={{
         background: isDark ? '#111827' : 'white',
         color: isDark ? 'white' : 'black',
-        minHeight: '400px',
-        padding: '20px',
+        padding: '10px',
         '--mermaid-text-color': isDark ? '#ffffff' : '#000000',
         '--mermaid-node-text-color': isDark ? '#ffffff' : '#000000'
       } as any}
