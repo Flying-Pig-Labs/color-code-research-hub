@@ -415,50 +415,311 @@ const Index = () => {
                         )}
 
                         {researchType === "private-equity" && (
-                          <div>
-                            <Label htmlFor="targetIndustry" className="font-medium text-foreground mb-2 block">
-                              target fragmented industry
-                            </Label>
-                            <Input
-                              id="targetIndustry"
-                              value={targetIndustry}
-                              onChange={(e) => setTargetIndustry(e.target.value)}
-                              placeholder="e.g., HVAC services, veterinary clinics, dental practices, managed IT services"
-                              className="text-base"
-                              required
-                            />
+                          <div className="space-y-6">
+                            {/* Target Profile - Industry field + 3 vertical buttons */}
+                            <div>
+                              <Label htmlFor="targetIndustry" className="font-medium text-foreground mb-2 block">
+                                target fragmented industry
+                              </Label>
+                              <Input
+                                id="targetIndustry"
+                                value={targetIndustry}
+                                onChange={(e) => setTargetIndustry(e.target.value)}
+                                placeholder="e.g., HVAC services, veterinary clinics, dental practices, managed IT services"
+                                className="text-base mb-4"
+                                required
+                              />
+                              
+                              <Label className="font-medium text-foreground mb-3 block">Target Company Profile</Label>
+                              <div className="flex flex-col gap-2">
+                                {[
+                                  { value: 'founder-led', label: 'Founder-Led', desc: 'Original founder still involved' },
+                                  { value: 'family-owned', label: 'Family-Owned', desc: 'Multi-generational business' },
+                                  { value: 'management-owned', label: 'Management-Owned', desc: 'Professional management team' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setTargetProfile(option.value)}
+                                    className={`px-4 py-3 rounded-md border text-sm text-left transition-colors ${
+                                      targetProfile === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-xs text-muted-foreground">{option.desc}</div>
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">What type of ownership structure are you targeting?</p>
+                            </div>
+
+                            {/* Value Driver - 4 pill buttons */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Primary Value Driver</Label>
+                              <div className="flex gap-2 flex-wrap">
+                                {[
+                                  { value: 'consolidation', label: 'Consolidation' },
+                                  { value: 'digitization', label: 'Digitization' },
+                                  { value: 'expansion', label: 'Geographic Expansion' },
+                                  { value: 'operational', label: 'Operational Excellence' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setValueDriver(option.value)}
+                                    className={`px-4 py-2 rounded-full border text-sm transition-colors ${
+                                      valueDriver === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    {option.label}
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">What's your main strategy for value creation?</p>
+                            </div>
+
+                            {/* Seller Motivation - dropdown */}
+                            <div>
+                              <Label htmlFor="sellerMotivation" className="font-medium text-foreground mb-2 block">
+                                Seller Motivation
+                              </Label>
+                              <select
+                                id="sellerMotivation"
+                                value={sellerMotivation}
+                                onChange={(e) => setSellerMotivation(e.target.value)}
+                                className="w-full px-3 py-2 text-base border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                              >
+                                <option value="">Select seller motivation...</option>
+                                <option value="retirement">Founder Retirement</option>
+                                <option value="succession">Succession Planning</option>
+                                <option value="growth-capital">Growth Capital Needs</option>
+                                <option value="liquidity">Liquidity Event</option>
+                                <option value="strategic-pivot">Strategic Pivot</option>
+                                <option value="market-pressure">Market Pressure</option>
+                              </select>
+                              <p className="text-xs text-muted-foreground mt-2">Why might sellers be motivated to exit?</p>
+                            </div>
                           </div>
                         )}
 
                         {researchType === "city-revitalization" && (
-                          <div>
-                            <Label htmlFor="targetLocation" className="font-medium text-foreground mb-2 block">
-                              city, municipality, or county
-                            </Label>
-                            <Input
-                              id="targetLocation"
-                              value={targetLocation}
-                              onChange={(e) => setTargetLocation(e.target.value)}
-                              placeholder="e.g., Richmond, Virginia; Franklin County, Ohio; Bronzeville neighborhood in Chicago"
-                              className="text-base"
-                              required
-                            />
+                          <div className="space-y-6">
+                            {/* Target Location - existing field */}
+                            <div>
+                              <Label htmlFor="targetLocation" className="font-medium text-foreground mb-2 block">
+                                city, municipality, or county
+                              </Label>
+                              <Input
+                                id="targetLocation"
+                                value={targetLocation}
+                                onChange={(e) => setTargetLocation(e.target.value)}
+                                placeholder="e.g., Richmond, Virginia; Franklin County, Ohio; Bronzeville neighborhood in Chicago"
+                                className="text-base"
+                                required
+                              />
+                            </div>
+
+                            {/* Focus Area - dropdown */}
+                            <div>
+                              <Label htmlFor="focusArea" className="font-medium text-foreground mb-2 block">
+                                Development Focus Area
+                              </Label>
+                              <select
+                                id="focusArea"
+                                value={focusArea}
+                                onChange={(e) => setFocusArea(e.target.value)}
+                                className="w-full px-3 py-2 text-base border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                              >
+                                <option value="">Select focus area...</option>
+                                <option value="downtown">Downtown Revitalization</option>
+                                <option value="residential">Residential Development</option>
+                                <option value="mixed-use">Mixed-Use Districts</option>
+                                <option value="industrial">Industrial Redevelopment</option>
+                                <option value="waterfront">Waterfront Development</option>
+                                <option value="historic">Historic Preservation</option>
+                                <option value="transit">Transit-Oriented Development</option>
+                              </select>
+                              <p className="text-xs text-muted-foreground mt-2">What type of development are you focusing on?</p>
+                            </div>
+
+                            {/* Target Population - 2 buttons */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Target Population</Label>
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setTargetPopulation('existing')}
+                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    targetPopulation === 'existing'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className="font-medium">Existing Residents</div>
+                                  <div className="text-xs text-muted-foreground mt-1">Improve current community</div>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setTargetPopulation('new')}
+                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    targetPopulation === 'new'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className="font-medium">New Residents</div>
+                                  <div className="text-xs text-muted-foreground mt-1">Attract new population</div>
+                                </button>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">Who is the primary beneficiary of this development?</p>
+                            </div>
+
+                            {/* Local Contribution - 3-option selector */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Local Government Contribution</Label>
+                              <div className="flex gap-3">
+                                {[
+                                  { value: 'funding', label: 'Funding', desc: 'Financial investment' },
+                                  { value: 'land', label: 'Land', desc: 'Property contribution' },
+                                  { value: 'regulatory', label: 'Regulatory', desc: 'Policy support' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setLocalContribution(option.value)}
+                                    className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                      localContribution === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-xs text-muted-foreground mt-1">{option.desc}</div>
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">What can local government contribute to the project?</p>
+                            </div>
                           </div>
                         )}
 
                         {researchType === "data-center" && (
-                          <div>
-                            <Label htmlFor="targetRegion" className="font-medium text-foreground mb-2 block">
-                              target geographic region
-                            </Label>
-                            <Input
-                              id="targetRegion"
-                              value={targetRegion}
-                              onChange={(e) => setTargetRegion(e.target.value)}
-                              placeholder="e.g., Northern Virginia, state of Arizona, Pacific Northwest, Dallas-Fort Worth metroplex"
-                              className="text-base"
-                              required
-                            />
+                          <div className="space-y-6">
+                            {/* Target Region - existing field */}
+                            <div>
+                              <Label htmlFor="targetRegion" className="font-medium text-foreground mb-2 block">
+                                target geographic region
+                              </Label>
+                              <Input
+                                id="targetRegion"
+                                value={targetRegion}
+                                onChange={(e) => setTargetRegion(e.target.value)}
+                                placeholder="e.g., Northern Virginia, state of Arizona, Pacific Northwest, Dallas-Fort Worth metroplex"
+                                className="text-base"
+                                required
+                              />
+                            </div>
+
+                            {/* Facility Type - 2 buttons */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Facility Type</Label>
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setFacilityType('hyperscale')}
+                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    facilityType === 'hyperscale'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className="font-medium">Hyperscale</div>
+                                  <div className="text-xs text-muted-foreground mt-1">Large-scale cloud providers</div>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setFacilityType('colocation')}
+                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    facilityType === 'colocation'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className="font-medium">Colocation</div>
+                                  <div className="text-xs text-muted-foreground mt-1">Multi-tenant facilities</div>
+                                </button>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">What type of data center are you targeting?</p>
+                            </div>
+
+                            {/* Latency Requirement - 3 buttons */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Latency Requirement</Label>
+                              <div className="flex gap-3">
+                                {[
+                                  { value: 'ultra-low', label: 'Ultra-Low', desc: '<5ms' },
+                                  { value: 'low', label: 'Low', desc: '<20ms' },
+                                  { value: 'standard', label: 'Standard', desc: '<50ms' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setLatencyRequirement(option.value)}
+                                    className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                      latencyRequirement === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-xs text-muted-foreground mt-1">{option.desc}</div>
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">What latency performance do you need?</p>
+                            </div>
+
+                            {/* Disaster Risk Tolerance - 3-step slider */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Disaster Risk Tolerance</Label>
+                              <div className="relative">
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-xs text-muted-foreground">Low Risk</span>
+                                  <span className="text-xs text-muted-foreground">Medium Risk</span>
+                                  <span className="text-xs text-muted-foreground">High Risk</span>
+                                </div>
+                                <div className="flex gap-1">
+                                  {[1, 2, 3].map(level => (
+                                    <button
+                                      key={level}
+                                      type="button"
+                                      onClick={() => setDisasterRisk(level)}
+                                      className={`flex-1 h-3 rounded-full transition-colors ${
+                                        disasterRisk >= level
+                                          ? 'bg-stone-400 dark:bg-stone-500'
+                                          : 'bg-stone-200 dark:bg-stone-700'
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                                <div className="flex justify-between mt-2">
+                                  <span className={`text-xs ${
+                                    disasterRisk >= 1 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                  }`}>Stable regions</span>
+                                  <span className={`text-xs ${
+                                    disasterRisk >= 2 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                  }`}>Some risk acceptable</span>
+                                  <span className={`text-xs ${
+                                    disasterRisk >= 3 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                  }`}>Cost over stability</span>
+                                </div>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">How much disaster risk can you tolerate for lower costs?</p>
+                            </div>
                           </div>
                         )}
 
