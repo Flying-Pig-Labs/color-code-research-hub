@@ -373,7 +373,7 @@ const SharkLeaderboard = () => {
                         size="sm"
                         onClick={() => handleBuild(idea)}
                         disabled={buildingIdea === idea.issueNumber}
-                        className="bg-white dark:bg-gray-800 border-2 border-yellow-500 text-gray-800 dark:text-gray-200 hover:bg-gradient-to-r hover:from-yellow-400 hover:to-yellow-500 hover:text-black font-semibold transition-all duration-200"
+                        className="bg-white dark:bg-black border-2 border-yellow-500 text-gray-800 dark:text-gray-200 hover:bg-gradient-to-r hover:from-yellow-400 hover:to-yellow-500 hover:text-black font-semibold transition-all duration-200"
                       >
                         {buildingIdea === idea.issueNumber ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
