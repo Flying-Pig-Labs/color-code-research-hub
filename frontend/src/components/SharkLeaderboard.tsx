@@ -223,7 +223,7 @@ const SharkLeaderboard = () => {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
+    if (score >= 80) return 'text-yellow-600';
     if (score >= 60) return 'text-blue-600';
     if (score >= 40) return 'text-yellow-600';
     if (score >= 20) return 'text-orange-600';
@@ -315,7 +315,7 @@ const SharkLeaderboard = () => {
                                 href={idea.issueUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-medium hover:underline text-blue-600 block truncate max-w-[250px]"
+                                className="font-medium hover:underline text-yellow-600 dark:text-yellow-400 block truncate max-w-[250px]"
                               >
                                 {idea.issueTitle}
                               </a>
@@ -325,10 +325,6 @@ const SharkLeaderboard = () => {
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <span>{idea.repository}</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </div>
                       </div>
                     </TableCell>
                     
@@ -348,13 +344,7 @@ const SharkLeaderboard = () => {
                     </TableCell>
                     
                     <TableCell className="text-center">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="font-bold text-lg">{idea.investmentDisplay || '$0'}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          <DollarSign className="h-3 w-3 mr-1" />
-                          Total
-                        </Badge>
-                      </div>
+                      <span className="font-bold text-lg">{idea.investmentDisplay || '$0'}</span>
                     </TableCell>
                     
                     <TableCell className="text-center">
@@ -365,9 +355,6 @@ const SharkLeaderboard = () => {
                               <span className={`font-bold text-2xl ${getScoreColor(idea.sharkScore)}`}>
                                 {idea.sharkScore}
                               </span>
-                              <Badge className={`text-xs ${scoreLabel.color}`}>
-                                {scoreLabel.text}
-                              </Badge>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -398,7 +385,7 @@ const SharkLeaderboard = () => {
                         size="sm"
                         onClick={() => handleBuild(idea)}
                         disabled={buildingIdea === idea.issueNumber}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 dark:from-yellow-500 dark:to-yellow-600 dark:hover:from-yellow-400 dark:hover:to-yellow-500 text-black font-semibold"
                       >
                         {buildingIdea === idea.issueNumber ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
