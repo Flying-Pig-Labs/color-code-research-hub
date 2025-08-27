@@ -134,12 +134,12 @@ const Index = () => {
                   </Label>
                   
                   <Tabs value={researchType} onValueChange={setResearchType} className="w-full">
-                    <TabsList className="grid w-full grid-cols-5 mb-8">
-                      <TabsTrigger value="innovation" className="text-sm px-3">innovation</TabsTrigger>
-                      <TabsTrigger value="medical-device" className="text-sm px-3">medical device</TabsTrigger>
-                      <TabsTrigger value="private-equity" className="text-sm px-3">private equity</TabsTrigger>
-                      <TabsTrigger value="city-revitalization" className="text-sm px-3">city revitalization</TabsTrigger>
-                      <TabsTrigger value="data-center" className="text-sm px-3">data center</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-5 mb-8 bg-transparent border-b-2 border-border rounded-none p-0 h-auto">
+                      <TabsTrigger value="innovation" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">innovation</TabsTrigger>
+                      <TabsTrigger value="medical-device" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">medical device</TabsTrigger>
+                      <TabsTrigger value="private-equity" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">private equity</TabsTrigger>
+                      <TabsTrigger value="city-revitalization" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">city revitalization</TabsTrigger>
+                      <TabsTrigger value="data-center" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">data center</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value={researchType} className="mt-0">
