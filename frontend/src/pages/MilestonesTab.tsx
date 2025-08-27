@@ -52,17 +52,10 @@ const MilestonesTab = () => {
   const fetchMvpBuilderRepos = async () => {
     try {
       setLoading(true);
-      // Fetch truflr.ai repos (where BUILD button creates new repos)
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/github/repos/truflr-ai`, {
-        credentials: 'omit'
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch repositories");
-      }
-
-      const data = await response.json();
-      setRepos(data);
+      // Use the GitHub service directly instead of a backend API
+      const { githubService } = await import('../services/githubService');
+      const repos = await githubService.listRecentRepos('', 50); // Get more repos, no prefix filter
+      setRepos(repos);
     } catch (error) {
       console.error("Error fetching repos:", error);
       toast({
