@@ -33,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertCircle } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';\nimport { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
@@ -56,22 +56,39 @@ const Index = () => {
   const [researchType, setResearchType] = useState("innovation");
   const [researchTopology, setResearchTopology] = useState("federated");
   
-  // Innovation form state (current form)
+  // Core Configuration (applies to all research types)
+  const [investmentScale, setInvestmentScale] = useState("growth");
+  const [timeline, setTimeline] = useState("medium-term");
+  const [riskProfile, setRiskProfile] = useState("moderate");
+  
+  // Innovation form state
   const [forestDescription, setForestDescription] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [industryFocus, setIndustryFocus] = useState("");
   
-  // Medical Device form state
+  // Medical Device form state (Clinical Needs Navigator)
   const [clinicalArea, setClinicalArea] = useState("");
+  const [fdaPathway, setFdaPathway] = useState("510k");
+  const [careSetting, setCareSetting] = useState("outpatient");
+  const [techMaturity, setTechMaturity] = useState("emerging");
   
-  // Private Equity form state
+  // Private Equity form state (Acquisition Thesis Generator)
   const [targetIndustry, setTargetIndustry] = useState("");
+  const [targetProfile, setTargetProfile] = useState("add-on");
+  const [valueDriver, setValueDriver] = useState("cost-synergies");
+  const [sellerMotivation, setSellerMotivation] = useState("growth-partnership");
   
-  // City Revitalization form state
+  // City Revitalization form state (Public Funding Strategist)
   const [targetLocation, setTargetLocation] = useState("");
+  const [focusArea, setFocusArea] = useState("infrastructure");
+  const [targetPopulation, setTargetPopulation] = useState("lmi");
+  const [localContribution, setLocalContribution] = useState("cash-match");
   
-  // Data Center form state
+  // Data Center form state (Site Selection Intelligence)
   const [targetRegion, setTargetRegion] = useState("");
+  const [facilityType, setFacilityType] = useState("regional");
+  const [latencyRequirement, setLatencyRequirement] = useState("standard");
+  const [disasterRiskTolerance, setDisasterRiskTolerance] = useState("risk-neutral");
   
   const navItems = [
     { 
@@ -88,25 +105,32 @@ const Index = () => {
     // TODO: Implement API call to Red Team endpoint
     const baseData = { researchType, researchTopology };
     
+    const coreData = { 
+      ...baseData, 
+      investmentScale, 
+      timeline, 
+      riskProfile 
+    };
+    
     let formData;
     switch (researchType) {
       case "innovation":
-        formData = { ...baseData, forestDescription, companyName, industryFocus };
+        formData = { ...coreData, forestDescription, companyName, industryFocus };
         break;
       case "medical-device":
-        formData = { ...baseData, clinicalArea };
+        formData = { ...coreData, clinicalArea, fdaPathway, careSetting, techMaturity };
         break;
       case "private-equity":
-        formData = { ...baseData, targetIndustry };
+        formData = { ...coreData, targetIndustry, targetProfile, valueDriver, sellerMotivation };
         break;
       case "city-revitalization":
-        formData = { ...baseData, targetLocation };
+        formData = { ...coreData, targetLocation, focusArea, targetPopulation, localContribution };
         break;
       case "data-center":
-        formData = { ...baseData, targetRegion };
+        formData = { ...coreData, targetRegion, facilityType, latencyRequirement, disasterRiskTolerance };
         break;
       default:
-        formData = baseData;
+        formData = coreData;
     }
     
     console.log("Submitting research request:", formData);
