@@ -251,26 +251,15 @@ const SharkLeaderboard = () => {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-carmax-blue mb-4" />
-        <p className="text-muted-foreground">Loading top ideas from all reports...</p>
+        <p className="text-muted-foreground">Locating truffles...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header with refresh */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-yellow-500" />
-            Top 10 Ideas Across All Reports
-          </h2>
-          {lastRefreshed && (
-            <p className="text-sm text-muted-foreground mt-1">
-              Last updated: {lastRefreshed.toLocaleTimeString()}
-            </p>
-          )}
-        </div>
+      {/* Refresh button only */}
+      <div className="flex justify-end">
         <Button
           variant="outline"
           size="sm"
@@ -288,7 +277,7 @@ const SharkLeaderboard = () => {
 
       {/* Leaderboard Table */}
       <Card className="overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-carmax-yellow/10 to-carmax-blue/10">
+        <CardHeader className="bg-gradient-to-r from-carmax-yellow/10 to-carmax-blue/10 text-center">
           <CardTitle className="text-lg">Shark Tank Leaderboard</CardTitle>
         </CardHeader>
         <CardContent className="p-0">

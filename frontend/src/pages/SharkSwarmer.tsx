@@ -98,7 +98,7 @@ const SharkSwarmer = () => {
           <DialogHeader>
             <DialogTitle>How truflr.ai Ideation Works</DialogTitle>
           </DialogHeader>
-          <div className="p-6 space-y-6">
+          <div className="p-4 space-y-4">
             {/* Mermaid Diagram */}
             <div className="w-full overflow-x-auto">
               <MermaidDiagram 
@@ -126,8 +126,8 @@ const SharkSwarmer = () => {
             </div>
             
             {/* Key Value Propositions */}
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4 dark:text-white">Key Value Propositions:</h3>
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+              <h3 className="text-lg font-semibold mb-3 dark:text-white">Key Value Propositions:</h3>
               <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-stone-600 dark:text-stone-400">Speed:</span>
