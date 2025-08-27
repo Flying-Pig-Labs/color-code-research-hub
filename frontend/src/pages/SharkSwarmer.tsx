@@ -43,8 +43,8 @@ const SharkSwarmer = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
-        title="Ideate"
-        subtitle="AI-Powered Idea Evaluation"
+        title="ideate"
+        subtitle="ai-powered idea evaluation"
         icon={<Lightbulb className="h-6 w-6" />}
         navItems={navItems}
         showHealthCheck={false}
@@ -67,7 +67,7 @@ const SharkSwarmer = () => {
                       <Target className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <CardDescription>Track running ideation processes and outputs</CardDescription>
+                      <CardDescription>track running ideation processes and outputs</CardDescription>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm">
@@ -96,7 +96,7 @@ const SharkSwarmer = () => {
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
         <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-0">
           <DialogHeader className="p-6 pb-2">
-            <DialogTitle>How truflr.ai Ideation Works</DialogTitle>
+            <DialogTitle>how truflr.ai ideation works</DialogTitle>
           </DialogHeader>
           <div className="px-6 pb-6 space-y-4">
             {/* Mermaid Diagram */}

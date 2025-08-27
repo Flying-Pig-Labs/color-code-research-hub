@@ -146,8 +146,8 @@ const MilestonesTab = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
-        title="Plan"
-        subtitle="Dynamic Backlog Generation"
+        title="plan"
+        subtitle="dynamic backlog generation"
         icon={<Hammer className="h-6 w-6" />}
         navItems={navItems}
         showHealthCheck={false}
@@ -171,9 +171,9 @@ const MilestonesTab = () => {
                       <Target className="h-5 w-5 text-carmax-blue" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-bold text-foreground">Plan Generation History</CardTitle>
+                      <CardTitle className="text-lg font-bold text-foreground">plan generation history</CardTitle>
                       <CardDescription className="text-muted-foreground">
-                        Track completed and running plan generation jobs
+                        track completed and running plan generation jobs
                       </CardDescription>
                     </div>
                   </div>
@@ -201,9 +201,9 @@ const MilestonesTab = () => {
                   <Github className="h-6 w-6 text-carmax-blue" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-foreground">Plan GTM</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-foreground">plan gtm</CardTitle>
                   <CardDescription className="text-muted-foreground mt-1">
-                    Choose a repository from truflr.ai to generate your project plan
+                    choose a repository from truflr.ai to generate your project plan
                   </CardDescription>
                 </div>
               </div>
@@ -213,7 +213,7 @@ const MilestonesTab = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
-                    placeholder="Search repositories..."
+                    placeholder="search repositories..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 h-12 bg-background/80 border-carmax-blue/20 focus:border-carmax-blue focus:ring-2 focus:ring-carmax-blue/20 transition-all duration-300"
@@ -294,10 +294,10 @@ const MilestonesTab = () => {
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>How truflr.ai Plan Works</DialogTitle>
+            <DialogTitle>how truflr.ai plan works</DialogTitle>
           </DialogHeader>
           <div className="p-6">
-            <p className="text-lg">Hello world</p>
+            <p className="text-lg">hello world</p>
           </div>
         </DialogContent>
       </Dialog>

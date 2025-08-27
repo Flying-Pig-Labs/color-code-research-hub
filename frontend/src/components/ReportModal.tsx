@@ -146,7 +146,7 @@ export function ReportModal({
           <div className="flex items-center space-x-3">
             <FileText className={`h-6 w-6 ${isPreview ? 'text-blue-600' : 'text-green-600'}`} />
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {isPreview ? 'Report Preview' : 'Full Report'}
+              {isPreview ? 'report preview' : 'full report'}
             </h2>
           </div>
           <button
@@ -168,7 +168,7 @@ export function ReportModal({
                 {typeof processedSummary === 'string' ? (
                   // Simple summary format
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3">Executive Summary</p>
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3">executive summary</p>
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{processedSummary}</p>
                   </div>
                 ) : (
@@ -176,7 +176,7 @@ export function ReportModal({
                   <div className="space-y-4">
                     {processedSummary.keyInsights.length > 0 && (
                       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                        <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">Key Insights</h4>
+                        <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">key insights</h4>
                         <ul className="space-y-2">
                           {processedSummary.keyInsights.map((insight, idx) => (
                             <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -189,7 +189,7 @@ export function ReportModal({
                     
                     {processedSummary.opportunities.length > 0 && (
                       <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                        <h4 className="text-sm font-semibold text-green-900 dark:text-green-300 mb-3">Opportunities</h4>
+                        <h4 className="text-sm font-semibold text-green-900 dark:text-green-300 mb-3">opportunities</h4>
                         <ul className="space-y-2">
                           {processedSummary.opportunities.map((opp, idx) => (
                             <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -202,7 +202,7 @@ export function ReportModal({
                     
                     {processedSummary.challenges.length > 0 && (
                       <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
-                        <h4 className="text-sm font-semibold text-orange-900 dark:text-orange-300 mb-3">Challenges</h4>
+                        <h4 className="text-sm font-semibold text-orange-900 dark:text-orange-300 mb-3">challenges</h4>
                         <ul className="space-y-2">
                           {processedSummary.challenges.map((challenge, idx) => (
                             <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -356,7 +356,7 @@ export function ReportModal({
                 onClick={onClose}
                 className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500"
               >
-                Close
+                close
               </button>
               <div className="flex space-x-3">
                 {/* IDEATE Button */}
@@ -366,14 +366,14 @@ export function ReportModal({
                   title="Generate innovation ideas from this research"
                 >
                   <Lightbulb className="h-4 w-4 mr-2" />
-                  IDEATE
+                  ideate
                 </button>
                 
                 <button
                   onClick={onViewFull}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
                 >
-                  View Full Report
+                  view full report
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </button>
               </div>
@@ -383,7 +383,7 @@ export function ReportModal({
               onClick={onClose}
               className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500"
             >
-              Close
+              close
             </button>
           )}
         </div>

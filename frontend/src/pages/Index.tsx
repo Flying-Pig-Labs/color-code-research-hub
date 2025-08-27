@@ -72,8 +72,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
-        title="Research"
-        subtitle="Product Discovery Intelligence"
+        title="research"
+        subtitle="product discovery intelligence"
         icon={<Search className="h-6 w-6" />}
         showHealthCheck={false}
         navItems={navItems}
@@ -89,7 +89,7 @@ const Index = () => {
                   {/* Main "Describe the forest" field */}
                   <div>
                     <Label htmlFor="forest" className="text-lg font-heading font-semibold text-foreground mb-2 block">
-                      Launch a truffle hunt
+                      launch a truffle hunt
                     </Label>
                     <Textarea
                       id="forest"
@@ -105,7 +105,7 @@ const Index = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="company" className="font-medium text-foreground mb-2 block">
-                        Company/Project Name
+                        company/project name
                       </Label>
                       <Input
                         id="company"
@@ -118,7 +118,7 @@ const Index = () => {
                     
                     <div>
                       <Label htmlFor="industry" className="font-medium text-foreground mb-2 block">
-                        Industry Focus
+                        industry focus
                       </Label>
                       <Input
                         id="industry"
@@ -138,7 +138,7 @@ const Index = () => {
                       className="bg-accent hover:bg-accent/90 text-accent-foreground px-8"
                       disabled={!forestDescription.trim()}
                     >
-                      Start Research Hunt
+                      start research hunt
                     </Button>
                   </div>
                 </form>

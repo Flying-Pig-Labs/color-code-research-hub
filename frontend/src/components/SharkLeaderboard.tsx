@@ -62,6 +62,7 @@ interface BuildResponse {
 const SharkLeaderboard = () => {
   const { toast } = useToast();
   const [ideas, setIdeas] = useState<LeaderboardIdea[]>([]);
+  const [allIdeas, setAllIdeas] = useState<LeaderboardIdea[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [buildingIdea, setBuildingIdea] = useState<number | null>(null);
@@ -103,7 +104,10 @@ const SharkLeaderboard = () => {
         medal: idea.medal
       }));
       
-      // Filter to only show ideas with valid scores
+      // Store all ideas for stats calculation
+      setAllIdeas(mappedIdeas);
+      
+      // Filter to only show ideas with valid scores in table
       const validIdeas = mappedIdeas.filter((idea: LeaderboardIdea) => 
         idea.sharkScore > 0
       );
@@ -269,27 +273,26 @@ const SharkLeaderboard = () => {
           {refreshing ? (
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
           ) : (
-            <RefreshCw className="h-4 w-4 mr-2" />
+            refreshCw className="h-4 w-4 mr-2" />
           )}
-          Refresh
+          refresh
         </Button>
       </div>
 
       {/* Leaderboard Table */}
       <Card className="overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-carmax-yellow/10 to-carmax-blue/10 text-center">
-          <CardTitle className="text-lg">Shark Tank Leaderboard</CardTitle>
+          <CardTitle className="text-lg">shark tank leaderboard</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16 text-center">Rank</TableHead>
-                <TableHead>Idea Name</TableHead>
-                <TableHead className="max-w-[300px]">Description</TableHead>
-                <TableHead className="text-center">Investment</TableHead>
-                <TableHead className="text-center">Score</TableHead>
-                <TableHead className="text-center">Action</TableHead>
+                <TableHead className="w-16 text-center">rank</TableHead>
+                <TableHead>idea</TableHead>
+                <TableHead className="text-center">investment</TableHead>
+                <TableHead className="text-center">score</TableHead>
+                <TableHead className="text-center">action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -315,7 +318,7 @@ const SharkLeaderboard = () => {
                                 href={idea.issueUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-medium hover:underline text-yellow-600 dark:text-yellow-400 block truncate max-w-[250px]"
+                                className="font-medium hover:underline text-yellow-600 dark:text-yellow-400 block"
                               >
                                 {idea.issueTitle}
                               </a>
@@ -326,21 +329,6 @@ const SharkLeaderboard = () => {
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                    </TableCell>
-                    
-                    <TableCell className="max-w-[300px]">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p className="text-sm text-muted-foreground line-clamp-2">
-                              {idea.description || 'No description available'}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-md">{idea.description || 'No description available'}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
                     </TableCell>
                     
                     <TableCell className="text-center">
@@ -385,14 +373,14 @@ const SharkLeaderboard = () => {
                         size="sm"
                         onClick={() => handleBuild(idea)}
                         disabled={buildingIdea === idea.issueNumber}
-                        className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 dark:from-yellow-500 dark:to-yellow-600 dark:hover:from-yellow-400 dark:hover:to-yellow-500 text-black font-semibold"
+                        className="bg-white dark:bg-gray-800 border-2 border-yellow-500 text-gray-800 dark:text-gray-200 hover:bg-gradient-to-r hover:from-yellow-400 hover:to-yellow-500 hover:text-black font-semibold transition-all duration-200"
                       >
                         {buildingIdea === idea.issueNumber ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           <>
                             <Rocket className="h-4 w-4 mr-1" />
-                            BUILD
+                            build
                           </>
                         )}
                       </Button>
@@ -412,15 +400,15 @@ const SharkLeaderboard = () => {
       </Card>
 
       {/* Stats Summary */}
-      {ideas.length > 0 && (
+      {allIdeas.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Investment Pool</p>
+                  <p className="text-sm text-muted-foreground">total investment pool</p>
                   <p className="text-2xl font-bold">
-                    ${(ideas.reduce((sum, idea) => sum + (idea.investment || 0), 0) / 1000000).toFixed(1)}M
+                    ${(allIdeas.reduce((sum, idea) => sum + (idea.investment || 0), 0) / 1000000).toFixed(1)}M
                   </p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-600" />
@@ -432,9 +420,9 @@ const SharkLeaderboard = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Average Score</p>
+                  <p className="text-sm text-muted-foreground">average score</p>
                   <p className="text-2xl font-bold">
-                    {(ideas.reduce((sum, idea) => sum + idea.sharkScore, 0) / ideas.length).toFixed(1)}
+                    {(allIdeas.filter(idea => idea.sharkScore > 0).reduce((sum, idea) => sum + idea.sharkScore, 0) / allIdeas.filter(idea => idea.sharkScore > 0).length).toFixed(1)}
                   </p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-blue-600" />
@@ -446,9 +434,9 @@ const SharkLeaderboard = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Hot Ideas (80+)</p>
+                  <p className="text-sm text-muted-foreground">hot ideas (80+)</p>
                   <p className="text-2xl font-bold">
-                    {ideas.filter(idea => idea.sharkScore >= 80).length}
+                    {allIdeas.filter(idea => idea.sharkScore >= 80).length}
                   </p>
                 </div>
                 <Trophy className="h-8 w-8 text-yellow-500" />
