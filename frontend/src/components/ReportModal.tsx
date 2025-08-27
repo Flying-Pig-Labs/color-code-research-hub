@@ -101,7 +101,41 @@ export function ReportModal({
 
   const isPreview = mode === 'preview';
   const title = reportData?.title || report?.metadata?.title || 'Research Report';
-  const summary = reportData?.summary || report?.metadata?.summary || 'No summary available';
+  const rawSummary = reportData?.summary || report?.metadata?.summary || 'No summary available';
+  
+  // Process summary into structured format for better readability
+  const processedSummary = React.useMemo(() => {
+    if (rawSummary === 'No summary available') return rawSummary;
+    
+    // Split into sentences and group them into logical sections
+    const sentences = rawSummary.split(/[.!?]+/).filter(s => s.trim().length > 10);
+    
+    if (sentences.length <= 2) {
+      return rawSummary; // Keep short summaries as-is
+    }
+    
+    // Group sentences into key insights
+    const keyInsights = [];
+    const opportunities = [];
+    const challenges = [];
+    
+    sentences.forEach(sentence => {
+      const lower = sentence.toLowerCase();
+      if (lower.includes('opportunity') || lower.includes('potential') || lower.includes('growth')) {
+        opportunities.push(sentence.trim());
+      } else if (lower.includes('challenge') || lower.includes('difficulty') || lower.includes('risk')) {
+        challenges.push(sentence.trim());
+      } else {
+        keyInsights.push(sentence.trim());
+      }
+    });
+    
+    return {
+      keyInsights: keyInsights.slice(0, 3),
+      opportunities: opportunities.slice(0, 2),
+      challenges: challenges.slice(0, 2)
+    };
+  }, [rawSummary]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
@@ -126,36 +160,85 @@ export function ReportModal({
         {/* Content */}
         <div className={`flex-1 overflow-y-auto p-6 ${isPreview ? 'flex-shrink-0' : ''}`}>
           {isPreview ? (
-            // Preview Mode - Show 120-word summary
-            <div className="space-y-4">
+            // Preview Mode - Show structured summary
+            <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                  <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">Executive Summary (120 words)</p>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{summary}</p>
-                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">{title}</h3>
+                
+                {typeof processedSummary === 'string' ? (
+                  // Simple summary format
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3">Executive Summary</p>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{processedSummary}</p>
+                  </div>
+                ) : (
+                  // Structured summary format
+                  <div className="space-y-4">
+                    {processedSummary.keyInsights.length > 0 && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">Key Insights</h4>
+                        <ul className="space-y-2">
+                          {processedSummary.keyInsights.map((insight, idx) => (
+                            <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              • {insight}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {processedSummary.opportunities.length > 0 && (
+                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-green-900 dark:text-green-300 mb-3">Opportunities</h4>
+                        <ul className="space-y-2">
+                          {processedSummary.opportunities.map((opp, idx) => (
+                            <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              • {opp}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {processedSummary.challenges.length > 0 && (
+                      <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-orange-900 dark:text-orange-300 mb-3">Challenges</h4>
+                        <ul className="space-y-2">
+                          {processedSummary.challenges.map((challenge, idx) => (
+                            <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              • {challenge}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               {reportData && (
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-500 dark:text-gray-400">Date:</span>
-                    <span className="ml-2 text-gray-900 dark:text-gray-200">
-                      {reportData.createdAt ? new Date(reportData.createdAt).toLocaleDateString() : 'N/A'}
-                    </span>
+                <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Report Details</h4>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium text-gray-500 dark:text-gray-400">Date:</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-200">
+                        {reportData.createdAt ? new Date(reportData.createdAt).toLocaleDateString() : 'N/A'}
+                      </span>
+                    </div>
+                    {reportData.vendorName && (
+                      <div>
+                        <span className="font-medium text-gray-500 dark:text-gray-400">Vendor:</span>
+                        <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.vendorName}</span>
+                      </div>
+                    )}
+                    {reportData.companyName && (
+                      <div>
+                        <span className="font-medium text-gray-500 dark:text-gray-400">Company:</span>
+                        <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.companyName}</span>
+                      </div>
+                    )}
                   </div>
-                  {reportData.vendorName && (
-                    <div>
-                      <span className="font-medium text-gray-500 dark:text-gray-400">Vendor:</span>
-                      <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.vendorName}</span>
-                    </div>
-                  )}
-                  {reportData.companyName && (
-                    <div>
-                      <span className="font-medium text-gray-500 dark:text-gray-400">Company:</span>
-                      <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.companyName}</span>
-                    </div>
-                  )}
                 </div>
               )}
               
