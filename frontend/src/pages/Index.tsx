@@ -200,13 +200,13 @@ const Index = () => {
                       <form onSubmit={(e) => { e.preventDefault(); handleSubmitResearch(); }} className="space-y-8">
 
                         {/* Core Configuration - applies to all research types */}
-                        <div className=\"border border-border rounded-lg p-6 bg-muted/20\">
-                          <h3 className=\"text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider\">Core Configuration</h3>
+                        <div className="border border-border rounded-lg p-6 bg-muted/20">
+                          <h3 className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">Core Configuration</h3>
                           
                           {/* Investment Scale */}
-                          <div className=\"mb-6\">
-                            <Label className=\"font-medium text-foreground mb-3 block\">Investment Scale</Label>
-                            <div className=\"grid grid-cols-4 gap-2\">
+                          <div className="mb-6">
+                            <Label className="font-medium text-foreground mb-3 block">Investment Scale</Label>
+                            <div className="grid grid-cols-4 gap-2">
                               {[
                                 { value: 'seed', label: 'Seed', desc: '$0-1M' },
                                 { value: 'growth', label: 'Growth', desc: '$1-25M' },
@@ -215,7 +215,7 @@ const Index = () => {
                               ].map(option => (
                                 <button
                                   key={option.value}
-                                  type=\"button\"
+                                  type="button"
                                   onClick={() => setInvestmentScale(option.value)}
                                   className={`p-3 rounded-md border text-sm text-center transition-colors ${
                                     investmentScale === option.value
@@ -223,18 +223,18 @@ const Index = () => {
                                       : 'bg-background border-border text-muted-foreground hover:bg-muted'
                                   }`}
                                 >
-                                  <div className=\"font-medium\">{option.label}</div>
-                                  <div className=\"text-xs text-muted-foreground\">{option.desc}</div>
+                                  <div className="font-medium">{option.label}</div>
+                                  <div className="text-xs text-muted-foreground">{option.desc}</div>
                                 </button>
                               ))}
                             </div>
-                            <p className=\"text-xs text-muted-foreground mt-2\">Choose the investment size you're targeting.</p>
+                            <p className="text-xs text-muted-foreground mt-2">Choose the investment size you're targeting.</p>
                           </div>
 
                           {/* Timeline */}
-                          <div className=\"mb-6\">
-                            <Label className=\"font-medium text-foreground mb-3 block\">Timeline</Label>
-                            <div className=\"flex gap-3\">
+                          <div className="mb-6">
+                            <Label className="font-medium text-foreground mb-3 block">Timeline</Label>
+                            <div className="flex gap-3">
                               {[
                                 { value: 'short-term', label: 'Short-term', icon: '⏱', desc: '<2 years' },
                                 { value: 'medium-term', label: 'Medium-term', icon: '📆', desc: '2-5 years' },
@@ -242,7 +242,7 @@ const Index = () => {
                               ].map(option => (
                                 <button
                                   key={option.value}
-                                  type=\"button\"
+                                  type="button"
                                   onClick={() => setTimeline(option.value)}
                                   className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
                                     timeline === option.value
@@ -250,19 +250,19 @@ const Index = () => {
                                       : 'bg-background border-border text-muted-foreground hover:bg-muted'
                                   }`}
                                 >
-                                  <div className=\"text-lg mb-1\">{option.icon}</div>
-                                  <div className=\"font-medium\">{option.label}</div>
-                                  <div className=\"text-xs text-muted-foreground\">{option.desc}</div>
+                                  <div className="text-lg mb-1">{option.icon}</div>
+                                  <div className="font-medium">{option.label}</div>
+                                  <div className="text-xs text-muted-foreground">{option.desc}</div>
                                 </button>
                               ))}
                             </div>
-                            <p className=\"text-xs text-muted-foreground mt-2\">Select your planning horizon.</p>
+                            <p className="text-xs text-muted-foreground mt-2">Select your planning horizon.</p>
                           </div>
 
                           {/* Risk Profile */}
-                          <div className=\"mb-0\">
-                            <Label className=\"font-medium text-foreground mb-3 block\">Risk Profile</Label>
-                            <div className=\"flex gap-3\">
+                          <div className="mb-0">
+                            <Label className="font-medium text-foreground mb-3 block">Risk Profile</Label>
+                            <div className="flex gap-3">
                               {[
                                 { value: 'conservative', label: 'Conservative' },
                                 { value: 'moderate', label: 'Moderate' },
@@ -270,7 +270,7 @@ const Index = () => {
                               ].map(option => (
                                 <button
                                   key={option.value}
-                                  type=\"button\"
+                                  type="button"
                                   onClick={() => setRiskProfile(option.value)}
                                   className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
                                     riskProfile === option.value
@@ -282,7 +282,7 @@ const Index = () => {
                                 </button>
                               ))}
                             </div>
-                            <p className=\"text-xs text-muted-foreground mt-2\">Adjust to reflect your risk appetite.</p>
+                            <p className="text-xs text-muted-foreground mt-2">Adjust to reflect your risk appetite.</p>
                           </div>
                         </div>
 
@@ -300,18 +300,117 @@ const Index = () => {
                         )}
 
                         {researchType === "medical-device" && (
-                          <div>
-                            <Label htmlFor="clinicalArea" className="font-medium text-foreground mb-2 block">
-                              clinical area or medical condition
-                            </Label>
-                            <Input
-                              id="clinicalArea"
-                              value={clinicalArea}
-                              onChange={(e) => setClinicalArea(e.target.value)}
-                              placeholder="e.g., Cardiology, orthopedic spine surgery, type 2 diabetes management, glaucoma"
-                              className="text-base"
-                              required
-                            />
+                          <div className="space-y-6">
+                            {/* Clinical Area - existing field */}
+                            <div>
+                              <Label htmlFor="clinicalArea" className="font-medium text-foreground mb-2 block">
+                                clinical area or medical condition
+                              </Label>
+                              <Input
+                                id="clinicalArea"
+                                value={clinicalArea}
+                                onChange={(e) => setClinicalArea(e.target.value)}
+                                placeholder="e.g., Cardiology, orthopedic spine surgery, type 2 diabetes management, glaucoma"
+                                className="text-base"
+                                required
+                              />
+                            </div>
+
+                            {/* FDA Pathway - 2 button selector */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">FDA Regulatory Pathway</Label>
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setFdaPathway('510k')}
+                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    fdaPathway === '510k'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className="font-medium">510(k) Clearance</div>
+                                  <div className="text-xs text-muted-foreground mt-1">Predicate device exists</div>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setFdaPathway('pma')}
+                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                    fdaPathway === 'pma'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  <div className="font-medium">PMA Approval</div>
+                                  <div className="text-xs text-muted-foreground mt-1">Novel/high-risk device</div>
+                                </button>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">Choose the expected FDA regulatory path.</p>
+                            </div>
+
+                            {/* Care Setting - 3 pill buttons */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Primary Care Setting</Label>
+                              <div className="flex gap-2 flex-wrap">
+                                {[
+                                  { value: 'outpatient', label: 'Outpatient' },
+                                  { value: 'inpatient', label: 'Inpatient' },
+                                  { value: 'home', label: 'Home Care' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setCareSetting(option.value)}
+                                    className={`px-4 py-2 rounded-full border text-sm transition-colors ${
+                                      careSetting === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    {option.label}
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">Where will the device primarily be used?</p>
+                            </div>
+
+                            {/* Technology Maturity - 3-step slider */}
+                            <div>
+                              <Label className="font-medium text-foreground mb-3 block">Technology Maturity Level</Label>
+                              <div className="relative">
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-xs text-muted-foreground">Concept</span>
+                                  <span className="text-xs text-muted-foreground">Prototype</span>
+                                  <span className="text-xs text-muted-foreground">Validated</span>
+                                </div>
+                                <div className="flex gap-1">
+                                  {[1, 2, 3].map(level => (
+                                    <button
+                                      key={level}
+                                      type="button"
+                                      onClick={() => setTechMaturity(level)}
+                                      className={`flex-1 h-3 rounded-full transition-colors ${
+                                        techMaturity >= level
+                                          ? 'bg-stone-400 dark:bg-stone-500'
+                                          : 'bg-stone-200 dark:bg-stone-700'
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                                <div className="flex justify-between mt-2">
+                                  <span className={`text-xs ${
+                                    techMaturity >= 1 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                  }`}>Early stage</span>
+                                  <span className={`text-xs ${
+                                    techMaturity >= 2 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                  }`}>Working prototype</span>
+                                  <span className={`text-xs ${
+                                    techMaturity >= 3 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                  }`}>Clinical validation</span>
+                                </div>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">How mature is the underlying technology?</p>
+                            </div>
                           </div>
                         )}
 
