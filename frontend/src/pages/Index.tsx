@@ -71,25 +71,25 @@ const Index = () => {
   const [clinicalArea, setClinicalArea] = useState("");
   const [fdaPathway, setFdaPathway] = useState("510k");
   const [careSetting, setCareSetting] = useState("outpatient");
-  const [techMaturity, setTechMaturity] = useState("emerging");
+  const [techMaturity, setTechMaturity] = useState(1);
   
   // Private Equity form state (Acquisition Thesis Generator)
   const [targetIndustry, setTargetIndustry] = useState("");
-  const [targetProfile, setTargetProfile] = useState("add-on");
-  const [valueDriver, setValueDriver] = useState("cost-synergies");
-  const [sellerMotivation, setSellerMotivation] = useState("growth-partnership");
+  const [targetProfile, setTargetProfile] = useState("founder-led");
+  const [valueDriver, setValueDriver] = useState("consolidation");
+  const [sellerMotivation, setSellerMotivation] = useState("");
   
   // City Revitalization form state (Public Funding Strategist)
   const [targetLocation, setTargetLocation] = useState("");
-  const [focusArea, setFocusArea] = useState("infrastructure");
-  const [targetPopulation, setTargetPopulation] = useState("lmi");
-  const [localContribution, setLocalContribution] = useState("cash-match");
+  const [focusArea, setFocusArea] = useState("");
+  const [targetPopulation, setTargetPopulation] = useState("existing");
+  const [localContribution, setLocalContribution] = useState("funding");
   
   // Data Center form state (Site Selection Intelligence)
   const [targetRegion, setTargetRegion] = useState("");
-  const [facilityType, setFacilityType] = useState("regional");
-  const [latencyRequirement, setLatencyRequirement] = useState("standard");
-  const [disasterRiskTolerance, setDisasterRiskTolerance] = useState("risk-neutral");
+  const [facilityType, setFacilityType] = useState("hyperscale");
+  const [latencyRequirement, setLatencyRequirement] = useState("ultra-low");
+  const [disasterRiskTolerance, setDisasterRiskTolerance] = useState(1);
   
   const navItems = [
     { 
@@ -697,9 +697,9 @@ const Index = () => {
                                     <button
                                       key={level}
                                       type="button"
-                                      onClick={() => setDisasterRisk(level)}
+                                      onClick={() => setDisasterRiskTolerance(level)}
                                       className={`flex-1 h-3 rounded-full transition-colors ${
-                                        disasterRisk >= level
+                                        disasterRiskTolerance >= level
                                           ? 'bg-stone-400 dark:bg-stone-500'
                                           : 'bg-stone-200 dark:bg-stone-700'
                                       }`}
@@ -708,13 +708,13 @@ const Index = () => {
                                 </div>
                                 <div className="flex justify-between mt-2">
                                   <span className={`text-xs ${
-                                    disasterRisk >= 1 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                    disasterRiskTolerance >= 1 ? 'text-foreground font-medium' : 'text-muted-foreground'
                                   }`}>Stable regions</span>
                                   <span className={`text-xs ${
-                                    disasterRisk >= 2 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                    disasterRiskTolerance >= 2 ? 'text-foreground font-medium' : 'text-muted-foreground'
                                   }`}>Some risk acceptable</span>
                                   <span className={`text-xs ${
-                                    disasterRisk >= 3 ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                    disasterRiskTolerance >= 3 ? 'text-foreground font-medium' : 'text-muted-foreground'
                                   }`}>Cost over stability</span>
                                 </div>
                               </div>
