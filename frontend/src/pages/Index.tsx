@@ -25,7 +25,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { ResearchReportHistory } from "@/components/ResearchReportHistory";
-import { CircleHelp, Search, FileText, HelpCircle } from "lucide-react";
+import { CircleHelp, Search, FileText, HelpCircle, Clock, Calendar, CalendarDays } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -705,25 +705,30 @@ const Index = () => {
                             <Label className="font-medium text-foreground mb-3 block">Timeline</Label>
                             <div className="flex gap-3">
                               {[
-                                { value: 'short-term', label: 'Short-term', icon: '⏱', desc: '<2 years' },
-                                { value: 'medium-term', label: 'Medium-term', icon: '📆', desc: '2-5 years' },
-                                { value: 'long-term', label: 'Long-term', icon: '🗓', desc: '5+ years' }
-                              ].map(option => (
-                                <button
-                                  key={option.value}
-                                  type="button"
-                                  onClick={() => setTimeline(option.value)}
-                                  className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
-                                    timeline === option.value
-                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
-                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
-                                  }`}
-                                >
-                                  <div className="text-lg mb-1">{option.icon}</div>
-                                  <div className="font-medium">{option.label}</div>
-                                  <div className="text-xs text-muted-foreground">{option.desc}</div>
-                                </button>
-                              ))}
+                                { value: 'short-term', label: 'Short-term', icon: Clock, desc: '<2 years' },
+                                { value: 'medium-term', label: 'Medium-term', icon: Calendar, desc: '2-5 years' },
+                                { value: 'long-term', label: 'Long-term', icon: CalendarDays, desc: '5+ years' }
+                              ].map(option => {
+                                const IconComponent = option.icon;
+                                return (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setTimeline(option.value)}
+                                    className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                      timeline === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    <div className="mb-1">
+                                      <IconComponent className="h-5 w-5 mx-auto" />
+                                    </div>
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-xs text-muted-foreground">{option.desc}</div>
+                                  </button>
+                                );
+                              })}
                             </div>
                             <p className="text-xs text-muted-foreground mt-2">Select your planning horizon.</p>
                           </div>
