@@ -94,11 +94,11 @@ const SharkSwarmer = () => {
 
       {/* How Modal */}
       <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-0">
+          <DialogHeader className="p-6 pb-2">
             <DialogTitle>How truflr.ai Ideation Works</DialogTitle>
           </DialogHeader>
-          <div className="p-4 space-y-4">
+          <div className="px-6 pb-6 space-y-4">
             {/* Mermaid Diagram */}
             <div className="w-full overflow-x-auto">
               <MermaidDiagram 

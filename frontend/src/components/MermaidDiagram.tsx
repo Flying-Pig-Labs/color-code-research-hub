@@ -16,36 +16,31 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
     
     mermaid.initialize({
       startOnLoad: false,
-      theme: 'default',
+      theme: 'base',
       themeVariables: {
-        // Use white background with black text for maximum contrast
-        primaryColor: '#ffffff',
-        primaryTextColor: '#000000',
-        primaryBorderColor: '#333333',
-        lineColor: '#333333',
-        secondaryColor: '#f8f9fa',
-        tertiaryColor: '#e9ecef',
-        background: '#ffffff',
-        mainBkg: '#ffffff',
-        secondBkg: '#f8f9fa',
-        tertiaryTextColor: '#000000',
-        textColor: '#000000',
-        nodeTextColor: '#000000',
-        edgeLabelBackground: '#ffffff',
-        clusterBkg: '#f8f9fa',
-        clusterTextColor: '#000000',
+        // Node/tile backgrounds: light gray for light mode, very dark for dark mode
+        primaryColor: isDark ? '#0f1419' : '#f3f4f6',
+        primaryTextColor: isDark ? '#ffffff' : '#000000',
+        primaryBorderColor: isDark ? '#374151' : '#333333',
+        lineColor: isDark ? '#6b7280' : '#333333',
+        secondaryColor: isDark ? '#1f2937' : '#e5e7eb',
+        tertiaryColor: isDark ? '#1f2937' : '#e5e7eb',
+        background: isDark ? '#111827' : '#ffffff',
+        mainBkg: isDark ? '#0f1419' : '#f3f4f6',
+        secondBkg: isDark ? '#1f2937' : '#e5e7eb',
+        tertiaryTextColor: isDark ? '#ffffff' : '#000000',
+        textColor: isDark ? '#ffffff' : '#000000',
+        nodeTextColor: isDark ? '#ffffff' : '#000000',
+        edgeLabelBackground: isDark ? '#0f1419' : '#ffffff',
+        clusterBkg: isDark ? '#1f2937' : '#e5e7eb',
+        clusterTextColor: isDark ? '#ffffff' : '#000000',
         fontFamily: 'Arial, sans-serif',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        // Force all text to be black
-        cScale0: '#000000',
-        cScale1: '#000000',
-        cScale2: '#000000',
-        cScale3: '#000000',
-        cScale4: '#000000',
-        cScale5: '#000000',
-        cScale6: '#000000',
-        cScale7: '#000000',
+        fontSize: '12px',
+        fontWeight: 'normal',
+        // Force text colors based on theme
+        cScale0: isDark ? '#ffffff' : '#000000',
+        cScale1: isDark ? '#ffffff' : '#000000',
+        cScale2: isDark ? '#ffffff' : '#000000',
       },
       flowchart: {
         nodeSpacing: 20,
@@ -55,33 +50,20 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
       },
       themeCSS: `
         .node rect, .node circle, .node ellipse, .node polygon {
-          fill: #ffffff !important;
-          stroke: #333333 !important;
-          stroke-width: 2px !important;
+          fill: ${isDark ? '#0f1419' : '#f3f4f6'} !important;
+          stroke: ${isDark ? '#374151' : '#333333'} !important;
         }
-        .node text, .nodeLabel, .edgeLabel, .cluster text, text, tspan {
-          fill: #000000 !important;
-          color: #000000 !important;
-          font-size: 14px !important;
-          font-weight: bold !important;
-          font-family: Arial, sans-serif !important;
+        .node text {
+          fill: ${isDark ? '#ffffff' : '#000000'} !important;
+          font-size: 12px !important;
+          font-weight: normal !important;
         }
         .edgeLabel {
-          background-color: #ffffff !important;
-          color: #000000 !important;
+          background-color: ${isDark ? '#0f1419' : '#ffffff'} !important;
         }
         .cluster rect {
-          fill: #f8f9fa !important;
-          stroke: #333333 !important;
-          stroke-width: 1px !important;
-        }
-        .edgePath .path {
-          stroke: #333333 !important;
-          stroke-width: 2px !important;
-        }
-        .marker {
-          fill: #333333 !important;
-          stroke: #333333 !important;
+          fill: ${isDark ? '#1f2937' : '#e5e7eb'} !important;
+          stroke: ${isDark ? '#374151' : '#333333'} !important;
         }
       `,
     });
@@ -92,53 +74,36 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
           const { svg } = await mermaid.render(`${id}-${Date.now()}`, chart);
           ref.current.innerHTML = svg;
           
-          // Force black text and white backgrounds after rendering
+          // Force styling based on theme after rendering
           const svgElement = ref.current.querySelector('svg');
           if (svgElement) {
-            // Fix text styling - force black text with bold weight
-            const allText = svgElement.querySelectorAll('text, tspan, .nodeLabel, .edgeLabel, foreignObject div');
+            const textColor = isDark ? '#ffffff' : '#000000';
+            const nodeColor = isDark ? '#0f1419' : '#f3f4f6';
+            const strokeColor = isDark ? '#374151' : '#333333';
+            
+            // Fix text styling and ensure it's not cut off
+            const allText = svgElement.querySelectorAll('text, tspan, .nodeLabel, .edgeLabel');
             allText.forEach((textElement: any) => {
-              textElement.style.fill = '#000000';
-              textElement.style.color = '#000000';
-              textElement.style.fontWeight = 'bold';
-              textElement.style.fontSize = '14px';
+              textElement.style.fill = textColor;
+              textElement.style.color = textColor;
+              textElement.style.fontWeight = 'normal';
+              textElement.style.fontSize = '12px';
               textElement.style.fontFamily = 'Arial, sans-serif';
+              // Prevent text overflow
               textElement.style.overflow = 'visible';
               textElement.style.textOverflow = 'clip';
             });
             
-            // Fix node backgrounds - white with dark borders
+            // Fix node backgrounds
             const allNodes = svgElement.querySelectorAll('.node rect, .node circle, .node ellipse, .node polygon');
             allNodes.forEach((node: any) => {
-              node.style.fill = '#ffffff';
-              node.style.stroke = '#333333';
+              node.style.fill = nodeColor;
+              node.style.stroke = strokeColor;
               node.style.strokeWidth = '2px';
-            });
-            
-            // Fix cluster backgrounds
-            const allClusters = svgElement.querySelectorAll('.cluster rect');
-            allClusters.forEach((cluster: any) => {
-              cluster.style.fill = '#f8f9fa';
-              cluster.style.stroke = '#333333';
-              cluster.style.strokeWidth = '1px';
-            });
-            
-            // Fix edge paths and arrows
-            const allPaths = svgElement.querySelectorAll('.edgePath .path');
-            allPaths.forEach((path: any) => {
-              path.style.stroke = '#333333';
-              path.style.strokeWidth = '2px';
-            });
-            
-            const allMarkers = svgElement.querySelectorAll('.marker');
-            allMarkers.forEach((marker: any) => {
-              marker.style.fill = '#333333';
-              marker.style.stroke = '#333333';
             });
             
             // Ensure SVG has proper viewBox and dimensions for text visibility
             svgElement.style.overflow = 'visible';
-            svgElement.style.backgroundColor = '#ffffff';
           }
         } catch (error) {
           console.error('Error rendering mermaid diagram:', error);
@@ -157,12 +122,12 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
       ref={ref} 
       className="mermaid-container w-full overflow-visible" 
       style={{
-        background: 'white',
-        color: 'black',
+        background: isDark ? '#111827' : 'white',
+        color: isDark ? 'white' : 'black',
         minHeight: '400px',
         padding: '20px',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px'
+        '--mermaid-text-color': isDark ? '#ffffff' : '#000000',
+        '--mermaid-node-text-color': isDark ? '#ffffff' : '#000000'
       } as any}
     />
   );
