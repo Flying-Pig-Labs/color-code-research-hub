@@ -25,7 +25,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { ResearchReportHistory } from "@/components/ResearchReportHistory";
-import { CircleHelp, Search, FileText } from "lucide-react";
+import { CircleHelp, Search, FileText, HelpCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,6 +33,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertCircle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /**
  * Main Research page component for streamlined product discovery.
@@ -48,6 +55,7 @@ const Index = () => {
   const [forestDescription, setForestDescription] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [industryFocus, setIndustryFocus] = useState("");
+  const [researchTopology, setResearchTopology] = useState("federated");
   
   const navItems = [
     { 
@@ -65,7 +73,8 @@ const Index = () => {
     console.log("Submitting research request:", {
       forestDescription,
       companyName,
-      industryFocus
+      industryFocus,
+      researchTopology
     });
   };
 
@@ -83,7 +92,7 @@ const Index = () => {
       {/* Streamlined Research Form - The main interface */}
         <section className="py-12 lg:py-20">
           <div className="max-w-4xl mx-auto px-6">
-            <Card className="bg-card border-border shadow-card">
+            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600">
               <CardContent className="p-8">
                 <form onSubmit={(e) => { e.preventDefault(); handleSubmitResearch(); }} className="space-y-8">
                   {/* Main "Describe the forest" field */}
@@ -99,6 +108,82 @@ const Index = () => {
                       className="min-h-[120px] text-base"
                       required
                     />
+                  </div>
+
+                  {/* Research topology selection */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Label htmlFor="topology" className="font-medium text-foreground">
+                        research topology
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <div className="space-y-2">
+                              <p><strong>Hierarchical:</strong> Centralized command and control</p>
+                              <p><strong>Byzantine:</strong> Fully decentralized and autonomous</p>
+                              <p><strong>Federated:</strong> Semi-autonomous units with coordinated integration (recommended)</p>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <Select value={researchTopology} onValueChange={setResearchTopology}>
+                      <SelectTrigger className="text-base">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="hierarchical">
+                          <div className="flex items-center gap-2">
+                            <span>Hierarchical</span>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Centralized command and control</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="byzantine">
+                          <div className="flex items-center gap-2">
+                            <span>Byzantine</span>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Fully decentralized and autonomous</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="federated">
+                          <div className="flex items-center gap-2">
+                            <span>Federated</span>
+                            <span className="text-xs text-amber-600 dark:text-amber-400">(recommended)</span>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Semi-autonomous units with coordinated integration</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Key data points - streamlined */}

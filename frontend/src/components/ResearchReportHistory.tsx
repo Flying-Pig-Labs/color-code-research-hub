@@ -348,7 +348,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                         disabled={!report.processedSummary}
                         className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                           report.processedSummary
-                            ? 'bg-purple-50 dark:bg-black text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 border border-purple-200 dark:border-purple-500 cursor-pointer'
+                            ? 'bg-amber-50 dark:bg-black text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900 border border-amber-300 dark:border-amber-600 cursor-pointer'
                             : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200 dark:border-gray-600'
                         }`}
                         title={!report.processedSummary ? 'Summary not yet processed' : 'Preview summary'}
@@ -358,7 +358,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                       </button>
                       <Link
                         to={`/reports/${report.reportId}`}
-                        className="inline-flex items-center px-3 py-1 rounded-lg bg-green-50 dark:bg-black text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900 border border-green-200 dark:border-green-500 transition-colors"
+                        className="inline-flex items-center px-3 py-1 rounded-lg bg-stone-50 dark:bg-black text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-900 border border-stone-300 dark:border-stone-600 transition-colors"
                       >
                         <ExternalLink className="h-3 w-3 mr-1" />
                         View
@@ -368,7 +368,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                         disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key}
                         className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                           report.downloadUrl || report.s3Key || report.s3Files?.response || report.s3ReportKey || report.fullReportS3Key
-                            ? 'bg-blue-50 dark:bg-black text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-500 cursor-pointer'
+                            ? 'bg-yellow-50 dark:bg-black text-yellow-800 dark:text-yellow-200 hover:bg-yellow-100 dark:hover:bg-yellow-900 border border-yellow-400 dark:border-yellow-600 cursor-pointer'
                             : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200 dark:border-gray-600'
                         }`}
                         title={
