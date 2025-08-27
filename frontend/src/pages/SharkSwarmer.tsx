@@ -120,9 +120,7 @@ const SharkSwarmer = () => {
     style G fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
     style H fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
     style I fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
-    style J fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000
-    classDef outcome fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
-    class J outcome`}
+    style J fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000`}
                 id="ideation-flow"
               />
             </div>

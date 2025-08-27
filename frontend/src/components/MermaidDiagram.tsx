@@ -18,21 +18,21 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
       startOnLoad: false,
       theme: 'base',
       themeVariables: {
-        // Node/tile backgrounds: light gray for light mode, dark blue for dark mode
-        primaryColor: isDark ? '#1e3a8a' : '#f3f4f6',
+        // Node/tile backgrounds: light gray for light mode, very dark for dark mode
+        primaryColor: isDark ? '#0f1419' : '#f3f4f6',
         primaryTextColor: isDark ? '#ffffff' : '#000000',
-        primaryBorderColor: isDark ? '#6b7280' : '#333333',
-        lineColor: isDark ? '#9ca3af' : '#333333',
-        secondaryColor: isDark ? '#1e40af' : '#e5e7eb',
-        tertiaryColor: isDark ? '#1e40af' : '#e5e7eb',
+        primaryBorderColor: isDark ? '#374151' : '#333333',
+        lineColor: isDark ? '#6b7280' : '#333333',
+        secondaryColor: isDark ? '#1f2937' : '#e5e7eb',
+        tertiaryColor: isDark ? '#1f2937' : '#e5e7eb',
         background: isDark ? '#111827' : '#ffffff',
-        mainBkg: isDark ? '#1e3a8a' : '#f3f4f6',
-        secondBkg: isDark ? '#1e40af' : '#e5e7eb',
+        mainBkg: isDark ? '#0f1419' : '#f3f4f6',
+        secondBkg: isDark ? '#1f2937' : '#e5e7eb',
         tertiaryTextColor: isDark ? '#ffffff' : '#000000',
         textColor: isDark ? '#ffffff' : '#000000',
         nodeTextColor: isDark ? '#ffffff' : '#000000',
-        edgeLabelBackground: isDark ? '#1f2937' : '#ffffff',
-        clusterBkg: isDark ? '#1e40af' : '#e5e7eb',
+        edgeLabelBackground: isDark ? '#0f1419' : '#ffffff',
+        clusterBkg: isDark ? '#1f2937' : '#e5e7eb',
         clusterTextColor: isDark ? '#ffffff' : '#000000',
         fontFamily: 'Arial, sans-serif',
         fontSize: '12px',
@@ -50,8 +50,8 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
       },
       themeCSS: `
         .node rect, .node circle, .node ellipse, .node polygon {
-          fill: ${isDark ? '#1e3a8a' : '#f3f4f6'} !important;
-          stroke: ${isDark ? '#6b7280' : '#333333'} !important;
+          fill: ${isDark ? '#0f1419' : '#f3f4f6'} !important;
+          stroke: ${isDark ? '#374151' : '#333333'} !important;
         }
         .node text {
           fill: ${isDark ? '#ffffff' : '#000000'} !important;
@@ -59,7 +59,11 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
           font-weight: normal !important;
         }
         .edgeLabel {
-          background-color: ${isDark ? '#1f2937' : '#ffffff'} !important;
+          background-color: ${isDark ? '#0f1419' : '#ffffff'} !important;
+        }
+        .cluster rect {
+          fill: ${isDark ? '#1f2937' : '#e5e7eb'} !important;
+          stroke: ${isDark ? '#374151' : '#333333'} !important;
         }
       `,
     });
@@ -74,8 +78,8 @@ export const MermaidDiagram = ({ chart, id = 'mermaid-diagram' }: MermaidDiagram
           const svgElement = ref.current.querySelector('svg');
           if (svgElement) {
             const textColor = isDark ? '#ffffff' : '#000000';
-            const nodeColor = isDark ? '#1e3a8a' : '#f3f4f6';
-            const strokeColor = isDark ? '#6b7280' : '#333333';
+            const nodeColor = isDark ? '#0f1419' : '#f3f4f6';
+            const strokeColor = isDark ? '#374151' : '#333333';
             
             // Fix text styling and ensure it's not cut off
             const allText = svgElement.querySelectorAll('text, tspan, .nodeLabel, .edgeLabel');
