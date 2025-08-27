@@ -52,10 +52,26 @@ import {
  */
 const Index = () => {
   const [howModalOpen, setHowModalOpen] = useState(false);
+  // Research type and form state
+  const [researchType, setResearchType] = useState("innovation");
+  const [researchTopology, setResearchTopology] = useState("federated");
+  
+  // Innovation form state (current form)
   const [forestDescription, setForestDescription] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [industryFocus, setIndustryFocus] = useState("");
-  const [researchTopology, setResearchTopology] = useState("federated");
+  
+  // Medical Device form state
+  const [clinicalArea, setClinicalArea] = useState("");
+  
+  // Private Equity form state
+  const [targetIndustry, setTargetIndustry] = useState("");
+  
+  // City Revitalization form state
+  const [targetLocation, setTargetLocation] = useState("");
+  
+  // Data Center form state
+  const [targetRegion, setTargetRegion] = useState("");
   
   const navItems = [
     { 
@@ -70,12 +86,30 @@ const Index = () => {
   // Handle research form submission (hits Red Team API)
   const handleSubmitResearch = async () => {
     // TODO: Implement API call to Red Team endpoint
-    console.log("Submitting research request:", {
-      forestDescription,
-      companyName,
-      industryFocus,
-      researchTopology
-    });
+    const baseData = { researchType, researchTopology };
+    
+    let formData;
+    switch (researchType) {
+      case "innovation":
+        formData = { ...baseData, forestDescription, companyName, industryFocus };
+        break;
+      case "medical-device":
+        formData = { ...baseData, clinicalArea };
+        break;
+      case "private-equity":
+        formData = { ...baseData, targetIndustry };
+        break;
+      case "city-revitalization":
+        formData = { ...baseData, targetLocation };
+        break;
+      case "data-center":
+        formData = { ...baseData, targetRegion };
+        break;
+      default:
+        formData = baseData;
+    }
+    
+    console.log("Submitting research request:", formData);
   };
 
   return (
@@ -95,20 +129,101 @@ const Index = () => {
             <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600">
               <CardContent className="p-8">
                 <form onSubmit={(e) => { e.preventDefault(); handleSubmitResearch(); }} className="space-y-8">
-                  {/* Main "Describe the forest" field */}
+                  {/* Research type selection */}
                   <div>
-                    <Label htmlFor="forest" className="text-lg font-heading font-semibold text-foreground mb-2 block">
+                    <Label htmlFor="researchType" className="text-lg font-heading font-semibold text-foreground mb-2 block">
                       launch a truffle hunt
                     </Label>
-                    <Textarea
-                      id="forest"
-                      value={forestDescription}
-                      onChange={(e) => setForestDescription(e.target.value)}
-                      placeholder="Tell us about the market landscape, competitive environment, or product space you want to explore..."
-                      className="min-h-[120px] text-base"
-                      required
-                    />
+                    <Select value={researchType} onValueChange={setResearchType}>
+                      <SelectTrigger className="text-base mb-6">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="innovation">🔬 Innovation Research</SelectItem>
+                        <SelectItem value="medical-device">🔬 Bench-to-Bedside (Medical Device)</SelectItem>
+                        <SelectItem value="private-equity">📈 Private Equity Roll-up Radar</SelectItem>
+                        <SelectItem value="city-revitalization">🏙️ City Revitalization</SelectItem>
+                        <SelectItem value="data-center">🔌 Data Center Siting</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
+
+                  {/* Dynamic form content based on research type */}
+                  {researchType === "innovation" && (
+                    <div>
+                      <Textarea
+                        value={forestDescription}
+                        onChange={(e) => setForestDescription(e.target.value)}
+                        placeholder="Tell us about the market landscape, competitive environment, or product space you want to explore..."
+                        className="min-h-[120px] text-base"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {researchType === "medical-device" && (
+                    <div>
+                      <Label htmlFor="clinicalArea" className="font-medium text-foreground mb-2 block">
+                        clinical area or medical condition
+                      </Label>
+                      <Input
+                        id="clinicalArea"
+                        value={clinicalArea}
+                        onChange={(e) => setClinicalArea(e.target.value)}
+                        placeholder="e.g., Cardiology, orthopedic spine surgery, type 2 diabetes management, glaucoma"
+                        className="text-base"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {researchType === "private-equity" && (
+                    <div>
+                      <Label htmlFor="targetIndustry" className="font-medium text-foreground mb-2 block">
+                        target fragmented industry
+                      </Label>
+                      <Input
+                        id="targetIndustry"
+                        value={targetIndustry}
+                        onChange={(e) => setTargetIndustry(e.target.value)}
+                        placeholder="e.g., HVAC services, veterinary clinics, dental practices, managed IT services"
+                        className="text-base"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {researchType === "city-revitalization" && (
+                    <div>
+                      <Label htmlFor="targetLocation" className="font-medium text-foreground mb-2 block">
+                        city, municipality, or county
+                      </Label>
+                      <Input
+                        id="targetLocation"
+                        value={targetLocation}
+                        onChange={(e) => setTargetLocation(e.target.value)}
+                        placeholder="e.g., Richmond, Virginia; Franklin County, Ohio; Bronzeville neighborhood in Chicago"
+                        className="text-base"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {researchType === "data-center" && (
+                    <div>
+                      <Label htmlFor="targetRegion" className="font-medium text-foreground mb-2 block">
+                        target geographic region
+                      </Label>
+                      <Input
+                        id="targetRegion"
+                        value={targetRegion}
+                        onChange={(e) => setTargetRegion(e.target.value)}
+                        placeholder="e.g., Northern Virginia, state of Arizona, Pacific Northwest, Dallas-Fort Worth metroplex"
+                        className="text-base"
+                        required
+                      />
+                    </div>
+                  )}
 
                   {/* Research topology selection */}
                   <div>
@@ -186,34 +301,36 @@ const Index = () => {
                     </Select>
                   </div>
 
-                  {/* Key data points - streamlined */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="company" className="font-medium text-foreground mb-2 block">
-                        company/project name
-                      </Label>
-                      <Input
-                        id="company"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="Your company or project"
-                        className="text-base"
-                      />
+                  {/* Additional fields for Innovation research type only */}
+                  {researchType === "innovation" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="company" className="font-medium text-foreground mb-2 block">
+                          company/project name
+                        </Label>
+                        <Input
+                          id="company"
+                          value={companyName}
+                          onChange={(e) => setCompanyName(e.target.value)}
+                          placeholder="Your company or project"
+                          className="text-base"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="industry" className="font-medium text-foreground mb-2 block">
+                          industry focus
+                        </Label>
+                        <Input
+                          id="industry"
+                          value={industryFocus}
+                          onChange={(e) => setIndustryFocus(e.target.value)}
+                          placeholder="e.g., SaaS, Healthcare, FinTech"
+                          className="text-base"
+                        />
+                      </div>
                     </div>
-                    
-                    <div>
-                      <Label htmlFor="industry" className="font-medium text-foreground mb-2 block">
-                        industry focus
-                      </Label>
-                      <Input
-                        id="industry"
-                        value={industryFocus}
-                        onChange={(e) => setIndustryFocus(e.target.value)}
-                        placeholder="e.g., SaaS, Healthcare, FinTech"
-                        className="text-base"
-                      />
-                    </div>
-                  </div>
+                  )}
 
                   {/* Submit button */}
                   <div className="flex justify-center pt-4">
@@ -221,7 +338,13 @@ const Index = () => {
                       type="submit" 
                       size="lg"
                       className="bg-accent hover:bg-accent/90 text-accent-foreground px-8"
-                      disabled={!forestDescription.trim()}
+                      disabled={
+                        (researchType === "innovation" && !forestDescription.trim()) ||
+                        (researchType === "medical-device" && !clinicalArea.trim()) ||
+                        (researchType === "private-equity" && !targetIndustry.trim()) ||
+                        (researchType === "city-revitalization" && !targetLocation.trim()) ||
+                        (researchType === "data-center" && !targetRegion.trim())
+                      }
                     >
                       start research hunt
                     </Button>
