@@ -340,14 +340,6 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                       >
                         Cancel
                       </button>
-                      <Link
-                        to={`/reports/${report.reportId}`}
-                        className="inline-flex items-center px-3 py-1 rounded-lg bg-gray-100 text-gray-500 border border-gray-200 transition-colors"
-                        title="Job still in progress"
-                      >
-                        <ExternalLink className="h-3 w-3 mr-1" />
-                        View
-                      </Link>
                     </div>
                   ) : (
                     <div className="flex space-x-2">
@@ -356,8 +348,8 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                         disabled={!report.processedSummary}
                         className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                           report.processedSummary
-                            ? 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 cursor-pointer'
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
+                            ? 'bg-purple-50 dark:bg-black text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 border border-purple-200 dark:border-purple-500 cursor-pointer'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200 dark:border-gray-600'
                         }`}
                         title={!report.processedSummary ? 'Summary not yet processed' : 'Preview summary'}
                       >
@@ -366,7 +358,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                       </button>
                       <Link
                         to={`/reports/${report.reportId}`}
-                        className="inline-flex items-center px-3 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
+                        className="inline-flex items-center px-3 py-1 rounded-lg bg-green-50 dark:bg-black text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900 border border-green-200 dark:border-green-500 transition-colors"
                       >
                         <ExternalLink className="h-3 w-3 mr-1" />
                         View
@@ -376,8 +368,8 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                         disabled={!report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key}
                         className={`inline-flex items-center px-3 py-1 rounded-lg transition-colors ${
                           report.downloadUrl || report.s3Key || report.s3Files?.response || report.s3ReportKey || report.fullReportS3Key
-                            ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 cursor-pointer'
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200'
+                            ? 'bg-blue-50 dark:bg-black text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-500 cursor-pointer'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200 dark:border-gray-600'
                         }`}
                         title={
                           !report.downloadUrl && !report.s3Key && !report.s3Files?.response && !report.s3ReportKey && !report.fullReportS3Key
