@@ -171,7 +171,7 @@ const MilestonesTab = () => {
                       <Target className="h-5 w-5 text-carmax-blue" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-bold text-foreground">plan generation history</CardTitle>
+                      <CardTitle className="text-lg font-bold text-foreground">history</CardTitle>
                       <CardDescription className="text-muted-foreground">
                         track completed and running plan generation jobs
                       </CardDescription>

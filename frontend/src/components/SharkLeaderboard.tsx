@@ -282,7 +282,7 @@ const SharkLeaderboard = () => {
       {/* Leaderboard Table */}
       <Card className="overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-carmax-yellow/10 to-carmax-blue/10 text-center">
-          <CardTitle className="text-lg">shark tank leaderboard</CardTitle>
+          <CardTitle className="text-lg">leaderboard</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>

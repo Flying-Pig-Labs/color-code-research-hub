@@ -136,7 +136,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               className="text-muted-foreground hover:text-accent transition-gentle"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              logout
             </Button>
           </div>
           
@@ -175,28 +175,28 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
               <Search className="h-4 w-4 mr-2" />
-              Research
+              research
             </TabsTrigger>
             <TabsTrigger 
               value="ideate" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
               <Lightbulb className="h-4 w-4 mr-2" />
-              Ideate
+              ideate
             </TabsTrigger>
             <TabsTrigger 
               value="plan" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
               <ClipboardList className="h-4 w-4 mr-2" />
-              Plan
+              plan
             </TabsTrigger>
             <TabsTrigger 
               value="build" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
             >
               <Hammer className="h-4 w-4 mr-2" />
-              Build
+              build
             </TabsTrigger>
           </TabsList>
 
