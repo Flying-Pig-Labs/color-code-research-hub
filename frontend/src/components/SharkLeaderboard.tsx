@@ -273,7 +273,7 @@ const SharkLeaderboard = () => {
           {refreshing ? (
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
           ) : (
-            refreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="h-4 w-4 mr-2" />
           )}
           refresh
         </Button>
