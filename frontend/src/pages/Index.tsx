@@ -924,6 +924,7 @@ const Index = () => {
                         </div>
                             </div>
                           )}
+                          </div>
                         </div>
 
                         {/* Navigation Controls */}
