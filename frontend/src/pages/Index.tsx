@@ -267,7 +267,7 @@ const Index = () => {
                         </div>
 
                         {/* Page Container with Slide Transition */}
-                        <div className="relative overflow-hidden">
+                        <div className="relative overflow-x-hidden overflow-y-auto max-h-[70vh]">
                           <div 
                             className={`transition-transform duration-300 ease-in-out ${
                               currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
