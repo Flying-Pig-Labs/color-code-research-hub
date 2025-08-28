@@ -106,9 +106,8 @@ const Index = () => {
     },
   ];
 
-  // Handle research form submission (hits Red Team API)
+  // Handle research form submission (hits Research API)
   const handleSubmitResearch = async () => {
-    // TODO: Implement API call to Red Team endpoint
     const baseData = { researchType, researchTopology };
     
     const coreData = { 
@@ -139,7 +138,36 @@ const Index = () => {
         formData = coreData;
     }
     
-    console.log("Submitting research request:", formData);
+    try {
+      console.log("Submitting research request:", formData);
+      
+      // Call the research API
+      const response = await fetch('/api/research/v2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log("Research job started:", result);
+        alert(`Research job started successfully! Request ID: ${result.request_id}`);
+        
+        // Reset form or redirect as needed
+        // Could add toast notification here instead of alert
+        
+      } else {
+        console.error("Research submission failed:", result);
+        alert(`Failed to start research: ${result.message || 'Unknown error'}`);
+      }
+      
+    } catch (error) {
+      console.error("Error submitting research request:", error);
+      alert("Failed to submit research request. Please try again.");
+    }
   };
 
   // Page navigation functions

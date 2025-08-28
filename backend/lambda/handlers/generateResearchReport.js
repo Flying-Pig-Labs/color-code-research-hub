@@ -76,6 +76,7 @@ const axios = require('axios');
 const { marked } = require('marked');
 const createDOMPurify = require('isomorphic-dompurify');
 const { v4: uuidv4 } = require('uuid');
+const { generateResearchPrompt } = require('./services/strategic-research-prompts');
 
 // Initialize AWS clients
 const secretsManager = new SecretsManagerClient({ region: 'us-east-1' });
@@ -748,6 +749,91 @@ async function checkJobStatus(requestId) {
 }
 
 /**
+ * Generate intelligent title from form data
+ */
+function generateTitle(formData) {
+    const researchType = formData.researchType || 'innovation';
+    
+    switch (researchType) {
+        case 'innovation':
+            const topic = formData.forestDescription || formData.companyName || 'Market Analysis';
+            return `Innovation Research: ${topic}`;
+        case 'medical-device':
+            const clinical = formData.clinicalArea || 'Medical Device';
+            return `Medical Device Research: ${clinical}`;
+        case 'private-equity':
+            const industry = formData.targetIndustry || 'Industry';
+            return `Private Equity Research: ${industry} Consolidation`;
+        case 'city-revitalization':
+            const location = formData.targetLocation || 'Municipal Development';
+            return `City Revitalization Research: ${location}`;
+        case 'data-center':
+            const region = formData.targetRegion || 'Infrastructure';
+            return `Data Center Research: ${region} Analysis`;
+        default:
+            return 'Strategic Research Report';
+    }
+}
+
+/**
+ * Generate relevant tags from form data
+ */
+function generateTags(formData) {
+    const tags = [];
+    
+    // Add research type
+    if (formData.researchType) {
+        tags.push(formData.researchType);
+    }
+    
+    // Add strategic parameters
+    if (formData.investmentScale) {
+        tags.push(`${formData.investmentScale}-stage`);
+    }
+    if (formData.timeline) {
+        tags.push(formData.timeline);
+    }
+    if (formData.riskProfile) {
+        tags.push(`${formData.riskProfile}-risk`);
+    }
+    if (formData.researchTopology) {
+        tags.push(formData.researchTopology);
+    }
+    
+    // Add type-specific tags
+    switch (formData.researchType) {
+        case 'innovation':
+            if (formData.industryFocus) tags.push(formData.industryFocus);
+            if (formData.companyName) tags.push(formData.companyName);
+            tags.push('competitive-intelligence', 'market-opportunity');
+            break;
+        case 'medical-device':
+            if (formData.clinicalArea) tags.push(formData.clinicalArea);
+            if (formData.fdaPathway) tags.push(formData.fdaPathway);
+            if (formData.careSetting) tags.push(formData.careSetting);
+            tags.push('clinical-research', 'regulatory-analysis');
+            break;
+        case 'private-equity':
+            if (formData.targetIndustry) tags.push(formData.targetIndustry);
+            if (formData.valueDriver) tags.push(formData.valueDriver);
+            tags.push('roll-up-analysis', 'acquisition-targets');
+            break;
+        case 'city-revitalization':
+            if (formData.targetLocation) tags.push(formData.targetLocation);
+            if (formData.focusArea) tags.push(formData.focusArea);
+            tags.push('municipal-development', 'public-private-partnership');
+            break;
+        case 'data-center':
+            if (formData.targetRegion) tags.push(formData.targetRegion);
+            if (formData.facilityType) tags.push(formData.facilityType);
+            tags.push('infrastructure-analysis', 'location-intelligence');
+            break;
+    }
+    
+    return tags;
+}
+
+/**
  * Main Lambda handler
  */
 exports.handler = async (event) => {
@@ -778,19 +864,34 @@ exports.handler = async (event) => {
         if (path === '/api/research/v2' && method === 'POST') {
             const body = JSON.parse(event.body || '{}');
             
-            const userContent = body.content || body.task || '';
+            // Generate sophisticated research prompt from form data
+            let userContent;
+            try {
+                // If structured form data is provided, generate strategic prompt
+                if (body.researchType || body.forestDescription || body.clinicalArea) {
+                    userContent = generateResearchPrompt(body);
+                } else {
+                    // Fallback to simple content/task for backwards compatibility
+                    userContent = body.content || body.task || '';
+                }
+            } catch (error) {
+                console.error('Error generating research prompt:', error);
+                userContent = body.content || body.task || '';
+            }
+            
             const model = body.model || 'sonar-deep-research';
             
             const metadata = {
-                title: body.title || 'Research Report',
+                title: body.title || generateTitle(body) || 'Research Report',
                 requester: body.requester || 'Unknown',
-                team: body.team || 'unknown',
+                team: body.team || body.researchType || 'innovation',
                 vendorName: body.vendorName || null,
                 companyName: body.companyName || null,
-                tags: body.tags || [],
+                tags: body.tags || generateTags(body),
                 model,
                 reasoning_effort: body.reasoning_effort || 'high',
-                originalPrompt: userContent
+                originalPrompt: userContent,
+                formData: body // Store original form data
             };
 
             if (!userContent) {
@@ -799,7 +900,7 @@ exports.handler = async (event) => {
                     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         error: 'Bad Request',
-                        message: 'Missing required field: content or task'
+                        message: 'Missing required research parameters. Please provide either structured form data or content/task field.'
                     })
                 };
             }
