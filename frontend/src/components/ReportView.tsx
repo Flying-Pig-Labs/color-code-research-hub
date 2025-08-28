@@ -277,10 +277,10 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading report...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading report...</p>
         </div>
       </div>
     );
@@ -288,16 +288,16 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
 
   if (error || !report) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="max-w-md w-full mx-4">
           <CardHeader>
-            <CardTitle className="flex items-center text-red-600">
+            <CardTitle className="flex items-center text-destructive">
               <X className="h-5 w-5 mr-2" />
               Error Loading Report
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <p className="text-muted-foreground mb-4">{error}</p>
             <div className="flex gap-2">
               <Button
                 onClick={() => navigate(-1)}
@@ -325,9 +325,9 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
   const disclaimers = report.metadata.disclaimers || getDefaultDisclaimers('general');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-background border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -343,10 +343,10 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
               
               <div className="flex items-center">
                 <div>
-                  <h1 className="text-lg font-semibold text-gray-900 truncate max-w-md">
+                  <h1 className="text-lg font-semibold text-foreground truncate max-w-md">
                     {report.metadata.title}
                   </h1>
-                  <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex items-center text-sm text-muted-foreground">
                     <Clock className="h-3 w-3 mr-1" />
                     {format(new Date(report.metadata.createdAt), 'M/d/yyyy h:mma')}
                   </div>
@@ -395,8 +395,8 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                           onClick={() => scrollToSection(item.id)}
                           className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                             activeSection === item.id
-                              ? 'bg-blue-100 text-blue-700 font-medium'
-                              : 'text-gray-700 hover:bg-gray-100'
+                              ? 'bg-primary/10 text-primary font-medium'
+                              : 'text-foreground hover:bg-accent'
                           }`}
                         >
                           {item.title}
@@ -429,8 +429,8 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                           onClick={() => scrollToSection(item.id)}
                           className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                             activeSection === item.id
-                              ? 'bg-blue-100 text-blue-700 font-medium'
-                              : 'text-gray-700 hover:bg-gray-100'
+                              ? 'bg-primary/10 text-primary font-medium'
+                              : 'text-foreground hover:bg-accent'
                           }`}
                         >
                           {item.title}
@@ -453,7 +453,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-2xl mb-2">{report.metadata.title}</CardTitle>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <div className="flex items-center">
                             <User className="h-4 w-4 mr-1" />
                             {report.metadata.team.toUpperCase()} Team
@@ -469,7 +469,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                   <CardContent>
                     <div className="prose max-w-none">
                       <h3 className="text-lg font-semibold mb-3">Executive Summary</h3>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-foreground leading-relaxed">
                         {report.metadata.summary || 
                          report.metadata.contentSummary || 
                          'This research report provides comprehensive analysis and insights based on the requested scope and methodology.'}
@@ -495,7 +495,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                     </CardHeader>
                     <CardContent>
                       <div 
-                        className="prose max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 prose-strong:text-gray-900"
+                        className="prose max-w-none prose-headings:text-foreground prose-a:text-primary prose-strong:text-foreground dark:prose-invert"
                         dangerouslySetInnerHTML={{ 
                           __html: renderMarkdownToHtml(section.content) 
                         }}
@@ -505,9 +505,9 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                 ))}
 
                 {/* Disclaimers */}
-                <Card className="border-yellow-200 bg-yellow-50">
+                <Card className="border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/20">
                   <CardHeader>
-                    <CardTitle className="text-yellow-800 flex items-center">
+                    <CardTitle className="text-yellow-800 dark:text-yellow-200 flex items-center">
                       <AlertTriangle className="h-5 w-5 mr-2" />
                       Important Disclaimers
                     </CardTitle>
@@ -515,7 +515,7 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                   <CardContent>
                     <div className="space-y-2">
                       {disclaimers.map((disclaimer, index) => (
-                        <p key={index} className="text-sm text-yellow-700">
+                        <p key={index} className="text-sm text-yellow-700 dark:text-yellow-300">
                           • {disclaimer}
                         </p>
                       ))}
@@ -524,23 +524,23 @@ export function ReportView({ reportId: propReportId }: ReportViewProps) {
                 </Card>
 
                 {/* Report Metadata */}
-                <Card className="bg-gray-50">
+                <Card className="bg-muted/50">
                   <CardHeader>
-                    <CardTitle className="text-sm text-gray-600">Report Information</CardTitle>
+                    <CardTitle className="text-sm text-muted-foreground">Report Information</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium text-gray-700">Report ID:</span>
-                        <span className="ml-2 text-gray-600 font-mono">{report.metadata.reportId}</span>
+                        <span className="font-medium text-foreground">Report ID:</span>
+                        <span className="ml-2 text-muted-foreground font-mono">{report.metadata.reportId}</span>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Request ID:</span>
-                        <span className="ml-2 text-gray-600 font-mono">{report.metadata.requestId}</span>
+                        <span className="font-medium text-foreground">Request ID:</span>
+                        <span className="ml-2 text-muted-foreground font-mono">{report.metadata.requestId}</span>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Generated:</span>
-                        <span className="ml-2 text-gray-600">
+                        <span className="font-medium text-foreground">Generated:</span>
+                        <span className="ml-2 text-muted-foreground">
                           {format(new Date(report.metadata.createdAt), 'PPpp')}
                         </span>
                       </div>
