@@ -76,7 +76,7 @@ const axios = require('axios');
 const { marked } = require('marked');
 const createDOMPurify = require('isomorphic-dompurify');
 const { v4: uuidv4 } = require('uuid');
-const { generateResearchPrompt } = require('./services/strategic-research-prompts');
+const { generateResearchPrompt } = require('./prompts/strategic-research-prompts');
 
 // Initialize AWS clients
 const secretsManager = new SecretsManagerClient({ region: 'us-east-1' });
