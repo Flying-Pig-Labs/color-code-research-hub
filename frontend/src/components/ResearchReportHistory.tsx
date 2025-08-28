@@ -239,6 +239,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Target
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -257,6 +260,25 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     if (!report.createdAt) return 'N/A';
                     const date = new Date(report.createdAt);
                     return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'M/d/yyyy h:mma');
+                  })()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                  {(() => {
+                    // Get research type from formData or fall back to team/legacy
+                    const formData = report.formData || {};
+                    const researchType = formData.researchType || report.team;
+                    
+                    switch(researchType) {
+                      case 'innovation': return 'Innovation';
+                      case 'medical-device': return 'Medical Device';
+                      case 'private-equity': return 'Private Equity';
+                      case 'data-center': return 'Data Center';
+                      case 'city-revitalization': return 'City Revitalization';
+                      case 'red': return 'Red Team';
+                      case 'black': return 'Black Team';
+                      case 'white': return 'White Team';
+                      default: return 'Research';
+                    }
                   })()}
                 </td>
                 <td className="px-6 py-4 text-sm text-foreground">

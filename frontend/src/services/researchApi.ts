@@ -218,6 +218,14 @@ export interface ResearchReport {
     team?: string;
     [key: string]: any;
   };
+  formData?: {
+    researchType?: 'innovation' | 'medical-device' | 'private-equity' | 'data-center' | 'city-revitalization';
+    investmentScale?: 'seed' | 'growth' | 'enterprise';
+    timeline?: 'short-term' | 'medium-term' | 'long-term';
+    riskProfile?: 'conservative' | 'moderate' | 'aggressive';
+    researchTopology?: 'hierarchical' | 'byzantine' | 'federated';
+    [key: string]: any;
+  };
   pipelineDurationSeconds?: number;
   pipelineStartedAt?: string;
   pipelineCompletedAt?: string;
