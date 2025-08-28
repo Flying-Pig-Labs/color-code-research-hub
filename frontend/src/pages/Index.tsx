@@ -219,10 +219,10 @@ const Index = () => {
       
 
       {/* Streamlined Research Form - The main interface */}
-        <section className="py-12 lg:py-20 min-h-fit">
-          <div className="max-w-4xl mx-auto px-6 min-h-fit">
-            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600 min-h-fit">
-              <CardContent className="p-8 min-h-fit">
+        <section className="py-12 lg:py-20 min-h-screen flex-1">
+          <div className="max-w-4xl mx-auto px-6 h-full">
+            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600 h-full">
+              <CardContent className="p-8 h-full overflow-y-auto">
                 <div>
                   <Label className="text-lg font-heading font-semibold text-foreground mb-4 block">
                     launch a truffle hunt
@@ -267,7 +267,7 @@ const Index = () => {
                         )}
                       </div>
                       
-                      <form onSubmit={(e) => { e.preventDefault(); currentFormPage === 2 ? handleSubmitResearch() : handleNextPage(); }} className="space-y-8">
+                      <form onSubmit={(e) => { e.preventDefault(); currentFormPage === 2 ? handleSubmitResearch() : handleNextPage(); }} className="space-y-8 pb-8">
 
                         {/* Progress Indicator */}
                         <div className="flex items-center justify-center mb-8">
@@ -295,7 +295,7 @@ const Index = () => {
                         </div>
 
                         {/* Page Container with Slide Transition */}
-                        <div className="relative overflow-x-hidden overflow-y-visible min-h-fit">
+                        <div className="relative overflow-x-hidden overflow-y-auto min-h-full">
                           <div 
                             className={`transition-transform duration-300 ease-in-out ${
                               currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
