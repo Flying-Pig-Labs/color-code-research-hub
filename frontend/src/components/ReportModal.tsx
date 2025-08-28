@@ -163,23 +163,23 @@ export function ReportModal({
             // Preview Mode - Show structured summary
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">{title}</h3>
+                <h3 className="text-xl font-bold text-foreground mb-4">{title}</h3>
                 
                 {typeof processedSummary === 'string' ? (
                   // Simple summary format
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <div className="bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                     <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3">executive summary</p>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{processedSummary}</p>
+                    <p className="text-foreground leading-relaxed">{processedSummary}</p>
                   </div>
                 ) : (
                   // Structured summary format
                   <div className="space-y-4">
                     {processedSummary.keyInsights.length > 0 && (
-                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                      <div className="bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                         <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">key insights</h4>
                         <ul className="space-y-2">
                           {processedSummary.keyInsights.map((insight, idx) => (
-                            <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            <li key={idx} className="text-foreground leading-relaxed">
                               • {insight}
                             </li>
                           ))}
@@ -188,11 +188,11 @@ export function ReportModal({
                     )}
                     
                     {processedSummary.opportunities.length > 0 && (
-                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                      <div className="bg-green-50 dark:bg-green-950/50 border border-green-200 dark:border-green-800 rounded-lg p-4">
                         <h4 className="text-sm font-semibold text-green-900 dark:text-green-300 mb-3">opportunities</h4>
                         <ul className="space-y-2">
                           {processedSummary.opportunities.map((opp, idx) => (
-                            <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            <li key={idx} className="text-foreground leading-relaxed">
                               • {opp}
                             </li>
                           ))}
@@ -201,11 +201,11 @@ export function ReportModal({
                     )}
                     
                     {processedSummary.challenges.length > 0 && (
-                      <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                      <div className="bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
                         <h4 className="text-sm font-semibold text-orange-900 dark:text-orange-300 mb-3">challenges</h4>
                         <ul className="space-y-2">
                           {processedSummary.challenges.map((challenge, idx) => (
-                            <li key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            <li key={idx} className="text-foreground leading-relaxed">
                               • {challenge}
                             </li>
                           ))}
@@ -217,25 +217,25 @@ export function ReportModal({
               </div>
               
               {reportData && (
-                <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Report Details</h4>
+                <div className="bg-muted/50 border border-border rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-foreground mb-3">Report Details</h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-gray-500 dark:text-gray-400">Date:</span>
-                      <span className="ml-2 text-gray-900 dark:text-gray-200">
+                      <span className="font-medium text-muted-foreground">Date:</span>
+                      <span className="ml-2 text-foreground">
                         {reportData.createdAt ? new Date(reportData.createdAt).toLocaleDateString() : 'N/A'}
                       </span>
                     </div>
                     {reportData.vendorName && (
                       <div>
-                        <span className="font-medium text-gray-500 dark:text-gray-400">Vendor:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.vendorName}</span>
+                        <span className="font-medium text-muted-foreground">Vendor:</span>
+                        <span className="ml-2 text-foreground">{reportData.vendorName}</span>
                       </div>
                     )}
                     {reportData.companyName && (
                       <div>
-                        <span className="font-medium text-gray-500 dark:text-gray-400">Company:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-200">{reportData.companyName}</span>
+                        <span className="font-medium text-muted-foreground">Company:</span>
+                        <span className="ml-2 text-foreground">{reportData.companyName}</span>
                       </div>
                     )}
                   </div>
@@ -263,11 +263,11 @@ export function ReportModal({
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                  <span className="ml-2 text-gray-600">Loading report...</span>
+                  <span className="ml-2 text-muted-foreground">Loading report...</span>
                 </div>
               ) : error ? (
                 <div className="text-center py-12">
-                  <p className="text-red-600">{error}</p>
+                  <p className="text-destructive">{error}</p>
                   <button
                     onClick={loadFullReport}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -279,14 +279,14 @@ export function ReportModal({
                 <>
                   {/* Report Header */}
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{report.metadata.title}</h3>
-                    <p className="text-gray-600">{report.metadata.summary}</p>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{report.metadata.title}</h3>
+                    <p className="text-muted-foreground">{report.metadata.summary}</p>
                   </div>
 
                   {/* Table of Contents */}
                   {report.tableOfContents && report.tableOfContents.length > 0 && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-gray-900 mb-3">Table of Contents</h4>
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <h4 className="font-semibold text-foreground mb-3">Table of Contents</h4>
                       <ul className="space-y-2">
                         {report.tableOfContents.map((item, index) => (
                           <li key={index} className="flex items-center text-sm">
@@ -305,24 +305,24 @@ export function ReportModal({
 
                   {/* Report Sections */}
                   {report.sections && report.sections.map((section, index) => (
-                    <div key={index} id={section.id} className="border-t pt-6">
-                      <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                    <div key={index} id={section.id} className="border-t border-border pt-6">
+                      <h4 className="text-xl font-semibold text-foreground mb-3">
                         {section.title}
                       </h4>
                       <div 
-                        className="prose prose-gray max-w-none"
+                        className="prose prose-gray max-w-none dark:prose-invert"
                         dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(section.content) }}
                       />
                     </div>
                   ))}
 
                   {/* Metadata */}
-                  <div className="border-t pt-6 mt-8">
-                    <h4 className="font-semibold text-gray-900 mb-3">Report Information</h4>
+                  <div className="border-t border-border pt-6 mt-8">
+                    <h4 className="font-semibold text-foreground mb-3">Report Information</h4>
                     <div className="grid grid-cols-1 gap-4 text-sm">
                       <div>
-                        <span className="font-medium text-gray-500">Created:</span>
-                        <span className="ml-2">{new Date(report.metadata.createdAt).toLocaleDateString()}</span>
+                        <span className="font-medium text-muted-foreground">Created:</span>
+                        <span className="ml-2 text-foreground">{new Date(report.metadata.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
@@ -340,7 +340,7 @@ export function ReportModal({
                   )}
                 </>
               ) : (
-                <div className="text-center py-12 text-gray-500">
+                <div className="text-center py-12 text-muted-foreground">
                   No report data available
                 </div>
               )}
@@ -354,7 +354,7 @@ export function ReportModal({
             <>
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500"
+                className="px-4 py-2 text-foreground bg-background border border-border rounded-lg hover:bg-muted"
               >
                 close
               </button>
