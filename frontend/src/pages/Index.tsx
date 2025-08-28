@@ -219,10 +219,10 @@ const Index = () => {
       
 
       {/* Streamlined Research Form - The main interface */}
-        <section className="py-12 lg:py-20">
-          <div className="max-w-4xl mx-auto px-6">
-            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600">
-              <CardContent className="p-8">
+        <section className="py-12 lg:py-20 min-h-fit">
+          <div className="max-w-4xl mx-auto px-6 min-h-fit">
+            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600 min-h-fit">
+              <CardContent className="p-8 min-h-fit">
                 <div>
                   <Label className="text-lg font-heading font-semibold text-foreground mb-4 block">
                     launch a truffle hunt
@@ -295,7 +295,7 @@ const Index = () => {
                         </div>
 
                         {/* Page Container with Slide Transition */}
-                        <div className="relative overflow-x-hidden overflow-y-auto max-h-[70vh]">
+                        <div className="relative overflow-x-hidden overflow-y-visible min-h-fit">
                           <div 
                             className={`transition-transform duration-300 ease-in-out ${
                               currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
