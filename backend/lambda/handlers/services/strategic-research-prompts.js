@@ -603,46 +603,200 @@ Output deal folklore: create a legend about the ${formData.targetIndustry || 'in
 }
 
 /**
- * City Revitalization Research Prompt
+ * City Revitalization Research Prompt - Comprehensive Community Development and Funding Optimization
  */
 function formatCityRevitalizationPrompt(formData) {
   const strategicContext = generateStrategicContext(formData);
   
-  return `🏛️ STRATEGIC CITY REVITALIZATION RESEARCH - MUNICIPAL DEVELOPMENT INTELLIGENCE 🏛️
+  const investmentScale = formData.investmentScale || 'growth';
+  const timeline = formData.timeline || 'medium-term';
+  const riskProfile = formData.riskProfile || 'moderate';
+  const researchTopology = formData.researchTopology || 'federated';
+  
+  return `🏛️ STRATEGIC CITY REVITALIZATION RESEARCH - COMPREHENSIVE COMMUNITY DEVELOPMENT AND FUNDING OPTIMIZATION 🏛️
 
-MISSION: Execute COMPREHENSIVE municipal development analysis and public-private partnership opportunity assessment.
+MISSION: Execute comprehensive analysis to identify optimal revitalization strategies and funding opportunities for **${formData.targetLocation || 'target communities'}** with specific focus on **${formData.focusArea || 'community development'}** development. Systematically align community needs with available grant opportunities to create data-driven revitalization programs targeting **${formData.targetPopulation || 'existing residents'}** with **${formData.localContribution || 'funding'}** partnership models.
+
+⚖️ ETHICAL CONTEXT: City revitalization research drives community development through strategic planning and responsible resource allocation. This research enables better outcomes for residents while ensuring equitable development that preserves community character and promotes inclusive economic growth.
 
 ${strategicContext}
 
-TARGET LOCATION: ${formData.targetLocation || 'Municipal development area'}
-FOCUS AREA: ${formData.focusArea || 'Comprehensive revitalization'}
-TARGET POPULATION: ${formData.targetPopulation || 'existing'} community focus
-LOCAL CONTRIBUTION: ${formData.localContribution || 'funding'} partnership model
+🎯 RESEARCH CONFIGURATION:
+This analysis is calibrated for **${investmentScale.toUpperCase()}** project scale with **${timeline}** implementation horizon, **${riskProfile}** risk tolerance, and **${researchTopology}** research methodology.
 
-EXHAUSTIVE MUNICIPAL RESEARCH REQUIREMENTS:
+🎯 PRIMARY RESEARCH OBJECTIVES:
+Generate comprehensive revitalization strategy for ${formData.targetLocation || 'target communities'} that demonstrates:
+• Quantified community needs in ${formData.focusArea || 'community development'} aligned with ${investmentScale} intervention scope
+• Matched funding opportunities with ${formData.targetPopulation || 'target population'} eligibility and ${formData.localContribution || 'funding'} partnership requirements
+• Implementation roadmap feasible within ${timeline} execution horizons
+• Risk management approach consistent with ${riskProfile} municipal capacity and community expectations
+• Evidence-based project design informed by successful peer community best practices
 
-1. ECONOMIC DEVELOPMENT ANALYSIS
-   • COMPLETE local economic assessment
-   • ALL revitalization precedents and outcomes
-   • EVERY public-private partnership model
-   • ALL funding source identification
-   • COMPLETE community impact measurement
+SUCCESS CRITERIA: Transform community development planning into systematic, fundable initiatives that maximize grant capture success while delivering measurable impact to ${formData.targetPopulation || 'target populations'} in ${formData.targetLocation || 'target community'} ${formData.focusArea || 'focus areas'}.
 
-2. REGULATORY AND POLICY LANDSCAPE
-   • ALL zoning and development regulations
-   • EVERY grant and funding opportunity
-   • COMPLETE permit and approval processes
-   • ALL stakeholder engagement requirements
-   • EVERY compliance and oversight consideration
+SWARM ASSEMBLY DIRECTIVE:
+Assemble specialized city revitalization intelligence team:
+• Lead Community Development Strategist - Orchestrate comprehensive revitalization analysis and funding optimization
+• Grant Research Specialists - Map federal, state, and foundation funding opportunities aligned with ${formData.focusArea || 'community development'} priorities
+• Community Needs Assessment Team - Quantify ${formData.focusArea || 'development'} challenges and opportunities for ${formData.targetPopulation || 'target populations'} in ${formData.targetLocation || 'target communities'}
+• Best Practices Research Team - Analyze successful peer community revitalization projects at ${investmentScale} scope with ${timeline} implementation
+• Municipal Capacity Analysis Team - Assess ${formData.targetLocation || 'municipal'} institutional capacity and ${formData.localContribution || 'funding'} partnership potential
+• Stakeholder Engagement Strategists - Design ${formData.targetPopulation || 'community'} participation frameworks and partnership development
+• Implementation Planning Team - Create ${timeline}-sequenced project roadmaps with ${riskProfile} risk management
+• Performance Measurement Analysts - Develop success metrics and evaluation frameworks for sustained community impact
 
-3. COMMUNITY AND INFRASTRUCTURE ANALYSIS
-   • ALL demographic and socioeconomic factors
-   • EVERY infrastructure improvement need
-   • COMPLETE transportation and connectivity analysis
-   • ALL environmental and sustainability considerations
-   • EVERY quality of life enhancement opportunity
+RESEARCH METHODOLOGY FRAMEWORK:
+**${researchTopology.toUpperCase()} RESEARCH APPROACH**:
+${researchTopology === 'hierarchical' ? `• Top-Down Community Assessment: Start with ${formData.targetLocation || 'community'} demographic analysis, narrow to ${formData.focusArea || 'focus area'} specific needs, then identify targeted interventions
+• Systematic Funding Alignment: Apply structured filtering from federal programs through state initiatives to local partnership opportunities
+• Centralized Grant Strategy: Aggregate all funding sources into unified application strategy with coordinated submission planning` : ''}
+${researchTopology === 'byzantine' ? `• Multi-Source Need Validation: Cross-verify community needs across census data, public input, and local government assessments
+• Redundant Funding Verification: Use overlapping grant databases and funding announcements to ensure comprehensive opportunity identification
+• Consensus Development Strategy: Reconcile competing community priorities through weighted scoring that balances resident input with funding availability` : ''}
+${researchTopology === 'federated' ? `• Distributed Stakeholder Analysis: Execute parallel research streams across community needs, funding landscape, regulatory requirements, and implementation capacity
+• Autonomous Domain Expertise: Allow each area (housing, infrastructure, economic development, social services) to develop independent assessments
+• Collaborative Community Strategy: Synthesize federated findings through cross-sector community development integration` : ''}
 
-DELIVERABLE: Complete municipal development analysis enabling informed city revitalization investment decisions.`;
+EXHAUSTIVE CITY REVITALIZATION RESEARCH REQUIREMENTS:
+
+1. COMMUNITY NEED ASSESSMENT AND QUANTIFICATION
+   Comprehensively assess ${formData.focusArea || 'focus area'} development needs in ${formData.targetLocation || 'target communities'} to establish quantified baseline conditions and identify priority intervention areas for ${formData.targetPopulation || 'target population'} benefit:
+   
+   **${investmentScale.toUpperCase()} PROJECT SCOPE FRAMEWORK**:
+   ${investmentScale === 'seed' ? `• Project Investment Range: $50K-$500K for focused pilot programs and demonstration projects
+   • Geographic Scope: Targeted intervention in specific ${formData.focusArea || 'focus area'} neighborhoods or districts
+   • Impact Metrics: Measurable improvements in specific community indicators with potential for replication` : ''}
+   ${investmentScale === 'growth' ? `• Project Investment Range: $500K-$5M for comprehensive ${formData.focusArea || 'focus area'} transformation initiatives
+   • Geographic Scope: Multi-neighborhood or city-wide ${formData.focusArea || 'focus area'} development programs
+   • Impact Metrics: Significant community transformation with measurable economic and social impact` : ''}
+   ${investmentScale === 'enterprise' ? `• Project Investment Range: $5M+ for large-scale ${formData.focusArea || 'focus area'} redevelopment and comprehensive community transformation
+   • Geographic Scope: City-wide or regional ${formData.focusArea || 'focus area'} development with multi-jurisdictional coordination
+   • Impact Metrics: Transformational community change with regional economic development impact` : ''}
+   
+   **${(formData.targetPopulation || 'TARGET POPULATION').toUpperCase()} NEEDS ANALYSIS**:
+   ${formData.targetPopulation === 'existing' ? `• Population Focus: Current ${formData.targetLocation || 'community'} residents with emphasis on retention and quality of life improvement
+   • Need Priorities: Housing preservation, neighborhood stabilization, local business support, and community services enhancement
+   • Engagement Strategy: Extensive resident input through surveys, public meetings, and community advisory participation` : ''}
+   ${formData.targetPopulation === 'new' ? `• Population Focus: Attract new residents and businesses to ${formData.targetLocation || 'target community'} through ${formData.focusArea || 'focus area'} improvements
+   • Need Priorities: Housing development, business attraction, infrastructure modernization, and amenity development
+   • Engagement Strategy: Market analysis, regional competitor assessment, and prospective resident/business surveys` : ''}
+   ${formData.targetPopulation === 'mixed' ? `• Population Focus: Balance existing resident needs with new resident/business attraction strategies
+   • Need Priorities: Integrated approach balancing preservation with growth and development
+   • Engagement Strategy: Comprehensive stakeholder engagement including current and prospective community members` : ''}
+
+2. FEDERAL AND STATE FUNDING LANDSCAPE ANALYSIS
+   Systematically map available federal and state grant opportunities aligned with ${formData.focusArea || 'focus area'} development needs and ${formData.targetLocation || 'community'} eligibility criteria:
+   
+   **${(formData.localContribution || 'LOCAL CONTRIBUTION').toUpperCase()} PARTNERSHIP MODEL INTEGRATION**:
+   ${formData.localContribution === 'funding' ? `• Local Match Requirements: Identify grants with favorable local match ratios and flexible match source requirements
+   • Municipal Capacity: Assess ${formData.targetLocation || 'community'} budget capacity for required local contributions and in-kind match
+   • Funding Strategy: Optimize grant portfolio to minimize local cash requirements while maximizing funding capture` : ''}
+   ${formData.localContribution === 'land' ? `• Asset Leverage: Utilize ${formData.targetLocation || 'community'} publicly owned land and property as match contribution for development projects
+   • Property Assessment: Inventory municipal assets suitable for ${formData.focusArea || 'focus area'} development and grant match requirements
+   • Development Strategy: Structure projects to maximize public asset utilization for community benefit` : ''}
+   ${formData.localContribution === 'services' ? `• Service Integration: Leverage ${formData.targetLocation || 'community'} municipal services and staff time as in-kind match for grant applications
+   • Capacity Assessment: Evaluate municipal department capability to provide required services and program support
+   • Partnership Strategy: Coordinate municipal services with grant-funded activities for maximum community impact` : ''}
+   
+   **${timeline.toUpperCase()} FUNDING ALIGNMENT**:
+   ${timeline === 'short-term' ? `• Grant Timeline: Focus on grants with immediate application deadlines and rapid deployment timelines (6-18 months)
+   • Implementation Speed: Prioritize funding opportunities supporting quick-start projects with visible community impact
+   • Capacity Requirements: Ensure ${formData.targetLocation || 'community'} administrative capacity can manage accelerated project timelines` : ''}
+   ${timeline === 'medium-term' ? `• Grant Timeline: Target strategic grants with standard development timelines and comprehensive planning phases (1-5 years)
+   • Implementation Planning: Balance thorough planning with reasonable implementation timelines for ${formData.focusArea || 'focus area'} development
+   • Capacity Building: Include capacity development components to strengthen long-term project sustainability` : ''}
+   ${timeline === 'long-term' ? `• Grant Timeline: Pursue comprehensive funding strategies with multi-phase implementation and long-term sustainability (5+ years)
+   • Implementation Vision: Develop transformational ${formData.focusArea || 'focus area'} strategies with sustained community development impact
+   • Institutional Development: Build ${formData.targetLocation || 'community'} institutional capacity for ongoing community development leadership` : ''}
+
+3. BEST PRACTICES AND PEER COMMUNITY ANALYSIS
+   Research successful ${formData.focusArea || 'focus area'} revitalization projects in peer communities to identify proven strategies, implementation approaches, and measurable outcomes applicable to ${formData.targetLocation || 'target communities'}:
+   
+   **PEER COMMUNITY SELECTION CRITERIA**:
+   • Demographic Similarity: Communities with comparable population size, economic base, and demographic characteristics to ${formData.targetLocation || 'target community'}
+   • ${formData.focusArea || 'Focus Area'} Focus: Successful projects specifically addressing similar ${formData.focusArea || 'development'} challenges
+   • ${investmentScale} Scope: Projects with comparable investment scale and resource deployment
+   • ${formData.targetPopulation || 'Target Population'} Alignment: Initiatives serving similar population demographics and community development objectives
+
+4. LOCAL ASSET AND CAPACITY ASSESSMENT
+   Comprehensively assess ${formData.targetLocation || 'community'} existing assets, institutional capacity, and partnership potential to support ${formData.focusArea || 'focus area'} development initiatives:
+   
+   **MUNICIPAL CAPACITY ANALYSIS**:
+   • Administrative Capacity: ${formData.targetLocation || 'Community'} staff expertise, project management capability, and grant administration experience
+   • Financial Capacity: Municipal budget analysis, debt capacity, and ability to provide ${formData.localContribution || 'funding'} match requirements
+   • Political Capacity: Community leadership support, political stability, and consensus-building capability for ${formData.focusArea || 'focus area'} development
+
+5. GRANT APPLICATION STRATEGY AND PORTFOLIO DEVELOPMENT
+   Develop comprehensive grant application strategy with prioritized funding targets, coordinated submission timeline, and maximized success probability:
+   
+   **${investmentScale.toUpperCase()} PORTFOLIO STRATEGY**:
+   ${investmentScale === 'seed' ? `• Grant Mix: 3-5 smaller grants ($50K-$200K) with high success probability and manageable administrative requirements
+   • Application Strategy: Focus on straightforward applications with clear eligibility and proven community need
+   • Implementation Approach: Pilot project strategy with demonstration value and potential for scaling` : ''}
+   ${investmentScale === 'growth' ? `• Grant Mix: 2-4 medium grants ($200K-$2M) with strategic community development impact
+   • Application Strategy: Comprehensive applications with strong evidence base and professional development approach
+   • Implementation Approach: Multi-phase development with measurable outcomes and sustainability planning` : ''}
+   ${investmentScale === 'enterprise' ? `• Grant Mix: 1-3 major grants ($2M+) with transformational community impact potential
+   • Application Strategy: Flagship applications with extensive partnerships, professional consultation, and comprehensive planning
+   • Implementation Approach: Large-scale transformation with regional impact and long-term sustainability commitment` : ''}
+
+6. IMPLEMENTATION ROADMAP AND SUCCESS METRICS
+   **${riskProfile.toUpperCase()}-CALIBRATED IMPLEMENTATION FRAMEWORK**:
+   
+   ${riskProfile === 'conservative' ? `• Project Selection (40%): Proven interventions with established success records and minimal complexity
+   • Implementation Planning (30%): Comprehensive planning with extensive risk mitigation and contingency preparation
+   • Community Support (20%): Strong community consensus with broad stakeholder engagement and support
+   • Financial Sustainability (10%): Conservative financial planning with diversified funding and minimal financial risk` : ''}
+   ${riskProfile === 'moderate' ? `• Community Impact (35%): Balance of innovation with proven effectiveness and reasonable implementation complexity
+   • Implementation Feasibility (30%): Realistic project scope with manageable complexity and appropriate resource requirements
+   • Partnership Strength (20%): Strong local partnerships with reasonable external collaboration requirements
+   • Financial Viability (15%): Balanced financial planning with reasonable risk and sustainable funding approach` : ''}
+   ${riskProfile === 'aggressive' ? `• Transformational Potential (40%): High-impact projects with significant community transformation potential
+   • Innovation Value (30%): Cutting-edge approaches with potential for significant community advancement
+   • Strategic Positioning (20%): Projects positioning ${formData.targetLocation || 'community'} for regional leadership and recognition
+   • Long-term Vision (10%): Visionary projects with potential for sustained community transformation` : ''}
+
+DELIVERABLE REQUIREMENTS:
+
+**Executive Summary**: ${investmentScale === 'seed' ? '2-page' : investmentScale === 'growth' ? '3-page' : '5-page'} overview of optimal ${formData.focusArea || 'focus area'} revitalization strategy for ${formData.targetLocation || 'target community'}, calibrated for ${investmentScale} scope, ${timeline} horizon, and ${riskProfile} implementation approach.
+
+**Grant Opportunity Portfolio**: Comprehensive funding strategy including:
+• Prioritized grant target list with application timeline and success probability assessment
+• ${formData.localContribution || 'Local contribution'} optimization strategy with municipal resource deployment planning
+• Application preparation roadmap with required documentation and partnership development
+• ${timeline}-sequenced submission strategy with coordinated application management
+
+**Community Development Plan**: Detailed ${formData.focusArea || 'focus area'} revitalization strategy including:
+• Evidence-based need assessment with quantitative and qualitative community data
+• ${formData.targetPopulation || 'Target population'} engagement strategy with ongoing participation and feedback mechanisms
+• Implementation timeline with ${timeline}-appropriate milestones and success metrics
+• ${riskProfile}-calibrated risk management and contingency planning
+
+**Best Practices Integration**: Peer community analysis with:
+• Successful project case studies applicable to ${formData.targetLocation || 'target community'} ${formData.focusArea || 'focus area'} development
+• Implementation strategies adapted for local context and municipal capacity
+• Partnership models and funding approaches with demonstrated effectiveness
+• Innovation opportunities with appropriate risk assessment and mitigation planning
+
+**Implementation Toolkit**: Practical resources for project execution including:
+• Grant application templates customized for ${formData.focusArea || 'focus area'} development projects
+• Community engagement protocols designed for ${formData.targetPopulation || 'target population'} participation
+• Performance measurement framework with appropriate metrics and reporting systems
+• Partnership development strategy with stakeholder engagement and coordination planning
+
+SUCCESS METRICS: Enable stakeholders to maximize grant capture success rate through strategic application portfolio development, implement evidence-based ${formData.focusArea || 'focus area'} revitalization projects with measurable community impact, optimize ${formData.localContribution || 'local contribution'} partnership models for sustainable community development, and build ${formData.targetLocation || 'community'} institutional capacity for ongoing community development leadership.
+
+═══════════════════════════════════════════════════════════════════════════
+🏛️ CITY REVITALIZATION CREATIVE DIVERGENCE DIRECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+Generate "phantom community" scenarios: design revitalization projects for community needs that don't exist yet but will emerge from demographic and economic changes in ${formData.targetLocation || 'target communities'}.
+
+Include development disruption thesis: identify which ${formData.focusArea || 'community development'} assumption everyone accepts that should be challenged through innovative revitalization approaches.
+
+Provide future community leader profile: describe the community organization or initiative that will lead ${formData.targetLocation || 'community'} transformation in 2030 through ${formData.focusArea || 'focus area'} excellence.
+
+Output community folklore: create a legend about the ${formData.focusArea || 'community development'} project that "could have been" but funding or political barriers prevented its ${investmentScale} implementation in ${formData.targetLocation || 'target community'}.`;
 }
 
 /**
