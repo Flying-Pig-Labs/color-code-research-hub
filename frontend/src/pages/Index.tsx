@@ -25,7 +25,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { ResearchReportHistory } from "@/components/ResearchReportHistory";
-import { CircleHelp, Search, FileText, HelpCircle, Clock, Calendar, CalendarDays } from "lucide-react";
+import { CircleHelp, Search, FileText, HelpCircle, Clock, Calendar, CalendarDays, Shield, TrendingUp, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
