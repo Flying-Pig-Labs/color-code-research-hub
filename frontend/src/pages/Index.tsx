@@ -296,6 +296,7 @@ const Index = () => {
 
                         {/* Page Container with Slide Transition */}
                         <div className="relative overflow-x-hidden overflow-y-auto min-h-full">
+                          {/* Page 1 Container */}
                           <div 
                             className={`transition-transform duration-300 ease-in-out ${
                               currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
@@ -924,6 +925,163 @@ const Index = () => {
                         </div>
                             </div>
                           )}
+                          </div>
+
+                          {/* Page 2 Container */}
+                          <div 
+                            className={`transition-transform duration-300 ease-in-out ${
+                              currentFormPage === 2 ? 'translate-x-0' : 'translate-x-full'
+                            } ${isTransitioning ? 'pointer-events-none' : ''}`}
+                            style={{ minHeight: 'fit-content' }}
+                          >
+                            {/* Page 2: Strategic Configuration */}
+                            {currentFormPage === 2 && (
+                              <div className="space-y-6">
+                                <div className="text-center mb-6">
+                                  <h3 className="text-lg font-semibold text-foreground mb-2">Strategic Configuration</h3>
+                                  <p className="text-sm text-muted-foreground">Configure investment parameters and research approach</p>
+                                </div>
+
+                          {/* Core Configuration - applies to all research types */}
+                          <div className="border border-border rounded-lg p-6 bg-muted/20">
+                            <h3 className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">Core Configuration</h3>
+                            
+                            {/* Investment Scale */}
+                            <div className="mb-6">
+                              <Label className="font-medium text-foreground mb-3 block">Investment Scale</Label>
+                              <div className="grid grid-cols-4 gap-2">
+                                {[
+                                  { value: 'seed', label: 'Seed', desc: '$0-1M' },
+                                  { value: 'growth', label: 'Growth', desc: '$1-25M' },
+                                  { value: 'scale', label: 'Scale', desc: '$25-100M' },
+                                  { value: 'enterprise', label: 'Enterprise', desc: '$100M+' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setInvestmentScale(option.value)}
+                                    className={`p-3 rounded-md border text-sm text-center transition-colors ${
+                                      investmentScale === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-xs text-muted-foreground">{option.desc}</div>
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">Choose the investment size you're targeting.</p>
+                            </div>
+
+                            {/* Timeline */}
+                            <div className="mb-6">
+                              <Label className="font-medium text-foreground mb-3 block">Timeline</Label>
+                              <div className="flex gap-3">
+                                {[
+                                  { value: 'short-term', label: 'Short-term', icon: Clock, desc: '<2 years' },
+                                  { value: 'medium-term', label: 'Medium-term', icon: Calendar, desc: '2-5 years' },
+                                  { value: 'long-term', label: 'Long-term', icon: CalendarDays, desc: '5+ years' }
+                                ].map(option => {
+                                  const IconComponent = option.icon;
+                                  return (
+                                    <button
+                                      key={option.value}
+                                      type="button"
+                                      onClick={() => setTimeline(option.value)}
+                                      className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                        timeline === option.value
+                                          ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                          : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                      }`}
+                                    >
+                                      <div className="mb-1">
+                                        <IconComponent className="h-5 w-5 mx-auto" />
+                                      </div>
+                                      <div className="font-medium">{option.label}</div>
+                                      <div className="text-xs text-muted-foreground">{option.desc}</div>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">What's your investment timeline?</p>
+                            </div>
+
+                            {/* Risk Profile */}
+                            <div className="mb-6">
+                              <Label className="font-medium text-foreground mb-3 block">Risk Profile</Label>
+                              <div className="flex gap-3">
+                                {[
+                                  { value: 'conservative', label: 'Conservative', icon: Shield, desc: 'Lower risk' },
+                                  { value: 'moderate', label: 'Moderate', icon: TrendingUp, desc: 'Balanced' },
+                                  { value: 'aggressive', label: 'Aggressive', icon: Zap, desc: 'Higher risk' }
+                                ].map(option => {
+                                  const IconComponent = option.icon;
+                                  return (
+                                    <button
+                                      key={option.value}
+                                      type="button"
+                                      onClick={() => setRiskProfile(option.value)}
+                                      className={`p-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                        riskProfile === option.value
+                                          ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                          : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                      }`}
+                                    >
+                                      <div className="mb-1">
+                                        <IconComponent className="h-5 w-5 mx-auto" />
+                                      </div>
+                                      <div className="font-medium">{option.label}</div>
+                                      <div className="text-xs text-muted-foreground">{option.desc}</div>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">How much risk can you tolerate?</p>
+                            </div>
+
+                            {/* Research Topology */}
+                            <div className="mb-0">
+                              <Label className="font-medium text-foreground mb-3 block">Research Topology</Label>
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setResearchTopology('hierarchical')}
+                                  className={`px-3 py-2 rounded-md border transition-colors text-sm ${
+                                    researchTopology === 'hierarchical'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  hierarchical
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setResearchTopology('byzantine')}
+                                  className={`px-3 py-2 rounded-md border transition-colors text-sm ${
+                                    researchTopology === 'byzantine'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  byzantine
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setResearchTopology('federated')}
+                                  className={`px-3 py-2 rounded-md border transition-colors text-sm ${
+                                    researchTopology === 'federated'
+                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                  }`}
+                                >
+                                  federated <span className="text-xs text-amber-600 dark:text-amber-400">(recommended)</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
