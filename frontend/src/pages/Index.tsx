@@ -1198,12 +1198,12 @@ const Index = () => {
     J --> L
     K --> L
     
-    %% Styling
-    classDef topLevel fill:#ffffff,stroke:#333333,stroke-width:3px,color:#000000
-    classDef research fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
-    classDef convergence fill:#ffffff,stroke:#333333,stroke-width:3px,color:#000000
-    classDef methodology fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
-    classDef output fill:#ffffff,stroke:#333333,stroke-width:4px,color:#000000
+    %% Styling - Let component handle colors based on theme
+    classDef topLevel stroke-width:3px
+    classDef research stroke-width:2px
+    classDef convergence stroke-width:3px
+    classDef methodology stroke-width:2px
+    classDef output stroke-width:4px
     
     class A,B,C,D,E topLevel
     class A1,B1,C1,D1,E1 research
