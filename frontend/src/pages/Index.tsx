@@ -1220,23 +1220,23 @@ const Index = () => {
               <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-stone-600 dark:text-stone-400">Alternative Data:</span>
-                  <span>Beyond traditional research methods - behavioral signals, digital footprints, ethnographic insights</span>
+                  <span className="dark:text-white">Behavioral signals, digital footprints, and ethnographic intelligence</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-stone-600 dark:text-stone-400">Pattern Recognition:</span>
-                  <span>Uncover hidden market dynamics and unconventional opportunities others miss</span>
+                  <span className="dark:text-white">Uncover hidden market dynamics and unconventional opportunities others miss</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-stone-600 dark:text-stone-400">Timing Intelligence:</span>
-                  <span>Strategic convergence analysis revealing optimal opportunity windows</span>
+                  <span className="dark:text-white">Strategic convergence analysis revealing optimal opportunity windows</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-stone-600 dark:text-stone-400">Deep Context:</span>
-                  <span>Comprehensive ecosystem mapping and stakeholder relationship intelligence</span>
+                  <span className="dark:text-white">Comprehensive ecosystem mapping and stakeholder relationship intelligence</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-stone-600 dark:text-stone-400">Novel Insights:</span>
-                  <span>Research approaches that reveal opportunity zones invisible to traditional analysis</span>
+                  <span className="dark:text-white">Research approaches that reveal opportunity zones invisible to traditional analysis</span>
                 </li>
               </ul>
             </div>
