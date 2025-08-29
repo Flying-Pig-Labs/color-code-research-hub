@@ -142,14 +142,25 @@ const Index = () => {
     try {
       console.log("Submitting research request:", formData);
       
-      // Call the research API with proper base URL
+      // Call the research API with proper base URL and headers
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API_BASE_URL}/api/research/v2`, {
+      console.log('API_BASE_URL:', API_BASE_URL);
+      console.log('Full URL:', `${API_BASE_URL}/api/research`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/research`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          content: `Research request: ${JSON.stringify(formData)}`,
+          title: `${formData.companyName || 'Research'} - ${formData.researchType || 'General'} Research`,
+          model: 'sonar-deep-research',
+          reasoning_effort: 'high',
+          team: 'white',
+          ...formData
+        }),
       });
       
       const result = await response.json();
