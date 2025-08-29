@@ -250,10 +250,10 @@ const Index = () => {
       
 
       {/* Streamlined Research Form - The main interface */}
-        <section className="py-12 lg:py-20 min-h-screen flex-1">
-          <div className="max-w-4xl mx-auto px-6 h-full">
-            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600 h-full">
-              <CardContent className="p-8 h-full overflow-y-auto">
+        <section className="py-12 lg:py-20">
+          <div className="max-w-4xl mx-auto px-6">
+            <Card className="bg-card border-border shadow-card border-2 border-stone-300 dark:border-stone-600">
+              <CardContent className="p-8">
                 <div>
                   <Label className="text-lg font-heading font-semibold text-foreground mb-4 block">
                     launch a truffle hunt
