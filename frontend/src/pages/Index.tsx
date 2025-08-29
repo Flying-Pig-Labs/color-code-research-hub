@@ -142,8 +142,9 @@ const Index = () => {
     try {
       console.log("Submitting research request:", formData);
       
-      // Call the research API
-      const response = await fetch('/api/research/v2', {
+      // Call the research API with proper base URL
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+      const response = await fetch(`${API_BASE_URL}/api/research/v2`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
