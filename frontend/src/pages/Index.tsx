@@ -36,6 +36,7 @@ import { AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MermaidDiagram } from "@/components/MermaidDiagram";
+import { toast } from 'sonner';
 import {
   Tooltip,
   TooltipContent,
@@ -167,19 +168,36 @@ const Index = () => {
       
       if (response.ok) {
         console.log("Research job started:", result);
-        alert(`Research job started successfully! Request ID: ${result.request_id}`);
+        
+        // Show custom styled success toast with pale green/yellow tint
+        toast.success('Research job started successfully!', {
+          description: `Request ID: ${result.request_id}`,
+          duration: 6000,
+          style: {
+            background: 'linear-gradient(135deg, #f8fff4 0%, #fcfef7 100%)',
+            border: '1px solid #d4edda',
+            color: '#2d5a2f',
+            boxShadow: '0 8px 32px rgba(45, 90, 47, 0.12)'
+          },
+          className: 'font-medium'
+        });
         
         // Reset form or redirect as needed
-        // Could add toast notification here instead of alert
         
       } else {
         console.error("Research submission failed:", result);
-        alert(`Failed to start research: ${result.message || 'Unknown error'}`);
+        toast.error('Failed to start research', {
+          description: result.message || 'Unknown error occurred',
+          duration: 5000
+        });
       }
       
     } catch (error) {
       console.error("Error submitting research request:", error);
-      alert("Failed to submit research request. Please try again.");
+      toast.error('Failed to submit research request', {
+        description: 'Please try again or contact support if the problem persists.',
+        duration: 5000
+      });
     }
   };
 
