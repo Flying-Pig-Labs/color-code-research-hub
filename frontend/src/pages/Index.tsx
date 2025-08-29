@@ -35,6 +35,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MermaidDiagram } from "@/components/MermaidDiagram";
 import {
   Tooltip,
   TooltipContent,
@@ -1128,6 +1129,120 @@ const Index = () => {
         </Card>
       </div>
 
+      {/* How Research Works Modal */}
+      <Dialog open={howModalOpen} onOpenChange={setHowModalOpen}>
+        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-0">
+          <DialogHeader className="p-6 pb-2">
+            <DialogTitle>how truflr.ai research works</DialogTitle>
+          </DialogHeader>
+          <div className="px-6 pb-6 space-y-4">
+            {/* Mermaid Diagram */}
+            <div className="w-full overflow-x-auto">
+              <MermaidDiagram 
+                chart={`flowchart TD
+    %% Top Level Categories
+    A[🚀 INNOVATION RESEARCH]
+    B[⛏️ CRYPTO MINING RESEARCH]
+    C[🏥 MEDICAL DEVICE RESEARCH]
+    D[💼 PRIVATE EQUITY RESEARCH]
+    E[🏙️ CITY REVITALIZATION RESEARCH]
+    
+    %% Second Level Research Focus
+    A1[Market Disruption Analysis<br/>Competitive Blind Spots<br/>Innovation Gap Identification]
+    B1[Site Selection Intelligence<br/>Equipment Logistics Modeling<br/>Power Arbitrage Patterns]
+    C1[Clinical Workflow Ethnography<br/>Alternative Data Mining<br/>Regulatory Pathway Innovation]
+    D1[Off-Market Pipeline Development<br/>Behavioral Economics Analysis<br/>Seller Motivation Prediction]
+    E1[Municipal Funding Optimization<br/>Coalition Partnership Analysis<br/>Multi-Stakeholder Ecosystem Mapping]
+    
+    %% Connections to parent categories
+    A --> A1
+    B --> B1
+    C --> C1
+    D --> D1
+    E --> E1
+    
+    %% Core Methodologies (converging layer)
+    F[Alternative Data Sources]
+    G[Ethnographic Intelligence]
+    H[Hidden Pattern Recognition]
+    I[Strategic Timing Analysis]
+    J[Network Relationship Mapping]
+    K[Behavioral Economics Integration]
+    
+    %% Convergence point for all research areas
+    CONV[METHODOLOGY CONVERGENCE]
+    
+    %% All research areas flow to convergence point
+    A1 --> CONV
+    B1 --> CONV
+    C1 --> CONV
+    D1 --> CONV
+    E1 --> CONV
+    
+    %% Final output
+    L[OPPORTUNITY ZONE INTELLIGENCE<br/>Novel Research Package]
+    
+    %% Convergence point connects to methodologies
+    CONV --> F
+    CONV --> G
+    CONV --> H
+    CONV --> I
+    CONV --> J
+    CONV --> K
+    
+    %% Methodologies converge to final output
+    F --> L
+    G --> L
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+    
+    %% Styling
+    classDef topLevel fill:#ffffff,stroke:#333333,stroke-width:3px,color:#000000
+    classDef research fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    classDef convergence fill:#ffffff,stroke:#333333,stroke-width:3px,color:#000000
+    classDef methodology fill:#ffffff,stroke:#333333,stroke-width:2px,color:#000000
+    classDef output fill:#ffffff,stroke:#333333,stroke-width:4px,color:#000000
+    
+    class A,B,C,D,E topLevel
+    class A1,B1,C1,D1,E1 research
+    class CONV convergence
+    class F,G,H,I,J,K methodology
+    class L output`}
+                id="research-flow"
+              />
+            </div>
+            
+            {/* Key Value Propositions */}
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+              <h3 className="text-lg font-semibold mb-3 dark:text-white">Research Intelligence Advantages:</h3>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Alternative Data:</span>
+                  <span>Beyond traditional research methods - behavioral signals, digital footprints, ethnographic insights</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Pattern Recognition:</span>
+                  <span>Uncover hidden market dynamics and unconventional opportunities others miss</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Timing Intelligence:</span>
+                  <span>Strategic convergence analysis revealing optimal opportunity windows</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Deep Context:</span>
+                  <span>Comprehensive ecosystem mapping and stakeholder relationship intelligence</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-stone-600 dark:text-stone-400">Novel Insights:</span>
+                  <span>Research approaches that reveal opportunity zones invisible to traditional analysis</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

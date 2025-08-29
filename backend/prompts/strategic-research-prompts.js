@@ -1,5 +1,5 @@
 /**
- * @file strategic-research-prompts.js
+ * @file strategic-research-prompts.js  
  * @description Strategic Research Prompt Generation System for Multi-Use-Case Intelligence
  * 
  * This service provides comprehensive prompt generation for 5 strategic research types,
@@ -31,11 +31,11 @@
  * - Community impact and revitalization planning
  * - Grant opportunities and municipal financing
  * 
- * 🏢 DATA CENTER RESEARCH - Infrastructure Location Intelligence
- * - Site selection and infrastructure optimization
- * - Power, connectivity, and regulatory analysis
- * - Market demand and capacity planning
- * - Risk assessment and disaster resilience
+ * ⛏️ CRYPTO MINING RESEARCH - Site Selection and Equipment Logistics Intelligence
+ * - Mining site selection with power cost optimization and equipment logistics analysis
+ * - Power availability, equipment deployment, and regulatory compliance analysis
+ * - Total delivered cost modeling and supplier network optimization
+ * - Geographic risk assessment and timeline feasibility planning
  * 
  * STRATEGIC PARAMETER INTEGRATION:
  * - Investment Scale: seed → growth → enterprise (scope adjustment)
@@ -276,18 +276,20 @@ Identify medical device opportunities in ${formData.clinicalArea || 'target clin
 • Strong commercial viability through existing or obtainable reimbursement mechanisms consistent with ${riskProfile} investment parameters
 • Technology landscape positioning appropriate for TRL ${formData.techMaturity || 'TRL 4-6'} development stage and ${investmentScale} resource requirements
 
-SUCCESS CRITERIA: Produce actionable intelligence that can guide ${investmentScale} resource allocation toward ${formData.clinicalArea || 'clinical'} innovations with the highest probability of clinical adoption and commercial success through the ${formData.fdaPathway || '510(k)'} pathway over ${timeline} timeframes.
+SUCCESS CRITERIA: Reveal hidden clinical patterns and unconventional innovation opportunities that traditional medtech research overlooks, uncovering unmet clinical needs through alternative data sources, novel regulatory pathway insights, and emerging clinical practice evolution that create asymmetric competitive intelligence.
 
 SWARM ASSEMBLY DIRECTIVE:
 Assemble specialized medical device intelligence team:
-• Lead Clinical Research Strategist - Orchestrate comprehensive bench-to-bedside analysis
-• FDA Regulatory Specialists - Navigate ${formData.fdaPathway || '510(k)'} pathway requirements and precedents aligned with ${timeline} development planning
-• Clinical Needs Assessment Team - Map unmet needs in ${formData.clinicalArea || 'target areas'} for ${formData.careSetting || 'clinical'} care delivery at ${investmentScale} market scale
-• Reimbursement Analysis Team - Analyze economic viability for ${formData.careSetting || 'target'} procedures consistent with ${riskProfile} investment parameters
-• Technology & Patent Intelligence - Map competitive landscape and IP considerations for TRL ${formData.techMaturity || 'TRL 4-6'} innovations at ${investmentScale} scope
-• Key Opinion Leader Network - Gather insights from practicing ${formData.clinicalArea || 'specialists'} and ${formData.careSetting || 'clinical'} care experts
-• Market Intelligence Analysts - Assess competitive dynamics and commercial positioning for ${investmentScale} market entry
-• Clinical Trial Strategy Team - Design evidence generation pathways for ${formData.fdaPathway || '510(k)'} submissions within ${timeline} constraints
+• Lead Clinical Pattern Discovery Specialist - Orchestrate unconventional clinical intelligence and hidden opportunity recognition
+• Medical Practice Ethnographers - Conduct field research in ${formData.careSetting || 'clinical'} settings to discover workflow pain points and unmet needs invisible to surveys
+• Patient Journey Intelligence Team - Map complete patient experience and care pathway inefficiencies across ${formData.clinicalArea || 'clinical specialty'} treatment episodes
+• Alternative Data Clinical Analysts - Mine electronic health records, insurance claims, device failure reports, and patient forums for innovation signals
+• Regulatory Pathway Innovation Researchers - Identify emerging FDA guidance, novel predicate device strategies, and accelerated approval opportunities
+• Clinical Frustration Point Specialists - Interview healthcare providers to discover daily operational challenges and technology adoption barriers
+• Healthcare Economics Anthropologists - Study reimbursement evolution, payer behavior changes, and value-based care transformation patterns
+• Medical Device Failure Analysis Team - Investigate device recalls, adverse event reports, and clinical performance gaps creating innovation opportunities
+• Emerging Clinical Practice Scouts - Monitor new surgical techniques, diagnostic approaches, and care delivery models requiring device innovation
+• Patient Advocacy and Community Intelligence - Analyze patient support groups, online health communities, and advocacy organization priorities
 
 RESEARCH METHODOLOGY FRAMEWORK:
 **${researchTopology.toUpperCase()} RESEARCH APPROACH**:
@@ -403,25 +405,93 @@ EXHAUSTIVE MEDICAL DEVICE RESEARCH REQUIREMENTS:
    • Revenue Scale Potential (20%): Large ${investmentScale} market opportunity with premium pricing sustainability
    • Strategic Value Creation (15%): Platform technology with multiple application and expansion opportunities` : ''}
 
+7. CLINICAL WORKFLOW ETHNOGRAPHIC INTELLIGENCE
+   Deep field research in ${formData.careSetting || 'clinical'} environments to discover hidden pain points and innovation opportunities invisible to traditional research:
+   • **${formData.careSetting || 'Clinical'} Setting Observational Research**: Detailed workflow analysis, communication pattern mapping, and efficiency bottleneck identification in real ${formData.clinicalArea || 'clinical'} settings
+   • **Healthcare Provider Frustration Point Analysis**: Daily operational challenges, technology adoption barriers, and workflow interruption causes affecting ${formData.clinicalArea || 'clinical specialty'} productivity
+   • **Patient Experience Journey Mapping**: Complete patient pathway analysis revealing pain points, anxiety triggers, and care coordination failures across ${formData.careSetting || 'care'} episodes
+   • **Clinical Decision-Making Process Investigation**: How physicians actually make treatment decisions, information sources consulted, and decision support tool gaps in ${formData.clinicalArea || 'clinical practice'}
+   • **Healthcare Team Communication Analysis**: Interdisciplinary communication patterns, information handoff failures, and collaboration tool inadequacies in ${formData.careSetting || 'clinical'} environments
+   • **Time and Motion Study Insights**: Detailed analysis of how healthcare providers actually spend time, identifying automation opportunities and efficiency improvement potential
+   • **Technology Integration Failure Patterns**: Why medical devices fail to integrate into workflows, user interface complaints, and adoption resistance factors
+   • **Clinical Outcomes Documentation Challenges**: How providers document patient outcomes, quality measure reporting burdens, and data capture inefficiencies
+
+8. ALTERNATIVE DATA CLINICAL INTELLIGENCE MINING
+   Systematic analysis of non-traditional data sources revealing unmet clinical needs and innovation opportunities:
+   • **Electronic Health Record Pattern Analysis**: Mining EHR data for treatment variation patterns, outcome disparities, and care gap identification in ${formData.clinicalArea || 'clinical specialty'}
+   • **Medical Device Recall and Failure Intelligence**: FDA adverse event reports, device recall patterns, and clinical performance gap analysis revealing innovation opportunities
+   • **Insurance Claims Data Opportunity Discovery**: Analyzing medical billing patterns, denial trends, and reimbursement challenges revealing device needs and market opportunities
+   • **Online Patient Community Sentiment Analysis**: Patient forum discussions, support group conversations, and health social media content revealing unmet needs and frustrations
+   • **Medical Literature Sentiment Mining**: Systematic analysis of clinical papers identifying researcher frustrations, technology limitations, and frequently mentioned unmet needs
+   • **Patent Landscape Gap Analysis**: Identifying technology white spaces, expired patent opportunities, and competitor innovation blind spots in ${formData.clinicalArea || 'clinical'} devices
+   • **Clinical Trial Database Intelligence**: Analyzing ongoing and completed trials for endpoint trends, technology gaps, and emerging biomarker opportunities
+   • **Healthcare Purchasing and Procurement Data**: Hospital and clinic purchasing patterns, vendor satisfaction surveys, and procurement challenge identification
+
+9. REGULATORY PATHWAY INNOVATION INTELLIGENCE
+   Advanced analysis of FDA regulatory strategy and novel pathway opportunities beyond traditional approaches:
+   • **Emerging FDA Guidance and Policy Evolution**: Identifying new regulatory pathways, digital health guidance updates, and accelerated approval opportunities for ${formData.clinicalArea || 'clinical'} devices
+   • **Novel Predicate Device Strategy Intelligence**: Creative predicate identification, regulatory precedent analysis, and pathway optimization strategies for ${formData.fdaPathway || '510(k)'} submissions
+   • **FDA Staff and Reviewer Insight Analysis**: Understanding FDA reviewer priorities, common submission issues, and regulatory success factor patterns through public documents and guidance
+   • **Breakthrough Device Designation Opportunities**: Qualifying criteria analysis, application strategy development, and expedited review pathway optimization
+   • **Real-World Evidence Regulatory Strategy**: Utilizing post-market data, patient registries, and real-world outcomes for regulatory decision support and label expansion
+   • **International Regulatory Harmonization Intelligence**: CE Mark opportunities, international pathway strategies, and global regulatory sequence optimization
+   • **Digital Health and Software Medical Device Pathways**: Understanding AI/ML medical device regulations, digital therapeutics pathways, and software validation requirements
+   • **Regulatory Science Collaboration Opportunities**: FDA-industry partnership programs, research collaboration initiatives, and regulatory science advancement projects
+
+10. HEALTHCARE ECONOMICS AND REIMBURSEMENT EVOLUTION RESEARCH
+    Comprehensive analysis of payment system changes and value-based care evolution creating device opportunities:
+    • **Value-Based Care Transformation Impact**: How payment model changes affect device adoption, outcome measurement requirements, and reimbursement strategy evolution
+    • **Patient-Reported Outcome Measure Integration**: PROM development opportunities, patient experience documentation needs, and quality metric reporting requirements
+    • **Health Technology Assessment Evolution**: ICER review processes, comparative effectiveness research requirements, and health economic modeling needs for ${formData.clinicalArea || 'clinical'} devices
+    • **Payer Coverage Policy Trend Analysis**: Medicare coverage determination patterns, commercial payer policy evolution, and prior authorization requirement impacts
+    • **Bundled Payment and Episode-Based Care Implications**: How payment bundling affects device selection, cost management priorities, and outcome optimization incentives
+    • **Digital Health Reimbursement Evolution**: Remote patient monitoring payment policies, telehealth integration reimbursement, and virtual care delivery models
+    • **Quality Measure and Performance Metric Requirements**: CMS quality reporting requirements, hospital quality scoring impacts, and provider performance measurement needs
+    • **Healthcare Affordability and Cost Reduction Pressures**: Device cost optimization requirements, generic device competition threats, and cost-effectiveness demonstration needs
+
+11. PATIENT ADVOCACY AND COMMUNITY INTELLIGENCE
+    Deep analysis of patient communities, advocacy organizations, and grassroots healthcare needs identification:
+    • **Patient Advocacy Organization Priority Analysis**: Understanding patient advocacy group priorities, funding patterns, and technology support initiatives in ${formData.clinicalArea || 'clinical specialty'}
+    • **Patient Support Community Intelligence**: Online patient communities, disease-specific forums, and peer support networks revealing unmet needs and technology preferences
+    • **Caregiver Burden and Support Need Analysis**: Family caregiver challenges, support tool requirements, and care coordination needs affecting device development priorities
+    • **Health Disparities and Access Gap Research**: Understanding healthcare access barriers, cultural competency needs, and underserved population device requirements
+    • **Patient-Reported Quality of Life Improvement Opportunities**: Patient satisfaction survey analysis, quality of life measurement gaps, and patient experience enhancement possibilities
+    • **Rare Disease and Orphan Indication Intelligence**: Patient registry analysis, rare disease community needs, and orphan drug/device development opportunities
+    • **Patient Safety and Adverse Event Prevention Research**: Patient safety concern analysis, near-miss event patterns, and preventable adverse event reduction opportunities
+    • **Health Literacy and Patient Education Enhancement Needs**: Patient education material effectiveness, health literacy barriers, and communication tool improvement opportunities
+
+12. EMERGING CLINICAL PRACTICE AND CARE DELIVERY MODEL RESEARCH
+    Analysis of evolving clinical practice patterns and new care delivery models requiring device innovation:
+    • **Precision Medicine and Personalized Care Evolution**: Biomarker-guided therapy needs, genetic testing integration requirements, and personalized device therapy opportunities
+    • **Minimally Invasive and Ambulatory Care Trends**: Outpatient procedure expansion, same-day discharge protocols, and ambulatory care technology requirements
+    • **Remote Patient Monitoring and Telehealth Integration**: Connected device opportunities, remote care delivery needs, and virtual patient management tool requirements
+    • **Preventive Care and Early Detection Focus**: Population health screening needs, early intervention opportunities, and preventive care technology requirements
+    • **Interdisciplinary Care Team Coordination Needs**: Multi-specialty collaboration tools, care coordinator communication systems, and team-based care support technology
+    • **Patient Engagement and Self-Management Support**: Patient activation tools, self-care education technology, and chronic disease management support systems
+    • **Aging Population and Geriatric Care Specialization**: Senior-specific device needs, age-related usability requirements, and geriatric care delivery support tools
+    • **Mental Health Integration and Behavioral Health Technology**: Mental health screening integration, behavioral intervention tools, and psychological support device opportunities
+
 DELIVERABLE REQUIREMENTS:
 
-**Executive Summary**: ${investmentScale === 'seed' ? '2-page' : investmentScale === 'growth' ? '3-page' : '4-page'} overview of most promising ${formData.clinicalArea || 'clinical'} opportunities for ${formData.careSetting || 'care'} applications via ${formData.fdaPathway || '510(k)'} pathway, calibrated for ${investmentScale} scale, ${timeline} horizon, and ${riskProfile} risk parameters.
+**Executive Summary**: ${investmentScale === 'seed' ? '2-page' : investmentScale === 'growth' ? '3-page' : '4-page'} comprehensive intelligence analysis of hidden clinical patterns and unmet needs in ${formData.clinicalArea || 'clinical specialty'} through ${formData.careSetting || 'care setting'} research.
 
-**Detailed Opportunity Profiles**: For top ${investmentScale === 'seed' ? '5-7' : investmentScale === 'growth' ? '7-10' : '10-15'} opportunities:
-• ${formData.clinicalArea || 'Clinical'} need description and ${investmentScale}-appropriate market sizing
-• ${formData.fdaPathway || '510(k)'} regulatory pathway assessment with ${timeline} development planning and ${riskProfile} risk mitigation
-• ${formData.careSetting || 'Care setting'} reimbursement analysis calibrated for ${investmentScale} commercial deployment
-• Competitive landscape positioning for ${investmentScale} market entry over ${timeline} horizon
-• TRL ${formData.techMaturity || 'TRL 4-6'} to market development timeline with ${investmentScale} resource requirements
-• ${riskProfile}-adjusted commercial projections and investment merit assessment
+**Clinical Intelligence Database**: Comprehensive research findings including:
+• ${formData.clinicalArea || 'Clinical specialty'} workflow ethnographic discoveries and pain point analysis
+• Alternative data mining results from EHR patterns, patient communities, and device failure analysis
+• ${formData.fdaPathway || '510(k)'} regulatory pathway intelligence and novel predicate opportunities
+• Healthcare economics evolution patterns affecting ${formData.careSetting || 'care setting'} delivery models
+• Patient advocacy insights and community-driven needs identification
+• Emerging clinical practice patterns and care delivery transformation intelligence
 
-**Development Roadmap**: ${timeline}-sequenced implementation plan including:
-• Clinical development milestones aligned with ${formData.fdaPathway || '510(k)'} requirements
-• ${investmentScale} resource deployment and funding requirement projections
-• ${riskProfile}-appropriate risk mitigation strategies and contingency planning
-• Market entry strategy calibrated for ${investmentScale} commercial deployment
+**Deep Clinical Research Findings**: For ${investmentScale === 'seed' ? '5-7' : investmentScale === 'growth' ? '7-10' : '10-15'} key research discoveries:
+• Ethnographic field research insights from ${formData.careSetting || 'care setting'} environments
+• Alternative data intelligence revealing hidden clinical patterns and unmet needs
+• Regulatory pathway innovation opportunities and novel FDA strategy insights
+• Healthcare economics transformation creating reimbursement and adoption changes
+• Patient and provider community intelligence uncovering grassroots needs
+• Clinical practice evolution patterns and care delivery model transformation trends
 
-SUCCESS METRICS: Enable stakeholders to prioritize ${formData.clinicalArea || 'clinical'} R&D investments based on ${investmentScale} market opportunity assessment and ${riskProfile} risk tolerance, develop ${formData.fdaPathway || '510(k)'} regulatory strategies optimized for ${timeline} development horizons, and position ${formData.clinicalArea || 'clinical'} innovations for sustainable competitive advantage.
+SUCCESS METRICS: Provide comprehensive clinical intelligence that reveals hidden patterns in ${formData.clinicalArea || 'clinical specialty'} research, uncover unconventional innovation opportunities through alternative data analysis, and deliver novel insights into regulatory, economic, and clinical practice evolution that traditional medtech research approaches cannot access.
 
 ═══════════════════════════════════════════════════════════════════════════
 🏥 MEDICAL DEVICE CREATIVE DIVERGENCE DIRECTIVES
@@ -471,18 +541,20 @@ Generate proprietary pipeline of "off-market" acquisition targets in ${formData.
 • Risk-return profiles consistent with ${riskProfile} investment parameters
 • Operational characteristics that align with ${investmentScale} PE value creation playbooks
 
-SUCCESS CRITERIA: Produce actionable intelligence enabling proactive outreach to high-probability acquisition targets before they formally enter the market, with clear rationale for ${formData.valueDriver || 'consolidation'}-focused value creation over ${timeline} timeframes.
+SUCCESS CRITERIA: Reveal hidden market patterns and unconventional consolidation opportunities that traditional PE research overlooks, uncovering alternative data signals that predict seller motivation 6-18 months before companies formally enter the market, and identifying novel ${formData.valueDriver || 'consolidation'} opportunities that create asymmetric competitive advantages.
 
 SWARM ASSEMBLY DIRECTIVE:
 Assemble specialized private equity intelligence team:
-• Lead PE Research Strategist - Orchestrate comprehensive roll-up opportunity analysis
-• Industry Analysis Team - Map ${formData.targetIndustry || 'target industry'} fragmentation and consolidation dynamics for ${investmentScale} opportunities
-• Target Universe Generation Team - Build comprehensive database of ${formData.targetProfile || 'founder-led'} companies within ${investmentScale} parameters
-• Alternative Data Intelligence - Detect ${formData.sellerMotivation || 'seller motivation'} signals using non-traditional data sources calibrated for ${timeline} transaction timing
-• ${formData.valueDriver || 'Consolidation'} Value Creation Analysts - Evaluate improvement potential across targets for ${investmentScale} resource deployment
-• Financial Due Diligence Team - Assess risk-return profiles consistent with ${riskProfile} investment parameters
-• Market Intelligence Analysts - Provide competitive dynamics and positioning analysis
-• Deal Execution Strategists - Develop ${timeline}-sequenced engagement and acquisition roadmaps
+• Lead Alternative Data Strategist - Orchestrate unconventional market intelligence discovery and pattern recognition
+• Industry Disruption Specialists - Map hidden fragmentation patterns and emerging consolidation catalysts in ${formData.targetIndustry || 'target industry'}
+• Behavioral Economics Team - Analyze founder psychology, succession planning triggers, and emotional decision-making patterns
+• Digital Footprint Intelligence - Mine social media, patent filings, hiring patterns, and operational stress signals for ${formData.sellerMotivation || 'seller motivation'}
+• Local Market Ethnographers - Conduct field research in regional markets to discover off-market opportunities and relationship networks
+• Regulatory Change Analysts - Identify policy shifts creating consolidation pressure or opportunity windows
+• Technology Transition Researchers - Map generational technology adoption creating operational fatigue among ${formData.targetProfile || 'founder-led'} businesses
+• Cultural Anthropologists - Study industry culture shifts, generational transitions, and changing business relationship patterns
+• Economic Stress Signal Analysts - Detect early warning indicators of financial pressure, succession needs, and capital constraints
+• Competitive Intelligence Network - Build comprehensive understanding of competitor acquisition strategies and blind spots
 
 RESEARCH METHODOLOGY FRAMEWORK:
 **${researchTopology.toUpperCase()} RESEARCH APPROACH**:
@@ -498,8 +570,8 @@ ${researchTopology === 'federated' ? `• Distributed Research Modules: Execute 
 
 EXHAUSTIVE PRIVATE EQUITY RESEARCH REQUIREMENTS:
 
-1. INDUSTRY FRAGMENTATION AND MARKET STRUCTURE ANALYSIS
-   Map fragmentation landscape of ${formData.targetIndustry || 'target industry'} and validate structural characteristics for ${investmentScale} roll-up strategy focused on ${formData.valueDriver || 'consolidation'} over ${timeline} horizons:
+1. HIDDEN MARKET PATTERN DISCOVERY AND STRUCTURAL INTELLIGENCE
+   Reveal concealed fragmentation dynamics and emerging consolidation catalysts in ${formData.targetIndustry || 'target industry'} that traditional research overlooks, uncovering structural anomalies and opportunity timing signals:
    • Market share concentration in ${formData.targetIndustry || 'target industry'} using relevant NAICS codes supporting ${investmentScale} investment opportunities
    • Typical characteristics of ${formData.targetProfile || 'founder-led'} businesses in ${formData.targetIndustry || 'target industry'} aligning with ${investmentScale} deal size parameters
    • Industry dynamics supporting ${formData.valueDriver || 'consolidation'} as primary value creation strategy achievable within ${timeline} timeframes
@@ -562,6 +634,72 @@ EXHAUSTIVE PRIVATE EQUITY RESEARCH REQUIREMENTS:
    • ${formData.valueDriver || 'Consolidation'} Upside (35%): High-impact transformation opportunities with outsized returns
    • Competitive Advantage (20%): Unique positioning or disruption potential
    • Strategic Value (15%): Platform potential and long-term positioning benefits` : ''}
+
+6. BEHAVIORAL ECONOMICS AND FOUNDER PSYCHOLOGY RESEARCH
+   Deep analysis of ${formData.targetProfile || 'founder-led'} business owner psychology and succession planning triggers revealing unconventional selling motivations:
+   • **Generational Transition Patterns**: Analysis of ${formData.targetIndustry || 'target industry'} founder age demographics and retirement planning behaviors
+   • **Lifestyle Change Catalysts**: Geographic relocation desires, health considerations, family situation changes affecting business commitment
+   • **Operational Fatigue Indicators**: Technology adoption resistance, regulatory compliance burden, staffing challenge stress among ${formData.targetProfile || 'founder'} operators
+   • **Legacy and Succession Anxieties**: Family business transition concerns, key employee retention fears, customer relationship continuation worries
+   • **Financial Diversification Needs**: Real estate concentration risk, retirement funding gaps, education funding requirements creating liquidity pressure
+   • **Peer Network Influence Patterns**: Industry association dynamics, competitor transaction visibility, advisor recommendation patterns affecting selling decisions
+   • **Economic Stress Response Behaviors**: How ${formData.targetProfile || 'founder-led'} businesses respond to market downturns, supply chain disruptions, labor shortages
+   • **Identity and Purpose Evolution**: Founder motivation changes, philanthropic interests, new venture curiosity affecting business commitment levels
+
+7. DIGITAL FOOTPRINT INTELLIGENCE AND EARLY WARNING SYSTEMS
+   Comprehensive analysis of online behavioral patterns and digital signals indicating potential seller readiness:
+   • **Social Media Sentiment Analysis**: LinkedIn activity patterns, Facebook business posts, industry forum participation revealing business owner mindset shifts
+   • **Professional Network Changes**: Executive recruiter connections, business broker relationships, investment banker interactions, CPA/attorney consultations
+   • **Patent and IP Activity Patterns**: Patent application trends, trademark registrations, intellectual property licensing indicating strategic pivots
+   • **Hiring and Staffing Signal Detection**: Indeed job postings, LinkedIn recruiting activity, employee turnover patterns suggesting operational transitions
+   • **Technology Investment Patterns**: Website updates, software platform changes, equipment purchases indicating modernization efforts or divestment preparation
+   • **Marketing and Brand Evolution**: Advertising spend changes, brand messaging shifts, customer communication pattern evolution suggesting strategic realignment
+   • **Regulatory Compliance Behaviors**: Permit applications, licensing renewals, environmental compliance filings indicating operational focus areas
+   • **Financial Institution Relationships**: Banking relationship changes, credit line modifications, insurance policy adjustments suggesting capital structure evaluation
+
+8. LOCAL MARKET ETHNOGRAPHIC RESEARCH AND RELATIONSHIP MAPPING
+   Field research and relationship intelligence in regional markets to discover off-market opportunities and decision-influencer networks:
+   • **Community Business Leader Networks**: Chamber of Commerce leadership, Rotary Club participation, charitable board involvement revealing influence relationships
+   • **Professional Service Provider Intelligence**: CPA firms, law offices, insurance agents, business consultants serving target companies and their referral patterns
+   • **Industry Association and Trade Group Dynamics**: Regional association leadership, trade show participation, professional development engagement levels
+   • **Supplier and Customer Relationship Analysis**: Vendor financing arrangements, customer concentration patterns, supply chain partnership evolution
+   • **Real Estate and Property Development Connections**: Commercial property ownership, lease arrangement patterns, development project involvement
+   • **Family and Personal Relationship Factors**: Spouse business involvement, children career interests, extended family business connections affecting succession planning
+   • **Political and Civic Engagement Patterns**: Municipal involvement, political contribution patterns, community leadership roles revealing personal priority evolution
+   • **Lifestyle and Recreation Activity Analysis**: Country club memberships, recreational vehicle ownership, vacation property acquisition indicating wealth diversification desires
+
+9. REGULATORY AND POLICY SHIFT OPPORTUNITY INTELLIGENCE
+   Analysis of regulatory changes, policy evolution, and compliance pressure creating consolidation catalysts or acquisition timing windows:
+   • **Regulatory Burden Escalation Patterns**: Environmental regulations, labor law changes, industry-specific compliance requirements increasing operational complexity
+   • **Technology Mandate and Modernization Pressures**: Digital transformation requirements, cybersecurity regulations, data privacy compliance creating investment pressure
+   • **Tax Policy and Succession Planning Implications**: Estate tax considerations, depreciation schedule changes, corporate tax rate modifications affecting timing decisions
+   • **Industry Licensing and Certification Evolution**: Professional licensing requirements, quality certification mandates, safety standard updates requiring capital investment
+   • **International Trade and Tariff Impact Analysis**: Supply chain cost changes, export/import regulation modifications, trade agreement impacts on business models
+   • **Government Contract and Procurement Changes**: Public sector purchasing modifications, minority business requirements, local preference policies affecting revenue streams
+   • **Labor and Employment Law Evolution**: Minimum wage increases, benefits requirements, workplace safety regulations, union organizing trends affecting cost structures
+   • **Environmental and Sustainability Mandate Trends**: Carbon footprint reporting, renewable energy requirements, waste management regulations requiring operational changes
+
+10. COMPETITIVE INTELLIGENCE AND STRATEGIC BLIND SPOT ANALYSIS
+    Comprehensive understanding of competitor acquisition strategies and market blind spots creating information asymmetries:
+    • **Strategic Buyer Acquisition Pattern Analysis**: Corporate acquirer focus areas, integration capabilities, geographic preferences, deal size limitations
+    • **Financial Buyer Competition Mapping**: Private equity firm investment theses, portfolio company priorities, capital deployment schedules, deal sourcing capabilities
+    • **Investment Banking and Advisory Relationships**: Transaction history analysis, deal flow patterns, relationship strength assessment, exclusive arrangement identification
+    • **Valuation Multiple Evolution and Market Timing**: Historical transaction multiples, seasonal buying patterns, market cycle influences, capital availability impacts
+    • **Due Diligence and Integration Capability Assessment**: Acquirer operational strengths, cultural integration success rates, post-acquisition value creation track records
+    • **Capital Market and Financing Environment Monitoring**: Debt availability, interest rate sensitivity, equity market conditions, leveraged buyout financing trends
+    • **Industry Consolidation Velocity and Saturation Analysis**: Market concentration trends, remaining fragmentation opportunities, optimal timing for platform development
+    • **Acquisition Premium and Competitive Bidding Dynamics**: Historical bidding patterns, premium justification factors, competitive tension creation strategies
+
+11. TECHNOLOGY TRANSITION AND GENERATIONAL SHIFT RESEARCH
+    Analysis of technological change and generational business transition creating consolidation opportunities:
+    • **Digital Transformation Fatigue and Resistance Patterns**: Software adoption challenges, e-commerce implementation struggles, digital marketing competency gaps
+    • **Generational Workforce Management Challenges**: Millennial and Gen Z employee expectations, remote work accommodation pressures, benefits and compensation evolution
+    • **Legacy System and Infrastructure Modernization Needs**: Equipment replacement requirements, software platform migrations, cybersecurity upgrade necessities
+    • **Customer Behavior and Expectation Evolution**: Online purchasing preferences, service delivery expectations, communication channel modifications requiring operational adaptation
+    • **Supply Chain and Vendor Relationship Digitization**: Electronic ordering systems, automated payment processing, digital contract management, inventory management modernization
+    • **Operational Efficiency and Automation Opportunity Analysis**: Process improvement potential, labor cost reduction opportunities, quality enhancement through technology adoption
+    • **Data Analytics and Business Intelligence Capability Gaps**: Performance measurement limitations, customer insight deficiencies, operational optimization opportunities
+    • **Succession Planning and Knowledge Transfer Challenges**: Institutional knowledge preservation, skill gap identification, leadership development needs, mentorship program effectiveness
 
 DELIVERABLE REQUIREMENTS:
 
@@ -787,6 +925,171 @@ DELIVERABLE REQUIREMENTS:
 SUCCESS METRICS: Enable stakeholders to maximize grant capture success rate through strategic application portfolio development, implement evidence-based ${formData.focusArea || 'focus area'} revitalization projects with measurable community impact, optimize ${formData.localContribution || 'local contribution'} partnership models for sustainable community development, and build ${formData.targetLocation || 'community'} institutional capacity for ongoing community development leadership.
 
 ═══════════════════════════════════════════════════════════════════════════
+🤝 UNCOMMON COALITIONS STRATEGIC PARTNERSHIP ANALYSIS (CONCLUSION MODULE)
+═══════════════════════════════════════════════════════════════════════════
+
+**CRITICAL INTEGRATION DIRECTIVE**: Having identified optimal funding strategies and implementation frameworks, now execute EXHAUSTIVE analysis of strategic coalition opportunities that amplify ${formData.focusArea || 'focus area'} revitalization impact through unconventional partnerships and collaborative resource deployment.
+
+7. LIVE COMMUNITY ECOSYSTEM INTELLIGENCE (Real-Time Coalition Opportunity Recognition)
+   **${(formData.targetLocation || 'TARGET COMMUNITY').toUpperCase()} PARTNERSHIP ECOSYSTEM MONITORING**:
+   • Municipal activity tracking: City council transcripts analysis for upcoming decisions affecting ${formData.focusArea || 'focus area'} development
+   • Budget hearing intelligence revealing funding gaps that ${investmentScale}-appropriate coalitions could address
+   • Zoning application tracking for development opportunities requiring multi-stakeholder community engagement
+   • Permit activity analysis indicating infrastructure or business changes creating partnership windows
+   • Policy decision calendars that create ${timeline}-aligned collaboration opportunities
+   • **${formData.targetPopulation || 'Target population'}** advocacy organization scheduling and priority alignment analysis
+
+8. COMPREHENSIVE STAKEHOLDER ECOSYSTEM MAPPING
+   **${(formData.focusArea || 'FOCUS AREA').toUpperCase()} PARTNERSHIP ACTOR IDENTIFICATION**:
+   • Nonprofit event calendars analysis revealing programming gaps and collaboration potential within ${timeline} planning horizons
+   • Grant award databases showing recent funding that could support coalition-based ${formData.focusArea || 'focus area'} projects
+   • Volunteer organization capacity assessment indicating seasonal activity patterns and available human capital
+   • Community foundation priority alignment with ${formData.focusArea || 'focus area'} initiatives and ${formData.localContribution || 'local contribution'} models
+   • Faith-based organization outreach programs and social service capacity relevant to ${formData.targetPopulation || 'target population'}
+   • Neighborhood association leadership mapping and community organizing capacity for ${investmentScale} engagement
+
+9. BUSINESS AND ECONOMIC COALITION DEVELOPMENT
+   **CORPORATE SOCIAL RESPONSIBILITY AND COMMUNITY INVESTMENT ALIGNMENT**:
+   • Chamber of Commerce activity analysis and business priority alignment with ${formData.focusArea || 'focus area'} development goals
+   • New business registration tracking indicating emerging stakeholders seeking community connection and partnership
+   • Commercial development plans requiring public engagement and ${formData.targetPopulation || 'community'} partnership for success
+   • Corporate social responsibility initiative matching with ${formData.localContribution || 'resource'} contribution opportunities
+   • Local business association engagement potential and networking opportunities within ${timeline} constraints
+   • Economic development authority partnerships and incentive programs supporting ${investmentScale} coalition initiatives
+   • Professional service firm pro bono capacity and expertise sharing relevant to ${formData.focusArea || 'focus area'} development
+
+10. ACADEMIC AND RESEARCH COALITION INTEGRATION
+    **UNIVERSITY AND EDUCATION PARTNERSHIP ECOSYSTEM**:
+    • University project databases with student and faculty research aligned with ${formData.focusArea || 'focus area'} development objectives
+    • Student organization initiatives providing youth engagement and fresh perspectives on ${formData.targetPopulation || 'community'} challenges
+    • Research grant announcements that could support coalition-based ${timeline}-sequenced community projects
+    • Faculty expertise mapping for technical assistance and evaluation support relevant to ${investmentScale} implementation
+    • Service learning program integration and curriculum alignment with ${formData.focusArea || 'focus area'} needs
+    • Community college workforce development and training partnerships supporting ${formData.targetPopulation || 'target population'} advancement
+    • K-12 school system engagement and educational support opportunities within ${formData.targetLocation || 'community'} context
+
+11. STRATEGIC PARTNERSHIP DISCOVERY ALGORITHM
+    **${(formData.focusArea || 'FOCUS AREA').toUpperCase()} CONVERGENCE OPPORTUNITY MAPPING**:
+    • Cross-sector entities addressing same ${formData.focusArea || 'focus area'} challenges from different angles and perspectives
+    • Resource complementarity matches where excess organizational capacity meets unmet ${formData.targetPopulation || 'community'} needs
+    • Timing alignment opportunities across budget cycles, grant deadlines, and organizational calendars within ${timeline} parameters
+    • Shared pain point alliances around common ${formData.targetLocation || 'community'} problems requiring collaborative solutions
+    • Geographic proximity advantages and neighborhood-level collaboration potential for ${investmentScale} impact
+    • Political alliance building across partisan and organizational boundaries for sustainable ${formData.focusArea || 'focus area'} development
+    • Issue-specific coalitions with clear, measurable outcomes aligned with ${formData.targetPopulation || 'target population'} priorities
+
+12. TIMING CONVERGENCE AND COALITION OPPORTUNITY WINDOWS
+    **${timeline.toUpperCase()} PARTNERSHIP SYNCHRONIZATION ANALYSIS**:
+    ${timeline === 'short-term' ? `• Immediate Coalition Formation: Crisis response opportunities and urgent ${formData.focusArea || 'focus area'} needs requiring rapid stakeholder coordination
+    • Grant application deadlines supporting joint proposals and collaborative funding within 6-18 month timeframes
+    • Municipal decision calendars and policy windows creating immediate partnership incentives and opportunities` : ''}
+    ${timeline === 'medium-term' ? `• Strategic Partnership Development: Systematic relationship building and collaborative program development over 1-3 year horizons
+    • Budget cycle synchronization across city, nonprofits, and business planning periods for sustained resource commitment
+    • Infrastructure project timelines creating medium-term partnership needs and coordination opportunities` : ''}
+    ${timeline === 'long-term' ? `• Transformational Coalition Building: Comprehensive partnership ecosystems and institutional development over 3+ year commitments
+    • Secular community development trends requiring sustained multi-stakeholder collaboration and resource deployment
+    • Policy and regulatory evolution creating long-term partnership frameworks and collaborative governance structures` : ''}
+    • Seasonal events and community celebrations that could host collaborative programming and partnership development
+    • Election cycles and political transition periods affecting policy priorities and coalition formation opportunities
+    • Crisis response protocols requiring rapid coalition formation and resource mobilization for ${formData.focusArea || 'focus area'} resilience
+
+13. RESOURCE COMPLEMENTARITY AND STRATEGIC VALUE EXCHANGE
+    **${(formData.localContribution || 'LOCAL CONTRIBUTION').toUpperCase()} PARTNERSHIP OPTIMIZATION**:
+    ${formData.localContribution === 'funding' ? `• Financial Resource Coordination: Municipal budget capacity + nonprofit grant funding + corporate sponsorship integration
+    • Capital Investment Partnerships: Public investment + private sector development + community foundation support coordination
+    • Revenue Generation Collaborations: Fee-for-service partnerships + grant-funded programming + earned revenue optimization` : ''}
+    ${formData.localContribution === 'land' ? `• Asset-Based Partnerships: Public land + private development + nonprofit programming + community stewardship integration
+    • Property Development Coalitions: Municipal assets + developer expertise + community input + institutional anchor partnerships
+    • Space-Sharing Collaborations: Underutilized public facilities + nonprofit programming + community engagement + private sector support` : ''}
+    ${formData.localContribution === 'services' ? `• Service Integration Partnerships: Municipal services + nonprofit expertise + volunteer capacity + private sector efficiency
+    • Capacity Building Coalitions: Public sector stability + nonprofit innovation + academic research + business process improvement
+    • Human Capital Collaborations: Government staff + nonprofit specialists + community volunteers + private sector mentorship` : ''}
+    • **Strategic Resource Matching Examples**:
+      - Empty municipal buildings + youth organizations needing venues + corporate sponsors + university research projects
+      - City transportation needs + local business customer access + nonprofit workforce development + academic urban planning
+      - Municipal waste management + environmental nonprofits + business sustainability initiatives + community education programs
+
+14. COALITION BLUEPRINT DEVELOPMENT AND GOVERNANCE FRAMEWORKS
+    **${investmentScale.toUpperCase()} PARTNERSHIP STRUCTURE OPTIMIZATION**:
+    ${investmentScale === 'seed' ? `• Small Coalition Management: 3-5 core stakeholders with clear role definition and minimal bureaucratic overhead
+    • Resource Contribution Framework: Modest financial commitments + in-kind service sharing + volunteer coordination
+    • Decision-Making Process: Consensus-based with informal communication and flexible implementation protocols` : ''}
+    ${investmentScale === 'growth' ? `• Medium Coalition Coordination: 6-10 stakeholders with professional management and systematic governance structures
+    • Resource Mobilization Strategy: Significant funding coordination + professional service contributions + institutional capacity sharing
+    • Governance Framework: Formal decision-making protocols + accountability systems + professional development support` : ''}
+    ${investmentScale === 'enterprise' ? `• Large Coalition Architecture: 10+ stakeholders with comprehensive governance + professional staff + institutional partnerships
+    • Resource Deployment Systems: Major funding coordination + comprehensive service integration + institutional capacity building
+    • Strategic Management Framework: Board governance + executive leadership + professional evaluation + community accountability` : ''}
+    • **Partnership Success Metrics and Accountability Frameworks**:
+      - Short-term indicators (0-6 months): Partner engagement levels + resource mobilization + initial collaborative activities
+      - Medium-term outcomes (6-18 months): Project completion + community feedback + relationship strengthening + capacity building
+      - Long-term impact (18+ months): Sustainable partnerships + systemic change + replication potential + institutional development
+
+15. UNCONVENTIONAL COALITION SCENARIOS AND INNOVATION PARTNERSHIPS
+    **CREATIVE COLLABORATION OPPORTUNITIES BEYOND TRADITIONAL BOUNDARIES**:
+    • **Shared Pain Point Alliances**: Traffic safety coalitions (insurance companies + bike shops + senior centers + schools + municipal traffic department)
+    • **Resource Complementarity Innovations**: Empty lot development (community land trust + youth programs + corporate sponsors + university urban planning + environmental nonprofits)
+    • **Timing Convergence Catalysts**: Budget hearing coordination (municipal budget cycle + grant deadlines + infrastructure projects + election cycle planning)
+    • **Crisis Response Transformations**: Emergency preparedness (natural disaster response + economic disruption planning + social challenge coordination + community resilience building)
+    • **Celebration Amplification Strategies**: Community events (cultural programming + business promotion + educational initiatives + civic engagement + tourism development)
+    • **Development Partnership Innovations**: Housing initiatives (affordable housing developers + local business workforce + training institutions + transportation planning + childcare provision)
+
+16. MULTI-STAKEHOLDER ENGAGEMENT STRATEGIES AND IMPLEMENTATION PROTOCOLS
+    **${riskProfile.toUpperCase()}-CALIBRATED COALITION ENGAGEMENT FRAMEWORK**:
+    ${riskProfile === 'conservative' ? `• Established Partnership Approaches: Proven collaboration models with minimal organizational risk and clear success precedents
+    • Traditional Stakeholder Engagement: Formal municipal processes + established nonprofit partnerships + conventional business involvement
+    • Risk Mitigation Focus: Comprehensive planning + extensive stakeholder buy-in + proven implementation models + conservative timeline expectations` : ''}
+    ${riskProfile === 'moderate' ? `• Balanced Innovation Strategies: Proven approaches enhanced with strategic innovations and calculated partnership experiments
+    • Multi-Sector Coordination: Strategic municipal engagement + innovative nonprofit collaboration + creative business involvement + academic research integration
+    • Managed Risk Taking: Strategic innovation + stakeholder consensus building + pilot project validation + scalable implementation planning` : ''}
+    ${riskProfile === 'aggressive' ? `• Transformational Partnership Models: Cutting-edge collaboration structures with breakthrough potential and calculated strategic risks
+    • Disruptive Stakeholder Coordination: Innovative municipal engagement + experimental nonprofit partnerships + unconventional business alliances + groundbreaking academic collaboration
+    • Strategic Risk Tolerance: Breakthrough innovation + rapid prototype implementation + transformational change acceptance + visionary leadership development` : ''}
+
+17. IMPACT MEASUREMENT AND PARTNERSHIP SUCCESS TRACKING
+    **${(formData.focusArea || 'FOCUS AREA').toUpperCase()} COALITION EFFECTIVENESS METRICS**:
+    • **Collective Impact Indicators**: Quantifiable ${formData.focusArea || 'focus area'} improvements through coordinated partnership activities
+    • **Partnership Strength Metrics**: Stakeholder engagement sustainability + resource contribution consistency + collaborative decision-making effectiveness
+    • **Community Satisfaction Assessment**: ${formData.targetPopulation || 'Target population'} feedback + broader community support + stakeholder retention measurement
+    • **Social Return on Investment**: Economic impact calculation for ${formData.localContribution || 'resource'} deployment through partnership leverage
+    • **Institutional Change Documentation**: Policy influence + system improvements + collaborative governance development + replication potential analysis
+    • **Long-term Sustainability Evaluation**: Partnership durability + resource security + leadership development + community ownership + scaling opportunities
+
+18. POLITICAL DYNAMICS AND POLICY INTEGRATION THROUGH COALITION BUILDING
+    **${(formData.targetLocation || 'TARGET COMMUNITY').toUpperCase()} GOVERNANCE PARTNERSHIP STRATEGIES**:
+    • Municipal authority engagement through coalition advocacy and policy development collaboration within ${timeline} political cycles
+    • Elected official relationship building through coalition endorsement and community impact demonstration aligned with ${investmentScale} visibility
+    • Staff-level partnerships with city departments through coalition resource sharing and collaborative program implementation
+    • Public meeting engagement through coalition representation and community input amplification for ${formData.focusArea || 'focus area'} priorities
+    • Policy development collaboration through coalition expertise and implementation partnership for sustainable ${formData.targetPopulation || 'community'} benefit
+    • Regulatory advocacy through coalition influence and collaborative compliance support for ${formData.focusArea || 'focus area'} development
+    • Intergovernmental coordination through coalition bridge-building across municipal boundaries and jurisdictional collaboration
+
+**UNCOMMON COALITIONS DELIVERABLE INTEGRATION**:
+
+**Coalition Partnership Matrix**: Comprehensive database including:
+• Complete ${formData.targetLocation || 'community'} stakeholder ecosystem with partnership potential assessment and contact strategies
+• Resource complementarity analysis showing specific value exchanges and collaborative opportunities within ${timeline} constraints
+• Timing strategy maps with critical dates, decision points, and momentum-building milestones for ${formData.focusArea || 'focus area'} development
+• Political dynamics assessment with municipal engagement strategies and policy integration pathways
+• **${investmentScale}-Calibrated Partnership Portfolios**: Specific coalition configurations optimized for resource availability and impact potential
+
+**Strategic Coalition Blueprints**: For top ${investmentScale === 'seed' ? '5-7' : investmentScale === 'growth' ? '7-10' : '10-15'} partnership opportunities:
+• Complete stakeholder analysis with specific contact strategies and relationship-building pathways for each potential partner
+• Resource mobilization strategies aligned with ${formData.localContribution || 'local contribution'} capacity and ${timeline} deployment schedules
+• Governance frameworks appropriate for ${investmentScale} complexity and ${riskProfile} management preferences
+• Impact measurement systems with accountability structures and community feedback mechanisms
+• Implementation roadmaps with milestone tracking and partnership development sequences
+• Risk mitigation strategies and contingency planning for partnership challenges and stakeholder changes
+
+**Community Coalition Catalyst Scenarios**: Innovation partnership models including:
+• Cross-sector collaboration designs connecting sectors not traditionally aligned (funeral homes + youth programs for grief counseling; libraries + small business + workforce development)
+• Celebration amplification strategies where existing community events become comprehensive collaboration catalysts and partnership development opportunities
+• Crisis-to-catalyst transformation frameworks where community challenges become systematic partnership opportunities and resilience building initiatives
+• Technology-enabled collaboration platforms connecting stakeholders who wouldn't naturally interact but share ${formData.focusArea || 'focus area'} interests
+• Regional coordination strategies addressing ${formData.focusArea || 'focus area'} challenges through multi-jurisdictional partnership development and resource sharing
+
+═══════════════════════════════════════════════════════════════════════════
 🏛️ CITY REVITALIZATION CREATIVE DIVERGENCE DIRECTIVES
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -800,9 +1103,9 @@ Output community folklore: create a legend about the ${formData.focusArea || 'co
 }
 
 /**
- * Data Center Research Prompt - Comprehensive Geospatial and Regulatory Site Optimization
+ * Crypto Mining Research Prompt - Comprehensive Site Selection and Equipment Logistics Optimization
  */
-function formatDataCenterPrompt(formData) {
+function formatCryptoMiningPrompt(formData) {
   const strategicContext = generateStrategicContext(formData);
   
   const investmentScale = formData.investmentScale || 'growth';
@@ -810,195 +1113,238 @@ function formatDataCenterPrompt(formData) {
   const riskProfile = formData.riskProfile || 'moderate';
   const researchTopology = formData.researchTopology || 'federated';
   
-  return `🏢 STRATEGIC DATA CENTER RESEARCH - COMPREHENSIVE GEOSPATIAL AND REGULATORY SITE OPTIMIZATION 🏢
+  return `⛏️ STRATEGIC CRYPTO MINING RESEARCH - COMPREHENSIVE SITE SELECTION AND EQUIPMENT LOGISTICS OPTIMIZATION ⛏️
 
-MISSION: Execute comprehensive analysis to identify and evaluate optimal data center site locations in **${formData.targetRegion || 'target regions'}** for **${formData.facilityType || 'hyperscale'}** deployment. Systematically integrate geospatial, regulatory, and infrastructure data to enable rapid site identification and de-risk location strategies for facilities requiring **${formData.latencyRequirement || 'ultra-low'}** performance with disaster risk tolerance level **${formData.disasterRiskTolerance || '2'}**.
+MISSION: Execute comprehensive analysis to identify optimal crypto mining site locations globally with complete technical and economic documentation. Systematically integrate power costs, equipment logistics, and regulatory constraints to enable rapid site selection and de-risk mining operations for **${formData.budgetRange || '$1M-$10M'}** investment with **${formData.powerCapacity || '5-20 MW'}** capacity requirements within **${formData.timeline || 'standard development'}** timeline and **${formData.geographicRiskTolerance || 'US + Canada'}** risk parameters, considering **${formData.equipmentSituation || 'need to buy everything'}** logistics constraints.
 
-⚖️ ETHICAL CONTEXT: Data center infrastructure research drives digital economy growth through strategic site selection and responsible infrastructure development. This research enables better connectivity solutions while ensuring environmental stewardship and community benefit through optimized resource utilization.
+⚖️ ETHICAL CONTEXT: Crypto mining site selection is fundamental business activity focused on optimizing energy costs and operational efficiency. This research enables finding the most cost-effective and stable power sources globally while supporting renewable energy development through demand for excess capacity, creating jobs in underutilized regions, and following all applicable regulations.
 
 ${strategicContext}
 
 🎯 RESEARCH CONFIGURATION:
 This analysis is calibrated for **${investmentScale.toUpperCase()}** investment scale with **${timeline}** development horizon, **${riskProfile}** risk tolerance, and **${researchTopology}** research methodology.
 
-🎯 PRIMARY RESEARCH OBJECTIVES:
-Generate prioritized pipeline of optimal data center sites in ${formData.targetRegion || 'target regions'} that demonstrate:
-• Infrastructure readiness appropriate for ${formData.facilityType || 'hyperscale'} deployment at ${investmentScale} scope
-• Power availability and cost structure aligned with ${investmentScale} economic requirements
-• Connectivity infrastructure supporting ${formData.latencyRequirement || 'ultra-low'} performance specifications
-• Environmental and regulatory compliance consistent with disaster risk tolerance level ${formData.disasterRiskTolerance || '2'}
-• Development timeline feasibility matching ${timeline} project horizons with ${riskProfile} risk parameters
+🚨 CRITICAL DIRECTIVE: EQUIPMENT LOGISTICS AS PRIMARY CONSTRAINT 🚨
+Equipment logistics represents 35% of location decision matrix because $100K+ shipping premiums can completely negate power cost advantages. This research must balance ultra-cheap power against equipment deployment reality for **${formData.equipmentSituation || 'need to buy everything'}** scenarios.
 
-SUCCESS CRITERIA: Transform months-long manual site selection into efficient, data-driven location strategy enabling proactive site acquisition and development planning for ${formData.facilityType || 'hyperscale'} facilities in ${formData.targetRegion || 'target regions'}.
+🎯 PRIMARY RESEARCH OBJECTIVES:
+Generate prioritized pipeline of optimal mining sites globally that demonstrate:
+• Power costs at or below **${formData.maxPowerRate || '4'}** cents/kWh with viable ${formData.equipmentSituation || 'equipment'} logistics
+• Infrastructure readiness for **${formData.powerCapacity || '5-20 MW'}** deployment at ${investmentScale} scope
+• Equipment deployment feasibility within **${formData.timeline || 'standard'}** timeline constraints
+• Geographic risk profile aligned with **${formData.geographicRiskTolerance || 'US + Canada'}** tolerance
+• Total delivered economics including power + equipment + logistics + regulatory costs
+
+SUCCESS CRITERIA: Reveal hidden global mining site patterns and unconventional power arbitrage opportunities that traditional mining research overlooks, uncovering equipment logistics realities, alternative data signals for site evaluation, and novel geographic intelligence that creates asymmetric competitive advantages in mining location selection.
 
 SWARM ASSEMBLY DIRECTIVE:
-Assemble specialized data center site intelligence team:
-• Lead Infrastructure Research Strategist - Orchestrate comprehensive geospatial and regulatory analysis
-• Power Infrastructure Specialists - Analyze grid capacity and utility partnerships in ${formData.targetRegion || 'target regions'} for ${formData.facilityType || 'hyperscale'} deployment at ${investmentScale} scope
-• Connectivity Analysis Team - Map fiber infrastructure and network capabilities supporting ${formData.latencyRequirement || 'ultra-low'} performance requirements
-• Environmental Risk Assessment Team - Evaluate disaster risks and compliance aligned with tolerance level ${formData.disasterRiskTolerance || '2'}
-• Regulatory and Incentive Intelligence - Analyze zoning, permitting, and economic incentive programs for ${investmentScale} investment optimization
-• Geospatial Analysis Team - Conduct site-specific parcel analysis and GIS-enabled location optimization
-• Market Intelligence Analysts - Assess competitive dynamics and market positioning for ${investmentScale} market entry
-• Development Strategy Team - Design ${timeline}-sequenced site development and acquisition roadmaps
+Assemble specialized crypto mining site intelligence team:
+• Lead Mining Location Strategist - Orchestrate comprehensive site selection and equipment logistics analysis
+• Global Power Market Analysts - Map power costs under **${formData.maxPowerRate || '4'}** cents/kWh with ${formData.powerCapacity || '5-20 MW'} availability
+• Equipment Logistics Specialists - Analyze ASIC shipping, customs, and supplier networks for ${formData.equipmentSituation || 'equipment'} scenarios
+• Mining Equipment Ecosystem Team - Map supplier networks, delivery infrastructure, and maintenance capabilities
+• Regulatory Compliance Team - Analyze crypto mining laws and equipment import requirements by ${formData.geographicRiskTolerance || 'geographic'} zone
+• Infrastructure Assessment Team - Evaluate grid capacity, cooling requirements, and facility development needs
+• Financial Analysis Team - Model total delivered costs including equipment logistics premiums
+• Risk Assessment Team - Evaluate operational, regulatory, and equipment deployment risks
 
 RESEARCH METHODOLOGY FRAMEWORK:
 **${researchTopology.toUpperCase()} RESEARCH APPROACH**:
-${researchTopology === 'hierarchical' ? `• Top-Down Geographic Analysis: Start with ${formData.targetRegion || 'target region'} macro infrastructure assessment, narrow to optimal sub-markets, then identify specific parcels
-• Systematic Infrastructure Layering: Apply structured filtering from power grid capacity through connectivity infrastructure to site-specific characteristics
-• Centralized GIS Integration: Aggregate all geospatial datasets into unified analytical framework for consistent site evaluation` : ''}
-${researchTopology === 'byzantine' ? `• Multi-Source Infrastructure Verification: Cross-validate power, connectivity, and regulatory data across multiple independent sources
-• Redundant Site Assessment: Use overlapping analytical methodologies to ensure robust site identification and risk evaluation
-• Consensus Geographic Intelligence: Reconcile conflicting infrastructure data through weighted scoring that accounts for source reliability and currency` : ''}
-${researchTopology === 'federated' ? `• Distributed Infrastructure Analysis: Execute parallel research streams across power, connectivity, regulatory, and environmental domains
-• Autonomous Geographic Modules: Allow each infrastructure category to develop independent site assessments before integration
-• Collaborative Site Synthesis: Combine federated geographic findings through cross-functional spatial analytical integration` : ''}
+${researchTopology === 'hierarchical' ? `• Top-Down Mining Analysis: Start with global power cost mapping, narrow to ${formData.geographicRiskTolerance || 'geographic'} zones, then filter by equipment logistics feasibility
+• Systematic Cost Layering: Apply structured filtering from power rates through equipment costs to total delivered economics
+• Centralized Mining Intelligence: Aggregate all data sources into unified analytical framework for consistent site evaluation` : ''}
+${researchTopology === 'byzantine' ? `• Multi-Source Power Verification: Cross-validate power costs and availability across multiple independent utility and market sources
+• Redundant Equipment Analysis: Use overlapping equipment logistics assessments to ensure robust deployment feasibility analysis
+• Consensus Mining Intelligence: Reconcile conflicting cost and logistics data through weighted scoring accounting for source reliability` : ''}
+${researchTopology === 'federated' ? `• Distributed Mining Analysis: Execute parallel research streams across power markets, equipment logistics, regulatory, and infrastructure domains
+• Autonomous Domain Modules: Allow each specialty area to develop independent assessments before cross-functional integration
+• Collaborative Mining Synthesis: Combine federated findings through comprehensive mining site evaluation framework` : ''}
 
-EXHAUSTIVE DATA CENTER RESEARCH REQUIREMENTS:
+EXHAUSTIVE CRYPTO MINING RESEARCH REQUIREMENTS:
 
-1. POWER INFRASTRUCTURE AND GRID CAPACITY ANALYSIS
-   Map power availability, cost structures, and grid expansion capacity in ${formData.targetRegion || 'target regions'} to identify optimal electrical infrastructure for ${formData.facilityType || 'hyperscale'} deployment at ${investmentScale} power requirements:
+1. POWER COST AND AVAILABILITY ANALYSIS (Primary Filter: ${formData.maxPowerRate || '4'} cents/kWh maximum)
+   Map global power markets with industrial electricity rates at or below **${formData.maxPowerRate || '4'} cents/kWh** and grid capacity for **${formData.powerCapacity || '5-20 MW'}** mining operations:
    
-   **${(formData.facilityType || 'HYPERSCALE').toUpperCase()} POWER REQUIREMENTS FRAMEWORK**:
-   ${formData.facilityType === 'hyperscale' ? `• Power Density: 50-100+ MW capacity requirements with scalable expansion capability
-   • Grid Interconnection: Direct transmission-level interconnection (345kV+) with redundant feed capabilities
-   • Utility Partnership: Strategic utility relationships with committed capacity allocation and preferential pricing` : ''}
-   ${formData.facilityType === 'enterprise' ? `• Power Density: 10-50 MW capacity with enterprise-grade reliability requirements
-   • Grid Interconnection: Distribution-level interconnection with utility-grade redundancy and backup systems
-   • Utility Partnership: Commercial utility relationships with standard enterprise power procurement agreements` : ''}
-   ${formData.facilityType === 'edge' ? `• Power Density: 1-10 MW capacity with distributed deployment scalability
-   • Grid Interconnection: Standard commercial interconnection with local grid tie-in capabilities
-   • Utility Partnership: Standard commercial utility relationships with competitive rate negotiation` : ''}
+   **${(formData.powerCapacity || '5-20 MW').toUpperCase()} POWER REQUIREMENTS FRAMEWORK**:
+   ${formData.powerCapacity === '1-5 MW' ? `• Grid Requirements: Existing substations and data center co-location opportunities with immediate availability
+   • Utility Relationships: Standard commercial power agreements with competitive industrial rates
+   • Infrastructure Needs: Minimal additional electrical infrastructure development required` : ''}
+   ${formData.powerCapacity === '5-20 MW' ? `• Grid Requirements: Dedicated transformer installations and medium industrial site electrical infrastructure
+   • Utility Relationships: Direct utility partnerships with volume discount negotiations
+   • Infrastructure Needs: Moderate electrical infrastructure investment and utility coordination` : ''}
+   ${formData.powerCapacity === '20-50 MW' ? `• Grid Requirements: Direct utility partnerships and large industrial development electrical capacity
+   • Utility Relationships: Strategic utility agreements with dedicated infrastructure development
+   • Infrastructure Needs: Substantial electrical infrastructure investment and custom utility arrangements` : ''}
+   ${formData.powerCapacity === '50+ MW' ? `• Grid Requirements: Custom substation development and utility-scale electrical agreements
+   • Utility Relationships: Major utility partnerships with enterprise-level power procurement
+   • Infrastructure Needs: Comprehensive electrical infrastructure with utility joint-venture development` : ''}
    
    **${investmentScale.toUpperCase()} POWER ECONOMICS**:
-   ${investmentScale === 'seed' ? `• Target Power Costs: <$0.06/kWh with minimal demand charges and flexible contract terms
-   • Infrastructure Investment: Minimize upfront electrical infrastructure costs through existing capacity utilization
-   • Utility Incentives: Leverage available utility rebates and incentives for efficient power deployment` : ''}
-   ${investmentScale === 'growth' ? `• Target Power Costs: <$0.05/kWh with negotiated demand structures and scalable rate agreements
-   • Infrastructure Investment: Balanced infrastructure development with utility-shared costs and expansion capabilities
-   • Utility Incentives: Strategic utility partnerships with custom rate structures and development support` : ''}
-   ${investmentScale === 'enterprise' ? `• Target Power Costs: <$0.04/kWh with long-term contract pricing and dedicated infrastructure development
-   • Infrastructure Investment: Comprehensive electrical infrastructure with utility joint-venture development
-   • Utility Incentives: Major economic development incentives with custom utility programs and preferential treatment` : ''}
+   ${investmentScale === 'seed' ? `• Target Power Costs: Absolute minimum rates with flexible contract terms under ${formData.maxPowerRate || '4'} cents/kWh
+   • Contract Strategy: Short-term agreements with minimal commitments suitable for ${formData.budgetRange || 'seed'} scale
+   • Infrastructure Investment: Utilize existing capacity to minimize upfront electrical development costs` : ''}
+   ${investmentScale === 'growth' ? `• Target Power Costs: Competitive industrial rates with volume discounts maximizing ${formData.budgetRange || 'growth'} economics
+   • Contract Strategy: Medium-term agreements with scalable capacity and expansion options
+   • Infrastructure Investment: Balanced electrical infrastructure development with utility cost-sharing arrangements` : ''}
+   ${investmentScale === 'enterprise' ? `• Target Power Costs: Wholesale power rates with long-term contract pricing and dedicated infrastructure
+   • Contract Strategy: Long-term power agreements with custom rate structures and capacity commitments
+   • Infrastructure Investment: Comprehensive electrical infrastructure with utility partnership development` : ''}
 
-2. CONNECTIVITY INFRASTRUCTURE AND NETWORK ANALYSIS
-   Map fiber optic infrastructure, internet exchange points, and network connectivity capacity in ${formData.targetRegion || 'target regions'} to support ${formData.latencyRequirement || 'ultra-low'} performance for ${formData.facilityType || 'hyperscale'} applications:
+2. EQUIPMENT LOGISTICS AND SUPPLIER ECOSYSTEM ANALYSIS (Critical 35% Decision Factor)
+   Comprehensive analysis of equipment procurement, shipping, and deployment logistics based on **${formData.equipmentSituation || 'need to buy everything'}** scenario:
    
-   **${(formData.latencyRequirement || 'ULTRA-LOW').toUpperCase()} NETWORK PERFORMANCE FRAMEWORK**:
-   ${formData.latencyRequirement === 'ultra-low' ? `• Target Latency: <1ms to major population centers and <5ms to regional financial/cloud hubs
-   • Fiber Requirements: Direct fiber paths with minimal intermediate routing and premium carrier diversity
-   • Network Architecture: Proximity to major IXPs and subsea cable landing stations for global connectivity` : ''}
-   ${formData.latencyRequirement === 'low' ? `• Target Latency: <5ms to major population centers and <15ms to regional business hubs
-   • Fiber Requirements: High-quality fiber routes with carrier diversity and redundant path options
-   • Network Architecture: Access to regional network aggregation points and major carrier presence` : ''}
-   ${formData.latencyRequirement === 'standard' ? `• Target Latency: <15ms to major population centers and <30ms to regional connectivity hubs
-   • Fiber Requirements: Standard fiber access with commercial carrier options and reasonable diversity
-   • Network Architecture: Regional network presence with access to major internet backbones` : ''}
+   **${(formData.equipmentSituation || 'NEED TO BUY EVERYTHING').toUpperCase()} LOGISTICS FRAMEWORK**:
+   ${formData.equipmentSituation === 'already own equipment' ? `• Logistics Focus: Transportation costs from current location to optimal mining sites
+   • Location Flexibility: Maximum geographic flexibility including remote cheap power locations
+   • Timeline Optimization: Rapid deployment focused on site preparation and equipment transport logistics
+   • Cost Components: Transport costs, site setup, installation, and operational infrastructure` : ''}
+   ${formData.equipmentSituation === 'need to buy everything' ? `• Logistics Focus: ASIC procurement + international shipping + customs + local delivery + installation
+   • Location Prioritization: Established mining hubs and supplier networks strongly preferred (Texas, Washington)
+   • Timeline Planning: 2-6 month equipment procurement and shipping timelines integrated into deployment
+   • Cost Components: Equipment purchase + shipping + customs duties + installation + supplier network access` : ''}
+   ${formData.equipmentSituation === 'want turnkey solution' ? `• Logistics Focus: Hosted mining with pre-installed equipment and operational infrastructure
+   • Location Limitation: Existing mining facilities with immediate deployment capability only
+   • Timeline Acceleration: Immediate deployment eliminating all equipment logistics complexity
+   • Cost Components: All-inclusive hosting fees with equipment rental and operational services` : ''}
    
-   **${(formData.facilityType || 'HYPERSCALE').toUpperCase()} CONNECTIVITY REQUIREMENTS**:
-   ${formData.facilityType === 'hyperscale' ? `• Bandwidth Capacity: Multi-terabit capacity with direct peering arrangements and premium connectivity
-   • Carrier Diversity: Minimum 4-6 diverse fiber providers with geographically separated entry points
-   • Network Ecosystem: Proximity to cloud on-ramps, content delivery networks, and major internet exchanges` : ''}
+   **EQUIPMENT ECOSYSTEM MAPPING BY LOCATION**:
+   • **ESTABLISHED MINING HUBS** (Optimal for "need to buy everything"):
+     - Texas (Dallas/Houston): Comprehensive supplier networks, equipment distributors, local contractors
+     - Washington State: Existing mining facilities, hydropower access, equipment availability
+     - Wyoming/North Dakota: Developing supplier networks, lower equipment availability but cheap power
+   • **INTERNATIONAL LOCATIONS** (Equipment logistics challenges):
+     - Kazakhstan: Very limited supplier networks, months-long equipment shipping, high customs complexity
+     - Paraguay: Minimal equipment infrastructure, significant shipping and logistics premiums
+     - Iceland: High equipment import costs, everything must be imported, limited local suppliers
+   
+   **${timeline.toUpperCase()} EQUIPMENT DEPLOYMENT TIMELINE**:
+   ${timeline === 'short-term' ? `• Equipment Procurement: Focus on immediately available equipment and existing facility rental options
+   • Shipping Priority: Air freight and expedited shipping for critical path equipment deployment
+   • Installation Speed: Plug-and-play solutions and turnkey facilities to meet aggressive timeline requirements` : ''}
+   ${timeline === 'medium-term' ? `• Equipment Procurement: Standard procurement timelines with volume purchasing and supplier negotiations
+   • Shipping Strategy: Balanced approach between cost and speed with ocean and ground transport optimization
+   • Installation Planning: Systematic installation with professional contractors and infrastructure development` : ''}
+   ${timeline === 'long-term' ? `• Equipment Procurement: Comprehensive equipment planning with volume discounts and custom configurations
+   • Shipping Optimization: Cost-optimized shipping with bulk consolidation and strategic timing
+   • Installation Strategy: Complete facility development with custom infrastructure and long-term optimization` : ''}
 
-3. ENVIRONMENTAL RISK AND DISASTER TOLERANCE ASSESSMENT
-   Analyze environmental hazards, natural disaster risks, and regulatory constraints in ${formData.targetRegion || 'target regions'} to identify sites meeting disaster risk tolerance level ${formData.disasterRiskTolerance || '2'} for ${formData.facilityType || 'hyperscale'} deployment:
+3. GEOGRAPHIC RISK AND REGULATORY COMPLIANCE ANALYSIS
+   Analyze regulatory environments and import procedures within **${formData.geographicRiskTolerance || 'US + Canada'}** risk parameters:
    
-   **DISASTER RISK TOLERANCE LEVEL ${formData.disasterRiskTolerance || '2'} FRAMEWORK**:
-   ${(formData.disasterRiskTolerance || 2) <= 2 ? `• Environmental Exclusions: Avoid all flood zones, seismic risk areas, and extreme weather patterns
-   • Site Selection: Premium locations with minimal natural disaster exposure and maximum environmental stability
-   • Risk Mitigation: Comprehensive environmental due diligence with extensive mitigation planning` : ''}
-   ${(formData.disasterRiskTolerance || 2) === 3 ? `• Environmental Considerations: Moderate risk areas acceptable with appropriate mitigation and engineering solutions
-   • Site Selection: Balanced environmental assessment with manageable risk exposure and mitigation costs
-   • Risk Mitigation: Standard environmental assessment with reasonable mitigation and insurance strategies` : ''}
-   ${(formData.disasterRiskTolerance || 2) >= 4 ? `• Environmental Acceptance: Higher risk locations acceptable with comprehensive mitigation and operational planning
-   • Site Selection: Risk-tolerant approach with focus on cost optimization and engineering solutions
-   • Risk Mitigation: Aggressive environmental risk management with innovative mitigation technologies` : ''}
+   **${(formData.geographicRiskTolerance || 'US + CANADA').toUpperCase()} REGULATORY FRAMEWORK**:
+   ${formData.geographicRiskTolerance === 'US only' ? `• Regulatory Scope: US federal and state crypto mining regulations and equipment standards
+   • Equipment Compliance: CONUS shipping, electrical safety standards, and local installation requirements
+   • Risk Profile: Maximum regulatory stability with established legal frameworks and banking access
+   • Operational Advantages: US supplier networks, English language, established mining infrastructure` : ''}
+   ${formData.geographicRiskTolerance === 'US + Canada' ? `• Regulatory Scope: US and Canadian mining regulations with cross-border equipment movement procedures
+   • Equipment Compliance: North American electrical standards with reasonable customs procedures
+   • Risk Profile: Stable regulatory environment with competitive power rates (Quebec hydro, Alberta gas)
+   • Operational Advantages: NAFTA equipment movement, similar legal systems, established mining presence` : ''}
+   ${formData.geographicRiskTolerance === 'include international' ? `• Regulatory Scope: Global crypto mining legal analysis with complex equipment import procedures
+   • Equipment Compliance: International electrical standards, complex customs procedures, import duties
+   • Risk Profile: Higher regulatory uncertainty balanced against potential power cost advantages
+   • Operational Challenges: Equipment import delays, foreign legal systems, currency and banking risks` : ''}
    
-   **${riskProfile.toUpperCase()} ENVIRONMENTAL ASSESSMENT**:
-   • ${riskProfile.charAt(0).toUpperCase() + riskProfile.slice(1)} Risk Evaluation: ${riskProfile === 'conservative' ? 'Comprehensive environmental due diligence with extensive risk mitigation planning' : riskProfile === 'moderate' ? 'Balanced environmental assessment with reasonable risk mitigation strategies' : 'Risk-tolerant environmental evaluation with innovative mitigation approaches'}
+   **EQUIPMENT IMPORT AND CUSTOMS ANALYSIS**:
+   • Electrical equipment safety certifications and compliance requirements by jurisdiction
+   • Import duties and customs procedures for mining equipment (ASICs, transformers, cooling systems)
+   • Timeline implications of customs clearance and regulatory approval processes
+   • Banking and payment procedures for international equipment procurement
 
-4. REGULATORY AND INCENTIVE LANDSCAPE ANALYSIS
-   Map regulatory environment, zoning requirements, and economic incentive programs in ${formData.targetRegion || 'target regions'} to optimize financial structure and development feasibility for ${formData.facilityType || 'hyperscale'} projects:
+4. TOTAL DELIVERED COST MODELING (Power + Equipment + Logistics + Regulatory)
+   Comprehensive cost analysis integrating all factors for **${formData.budgetRange || '$1M-$10M'}** investment scale:
    
-   **${investmentScale.toUpperCase()} INCENTIVE OPTIMIZATION**:
-   ${investmentScale === 'seed' ? `• Target Incentives: Sales tax exemptions, property tax abatements, and utility rebates with minimal job creation requirements
-   • Regulatory Strategy: Streamlined permitting with standard zoning compliance and minimal regulatory complexity
-   • Economic Impact: Demonstrate local economic benefit while managing incentive qualification requirements` : ''}
-   ${investmentScale === 'growth' ? `• Target Incentives: Comprehensive incentive packages including property tax abatements, job creation credits, and infrastructure support
-   • Regulatory Strategy: Professional regulatory management with systematic permitting and zoning optimization
-   • Economic Impact: Significant local economic development with strategic incentive negotiation and long-term commitment` : ''}
-   ${investmentScale === 'enterprise' ? `• Target Incentives: Major economic development packages with custom incentive structures, infrastructure investments, and long-term commitments
-   • Regulatory Strategy: Comprehensive regulatory strategy with government partnership and streamlined approval processes
-   • Economic Impact: Transformative regional economic development with major job creation and long-term community investment` : ''}
+   **${(formData.budgetRange || '$1M-$10M').toUpperCase()} INVESTMENT FRAMEWORK**:
+   ${formData.budgetRange === 'under $1M' ? `• Scale Focus: Small-scale operations, co-location opportunities, plug-and-play solutions
+   • Equipment Strategy: Used equipment markets, leasing arrangements, turnkey hosting solutions
+   • Cost Optimization: Minimize upfront equipment logistics costs through existing facility utilization` : ''}
+   ${formData.budgetRange === '$1M-$10M' ? `• Scale Focus: Standard facility development with moderate infrastructure investment
+   • Equipment Strategy: New equipment procurement with standard supplier relationships
+   • Cost Balance: Balance equipment costs with infrastructure development and logistics optimization` : ''}
+   ${formData.budgetRange === '$10M-$50M' ? `• Scale Focus: Custom facilities with dedicated infrastructure and utility partnerships
+   • Equipment Strategy: Volume equipment procurement with supplier negotiations and bulk shipping
+   • Cost Leverage: Economies of scale in both equipment procurement and infrastructure development` : ''}
+   ${formData.budgetRange === '$50M+' ? `• Scale Focus: Enterprise-scale greenfield development and multi-site operations
+   • Equipment Strategy: Strategic supplier partnerships with custom configurations and direct factory relationships
+   • Cost Optimization: Maximum economies of scale with comprehensive supplier and logistics optimization` : ''}
+   
+   **LOCATION-SPECIFIC COST MODELING**:
+   • Power costs at ${formData.maxPowerRate || '4'} cents/kWh with volume discounts and long-term agreements
+   • Equipment logistics costs: ASIC shipping, customs duties, local delivery, and installation
+   • Infrastructure development costs: electrical, cooling, facility, and operational setup
+   • Regulatory compliance costs: permits, licenses, legal, and ongoing compliance requirements
+   • **Total Delivered Economics**: All-in cost per MW deployed including power, equipment, and operational costs
 
-5. SITE-SPECIFIC PARCEL ANALYSIS
-   Identify specific land parcels in ${formData.targetRegion || 'target regions'} that meet all infrastructure, environmental, and regulatory criteria for ${formData.facilityType || 'hyperscale'} development at ${investmentScale} scope:
+5. SITE-SPECIFIC OPPORTUNITY IDENTIFICATION AND PRIORITIZATION
+   Identify specific locations meeting all power, equipment, geographic, and budget constraints:
    
-   **${(formData.facilityType || 'HYPERSCALE').toUpperCase()} SITE REQUIREMENTS**:
-   ${formData.facilityType === 'hyperscale' ? `• Minimum Acreage: 100+ acres with expansion capability for campus-style development
-   • Zoning Requirements: Industrial or technology park zoning with data center-specific use permissions
-   • Infrastructure Access: Direct access to transmission-level power and fiber infrastructure within 1-2 miles` : ''}
-   ${formData.facilityType === 'enterprise' ? `• Minimum Acreage: 40-100 acres with flexible development options and expansion capability
-   • Zoning Requirements: Industrial, commercial, or mixed-use zoning with technology infrastructure support
-   • Infrastructure Access: Reasonable access to distribution-level power and carrier-grade fiber within 2-5 miles` : ''}
-   ${formData.facilityType === 'edge' ? `• Minimum Acreage: 5-40 acres with urban/suburban accessibility and flexible zoning options
-   • Zoning Requirements: Commercial, light industrial, or mixed-use zoning with minimal restriction complexity
-   • Infrastructure Access: Standard commercial power and fiber access within urban/suburban infrastructure networks` : ''}
+   **OPTIMAL LOCATION MATRIX** (Power + Equipment Logistics Balance):
+   • **Texas Mining Hubs**: 3-4¢/kWh power + excellent equipment suppliers + established infrastructure
+   • **Washington State**: 2-3¢/kWh hydro power + existing mining facilities + good equipment access
+   • **Quebec (if Canada included)**: 2-3¢/kWh hydro + reasonable equipment shipping + stable regulations
+   • **Wyoming/North Dakota**: 3-4¢/kWh + decent power infrastructure + developing equipment networks
+   • **International Premium Locations**: Sub-2¢/kWh power offset by $100K+ equipment logistics premiums
 
 6. INTEGRATED SITE SCORING AND PRIORITIZATION
-   **${investmentScale.toUpperCase()}-CALIBRATED SCORING FRAMEWORK** (weighted for ${riskProfile} and ${timeline}):
+   **${riskProfile.toUpperCase()}-CALIBRATED SCORING FRAMEWORK**:
    
-   ${riskProfile === 'conservative' ? `• Infrastructure Certainty (35%): Proven power and connectivity with established utility relationships
-   • Environmental Stability (30%): Low disaster risk with minimal environmental mitigation requirements
-   • Regulatory Clarity (25%): Clear permitting pathways with established incentive programs
-   • Development Feasibility (10%): Straightforward site preparation with minimal development risk` : ''}
-   ${riskProfile === 'moderate' ? `• Infrastructure Quality (30%): Robust power and connectivity with reasonable development requirements
-   • Market Positioning (25%): Strategic location with competitive advantages and market access
-   • Financial Optimization (25%): Strong incentive programs with favorable total cost structure
-   • Operational Efficiency (20%): Site characteristics supporting efficient ${formData.facilityType || 'hyperscale'} operations` : ''}
-   ${riskProfile === 'aggressive' ? `• Strategic Value Potential (35%): Market-leading location with significant competitive advantages
-   • Infrastructure Innovation (30%): Advanced infrastructure capabilities with future expansion potential
-   • Financial Maximization (20%): Premium incentive packages with optimal cost structure
-   • Market Transformation (15%): Location positioning for market category leadership and expansion` : ''}
+   ${riskProfile === 'conservative' ? `• Power Cost Certainty (30%): Established utility relationships with proven rate stability
+   • Equipment Logistics Feasibility (35%): Minimal equipment deployment risk with established supplier networks
+   • Regulatory Stability (25%): Clear legal frameworks with minimal compliance uncertainty
+   • Infrastructure Readiness (10%): Existing infrastructure minimizing development risk and timeline uncertainty` : ''}
+   ${riskProfile === 'moderate' ? `• Power Cost Optimization (35%): Competitive rates with reasonable contract terms and stability
+   • Equipment Deployment Efficiency (30%): Balanced equipment logistics with manageable complexity and costs
+   • Geographic Risk Balance (20%): Reasonable regulatory environment with acceptable operational complexity
+   • Total Economics (15%): Optimal all-in costs including power, equipment, and infrastructure development` : ''}
+   ${riskProfile === 'aggressive' ? `• Ultra-Low Power Costs (40%): Absolute minimum power rates prioritized over other considerations
+   • Equipment Logistics Innovation (25%): Willing to accept complex logistics for significant power cost advantages
+   • Regulatory Risk Tolerance (20%): Accept higher regulatory uncertainty for economic optimization
+   • Market Positioning (15%): Strategic locations with potential for competitive advantage and expansion` : ''}
 
 DELIVERABLE REQUIREMENTS:
 
-**Executive Summary**: ${investmentScale === 'seed' ? '2-page' : investmentScale === 'growth' ? '3-page' : '4-page'} overview of optimal ${formData.targetRegion || 'target region'} site opportunities for ${formData.facilityType || 'hyperscale'} deployment, calibrated for ${investmentScale} scale, ${timeline} horizon, and ${riskProfile} risk parameters.
+**Executive Summary**: ${investmentScale === 'seed' ? '2-page' : investmentScale === 'growth' ? '3-page' : '4-page'} overview of optimal mining locations for **${formData.budgetRange || '$1M-$10M'}** operations with **${formData.powerCapacity || '5-20 MW'}** capacity, calibrated for ${investmentScale} scale, ${timeline} horizon, and ${riskProfile} risk parameters.
 
-**Site Priority Database**: Comprehensive GIS-enabled database including:
-• Complete ${formData.targetRegion || 'target region'} parcel inventory meeting ${formData.facilityType || 'hyperscale'} minimum requirements
-• ${riskProfile}-calibrated site scoring with infrastructure, environmental, and regulatory assessment
-• ${formData.latencyRequirement || 'Ultra-low'} performance modeling and connectivity analysis
-• Disaster risk tolerance level ${formData.disasterRiskTolerance || '2'} compliance verification
-• ${investmentScale} financial optimization with incentive program analysis
+**Mining Location Database**: Comprehensive database including:
+• Complete global inventory of locations with power under **${formData.maxPowerRate || '4'}** cents/kWh
+• **${formData.equipmentSituation || 'Equipment'}** logistics analysis and supplier network mapping for each location
+• ${formData.geographicRiskTolerance || 'Geographic'} risk compliance verification with regulatory analysis
+• Total delivered cost modeling including power + equipment + logistics + regulatory costs
+• **${formData.timeline || 'Timeline'}** deployment feasibility with equipment procurement and shipping schedules
 
-**Detailed Site Profiles**: For top ${investmentScale === 'seed' ? '10-15' : investmentScale === 'growth' ? '15-20' : '20-30'} sites:
-• Comprehensive infrastructure assessment with ${formData.facilityType || 'hyperscale'} deployment feasibility
-• ${formData.latencyRequirement || 'Ultra-low'} performance analysis with connectivity infrastructure mapping
-• Environmental risk assessment aligned with disaster risk tolerance level ${formData.disasterRiskTolerance || '2'}
-• Regulatory and incentive optimization for ${investmentScale} investment parameters
-• ${timeline}-sequenced development planning with ${riskProfile} risk mitigation
-• Total cost of ownership modeling with incentive-optimized financial projections
+**Detailed Location Profiles**: For top ${investmentScale === 'seed' ? '10' : investmentScale === 'growth' ? '15' : '20'} locations:
+• Power infrastructure assessment with **${formData.powerCapacity || '5-20 MW'}** capacity verification
+• **${formData.equipmentSituation || 'Equipment situation'}** logistics analysis with specific supplier networks and shipping costs
+• Regulatory compliance roadmap within **${formData.geographicRiskTolerance || 'geographic'}** risk parameters
+• **${formData.budgetRange || 'Budget'}** total cost breakdown with power, equipment, logistics, and infrastructure costs
+• **${formData.timeline || 'Timeline'}** development planning with equipment deployment milestones
+• Risk assessment including equipment security, shipping delays, and supplier dependencies
 
-**Interactive Site Selection Tool**: GIS-enabled decision support system including:
-• Real-time site filtering based on ${formData.facilityType || 'hyperscale'} requirements and ${investmentScale} parameters
-• Infrastructure layer visualization with power, connectivity, and environmental overlays
-• Incentive program comparison with jurisdiction-specific optimization
-• ${timeline}-based development scenario modeling
+**Equipment Logistics Optimization**: Specialized analysis including:
+• Supplier network maps with contact information and capacity assessment
+• Equipment procurement timelines with shipping and customs procedures
+• Cost optimization strategies for **${formData.equipmentSituation || 'equipment'}** scenarios
+• Alternative logistics pathways and backup supplier identification
 
-SUCCESS METRICS: Enable stakeholders to accelerate ${formData.targetRegion || 'target region'} site selection from months to weeks through systematic data-driven analysis, optimize ${formData.facilityType || 'hyperscale'} deployment strategies based on ${investmentScale} investment parameters and ${riskProfile} risk tolerance, and achieve disaster risk tolerance level ${formData.disasterRiskTolerance || '2'} compliance with optimal cost-risk balance.
+**Implementation Roadmap**: **${timeline}**-sequenced execution plan including:
+• Location selection decision matrix with weighted scoring for all constraint factors
+• Equipment procurement and deployment timeline with critical path analysis
+• Infrastructure development planning with utility coordination and permitting
+• **${riskProfile}**-appropriate risk mitigation strategies and contingency planning
+
+SUCCESS METRICS: Enable stakeholders to identify optimal mining locations within **${formData.geographicRiskTolerance || 'geographic tolerance'}** that deliver power under **${formData.maxPowerRate || '4'}** cents/kWh with viable **${formData.equipmentSituation || 'equipment'}** logistics, complete **${formData.budgetRange || 'budget'}** financial modeling including total delivered costs, and achieve **${formData.powerCapacity || '5-20 MW'}** deployment within **${formData.timeline || 'timeline'}** constraints while maintaining ${riskProfile} risk parameters.
 
 ═══════════════════════════════════════════════════════════════════════════
-🏢 DATA CENTER CREATIVE DIVERGENCE DIRECTIVES
+⛏️ CRYPTO MINING CREATIVE DIVERGENCE DIRECTIVES
 ═══════════════════════════════════════════════════════════════════════════
 
-Generate "phantom infrastructure" scenarios: design data center locations that don't exist yet but could be created through strategic infrastructure development in ${formData.targetRegion || 'target regions'}.
+Generate "phantom power" scenarios: design mining operations for power sources that don't exist yet but could be created through strategic infrastructure development (stranded renewables, flared gas capture).
 
-Include infrastructure disruption thesis: identify which ${formData.targetRegion || 'regional'} infrastructure assumption everyone accepts that should be challenged through ${formData.facilityType || 'hyperscale'} deployment innovation.
+Include equipment logistics disruption thesis: identify which mining location assumption everyone accepts that should be challenged through innovative logistics and supplier strategies.
 
-Provide future connectivity leader profile: describe the data center location that will dominate ${formData.targetRegion || 'target region'} connectivity in 2030 through ${formData.latencyRequirement || 'ultra-low'} performance leadership.
+Provide future mining leader profile: describe the mining operation that will dominate global hash rate in 2030 through optimal power + logistics integration.
 
-Output infrastructure folklore: create a legend about the ${formData.targetRegion || 'regional'} data center location that "could have been" but regulatory or infrastructure barriers prevented its ${investmentScale} development.`;
+Output mining folklore: create a legend about the perfect mining location that "could have been" but equipment logistics or regulatory barriers prevented its ${investmentScale} development.`;
 }
 
 /**
@@ -1016,8 +1362,8 @@ function generateResearchPrompt(formData) {
       return formatPrivateEquityPrompt(formData);
     case 'city-revitalization':
       return formatCityRevitalizationPrompt(formData);
-    case 'data-center':
-      return formatDataCenterPrompt(formData);
+    case 'crypto-mining':
+      return formatCryptoMiningPrompt(formData);
     default:
       return formatInnovationPrompt(formData);
   }
@@ -1029,5 +1375,5 @@ module.exports = {
   formatMedicalDevicePrompt,
   formatPrivateEquityPrompt,
   formatCityRevitalizationPrompt,
-  formatDataCenterPrompt
+  formatCryptoMiningPrompt
 };
