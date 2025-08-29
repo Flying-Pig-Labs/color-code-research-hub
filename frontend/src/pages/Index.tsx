@@ -326,13 +326,12 @@ const Index = () => {
                         </div>
 
                         {/* Page Container with Slide Transition */}
-                        <div className="relative overflow-x-hidden overflow-y-auto" style={{ minHeight: '400px' }}>
+                        <div className="relative overflow-x-hidden min-h-fit">
                           {/* Page 1 Container */}
                           <div 
-                            className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
-                              currentFormPage === 1 ? 'translate-x-0' : '-translate-x-full'
+                            className={`transition-transform duration-300 ease-in-out ${
+                              currentFormPage === 1 ? 'translate-x-0 block' : '-translate-x-full hidden'
                             } ${isTransitioning ? 'pointer-events-none' : ''}`}
-                            style={{ minHeight: 'fit-content' }}
                           >
                             {/* Page 1: Use-Case Specific Configuration */}
                             {currentFormPage === 1 && (
@@ -960,10 +959,9 @@ const Index = () => {
 
                           {/* Page 2 Container */}
                           <div 
-                            className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
-                              currentFormPage === 2 ? 'translate-x-0' : 'translate-x-full'
+                            className={`transition-transform duration-300 ease-in-out ${
+                              currentFormPage === 2 ? 'translate-x-0 block' : 'translate-x-full hidden'
                             } ${isTransitioning ? 'pointer-events-none' : ''}`}
-                            style={{ minHeight: 'fit-content' }}
                           >
                             {/* Page 2: Strategic Configuration */}
                             {currentFormPage === 2 && (
