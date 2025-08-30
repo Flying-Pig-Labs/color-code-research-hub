@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Courier New - Monospace typography throughout */
+/* IBM Plex Mono - Modern monospace typography throughout */
 
 /* Definition of the sophisticated design system - Swiss design principles
 Typography-focused with clean lines and minimal color palette.
@@ -73,9 +73,9 @@ All colors MUST be HSL.
     --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-gentle: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-    /* Typography scale - using Courier New monospace throughout */
-    --font-heading: 'Courier New', 'Courier', monospace;
-    --font-body: 'Courier New', 'Courier', monospace;
+    /* Typography scale - using IBM Plex Mono throughout */
+    --font-heading: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
+    --font-body: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
 
     /* Sidebar (keep existing functionality) */
     --sidebar-background: 0 0% 99%;
@@ -146,7 +146,7 @@ All colors MUST be HSL.
     letter-spacing: -0.01em;
   }
 
-  /* Typography hierarchy using Courier New */
+  /* Typography hierarchy using IBM Plex Mono */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 600;
