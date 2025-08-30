@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* IBM Plex Mono - Modern monospace typography throughout */
+/* Cy font for titles/headings, IBM Plex Mono for body text */
 
 /* Definition of the sophisticated design system - Swiss design principles
 Typography-focused with clean lines and minimal color palette.
@@ -73,8 +73,8 @@ All colors MUST be HSL.
     --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-gentle: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-    /* Typography scale - using IBM Plex Mono throughout */
-    --font-heading: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
+    /* Typography scale - Cy for headings, IBM Plex Mono for body */
+    --font-heading: 'Cy', 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
     --font-body: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
 
     /* Sidebar (keep existing functionality) */
@@ -146,7 +146,7 @@ All colors MUST be HSL.
     letter-spacing: -0.01em;
   }
 
-  /* Typography hierarchy using IBM Plex Mono */
+  /* Typography hierarchy using Cy font for headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 600;
