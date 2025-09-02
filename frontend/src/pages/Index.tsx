@@ -92,11 +92,12 @@ const Index = () => {
   const [targetPopulation, setTargetPopulation] = useState("existing");
   const [localContribution, setLocalContribution] = useState("funding");
   
-  // Data Center form state (Site Selection Intelligence)
-  const [targetRegion, setTargetRegion] = useState("");
-  const [facilityType, setFacilityType] = useState("hyperscale");
-  const [latencyRequirement, setLatencyRequirement] = useState("ultra-low");
-  const [disasterRiskTolerance, setDisasterRiskTolerance] = useState(1);
+  // Crypto Mining form state (Mining Viability Research)
+  const [preferredRegions, setPreferredRegions] = useState("");
+  const [budgetUsd, setBudgetUsd] = useState("");
+  const [powerPreference, setPowerPreference] = useState("grid");
+  const [ownershipModel, setOwnershipModel] = useState("own");
+  const [maxPowerCost, setMaxPowerCost] = useState("");
   
   const navItems = [
     { 
@@ -133,8 +134,8 @@ const Index = () => {
       case "city-revitalization":
         formData = { ...coreData, targetLocation, focusArea, targetPopulation, localContribution };
         break;
-      case "data-center":
-        formData = { ...coreData, targetRegion, facilityType, latencyRequirement, disasterRiskTolerance };
+      case "crypto-mining":
+        formData = { ...coreData, preferredRegions, budgetUsd, powerPreference, ownershipModel, maxPowerCost };
         break;
       default:
         formData = coreData;
@@ -231,8 +232,8 @@ const Index = () => {
         return targetIndustry.trim() !== "";
       case "city-revitalization":
         return targetLocation.trim() !== "";
-      case "data-center":
-        return targetRegion.trim() !== "";
+      case "crypto-mining":
+        return preferredRegions.trim() !== "";
       default:
         return true;
     }
@@ -265,7 +266,7 @@ const Index = () => {
                       <TabsTrigger value="medical-device" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">medical device</TabsTrigger>
                       <TabsTrigger value="private-equity" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">private equity</TabsTrigger>
                       <TabsTrigger value="city-revitalization" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">city revitalization</TabsTrigger>
-                      <TabsTrigger value="data-center" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">data center</TabsTrigger>
+                      <TabsTrigger value="crypto-mining" className="text-sm px-4 py-3 border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none">crypto mining</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value={researchType} className="mt-0">
@@ -291,9 +292,9 @@ const Index = () => {
                             MUNICIPAL DEVELOPMENT AND ECONOMIC REVITALIZATION RESEARCH
                           </p>
                         )}
-                        {researchType === "data-center" && (
+                        {researchType === "crypto-mining" && (
                           <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                            STRATEGIC DATA CENTER LOCATION AND INFRASTRUCTURE ANALYSIS
+                            CRYPTOCURRENCY MINING VIABILITY AND SETUP RESEARCH
                           </p>
                         )}
                       </div>
@@ -662,70 +663,53 @@ const Index = () => {
                           </div>
                         )}
 
-                        {researchType === "data-center" && (
+                        {researchType === "crypto-mining" && (
                           <div className="space-y-6">
-                            {/* Target Region - existing field */}
+                            {/* Preferred Regions - text input */}
                             <div>
-                              <Label htmlFor="targetRegion" className="font-medium text-foreground mb-2 block">
-                                target geographic region
+                              <Label htmlFor="preferredRegions" className="font-medium text-foreground mb-2 block">
+                                preferred regions
                               </Label>
                               <Input
-                                id="targetRegion"
-                                value={targetRegion}
-                                onChange={(e) => setTargetRegion(e.target.value)}
-                                placeholder="e.g., Northern Virginia, state of Arizona, Pacific Northwest, Dallas-Fort Worth metroplex"
+                                id="preferredRegions"
+                                value={preferredRegions}
+                                onChange={(e) => setPreferredRegions(e.target.value)}
+                                placeholder="e.g., US-TX, Paraguay, Canada-Quebec, Iceland, Kazakhstan"
                                 className="text-base"
                                 required
                               />
                             </div>
 
-                            {/* Facility Type - 2 buttons */}
+                            {/* Budget USD - text input */}
                             <div>
-                              <Label className="font-medium text-foreground mb-3 block">Facility Type</Label>
-                              <div className="flex gap-3">
-                                <button
-                                  type="button"
-                                  onClick={() => setFacilityType('hyperscale')}
-                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
-                                    facilityType === 'hyperscale'
-                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
-                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
-                                  }`}
-                                >
-                                  <div className="font-medium">Hyperscale</div>
-                                  <div className="text-xs text-muted-foreground mt-1">Large-scale cloud providers</div>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setFacilityType('colocation')}
-                                  className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
-                                    facilityType === 'colocation'
-                                      ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
-                                      : 'bg-background border-border text-muted-foreground hover:bg-muted'
-                                  }`}
-                                >
-                                  <div className="font-medium">Colocation</div>
-                                  <div className="text-xs text-muted-foreground mt-1">Multi-tenant facilities</div>
-                                </button>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-2">What type of data center are you targeting?</p>
+                              <Label htmlFor="budgetUsd" className="font-medium text-foreground mb-2 block">
+                                budget (USD)
+                              </Label>
+                              <Input
+                                id="budgetUsd"
+                                value={budgetUsd}
+                                onChange={(e) => setBudgetUsd(e.target.value)}
+                                placeholder="e.g., 5000000, 10000000"
+                                className="text-base"
+                                type="number"
+                              />
                             </div>
 
-                            {/* Latency Requirement - 3 buttons */}
+                            {/* Power Preference - 3 buttons */}
                             <div>
-                              <Label className="font-medium text-foreground mb-3 block">Latency Requirement</Label>
+                              <Label className="font-medium text-foreground mb-3 block">Power Preference</Label>
                               <div className="flex gap-3">
                                 {[
-                                  { value: 'ultra-low', label: 'Ultra-Low', desc: '<5ms' },
-                                  { value: 'low', label: 'Low', desc: '<20ms' },
-                                  { value: 'standard', label: 'Standard', desc: '<50ms' }
+                                  { value: 'grid', label: 'Grid', desc: 'Utility power' },
+                                  { value: 'ppa', label: 'PPA', desc: 'Power purchase agreement' },
+                                  { value: 'flare', label: 'Flare', desc: 'Gas flare capture' }
                                 ].map(option => (
                                   <button
                                     key={option.value}
                                     type="button"
-                                    onClick={() => setLatencyRequirement(option.value)}
+                                    onClick={() => setPowerPreference(option.value)}
                                     className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
-                                      latencyRequirement === option.value
+                                      powerPreference === option.value
                                         ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
                                         : 'bg-background border-border text-muted-foreground hover:bg-muted'
                                     }`}
@@ -735,45 +719,50 @@ const Index = () => {
                                   </button>
                                 ))}
                               </div>
-                              <p className="text-xs text-muted-foreground mt-2">What latency performance do you need?</p>
+                              <p className="text-xs text-muted-foreground mt-2">What power source do you prefer?</p>
                             </div>
 
-                            {/* Disaster Risk Tolerance - 3-step slider */}
+                            {/* Ownership Model - 3 buttons */}
                             <div>
-                              <Label className="font-medium text-foreground mb-3 block">Disaster Risk Tolerance</Label>
-                              <div className="relative">
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="text-xs text-muted-foreground">Low Risk</span>
-                                  <span className="text-xs text-muted-foreground">Medium Risk</span>
-                                  <span className="text-xs text-muted-foreground">High Risk</span>
-                                </div>
-                                <div className="flex gap-1">
-                                  {[1, 2, 3].map(level => (
-                                    <button
-                                      key={level}
-                                      type="button"
-                                      onClick={() => setDisasterRiskTolerance(level)}
-                                      className={`flex-1 h-3 rounded-full transition-colors ${
-                                        disasterRiskTolerance >= level
-                                          ? 'bg-stone-400 dark:bg-stone-500'
-                                          : 'bg-stone-200 dark:bg-stone-700'
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
-                                <div className="flex justify-between mt-2">
-                                  <span className={`text-xs ${
-                                    disasterRiskTolerance >= 1 ? 'text-foreground font-medium' : 'text-muted-foreground'
-                                  }`}>Stable regions</span>
-                                  <span className={`text-xs ${
-                                    disasterRiskTolerance >= 2 ? 'text-foreground font-medium' : 'text-muted-foreground'
-                                  }`}>Some risk acceptable</span>
-                                  <span className={`text-xs ${
-                                    disasterRiskTolerance >= 3 ? 'text-foreground font-medium' : 'text-muted-foreground'
-                                  }`}>Cost over stability</span>
-                                </div>
+                              <Label className="font-medium text-foreground mb-3 block">Ownership Model</Label>
+                              <div className="flex gap-3">
+                                {[
+                                  { value: 'own', label: 'Own', desc: 'Full ownership' },
+                                  { value: 'hosted', label: 'Hosted', desc: 'Third-party hosting' },
+                                  { value: 'hybrid', label: 'Hybrid', desc: 'Mixed approach' }
+                                ].map(option => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setOwnershipModel(option.value)}
+                                    className={`px-4 py-3 rounded-md border text-sm flex-1 text-center transition-colors ${
+                                      ownershipModel === option.value
+                                        ? 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-foreground'
+                                        : 'bg-background border-border text-muted-foreground hover:bg-muted'
+                                    }`}
+                                  >
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-xs text-muted-foreground mt-1">{option.desc}</div>
+                                  </button>
+                                ))}
                               </div>
-                              <p className="text-xs text-muted-foreground mt-2">How much disaster risk can you tolerate for lower costs?</p>
+                              <p className="text-xs text-muted-foreground mt-2">How do you want to operate the mining setup?</p>
+                            </div>
+
+                            {/* Max Power Cost - text input */}
+                            <div>
+                              <Label htmlFor="maxPowerCost" className="font-medium text-foreground mb-2 block">
+                                max power cost ($/kWh)
+                              </Label>
+                              <Input
+                                id="maxPowerCost"
+                                value={maxPowerCost}
+                                onChange={(e) => setMaxPowerCost(e.target.value)}
+                                placeholder="e.g., 0.05, 0.08"
+                                className="text-base"
+                                type="number"
+                                step="0.001"
+                              />
                             </div>
                           </div>
                         )}

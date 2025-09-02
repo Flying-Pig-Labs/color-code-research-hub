@@ -767,9 +767,9 @@ function generateTitle(formData) {
         case 'city-revitalization':
             const location = formData.targetLocation || 'Municipal Development';
             return `City Revitalization Research: ${location}`;
-        case 'data-center':
-            const region = formData.targetRegion || 'Infrastructure';
-            return `Data Center Research: ${region} Analysis`;
+        case 'crypto-mining':
+            const regions = formData.preferredRegions || 'Mining Locations';
+            return `Crypto Mining Research: ${regions} Viability Analysis`;
         default:
             return 'Strategic Research Report';
     }
@@ -823,10 +823,10 @@ function generateTags(formData) {
             if (formData.focusArea) tags.push(formData.focusArea);
             tags.push('municipal-development', 'public-private-partnership');
             break;
-        case 'data-center':
-            if (formData.targetRegion) tags.push(formData.targetRegion);
-            if (formData.facilityType) tags.push(formData.facilityType);
-            tags.push('infrastructure-analysis', 'location-intelligence');
+        case 'crypto-mining':
+            if (formData.preferredRegions) tags.push(formData.preferredRegions);
+            if (formData.powerPreference) tags.push(formData.powerPreference);
+            tags.push('crypto-mining', 'mining-viability', 'power-analysis');
             break;
     }
     
