@@ -141,6 +141,8 @@ function createStructuredReport(perplexityResponse, metadata, requestId) {
     if (perplexityResponse?.response?.choices?.[0]?.message?.content) {
         content = perplexityResponse.response.choices[0].message.content;
     }
+    
+    console.log('Creating structured report for requestId:', requestId, 'jobType:', metadata?.jobType, 'contentLength:', content.length);
 
     // Create the structured report following the exact schema
     const structuredReport = {
@@ -172,10 +174,10 @@ function createStructuredReport(perplexityResponse, metadata, requestId) {
             sections: extractSections(content)
         },
         analysis: {
-            keyFindings: extractKeyFindings(content),
-            recommendations: extractRecommendations(content),
-            riskAssessment: extractRiskAssessment(content),
-            actionItems: extractActionItems(content)
+            keyFindings: safeExtractKeyFindings(content),
+            recommendations: safeExtractRecommendations(content),
+            riskAssessment: safeExtractRiskAssessment(content),
+            actionItems: safeExtractActionItems(content)
         },
         sources: extractSources(perplexityResponse),
         quality: {
@@ -238,6 +240,18 @@ function extractSections(content) {
 }
 
 /**
+ * Safe wrapper for extractKeyFindings with error handling
+ */
+function safeExtractKeyFindings(content) {
+    try {
+        return extractKeyFindings(content);
+    } catch (error) {
+        console.error('Error in extractKeyFindings:', error);
+        return [];
+    }
+}
+
+/**
  * Extract key findings using pattern matching
  */
 function extractKeyFindings(content) {
@@ -259,6 +273,18 @@ function extractKeyFindings(content) {
 /**
  * Extract recommendations
  */
+/**
+ * Safe wrapper for extractRecommendations with error handling
+ */
+function safeExtractRecommendations(content) {
+    try {
+        return extractRecommendations(content);
+    } catch (error) {
+        console.error('Error in extractRecommendations:', error);
+        return [];
+    }
+}
+
 function extractRecommendations(content) {
     const recommendations = [];
     const sections = content.toLowerCase();
@@ -285,6 +311,18 @@ function extractRecommendations(content) {
 }
 
 /**
+ * Safe wrapper for extractRiskAssessment with error handling
+ */
+function safeExtractRiskAssessment(content) {
+    try {
+        return extractRiskAssessment(content);
+    } catch (error) {
+        console.error('Error in extractRiskAssessment:', error);
+        return [];
+    }
+}
+
+/**
  * Extract risk assessment
  */
 function extractRiskAssessment(content) {
@@ -306,6 +344,18 @@ function extractRiskAssessment(content) {
     }
     
     return risks.slice(0, 5);
+}
+
+/**
+ * Safe wrapper for extractActionItems with error handling
+ */
+function safeExtractActionItems(content) {
+    try {
+        return extractActionItems(content);
+    } catch (error) {
+        console.error('Error in extractActionItems:', error);
+        return [];
+    }
 }
 
 /**
@@ -1028,8 +1078,20 @@ exports.handler = async (event) => {
 
                 } catch (error) {
                     console.error('Error processing completed job:', error);
+                    console.error('Error details:', {
+                        errorMessage: error.message,
+                        stack: error.stack,
+                        requestId: requestId,
+                        metadataTeam: metadata?.team,
+                        metadataJobType: metadata?.jobType,
+                        responseLength: statusResponse?.response?.choices?.[0]?.message?.content?.length || 0
+                    });
                     responseData.status = 'processing_error';
                     responseData.error = 'Failed to process completed research';
+                    // For debugging, include raw content if structured processing fails
+                    if (statusResponse?.response?.choices?.[0]?.message?.content) {
+                        responseData.raw_content = statusResponse.response.choices[0].message.content;
+                    }
                 }
             } else if (status === 'FAILED') {
                 responseData.status = 'failed';
