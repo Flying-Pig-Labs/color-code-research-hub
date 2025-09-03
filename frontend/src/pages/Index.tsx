@@ -25,6 +25,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { ResearchReportHistory } from "@/components/ResearchReportHistory";
+import { PipelineTracker } from "@/components/PipelineTracker";
 import { CircleHelp, Search, FileText, HelpCircle, Clock, Calendar, CalendarDays, Shield, TrendingUp, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -1136,6 +1137,8 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Pipeline Tracking Section */}
+        <PipelineTracker />
 
       {/* Research History Section - Clean, spacious layout */}
       <div className="max-w-6xl mx-auto px-6">
