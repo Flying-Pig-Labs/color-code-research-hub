@@ -673,6 +673,18 @@ async function logReportToDynamoDB(structuredReport, s3Keys) {
                 }
             }
         };
+        
+        // Add jobType field from metadata or tags
+        if (structuredReport.metadata.jobType) {
+            item.jobType = { S: structuredReport.metadata.jobType };
+        } else if (structuredReport.metadata.tags && structuredReport.metadata.tags.length > 0) {
+            // Try to extract research type from tags as fallback
+            const researchTypes = ['innovation', 'medical-device', 'private-equity', 'crypto-mining', 'city-revitalization'];
+            const foundType = structuredReport.metadata.tags.find(tag => researchTypes.includes(tag));
+            if (foundType) {
+                item.jobType = { S: foundType };
+            }
+        }
 
         // Add optional fields
         if (structuredReport.metadata.vendorName) {
@@ -885,6 +897,7 @@ exports.handler = async (event) => {
                 title: body.title || generateTitle(body) || 'Research Report',
                 requester: body.requester || 'Unknown',
                 team: body.team || body.researchType || 'innovation',
+                jobType: body.researchType || 'research', // Add jobType field
                 vendorName: body.vendorName || null,
                 companyName: body.companyName || null,
                 tags: body.tags || generateTags(body),
@@ -1071,6 +1084,7 @@ exports.handler = async (event) => {
                     contentSummary: item.contentSummary?.S,
                     wordCount: parseInt(item.wordCount?.N || '0'),
                     confidence: parseFloat(item.confidence?.N || '0'),
+                    jobType: item.jobType?.S || 'research', // Add jobType field
                     s3Keys: item.s3Keys?.M ? {
                         raw: item.s3Keys.M.raw?.S,
                         structured: item.s3Keys.M.structured?.S,

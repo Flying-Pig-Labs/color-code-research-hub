@@ -249,6 +249,9 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Target
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -267,6 +270,21 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     if (!report.createdAt) return 'N/A';
                     const date = new Date(report.createdAt);
                     return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'M/d/yyyy h:mma');
+                  })()}
+                </td>
+                <td className="px-6 py-4 text-sm text-foreground">
+                  {(() => {
+                    const jobType = report.jobType || report.metadata?.jobType || 'research';
+                    // Map jobType to display names
+                    const typeMap: { [key: string]: string } = {
+                      'innovation': 'Innovation',
+                      'medical-device': 'Medical Device', 
+                      'private-equity': 'Private Equity',
+                      'crypto-mining': 'Crypto Mining',
+                      'city-revitalization': 'City Revitalization',
+                      'research': 'Research'
+                    };
+                    return typeMap[jobType] || jobType;
                   })()}
                 </td>
                 <td className="px-6 py-4 text-sm text-foreground">
