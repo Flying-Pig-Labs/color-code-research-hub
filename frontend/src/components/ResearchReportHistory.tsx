@@ -30,11 +30,24 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
       setLoading(true);
       setError(null);
       
-      // Get active jobs from localStorage
+      // Get all reports from API first (this should query DynamoDB for actual status)
+      const apiReports = await listResearchReports(team, limit);
+      
+      // Get local tasks for any additional context, but don't rely on their status
       const localTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
-      const activeJobs = localTasks
-        .filter((task: any) => ['pending', 'processing', 'submitted'].includes(task.status))
-        .filter((task: any) => !team || task.team === team)
+      
+      // Only add local tasks that don't already exist in API results and are very recent (< 5 minutes)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const recentLocalTasks = localTasks
+        .filter((task: any) => {
+          // Only include very recent tasks not in API results
+          const createdAt = new Date(task.createdAt);
+          const isRecent = createdAt > fiveMinutesAgo;
+          const notInApi = !apiReports.some(report => 
+            report.reportId === (task.research_id || task.requestId || task.id)
+          );
+          return isRecent && notInApi && (!team || task.team === team);
+        })
         .map((task: any) => ({
           reportId: task.research_id || task.requestId || task.id,
           team: task.team || 'unknown',
@@ -43,15 +56,12 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
           title: task.vendorName || task.companyName || task.title || 'Research Job',
           vendorName: task.vendorName,
           companyName: task.companyName,
-          status: task.status,
+          status: 'pending', // Assume pending for very recent local tasks
           jobType: task.jobType || 'research'
         }));
 
-      // Get completed reports from API
-      const apiReports = await listResearchReports(team, limit);
-      
-      // Combine active jobs first, then completed reports
-      const allReports = [...activeJobs, ...apiReports];
+      // Combine API reports (which have accurate DynamoDB status) with recent local tasks
+      const allReports = [...apiReports, ...recentLocalTasks];
       setReports(allReports.slice(0, limit));
     } catch (err) {
       console.error('Failed to load reports:', err);
@@ -239,9 +249,6 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Type
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Target
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -260,25 +267,6 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                     if (!report.createdAt) return 'N/A';
                     const date = new Date(report.createdAt);
                     return isNaN(date.getTime()) ? 'Invalid date' : format(date, 'M/d/yyyy h:mma');
-                  })()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                  {(() => {
-                    // Get research type from formData or fall back to team/legacy
-                    const formData = report.formData || {};
-                    const researchType = formData.researchType || report.team;
-                    
-                    switch(researchType) {
-                      case 'innovation': return 'Innovation';
-                      case 'medical-device': return 'Medical Device';
-                      case 'private-equity': return 'Private Equity';
-                      case 'data-center': return 'Data Center';
-                      case 'city-revitalization': return 'City Revitalization';
-                      case 'red': return 'Red Team';
-                      case 'black': return 'Black Team';
-                      case 'white': return 'White Team';
-                      default: return 'Research';
-                    }
                   })()}
                 </td>
                 <td className="px-6 py-4 text-sm text-foreground">
