@@ -1137,25 +1137,53 @@ exports.handler = async (event) => {
                 }
 
                 const items = response.Items || [];
-                const reports = items.map(item => ({
-                    reportId: item.reportId?.S,
-                    title: item.title?.S,
-                    team: item.team?.S,
-                    requester: item.requester?.S,
-                    createdAt: item.createdAt?.S,
-                    contentSummary: item.contentSummary?.S,
-                    wordCount: parseInt(item.wordCount?.N || '0'),
-                    confidence: parseFloat(item.confidence?.N || '0'),
-                    jobType: item.jobType?.S || 'research', // Add jobType field
-                    tags: item.tags?.SS || [], // Add tags field for fallback research type detection
-                    s3Keys: item.s3Keys?.M ? {
-                        raw: item.s3Keys.M.raw?.S,
-                        structured: item.s3Keys.M.structured?.S,
-                        markdown: item.s3Keys.M.markdown?.S,
-                        html: item.s3Keys.M.html?.S,
-                        cleaned: item.s3Keys.M.cleaned?.S
-                    } : {}
-                }));
+                const reports = items.map(item => {
+                    // Handle both new structure (title) and old structure (objective)
+                    const title = item.title?.S || item.objective?.S || 'Research Report';
+                    const team = item.team?.S;
+                    
+                    // Extract research type - new reports will have jobType, old reports default to 'research'
+                    let jobType = item.jobType?.S || 'research';
+                    
+                    // Only try to extract from title if it has clear research type indicators
+                    if (jobType === 'research' && title) {
+                        if (title.startsWith('Private Equity Research:')) jobType = 'private-equity';
+                        else if (title.startsWith('Innovation Research:')) jobType = 'innovation';
+                        else if (title.startsWith('Medical Device Research:')) jobType = 'medical-device';
+                        else if (title.startsWith('City Revitalization Research:')) jobType = 'city-revitalization';
+                        else if (title.startsWith('Crypto Mining Research:')) jobType = 'crypto-mining';
+                    }
+                    
+                    return {
+                        reportId: item.reportId?.S,
+                        title: title,
+                        team: team,
+                        requester: item.requester?.S,
+                        createdAt: item.createdAt?.S,
+                        // Handle both new and old structure
+                        contentSummary: item.contentSummary?.S || item.processedSummary?.S,
+                        processedSummary: item.processedSummary?.S,
+                        wordCount: parseInt(item.wordCount?.N || item.summaryWordCount?.N || '0'),
+                        confidence: parseFloat(item.confidence?.N || '0'),
+                        jobType: jobType,
+                        tags: item.tags?.SS || [],
+                        // Handle both new and old S3 structure
+                        s3Keys: item.s3Keys?.M ? {
+                            raw: item.s3Keys.M.raw?.S,
+                            structured: item.s3Keys.M.structured?.S,
+                            markdown: item.s3Keys.M.markdown?.S,
+                            html: item.s3Keys.M.html?.S,
+                            cleaned: item.s3Keys.M.cleaned?.S
+                        } : {},
+                        // Add old structure fields for compatibility
+                        s3ReportKey: item.s3ReportKey?.S,
+                        s3SummaryKey: item.s3SummaryKey?.S,
+                        objective: item.objective?.S,
+                        status: item.status?.S,
+                        processingTimeMs: parseInt(item.processingTimeMs?.N || '0'),
+                        processingCompletedAt: item.processingCompletedAt?.S
+                    };
+                });
 
                 return {
                     statusCode: 200,
