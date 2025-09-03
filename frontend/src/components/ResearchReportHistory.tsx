@@ -274,7 +274,22 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
                 </td>
                 <td className="px-6 py-4 text-sm text-foreground">
                   {(() => {
-                    const jobType = report.jobType || report.metadata?.jobType || 'research';
+                    // Try to get jobType from multiple sources
+                    let jobType = report.jobType || report.metadata?.jobType;
+                    
+                    // Fallback: check tags array for research type (for existing reports)
+                    if (!jobType || jobType === 'research') {
+                      const researchTypes = ['innovation', 'medical-device', 'private-equity', 'crypto-mining', 'city-revitalization'];
+                      const tags = report.tags || report.metadata?.tags || [];
+                      const foundType = tags.find((tag: string) => researchTypes.includes(tag));
+                      if (foundType) {
+                        jobType = foundType;
+                      }
+                    }
+                    
+                    // Default to research if still not found
+                    jobType = jobType || 'research';
+                    
                     // Map jobType to display names
                     const typeMap: { [key: string]: string } = {
                       'innovation': 'Innovation',

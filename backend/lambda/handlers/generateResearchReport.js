@@ -1085,6 +1085,7 @@ exports.handler = async (event) => {
                     wordCount: parseInt(item.wordCount?.N || '0'),
                     confidence: parseFloat(item.confidence?.N || '0'),
                     jobType: item.jobType?.S || 'research', // Add jobType field
+                    tags: item.tags?.SS || [], // Add tags field for fallback research type detection
                     s3Keys: item.s3Keys?.M ? {
                         raw: item.s3Keys.M.raw?.S,
                         structured: item.s3Keys.M.structured?.S,
