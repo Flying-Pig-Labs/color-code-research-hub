@@ -1,0 +1,159 @@
+import { Stack, StackProps, CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+
+/**
+ * Data layer resources for the V2 platform.
+ * Defines DynamoDB tables, GSIs, S3 buckets and base IAM role
+ * used by application Lambdas. This is a scaffold only – business
+ * logic Lambdas should be added in dedicated stacks.
+ */
+export class DataLayerStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+
+    // Users table
+    const usersTable = new dynamodb.Table(this, 'UsersTable', {
+      tableName: 'Users',
+      partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    usersTable.addGlobalSecondaryIndex({
+      indexName: 'GSIUsersByCreated',
+      partitionKey: { name: 'entity', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'createdAt', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // Credit ledger table
+    const ledgerTable = new dynamodb.Table(this, 'CreditLedgerTable', {
+      tableName: 'CreditLedger',
+      partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'txId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    ledgerTable.addGlobalSecondaryIndex({
+      indexName: 'GSI_LedgerByTime',
+      partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'ts', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+    ledgerTable.addGlobalSecondaryIndex({
+      indexName: 'GSI_LedgerGlobal',
+      partitionKey: { name: 'reason', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'ts', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // Projects table
+    const projectsTable = new dynamodb.Table(this, 'ProjectsTable', {
+      tableName: 'Projects',
+      partitionKey: { name: 'projectId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    projectsTable.addGlobalSecondaryIndex({
+      indexName: 'GSI_ProjectsByUser',
+      partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'createdAt', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // Reports table
+    const reportsTable = new dynamodb.Table(this, 'ReportsTable', {
+      tableName: 'Reports',
+      partitionKey: { name: 'reportId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    reportsTable.addGlobalSecondaryIndex({
+      indexName: 'GSI_ReportsByProject',
+      partitionKey: { name: 'projectId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'startedAt', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // Ideations table
+    const ideationsTable = new dynamodb.Table(this, 'IdeationsTable', {
+      tableName: 'Ideations',
+      partitionKey: { name: 'ideationId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    ideationsTable.addGlobalSecondaryIndex({
+      indexName: 'GSI_IdeationsByProject',
+      partitionKey: { name: 'projectId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'startedAt', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // Double-downs table
+    const doublesTable = new dynamodb.Table(this, 'DoubleDownsTable', {
+      tableName: 'DoubleDowns',
+      partitionKey: { name: 'doubleId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    doublesTable.addGlobalSecondaryIndex({
+      indexName: 'GSI_DoublesByProject',
+      partitionKey: { name: 'projectId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'startedAt', type: dynamodb.AttributeType.NUMBER },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // S3 bucket for artifacts
+    const artifactsBucket = new s3.Bucket(this, 'ArtifactsBucket', {
+      bucketName: `${this.stackName.toLowerCase()}-artifacts`,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+
+    // IAM role for application Lambdas
+    const appRole = new iam.Role(this, 'AppLambdaRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+    });
+    appRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'));
+
+    [usersTable, ledgerTable, projectsTable, reportsTable, ideationsTable, doublesTable].forEach(t => t.grantReadWriteData(appRole));
+    artifactsBucket.grantReadWrite(appRole);
+
+    const environment = {
+      USERS_TABLE_NAME: usersTable.tableName,
+      CREDIT_LEDGER_TABLE_NAME: ledgerTable.tableName,
+      PROJECTS_TABLE_NAME: projectsTable.tableName,
+      REPORTS_TABLE_NAME: reportsTable.tableName,
+      IDEATIONS_TABLE_NAME: ideationsTable.tableName,
+      DOUBLES_TABLE_NAME: doublesTable.tableName,
+      ARTIFACTS_BUCKET_NAME: artifactsBucket.bucketName,
+      STRIPE_SECRET_KEY_PARAM: '/app/STRIPE_SECRET_KEY',
+      STRIPE_WEBHOOK_SECRET_PARAM: '/app/STRIPE_WEBHOOK_SECRET',
+      STRIPE_PRICE_CREDIT_PARAM: '/app/STRIPE_PRICE_CREDIT',
+    };
+
+    // Placeholder lambda to demonstrate env wiring
+    new lambda.Function(this, 'EnvPlaceholder', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromInline('export const handler = async () => {};'),
+      role: appRole,
+      environment,
+    });
+
+    // Outputs for easier discovery
+    new CfnOutput(this, 'UsersTableName', { value: usersTable.tableName });
+    new CfnOutput(this, 'CreditLedgerTableName', { value: ledgerTable.tableName });
+    new CfnOutput(this, 'ProjectsTableName', { value: projectsTable.tableName });
+    new CfnOutput(this, 'ReportsTableName', { value: reportsTable.tableName });
+    new CfnOutput(this, 'IdeationsTableName', { value: ideationsTable.tableName });
+    new CfnOutput(this, 'DoubleDownsTableName', { value: doublesTable.tableName });
+    new CfnOutput(this, 'ArtifactsBucketName', { value: artifactsBucket.bucketName });
+  }
+}
+
