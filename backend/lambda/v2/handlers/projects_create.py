@@ -4,6 +4,7 @@ import time
 import uuid
 import boto3
 from ..helpers.auth import get_user, AuthError
+from ..helpers.users import ensure_user_exists
 
 _dynamodb = boto3.client('dynamodb')
 PROJECTS_TABLE = os.environ.get('PROJECTS_TABLE_NAME', '')
@@ -15,6 +16,8 @@ def handler(event, context):
     except AuthError:
         return {"statusCode": 401, "body": json.dumps({"error": "unauthorized"})}
 
+    # Ensure user row exists (first login)
+    ensure_user_exists(claims)
     body = json.loads(event.get('body') or '{}')
     title = body.get('title')
     if not title:

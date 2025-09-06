@@ -4,6 +4,9 @@ import * as apigw from 'aws-cdk-lib/aws-apigateway';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as path from 'path';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 
 /**
  * API gateway and Lambda wiring for the V2 platform. All business logic
@@ -37,16 +40,24 @@ export class ApiLayerStack extends Stack {
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
       STRIPE_PRICE_CREDIT: process.env.STRIPE_PRICE_CREDIT || '',
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+      STRIPE_API_KEY_SECRET_ARN: process.env.STRIPE_API_KEY_SECRET_ARN || '',
+      STRIPE_SUCCESS_URL: process.env.STRIPE_SUCCESS_URL || '',
+      STRIPE_CANCEL_URL: process.env.STRIPE_CANCEL_URL || '',
     };
 
     // Handlers live at backend/lambda/v2/handlers relative to this file
     const code = lambda.Code.fromAsset(path.join(__dirname, '../../../lambda/v2/handlers'));
-    const makeFn = (id: string, handler: string) => new lambda.Function(this, id, {
-      runtime: lambda.Runtime.PYTHON_3_11,
-      handler,
-      code,
-      environment,
-    });
+    const fns: lambda.Function[] = [];
+    const makeFn = (id: string, handler: string) => {
+      const fn = new lambda.Function(this, id, {
+        runtime: lambda.Runtime.PYTHON_3_11,
+        handler,
+        code,
+        environment,
+      });
+      fns.push(fn);
+      return fn;
+    };
 
     // Billing
     const billingSession = makeFn('BillingStripeSession', 'billing_stripe_session.handler');
@@ -56,6 +67,17 @@ export class ApiLayerStack extends Stack {
     const billingWebhook = makeFn('BillingStripeWebhook', 'billing_stripe_webhook.handler');
     api.root.getResource('billing')!.getResource('stripe')!.addResource('webhook')
       .addMethod('POST', new apigw.LambdaIntegration(billingWebhook));
+
+    // Allow billing functions to read Stripe API key secret if provided
+    const stripeSecretArn = process.env.STRIPE_API_KEY_SECRET_ARN || '';
+    if (stripeSecretArn) {
+      const policy = new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [stripeSecretArn],
+      });
+      billingSession.addToRolePolicy(policy);
+      billingWebhook.addToRolePolicy(policy);
+    }
 
     const balance = makeFn('CreditsBalance', 'credits_balance.handler');
     api.root.addResource('credits').addResource('balance')
@@ -103,10 +125,49 @@ export class ApiLayerStack extends Stack {
     const adminUserGet = makeFn('AdminUserGet', 'admin_user_get.handler');
     adminUsersRes.addResource('{id}').addMethod('GET', new apigw.LambdaIntegration(adminUserGet), { authorizer });
     const adminMetrics = makeFn('AdminMetrics', 'admin_metrics.handler');
-    admin.addResource('metrics').addResource('summary')
+    const metricsRes = admin.addResource('metrics');
+    metricsRes.addMethod('GET', new apigw.LambdaIntegration(adminMetrics), { authorizer });
+    metricsRes.addResource('summary')
       .addMethod('GET', new apigw.LambdaIntegration(adminMetrics), { authorizer });
     const adminAdjust = makeFn('AdminCreditsAdjust', 'admin_credits_adjust.handler');
     admin.addResource('credits').addResource('adjust')
       .addMethod('POST', new apigw.LambdaIntegration(adminAdjust), { authorizer });
+
+    // Grant IAM permissions to access DDB tables and S3 bucket
+    const usersTable = environment.USERS_TABLE_NAME
+      ? dynamodb.Table.fromTableName(this, 'UsersTableRef', environment.USERS_TABLE_NAME)
+      : undefined;
+    const ledgerTable = environment.CREDIT_LEDGER_TABLE_NAME
+      ? dynamodb.Table.fromTableName(this, 'LedgerTableRef', environment.CREDIT_LEDGER_TABLE_NAME)
+      : undefined;
+    const projectsTable = environment.PROJECTS_TABLE_NAME
+      ? dynamodb.Table.fromTableName(this, 'ProjectsTableRef', environment.PROJECTS_TABLE_NAME)
+      : undefined;
+    const reportsTable = environment.REPORTS_TABLE_NAME
+      ? dynamodb.Table.fromTableName(this, 'ReportsTableRef', environment.REPORTS_TABLE_NAME)
+      : undefined;
+    const ideationsTable = environment.IDEATIONS_TABLE_NAME
+      ? dynamodb.Table.fromTableName(this, 'IdeationsTableRef', environment.IDEATIONS_TABLE_NAME)
+      : undefined;
+    const doublesTable = environment.DOUBLES_TABLE_NAME
+      ? dynamodb.Table.fromTableName(this, 'DoublesTableRef', environment.DOUBLES_TABLE_NAME)
+      : undefined;
+    const artifactsBucket = environment.ARTIFACTS_BUCKET_NAME
+      ? s3.Bucket.fromBucketName(this, 'ArtifactsBucketRef', environment.ARTIFACTS_BUCKET_NAME)
+      : undefined;
+
+    const grantRw = (table?: dynamodb.ITable) => {
+      if (!table) return;
+      fns.forEach(fn => table.grantReadWriteData(fn));
+    };
+    grantRw(usersTable);
+    grantRw(ledgerTable);
+    grantRw(projectsTable);
+    grantRw(reportsTable);
+    grantRw(ideationsTable);
+    grantRw(doublesTable);
+    if (artifactsBucket) {
+      fns.forEach(fn => artifactsBucket.grantReadWrite(fn));
+    }
   }
 }

@@ -294,9 +294,11 @@ if [ -d "$CDK_DIR" ]; then
                 echo "⚠️  USER_POOL_ID is not set. ApiLayerStack requires a Cognito User Pool ID."
                 echo "    Set USER_POOL_ID in your environment and rerun to deploy ApiLayerStack."
             else
-                echo "🚀 Deploying ApiLayerStack..."
-                npx cdk -a 'npx ts-node bin/api-layer.ts' deploy ApiLayerStack --require-approval never
-                echo "✅ ApiLayerStack deployed"
+        echo "🚀 Deploying ApiLayerStack..."
+        # Provide Stripe API key secret ARN default if not set
+        export STRIPE_API_KEY_SECRET_ARN="${STRIPE_API_KEY_SECRET_ARN:-arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww}"
+        npx cdk -a 'npx ts-node bin/api-layer.ts' deploy ApiLayerStack --require-approval never
+        echo "✅ ApiLayerStack deployed"
             fi
             popd >/dev/null
         fi

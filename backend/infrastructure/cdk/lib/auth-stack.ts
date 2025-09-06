@@ -1,6 +1,7 @@
 import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import { CfnUserPoolGroup } from 'aws-cdk-lib/aws-cognito';
 
 /**
  * AuthStack provisions a Cognito User Pool, Hosted UI domain and a public Web Client
@@ -53,6 +54,12 @@ export class AuthStack extends Stack {
     new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId });
     new CfnOutput(this, 'UserPoolClientId', { value: webClient.userPoolClientId });
     new CfnOutput(this, 'HostedUIDomain', { value: domain.domainName });
+
+    // Optional admin group
+    new CfnUserPoolGroup(this, 'AdminGroup', {
+      userPoolId: userPool.userPoolId,
+      groupName: 'admin',
+      description: 'Administrators',
+    });
   }
 }
-
