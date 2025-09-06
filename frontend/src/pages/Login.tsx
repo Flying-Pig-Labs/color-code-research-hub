@@ -37,7 +37,7 @@ const Login = () => {
               truflr.ai
             </h1>
             <img 
-              src="/logo-light.png"
+              src="/logo-dark.png"
               alt="truflr.ai Logo" 
               className="w-12 h-12 md:w-16 md:h-16"
             />

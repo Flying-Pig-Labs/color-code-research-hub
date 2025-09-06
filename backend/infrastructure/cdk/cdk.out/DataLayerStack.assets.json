@@ -1,0 +1,20 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "47b062b724129f60bc1baa3db8372ef67f3b21d13eb2922cbbd197e5ff84d701": {
+      "displayName": "DataLayerStack Template",
+      "source": {
+        "path": "DataLayerStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-221532e4": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "47b062b724129f60bc1baa3db8372ef67f3b21d13eb2922cbbd197e5ff84d701.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

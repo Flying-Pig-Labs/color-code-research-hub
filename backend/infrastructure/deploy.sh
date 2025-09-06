@@ -131,6 +131,7 @@ sam deploy \
     --capabilities CAPABILITY_IAM \
     --resolve-s3 \
     --no-confirm-changeset \
+    --no-fail-on-empty-changeset \
     --region us-east-1 \
     --parameter-overrides \
         Environment=production \

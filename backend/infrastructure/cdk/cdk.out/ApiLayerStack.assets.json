@@ -1,0 +1,34 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f": {
+      "displayName": "BillingStripeSession/Code",
+      "source": {
+        "path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region-992db3bf": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "7df3b200fb34bb4e102ab71a118ebaefe220dfc3de9bad482453044f85107fe9": {
+      "displayName": "ApiLayerStack Template",
+      "source": {
+        "path": "ApiLayerStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-3b967267": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "7df3b200fb34bb4e102ab71a118ebaefe220dfc3de9bad482453044f85107fe9.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

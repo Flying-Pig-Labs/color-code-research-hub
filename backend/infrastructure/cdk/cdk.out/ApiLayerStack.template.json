@@ -1,0 +1,4237 @@
+{
+ "Resources": {
+  "AuthorizerBD825682": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "ApiLayerStackAuthorizer53166042",
+    "ProviderARNs": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":cognito-idp:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":",
+        {
+         "Ref": "AWS::AccountId"
+        },
+        ":userpool/us-east-1_bKshBMVth"
+       ]
+      ]
+     }
+    ],
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "Type": "COGNITO_USER_POOLS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/Authorizer/Resource"
+   }
+  },
+  "HttpApiF5A9A8A7": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "V2HttpApi"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Resource"
+   }
+  },
+  "HttpApiCloudWatchRole6E8B73F8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/CloudWatchRole/Resource"
+   }
+  },
+  "HttpApiAccount2C8D4A9D": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "HttpApiCloudWatchRole6E8B73F8",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "HttpApiF5A9A8A7"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Account"
+   }
+  },
+  "HttpApiDeployment2ABEB12Ffabafcedd6440ec1d975af376e253feb": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Automatically created by the RestApi construct",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "DependsOn": [
+    "HttpApiadmincreditsadjustPOST49C8E1A5",
+    "HttpApiadmincreditsadjustF9C1008B",
+    "HttpApiadmincredits28BAB52E",
+    "HttpApiadminmetrics4A2B57D2",
+    "HttpApiadminmetricssummaryGET9A2832C4",
+    "HttpApiadminmetricssummaryF2C5329E",
+    "HttpApiadminA9BE4721",
+    "HttpApiadminusersidGET6EFC1447",
+    "HttpApiadminusersid09FAEB79",
+    "HttpApiadminusersGET4D2A5EE2",
+    "HttpApiadminusersA36D336F",
+    "HttpApibilling441D09DB",
+    "HttpApibillingstripecreatecheckoutsessionPOST7BA12272",
+    "HttpApibillingstripecreatecheckoutsessionAD8B6E75",
+    "HttpApibillingstripe18EB62D8",
+    "HttpApibillingstripewebhookPOST54687682",
+    "HttpApibillingstripewebhook0604D7BA",
+    "HttpApicreditsbalanceGETA8B07740",
+    "HttpApicreditsbalance61FF8902",
+    "HttpApicredits3EF59DEA",
+    "HttpApidoubledownsdoubleIdGET1E999A5A",
+    "HttpApidoubledownsdoubleId700F590F",
+    "HttpApidoubledowns9CB6304A",
+    "HttpApiideationsideationIdGETF480AFF6",
+    "HttpApiideationsideationId3E47D339",
+    "HttpApiideationsEC20B704",
+    "HttpApiprojectsprojectIddoubledown1074FBCC",
+    "HttpApiprojectsprojectIddoubledownstartPOST7AE6C4EF",
+    "HttpApiprojectsprojectIddoubledownstart0893AFFD",
+    "HttpApiprojectsprojectIdGET6A2E7B6B",
+    "HttpApiprojectsprojectIdideationA3D65EF6",
+    "HttpApiprojectsprojectIdideationstartPOST4690C073",
+    "HttpApiprojectsprojectIdideationstartBC19B2F3",
+    "HttpApiprojectsprojectIdreportA76C9763",
+    "HttpApiprojectsprojectIdreportstartPOSTA805CF02",
+    "HttpApiprojectsprojectIdreportstart43205E91",
+    "HttpApiprojectsprojectId24F57D02",
+    "HttpApiprojectsGET23681AFF",
+    "HttpApiprojectsPOSTFD80D2EA",
+    "HttpApiprojectsFD8E448F",
+    "HttpApireportsreportIdGET827D0A54",
+    "HttpApireportsreportId05CA7834",
+    "HttpApireports09D0EC4E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "HttpApiDeploymentStageprod7B463A5A": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "HttpApiDeployment2ABEB12Ffabafcedd6440ec1d975af376e253feb"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "HttpApiAccount2C8D4A9D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "HttpApibilling441D09DB": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "billing",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/Resource"
+   }
+  },
+  "HttpApibillingstripe18EB62D8": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApibilling441D09DB"
+    },
+    "PathPart": "stripe",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/Resource"
+   }
+  },
+  "HttpApibillingstripecreatecheckoutsessionAD8B6E75": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApibillingstripe18EB62D8"
+    },
+    "PathPart": "create-checkout-session",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/Resource"
+   }
+  },
+  "HttpApibillingstripecreatecheckoutsessionPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTbillingstripecreatecheckoutsessionE783D6FF": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "BillingStripeSession79B29DE0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/billing/stripe/create-checkout-session"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..billing.stripe.create-checkout-session"
+   }
+  },
+  "HttpApibillingstripecreatecheckoutsessionPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTbillingstripecreatecheckoutsessionE12A28D6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "BillingStripeSession79B29DE0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/billing/stripe/create-checkout-session"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..billing.stripe.create-checkout-session"
+   }
+  },
+  "HttpApibillingstripecreatecheckoutsessionPOST7BA12272": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "BillingStripeSession79B29DE0",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApibillingstripecreatecheckoutsessionAD8B6E75"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/POST/Resource"
+   }
+  },
+  "HttpApibillingstripewebhook0604D7BA": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApibillingstripe18EB62D8"
+    },
+    "PathPart": "webhook",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/webhook/Resource"
+   }
+  },
+  "HttpApibillingstripewebhookPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTbillingstripewebhookB8F32212": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "BillingStripeWebhook4EA50541",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/billing/stripe/webhook"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/webhook/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..billing.stripe.webhook"
+   }
+  },
+  "HttpApibillingstripewebhookPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTbillingstripewebhookC4147A13": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "BillingStripeWebhook4EA50541",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/billing/stripe/webhook"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/webhook/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..billing.stripe.webhook"
+   }
+  },
+  "HttpApibillingstripewebhookPOST54687682": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "BillingStripeWebhook4EA50541",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApibillingstripewebhook0604D7BA"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/webhook/POST/Resource"
+   }
+  },
+  "HttpApicredits3EF59DEA": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "credits",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/Resource"
+   }
+  },
+  "HttpApicreditsbalance61FF8902": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApicredits3EF59DEA"
+    },
+    "PathPart": "balance",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/balance/Resource"
+   }
+  },
+  "HttpApicreditsbalanceGETApiPermissionApiLayerStackHttpApi9A58276CGETcreditsbalance388BE655": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CreditsBalance3161737F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/credits/balance"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/balance/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..credits.balance"
+   }
+  },
+  "HttpApicreditsbalanceGETApiPermissionTestApiLayerStackHttpApi9A58276CGETcreditsbalance95715E56": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CreditsBalance3161737F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/credits/balance"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/balance/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..credits.balance"
+   }
+  },
+  "HttpApicreditsbalanceGETA8B07740": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CreditsBalance3161737F",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApicreditsbalance61FF8902"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/balance/GET/Resource"
+   }
+  },
+  "HttpApiprojectsFD8E448F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "projects",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/Resource"
+   }
+  },
+  "HttpApiprojectsPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojects64815644": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ProjectsCreateCA66F0D2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/projects"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects"
+   }
+  },
+  "HttpApiprojectsPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTprojects90A0469A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ProjectsCreateCA66F0D2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/projects"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..projects"
+   }
+  },
+  "HttpApiprojectsPOSTFD80D2EA": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ProjectsCreateCA66F0D2",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiprojectsFD8E448F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/POST/Resource"
+   }
+  },
+  "HttpApiprojectsGETApiPermissionApiLayerStackHttpApi9A58276CGETprojects8D8D7013": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ProjectsList7392543B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/projects"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..projects"
+   }
+  },
+  "HttpApiprojectsGETApiPermissionTestApiLayerStackHttpApi9A58276CGETprojectsF6E1C541": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ProjectsList7392543B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/projects"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..projects"
+   }
+  },
+  "HttpApiprojectsGET23681AFF": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ProjectsList7392543B",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiprojectsFD8E448F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/GET/Resource"
+   }
+  },
+  "HttpApiprojectsprojectId24F57D02": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsFD8E448F"
+    },
+    "PathPart": "{projectId}",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdGETApiPermissionApiLayerStackHttpApi9A58276CGETprojectsprojectId86CF37E6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ProjectsGet8C406C23",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/projects/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..projects.{projectId}"
+   }
+  },
+  "HttpApiprojectsprojectIdGETApiPermissionTestApiLayerStackHttpApi9A58276CGETprojectsprojectId5852469B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ProjectsGet8C406C23",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/projects/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..projects.{projectId}"
+   }
+  },
+  "HttpApiprojectsprojectIdGET6A2E7B6B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ProjectsGet8C406C23",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectId24F57D02"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/GET/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdreportA76C9763": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsprojectId24F57D02"
+    },
+    "PathPart": "report",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdreportstart43205E91": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsprojectIdreportA76C9763"
+    },
+    "PathPart": "start",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdreportstartPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojectsprojectIdreportstart3186E049": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ReportStartD6D0CB92",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/projects/*/report/start"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.report.start"
+   }
+  },
+  "HttpApiprojectsprojectIdreportstartPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTprojectsprojectIdreportstartADFE640B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ReportStartD6D0CB92",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/projects/*/report/start"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.report.start"
+   }
+  },
+  "HttpApiprojectsprojectIdreportstartPOSTA805CF02": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ReportStartD6D0CB92",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIdreportstart43205E91"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/POST/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdideationA3D65EF6": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsprojectId24F57D02"
+    },
+    "PathPart": "ideation",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdideationstartBC19B2F3": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsprojectIdideationA3D65EF6"
+    },
+    "PathPart": "start",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdideationstartPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojectsprojectIdideationstart242948D7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "IdeationStartFFFDE9B4",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/projects/*/ideation/start"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.ideation.start"
+   }
+  },
+  "HttpApiprojectsprojectIdideationstartPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTprojectsprojectIdideationstart94FEE55A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "IdeationStartFFFDE9B4",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/projects/*/ideation/start"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.ideation.start"
+   }
+  },
+  "HttpApiprojectsprojectIdideationstartPOST4690C073": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "IdeationStartFFFDE9B4",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIdideationstartBC19B2F3"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/POST/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIddoubledown1074FBCC": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsprojectId24F57D02"
+    },
+    "PathPart": "double-down",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIddoubledownstart0893AFFD": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiprojectsprojectIddoubledown1074FBCC"
+    },
+    "PathPart": "start",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIddoubledownstartPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojectsprojectIddoubledownstart98444D3B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DoubleStartF5D8C9F3",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/projects/*/double-down/start"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.double-down.start"
+   }
+  },
+  "HttpApiprojectsprojectIddoubledownstartPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTprojectsprojectIddoubledownstartB9AD2E0E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DoubleStartF5D8C9F3",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/projects/*/double-down/start"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.double-down.start"
+   }
+  },
+  "HttpApiprojectsprojectIddoubledownstartPOST7AE6C4EF": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "DoubleStartF5D8C9F3",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIddoubledownstart0893AFFD"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/POST/Resource"
+   }
+  },
+  "HttpApireports09D0EC4E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "reports",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/Resource"
+   }
+  },
+  "HttpApireportsreportId05CA7834": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApireports09D0EC4E"
+    },
+    "PathPart": "{reportId}",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/{reportId}/Resource"
+   }
+  },
+  "HttpApireportsreportIdGETApiPermissionApiLayerStackHttpApi9A58276CGETreportsreportIdCFEFB462": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ReportGet3F9696DD",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/reports/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/{reportId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..reports.{reportId}"
+   }
+  },
+  "HttpApireportsreportIdGETApiPermissionTestApiLayerStackHttpApi9A58276CGETreportsreportIdD307F8F6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ReportGet3F9696DD",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/reports/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/{reportId}/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..reports.{reportId}"
+   }
+  },
+  "HttpApireportsreportIdGET827D0A54": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ReportGet3F9696DD",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApireportsreportId05CA7834"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/{reportId}/GET/Resource"
+   }
+  },
+  "HttpApiideationsEC20B704": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "ideations",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/Resource"
+   }
+  },
+  "HttpApiideationsideationId3E47D339": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiideationsEC20B704"
+    },
+    "PathPart": "{ideationId}",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/{ideationId}/Resource"
+   }
+  },
+  "HttpApiideationsideationIdGETApiPermissionApiLayerStackHttpApi9A58276CGETideationsideationIdFF0F5E80": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "IdeationGet394FAE64",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/ideations/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/{ideationId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..ideations.{ideationId}"
+   }
+  },
+  "HttpApiideationsideationIdGETApiPermissionTestApiLayerStackHttpApi9A58276CGETideationsideationId873F0B9E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "IdeationGet394FAE64",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/ideations/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/{ideationId}/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..ideations.{ideationId}"
+   }
+  },
+  "HttpApiideationsideationIdGETF480AFF6": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "IdeationGet394FAE64",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiideationsideationId3E47D339"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/{ideationId}/GET/Resource"
+   }
+  },
+  "HttpApidoubledowns9CB6304A": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "double-downs",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/Resource"
+   }
+  },
+  "HttpApidoubledownsdoubleId700F590F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApidoubledowns9CB6304A"
+    },
+    "PathPart": "{doubleId}",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/Resource"
+   }
+  },
+  "HttpApidoubledownsdoubleIdGETApiPermissionApiLayerStackHttpApi9A58276CGETdoubledownsdoubleId195A5717": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DoubleGet0CB96C9E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/double-downs/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..double-downs.{doubleId}"
+   }
+  },
+  "HttpApidoubledownsdoubleIdGETApiPermissionTestApiLayerStackHttpApi9A58276CGETdoubledownsdoubleId3B29CA45": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DoubleGet0CB96C9E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/double-downs/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..double-downs.{doubleId}"
+   }
+  },
+  "HttpApidoubledownsdoubleIdGET1E999A5A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "DoubleGet0CB96C9E",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApidoubledownsdoubleId700F590F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/GET/Resource"
+   }
+  },
+  "HttpApiadminA9BE4721": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "admin",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/Resource"
+   }
+  },
+  "HttpApiadminusersA36D336F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiadminA9BE4721"
+    },
+    "PathPart": "users",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/Resource"
+   }
+  },
+  "HttpApiadminusersGETApiPermissionApiLayerStackHttpApi9A58276CGETadminusersC9D331C9": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminUsers888C7CB2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/admin/users"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.users"
+   }
+  },
+  "HttpApiadminusersGETApiPermissionTestApiLayerStackHttpApi9A58276CGETadminusers51EE0505": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminUsers888C7CB2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/admin/users"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..admin.users"
+   }
+  },
+  "HttpApiadminusersGET4D2A5EE2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AdminUsers888C7CB2",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiadminusersA36D336F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/GET/Resource"
+   }
+  },
+  "HttpApiadminusersid09FAEB79": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiadminusersA36D336F"
+    },
+    "PathPart": "{id}",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/{id}/Resource"
+   }
+  },
+  "HttpApiadminusersidGETApiPermissionApiLayerStackHttpApi9A58276CGETadminusersid6D712B8D": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminUserGetA0ECEFBD",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/admin/users/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/{id}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.users.{id}"
+   }
+  },
+  "HttpApiadminusersidGETApiPermissionTestApiLayerStackHttpApi9A58276CGETadminusersid0361E81E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminUserGetA0ECEFBD",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/admin/users/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/{id}/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..admin.users.{id}"
+   }
+  },
+  "HttpApiadminusersidGET6EFC1447": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AdminUserGetA0ECEFBD",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiadminusersid09FAEB79"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/{id}/GET/Resource"
+   }
+  },
+  "HttpApiadminmetrics4A2B57D2": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiadminA9BE4721"
+    },
+    "PathPart": "metrics",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/Resource"
+   }
+  },
+  "HttpApiadminmetricssummaryF2C5329E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiadminmetrics4A2B57D2"
+    },
+    "PathPart": "summary",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/summary/Resource"
+   }
+  },
+  "HttpApiadminmetricssummaryGETApiPermissionApiLayerStackHttpApi9A58276CGETadminmetricssummary024E3F3F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminMetricsA0D394C2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/admin/metrics/summary"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/summary/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.metrics.summary"
+   }
+  },
+  "HttpApiadminmetricssummaryGETApiPermissionTestApiLayerStackHttpApi9A58276CGETadminmetricssummary7BA01C2A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminMetricsA0D394C2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/admin/metrics/summary"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/summary/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..admin.metrics.summary"
+   }
+  },
+  "HttpApiadminmetricssummaryGET9A2832C4": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AdminMetricsA0D394C2",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiadminmetricssummaryF2C5329E"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/summary/GET/Resource"
+   }
+  },
+  "HttpApiadmincredits28BAB52E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiadminA9BE4721"
+    },
+    "PathPart": "credits",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/Resource"
+   }
+  },
+  "HttpApiadmincreditsadjustF9C1008B": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "HttpApiadmincredits28BAB52E"
+    },
+    "PathPart": "adjust",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/Resource"
+   }
+  },
+  "HttpApiadmincreditsadjustPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTadmincreditsadjustADA95C13": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminCreditsAdjust41FB01BC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/POST/admin/credits/adjust"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..admin.credits.adjust"
+   }
+  },
+  "HttpApiadmincreditsadjustPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTadmincreditsadjust058740A0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminCreditsAdjust41FB01BC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/POST/admin/credits/adjust"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..admin.credits.adjust"
+   }
+  },
+  "HttpApiadmincreditsadjustPOST49C8E1A5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AdminCreditsAdjust41FB01BC",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiadmincreditsadjustF9C1008B"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/POST/Resource"
+   }
+  },
+  "BillingStripeSessionServiceRole5DDB8F4E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/BillingStripeSession/ServiceRole/Resource"
+   }
+  },
+  "BillingStripeSession79B29DE0": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "billing_stripe_session.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "BillingStripeSessionServiceRole5DDB8F4E",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "BillingStripeSessionServiceRole5DDB8F4E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/BillingStripeSession/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "BillingStripeWebhookServiceRole7978B28D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/ServiceRole/Resource"
+   }
+  },
+  "BillingStripeWebhook4EA50541": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "billing_stripe_webhook.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "BillingStripeWebhookServiceRole7978B28D",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "BillingStripeWebhookServiceRole7978B28D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CreditsBalanceServiceRoleBB788369": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/CreditsBalance/ServiceRole/Resource"
+   }
+  },
+  "CreditsBalance3161737F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "credits_balance.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CreditsBalanceServiceRoleBB788369",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "CreditsBalanceServiceRoleBB788369"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/CreditsBalance/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ProjectsCreateServiceRoleBF7C69EF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsCreate/ServiceRole/Resource"
+   }
+  },
+  "ProjectsCreateCA66F0D2": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "projects_create.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ProjectsCreateServiceRoleBF7C69EF",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "ProjectsCreateServiceRoleBF7C69EF"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsCreate/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ProjectsListServiceRole2EE796E8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsList/ServiceRole/Resource"
+   }
+  },
+  "ProjectsList7392543B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "projects_list.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ProjectsListServiceRole2EE796E8",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "ProjectsListServiceRole2EE796E8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsList/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ProjectsGetServiceRoleA0721553": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsGet/ServiceRole/Resource"
+   }
+  },
+  "ProjectsGet8C406C23": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "projects_get.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ProjectsGetServiceRoleA0721553",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "ProjectsGetServiceRoleA0721553"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsGet/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ReportStartServiceRole922232D8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ReportStart/ServiceRole/Resource"
+   }
+  },
+  "ReportStartD6D0CB92": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "report_start.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ReportStartServiceRole922232D8",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "ReportStartServiceRole922232D8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ReportStart/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ReportGetServiceRoleEBAE137F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ReportGet/ServiceRole/Resource"
+   }
+  },
+  "ReportGet3F9696DD": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "report_get.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ReportGetServiceRoleEBAE137F",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "ReportGetServiceRoleEBAE137F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ReportGet/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "IdeationStartServiceRole66E4BEE3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/IdeationStart/ServiceRole/Resource"
+   }
+  },
+  "IdeationStartFFFDE9B4": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "ideation_start.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "IdeationStartServiceRole66E4BEE3",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "IdeationStartServiceRole66E4BEE3"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/IdeationStart/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "IdeationGetServiceRoleEDC90AE0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/IdeationGet/ServiceRole/Resource"
+   }
+  },
+  "IdeationGet394FAE64": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "ideation_get.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "IdeationGetServiceRoleEDC90AE0",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "IdeationGetServiceRoleEDC90AE0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/IdeationGet/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DoubleStartServiceRoleDF7E4BC8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/DoubleStart/ServiceRole/Resource"
+   }
+  },
+  "DoubleStartF5D8C9F3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "double_start.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "DoubleStartServiceRoleDF7E4BC8",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "DoubleStartServiceRoleDF7E4BC8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/DoubleStart/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DoubleGetServiceRole8089B895": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/DoubleGet/ServiceRole/Resource"
+   }
+  },
+  "DoubleGet0CB96C9E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "double_get.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "DoubleGetServiceRole8089B895",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "DoubleGetServiceRole8089B895"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/DoubleGet/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AdminUsersServiceRoleE61C321F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminUsers/ServiceRole/Resource"
+   }
+  },
+  "AdminUsers888C7CB2": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "admin_users.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AdminUsersServiceRoleE61C321F",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "AdminUsersServiceRoleE61C321F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminUsers/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AdminUserGetServiceRoleBD609C53": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminUserGet/ServiceRole/Resource"
+   }
+  },
+  "AdminUserGetA0ECEFBD": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "admin_user_get.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AdminUserGetServiceRoleBD609C53",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "AdminUserGetServiceRoleBD609C53"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminUserGet/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AdminMetricsServiceRole33E85810": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminMetrics/ServiceRole/Resource"
+   }
+  },
+  "AdminMetricsA0D394C2": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "admin_metrics.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AdminMetricsServiceRole33E85810",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "AdminMetricsServiceRole33E85810"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminMetrics/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AdminCreditsAdjustServiceRole40C06AAD": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/ServiceRole/Resource"
+   }
+  },
+  "AdminCreditsAdjust41FB01BC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE_NAME": "Users",
+      "CREDIT_LEDGER_TABLE_NAME": "CreditLedger",
+      "PROJECTS_TABLE_NAME": "Projects",
+      "REPORTS_TABLE_NAME": "Reports",
+      "IDEATIONS_TABLE_NAME": "Ideations",
+      "DOUBLES_TABLE_NAME": "DoubleDowns",
+      "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
+      "STRIPE_SECRET_KEY": "",
+      "STRIPE_PRICE_CREDIT": "",
+      "STRIPE_WEBHOOK_SECRET": ""
+     }
+    },
+    "Handler": "admin_credits_adjust.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AdminCreditsAdjustServiceRole40C06AAD",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11"
+   },
+   "DependsOn": [
+    "AdminCreditsAdjustServiceRole40C06AAD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/Resource",
+    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OwW7CMBBEv4W72ULg0mNIxa0qCuoZGWcTTBxv5F03olH+vXJT1JzmzexoNRlk2z1sVnrgtanatbNXGM+iTatKZIrBoNIDX0bd20YLDvoBY0GNt0KfjOFE5DiPcqNgvzGoovYLVyJL3tuULjA3hqIX9Ya9o0eHXlK6cGfRDaZshueQg+Z/8/dz5neUG1UpmmlSVncwluTmHjmclNPdtdIwFrU/YegssyWvjtEbSVDU/smT4t1FM6Mw5EkU7+AQTYuSNkyp+xGlj6J+z2mm9c2kPFUId375yjawfYX96s7WrkP0YjuEctYf+N4ek3MBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "HttpApiEndpoint9EC6E18F": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "HttpApiF5A9A8A7"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "HttpApiDeploymentStageprod7B463A5A"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
