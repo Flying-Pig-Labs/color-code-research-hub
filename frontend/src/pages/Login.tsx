@@ -117,13 +117,7 @@ function CognitoButtons() {
   const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID as string | undefined;
   const redirectUri = import.meta.env.VITE_COGNITO_REDIRECT_URI as string | undefined;
 
-  if (!domain || !clientId || !redirectUri) {
-    return (
-      <p className="text-xs text-muted-foreground text-center">
-        Tip: Configure Cognito env vars to enable sign up/sign in links.
-      </p>
-    );
-  }
+  if (!domain || !clientId || !redirectUri) return null;
 
   const params = new URLSearchParams({
     client_id: clientId,

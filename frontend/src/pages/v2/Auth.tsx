@@ -28,14 +28,7 @@ const Auth: React.FC = () => {
           <p className="text-muted-foreground">Sign in or create an account</p>
         </div>
 
-        {missingEnv ? (
-          <div className="rounded-md border border-border p-4 text-sm">
-            <p className="font-medium mb-1">Cognito not configured</p>
-            <p>
-              Set VITE_COGNITO_DOMAIN, VITE_COGNITO_CLIENT_ID, and VITE_COGNITO_REDIRECT_URI in your .env.local.
-            </p>
-          </div>
-        ) : (
+        {!missingEnv && (
           <div className="space-y-3">
             <a href={signInUrl} className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2 text-accent-foreground hover:bg-accent/90">
               Continue with Cognito
@@ -46,9 +39,11 @@ const Auth: React.FC = () => {
           </div>
         )}
 
-        <div className="text-xs text-center text-muted-foreground">
-          Using Cognito Hosted UI (no Amplify dependency)
-        </div>
+        {!missingEnv && (
+          <div className="text-xs text-center text-muted-foreground">
+            Using Cognito Hosted UI (no Amplify dependency)
+          </div>
+        )}
       </div>
     </div>
   );

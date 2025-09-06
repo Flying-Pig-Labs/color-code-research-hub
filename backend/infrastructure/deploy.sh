@@ -230,6 +230,33 @@ if [ -d "$CDK_DIR" ]; then
         echo "🔧 Bootstrapping CDK environment (safe to run repeatedly)..."
         npx cdk -a 'npx ts-node bin/data-layer.ts' bootstrap aws://$ACCOUNT_ID/$AWS_REGION || true
 
+        echo "🔐 Deploying AuthStack (Cognito)…"
+        COGNITO_CALLBACK_URL_DEFAULT="https://www.truflr.ai/v2/auth/callback"
+        COGNITO_LOGOUT_URL_DEFAULT="https://www.truflr.ai/"
+        export COGNITO_CALLBACK_URL="${COGNITO_CALLBACK_URL:-$COGNITO_CALLBACK_URL_DEFAULT}"
+        export COGNITO_LOGOUT_URL="${COGNITO_LOGOUT_URL:-$COGNITO_LOGOUT_URL_DEFAULT}"
+        npx cdk -a 'npx ts-node bin/auth-layer.ts' deploy AuthStack --require-approval never
+
+        echo "🔎 Reading AuthStack outputs..."
+        AUTH_STACK_INFO=$(aws cloudformation describe-stacks \
+            --stack-name AuthStack \
+            --profile $PROFILE \
+            --region $AWS_REGION 2>&1)
+
+        if [ $? -ne 0 ]; then
+            echo "❌ Failed to retrieve AuthStack information!"
+            echo "Error: $AUTH_STACK_INFO"
+            echo "ApiLayerStack will fall back to USER_POOL_ID if provided."
+        else
+            export USER_POOL_ID=$(echo "$AUTH_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="UserPoolId") | .OutputValue')
+            export USER_POOL_CLIENT_ID=$(echo "$AUTH_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="UserPoolClientId") | .OutputValue')
+            export COGNITO_HOSTED_UI_DOMAIN=$(echo "$AUTH_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="HostedUIDomain") | .OutputValue')
+            echo "✅ AuthStack deployed"
+            echo "   USER_POOL_ID=$USER_POOL_ID"
+            echo "   USER_POOL_CLIENT_ID=$USER_POOL_CLIENT_ID"
+            echo "   COGNITO_HOSTED_UI_DOMAIN=$COGNITO_HOSTED_UI_DOMAIN"
+        fi
+
         echo "🚀 Deploying DataLayerStack..."
         npx cdk -a 'npx ts-node bin/data-layer.ts' deploy DataLayerStack --require-approval never
 

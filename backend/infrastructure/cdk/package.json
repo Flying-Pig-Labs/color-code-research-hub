@@ -8,6 +8,7 @@
     "build": "tsc -p .",
     "cdk": "cdk",
     "cdk:bootstrap": "npx cdk -a 'npx ts-node bin/data-layer.ts' bootstrap",
+    "cdk:deploy:auth": "npx cdk -a 'npx ts-node bin/auth-layer.ts' deploy AuthStack --require-approval never",
     "cdk:deploy:data": "npx cdk -a 'npx ts-node bin/data-layer.ts' deploy DataLayerStack --require-approval never",
     "cdk:deploy:api": "npx cdk -a 'npx ts-node bin/api-layer.ts' deploy ApiLayerStack --require-approval never"
   },
@@ -21,4 +22,3 @@
     "constructs": "^10.3.0"
   }
 }
-
