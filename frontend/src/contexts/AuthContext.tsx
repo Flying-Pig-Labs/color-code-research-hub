@@ -81,9 +81,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * Initializes from sessionStorage on component mount to maintain login across refreshes.
    */
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check if user is already logged in (from sessionStorage) on initial load
-    const authStatus = sessionStorage.getItem('isAuthenticated');
-    return authStatus === 'true';
+    // Consider either our simple flag or presence of an id_token from Cognito Hosted UI
+    const authStatus = sessionStorage.getItem('isAuthenticated') === 'true';
+    const hasIdToken = !!sessionStorage.getItem('id_token');
+    return authStatus || hasIdToken;
   });
 
   /**
@@ -92,11 +93,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    */
   useEffect(() => {
     // Update sessionStorage when auth state changes
-    if (isAuthenticated) {
-      sessionStorage.setItem('isAuthenticated', 'true');
-    } else {
-      sessionStorage.removeItem('isAuthenticated');
-    }
+    if (isAuthenticated) sessionStorage.setItem('isAuthenticated', 'true');
+    else sessionStorage.removeItem('isAuthenticated');
   }, [isAuthenticated]);
 
   /**
@@ -125,6 +123,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    */
   const logout = () => {
     setIsAuthenticated(false);
+    // Clear any Cognito tokens/groups if present
+    sessionStorage.removeItem('id_token');
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('token_expires_in');
+    sessionStorage.removeItem('cognitoGroups');
     // Navigation will be handled by the component that calls logout
   };
 

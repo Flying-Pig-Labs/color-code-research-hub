@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn } from "lucide-react";
+import React from "react";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -94,6 +95,10 @@ const Login = () => {
               Request Beta Access
             </Button>
           </form>
+          {/* Cognito Hosted UI Auth (Sign in / Register) */}
+          <div className="mt-4 space-y-2">
+            <CognitoButtons />
+          </div>
         </div>
 
         {/* Footer hint */}
@@ -106,3 +111,36 @@ const Login = () => {
 };
 
 export default Login;
+
+function CognitoButtons() {
+  const domain = import.meta.env.VITE_COGNITO_DOMAIN as string | undefined;
+  const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID as string | undefined;
+  const redirectUri = import.meta.env.VITE_COGNITO_REDIRECT_URI as string | undefined;
+
+  if (!domain || !clientId || !redirectUri) {
+    return (
+      <p className="text-xs text-muted-foreground text-center">
+        Tip: Configure Cognito env vars to enable sign up/sign in links.
+      </p>
+    );
+  }
+
+  const params = new URLSearchParams({
+    client_id: clientId,
+    response_type: 'token',
+    scope: 'openid email profile',
+    redirect_uri: redirectUri,
+  }).toString();
+  const base = `https://${domain}/oauth2/authorize?${params}`;
+
+  return (
+    <div className="grid grid-cols-1 gap-2">
+      <a href={`${base}`} className="inline-flex w-full items-center justify-center rounded-md border border-border px-4 py-2 hover:bg-muted">
+        Sign in with Cognito
+      </a>
+      <a href={`${base}&screen_hint=signup`} className="inline-flex w-full items-center justify-center rounded-md border border-border px-4 py-2 hover:bg-muted">
+        Create an account
+      </a>
+    </div>
+  );
+}

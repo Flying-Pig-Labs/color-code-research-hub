@@ -1,0 +1,24 @@
+{
+  "name": "color-code-research-hub-cdk",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p .",
+    "cdk": "cdk",
+    "cdk:bootstrap": "npx cdk -a 'npx ts-node bin/data-layer.ts' bootstrap",
+    "cdk:deploy:data": "npx cdk -a 'npx ts-node bin/data-layer.ts' deploy DataLayerStack --require-approval never",
+    "cdk:deploy:api": "npx cdk -a 'npx ts-node bin/api-layer.ts' deploy ApiLayerStack --require-approval never"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.146.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.146.0",
+    "constructs": "^10.3.0"
+  }
+}
+

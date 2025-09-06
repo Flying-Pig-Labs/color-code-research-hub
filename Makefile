@@ -11,7 +11,7 @@ help:
 	@echo "  make web      - Start only the web server"
 	@echo "  make test     - Run unit tests (vitest)"
 	@echo "  make lambda-build-prompts - Copy prompts for Lambda build"
-	@echo "  make lambda   - Deploy Lambda functions to AWS"
+	@echo "  make lambda   - Deploy SAM stack and V2 CDK stacks to AWS"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make clean    - Kill all related processes"
 	@echo "  make install  - Install dependencies"

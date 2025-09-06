@@ -39,7 +39,8 @@ export class ApiLayerStack extends Stack {
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
     };
 
-    const code = lambda.Code.fromAsset(path.join(__dirname, '../../lambda/v2/handlers'));
+    // Handlers live at backend/lambda/v2/handlers relative to this file
+    const code = lambda.Code.fromAsset(path.join(__dirname, '../../../lambda/v2/handlers'));
     const makeFn = (id: string, handler: string) => new lambda.Function(this, id, {
       runtime: lambda.Runtime.PYTHON_3_11,
       handler,

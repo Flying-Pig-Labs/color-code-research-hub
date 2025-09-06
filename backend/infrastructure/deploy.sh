@@ -208,3 +208,71 @@ echo ""
 echo "==============================================="
 echo "✨ Deployment completed at $(date)"
 echo "==============================================="
+
+# Deploy V2 CDK stacks (Data + API) if CDK project is present
+echo ""
+echo "🏗️  Step 7: Deploying V2 CDK stacks (Data + API)..."
+echo "---------------------------------------"
+
+CDK_DIR="$SCRIPT_DIR/cdk"
+if [ -d "$CDK_DIR" ]; then
+    echo "📁 Found CDK directory at: $CDK_DIR"
+    pushd "$CDK_DIR" >/dev/null
+
+    if [ ! -f package.json ]; then
+        echo "ℹ️  No package.json in CDK directory. Skipping V2 CDK deployment."
+        echo "   To enable, add a CDK project in $CDK_DIR (package.json, tsconfig)."
+        popd >/dev/null
+    else
+        echo "📦 Installing CDK dependencies (if needed)..."
+        npm install
+
+        echo "🔧 Bootstrapping CDK environment (safe to run repeatedly)..."
+        npx cdk -a 'npx ts-node bin/data-layer.ts' bootstrap aws://$ACCOUNT_ID/$AWS_REGION || true
+
+        echo "🚀 Deploying DataLayerStack..."
+        npx cdk -a 'npx ts-node bin/data-layer.ts' deploy DataLayerStack --require-approval never
+
+        echo "🔎 Reading DataLayerStack outputs..."
+        DATA_STACK_INFO=$(aws cloudformation describe-stacks \
+            --stack-name DataLayerStack \
+            --profile $PROFILE \
+            --region $AWS_REGION 2>&1)
+
+        if [ $? -ne 0 ]; then
+            echo "❌ Failed to retrieve DataLayerStack information!"
+            echo "Error: $DATA_STACK_INFO"
+            echo "Skipping ApiLayerStack deployment."
+            popd >/dev/null
+        else
+            export USERS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="UsersTableName") | .OutputValue')
+            export CREDIT_LEDGER_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="CreditLedgerTableName") | .OutputValue')
+            export PROJECTS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ProjectsTableName") | .OutputValue')
+            export REPORTS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ReportsTableName") | .OutputValue')
+            export IDEATIONS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="IdeationsTableName") | .OutputValue')
+            export DOUBLES_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="DoubleDownsTableName") | .OutputValue')
+            export ARTIFACTS_BUCKET_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ArtifactsBucketName") | .OutputValue')
+
+            echo "✅ DataLayer outputs exported as env vars for ApiLayerStack"
+            echo "   USERS_TABLE_NAME=$USERS_TABLE_NAME"
+            echo "   CREDIT_LEDGER_TABLE_NAME=$CREDIT_LEDGER_TABLE_NAME"
+            echo "   PROJECTS_TABLE_NAME=$PROJECTS_TABLE_NAME"
+            echo "   REPORTS_TABLE_NAME=$REPORTS_TABLE_NAME"
+            echo "   IDEATIONS_TABLE_NAME=$IDEATIONS_TABLE_NAME"
+            echo "   DOUBLES_TABLE_NAME=$DOUBLES_TABLE_NAME"
+            echo "   ARTIFACTS_BUCKET_NAME=$ARTIFACTS_BUCKET_NAME"
+
+            if [ -z "${USER_POOL_ID:-}" ]; then
+                echo "⚠️  USER_POOL_ID is not set. ApiLayerStack requires a Cognito User Pool ID."
+                echo "    Set USER_POOL_ID in your environment and rerun to deploy ApiLayerStack."
+            else
+                echo "🚀 Deploying ApiLayerStack..."
+                npx cdk -a 'npx ts-node bin/api-layer.ts' deploy ApiLayerStack --require-approval never
+                echo "✅ ApiLayerStack deployed"
+            fi
+            popd >/dev/null
+        fi
+    fi
+else
+    echo "ℹ️  No CDK directory found. Skipping V2 CDK deployment."
+fi

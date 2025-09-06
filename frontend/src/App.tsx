@@ -40,6 +40,7 @@ import AppLayout from "./components/layout/AppLayout";
 
 // V2 Pages and Components
 import AuthV2 from "./pages/v2/Auth";
+import AuthCallback from "./pages/v2/AuthCallback";
 import Billing from "./pages/v2/Billing";
 import Projects from "./pages/v2/Projects";
 import ProjectDetail from "./pages/v2/ProjectDetail";
@@ -120,6 +121,7 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/v2/auth" element={<AuthV2 />} />
+            <Route path="/v2/auth/callback" element={<AuthCallback />} />
             
             {/* Protected Routes - Require authentication */}
             
