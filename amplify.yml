@@ -7,6 +7,8 @@ frontend:
         - npm ci
     build:
       commands:
+        # Load repo root .env.production if present (some teams commit it at root)
+        - 'if [ -f ./.env.production ]; then set -a; . ./.env.production; set +a; fi'
         # If a .env.production file exists in the repo, load it into env first
         - 'if [ -f frontend/.env.production ]; then set -a; . frontend/.env.production; set +a; fi'
         # Fail fast if required env vars are missing; rely on Amplify env config

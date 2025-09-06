@@ -11,7 +11,10 @@ help:
 	@echo "  make web      - Start only the web server"
 	@echo "  make test     - Run unit tests (vitest)"
 	@echo "  make lambda-build-prompts - Copy prompts for Lambda build"
-	@echo "  make lambda   - Deploy SAM stack and V2 CDK stacks to AWS"
+	@echo "  make lambda              - Deploy SAM stack (and CDK unless skipped)"
+	@echo "  make lambda-sam          - Deploy only SAM (skip CDK)"
+	@echo "  make lambda-nocache      - SAM build without cache (slower, safer)"
+	@echo "  make lambda-validate     - Validate SAM template only"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make clean    - Kill all related processes"
 	@echo "  make install  - Install dependencies"
@@ -79,6 +82,18 @@ lambda-build-prompts:
 lambda:
 	@echo "🚀 Deploying Lambda functions to AWS..."
 	@cd backend/infrastructure && ./deploy.sh
+
+lambda-sam:
+	@echo "🚀 Deploying SAM only (skipping CDK)..."
+	@cd backend/infrastructure && SKIP_CDK=1 ./deploy.sh
+
+lambda-nocache:
+	@echo "🚀 Deploying with SAM --no-cached (full rebuild)..."
+	@cd backend/infrastructure && NO_CACHE=1 ./deploy.sh
+
+lambda-validate:
+	@echo "🧪 Validating SAM template..."
+	@cd backend/infrastructure && sam validate
 
 # Install dependencies
 install:

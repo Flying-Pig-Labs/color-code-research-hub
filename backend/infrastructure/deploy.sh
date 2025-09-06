@@ -99,10 +99,16 @@ echo "✅ Prompts copied"
 echo ""
 echo "🏗️  Step 4: Building SAM application..."
 echo "---------------------------------------"
-echo "⚙️  Using parallel build with caching for faster builds"
+if [ "${NO_CACHE:-}" = "1" ] || [ "${NO_CACHE:-}" = "true" ]; then
+    echo "⚙️  Using parallel build without cache (this may take longer)"
+    SAM_BUILD_ARGS=(--parallel --no-cached)
+else
+    echo "⚙️  Using parallel build with caching for faster builds"
+    SAM_BUILD_ARGS=(--parallel --cached)
+fi
 
 BUILD_START=$(date +%s)
-sam build --parallel --cached 2>&1 | while IFS= read -r line; do
+sam build "${SAM_BUILD_ARGS[@]}" 2>&1 | while IFS= read -r line; do
     echo "   BUILD: $line"
 done
 
@@ -212,8 +218,11 @@ echo "==============================================="
 
 # Deploy V2 CDK stacks (Data + API) if CDK project is present
 echo ""
-echo "🏗️  Step 7: Deploying V2 CDK stacks (Data + API)..."
-echo "---------------------------------------"
+if [ "${SKIP_CDK:-}" = "1" ] || [ "${SKIP_CDK:-}" = "true" ]; then
+  echo "⏭️  Skipping CDK deployment per SKIP_CDK flag."
+else
+  echo "🏗️  Step 7: Deploying V2 CDK stacks (Data + API)..."
+  echo "---------------------------------------"
 
 CDK_DIR="$SCRIPT_DIR/cdk"
 if [ -d "$CDK_DIR" ]; then
@@ -306,4 +315,5 @@ if [ -d "$CDK_DIR" ]; then
     fi
 else
     echo "ℹ️  No CDK directory found. Skipping V2 CDK deployment."
+fi
 fi

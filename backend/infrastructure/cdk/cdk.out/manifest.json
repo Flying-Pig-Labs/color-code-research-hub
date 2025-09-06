@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/33526d7ba4aa8b8f69d2dfff9bf453fd6b039ee398f6563374e67e5da52cff07.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fa1c23760253f183b836cc3aeafe15a2f37b3704633e5e42b3c8301126955117.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -61,7 +61,7 @@
         "/ApiLayerStack/HttpApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiDeployment2ABEB12Ffdb8cfc54a91b89d02d09df3ca841000"
+            "data": "HttpApiDeployment2ABEB12F99f9f3d1e4e94f58ffbeab9bb8972977"
           }
         ],
         "/ApiLayerStack/HttpApi/DeploymentStage.prod/Resource": [
@@ -712,6 +712,36 @@
             "data": "HttpApiadmincreditsadjustPOST49C8E1A5"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/config/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiconfig6E729BFE"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/config/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiconfigOPTIONS2C1633A9"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/config/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..config": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiconfigGETApiPermissionApiLayerStackHttpApi9A58276CGETconfigDC4E7361"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/config/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..config": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiconfigGETApiPermissionTestApiLayerStackHttpApi9A58276CGETconfig1AB8024D"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/config/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiconfigGET7C31764E"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default4xx/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -1010,6 +1040,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AdminCreditsAdjust41FB01BC"
+          }
+        ],
+        "/ApiLayerStack/ConfigGet/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ConfigGetServiceRole18E52F30"
+          }
+        ],
+        "/ApiLayerStack/ConfigGet/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ConfigGetServiceRoleDefaultPolicyAAA1A0BB"
+          }
+        ],
+        "/ApiLayerStack/ConfigGet/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ConfigGetBAD2BF9E"
           }
         ],
         "/ApiLayerStack/CDKMetadata/Default": [
