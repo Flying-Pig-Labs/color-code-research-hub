@@ -27,6 +27,29 @@ export class ApiLayerStack extends Stack {
 
     const api = new apigw.RestApi(this, 'HttpApi', {
       restApiName: 'V2HttpApi',
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+        allowHeaders: ['Content-Type', 'Authorization', 'X-Api-Key', 'Accept', 'Idempotency-Key'],
+      },
+    });
+
+    // Ensure CORS headers on default 4xx/5xx responses
+    api.addGatewayResponse('Default4xx', {
+      type: apigw.ResponseType.DEFAULT_4XX,
+      responseHeaders: {
+        'Access-Control-Allow-Origin': "'*'",
+        'Access-Control-Allow-Headers': "'*'",
+        'Access-Control-Allow-Methods': "'*'",
+      },
+    });
+    api.addGatewayResponse('Default5xx', {
+      type: apigw.ResponseType.DEFAULT_5XX,
+      responseHeaders: {
+        'Access-Control-Allow-Origin': "'*'",
+        'Access-Control-Allow-Headers': "'*'",
+        'Access-Control-Allow-Methods': "'*'",
+      },
     });
 
     const environment = {

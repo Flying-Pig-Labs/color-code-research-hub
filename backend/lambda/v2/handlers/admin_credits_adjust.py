@@ -4,6 +4,7 @@ import time
 import uuid
 import boto3
 from ..helpers.auth import get_user, require_admin, AuthError
+from ..helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')
@@ -15,13 +16,13 @@ def handler(event, context):
         claims = get_user(event)
         require_admin(claims)
     except AuthError:
-        return {"statusCode": 403, "body": json.dumps({"error": "forbidden"})}
+        return json_response(403, {"error": "forbidden"})
     body = json.loads(event.get('body') or '{}')
     user_id = body.get('userId')
     delta = body.get('delta')
     note = body.get('note', '')
     if user_id is None or delta not in (-1, 1):
-        return {"statusCode": 422, "body": json.dumps({"error": "invalid request"})}
+        return json_response(422, {"error": "invalid request"})
     tx_id = f"ADJ_{uuid.uuid4()}"
     ts = int(time.time() * 1000)
     if delta > 0:
@@ -64,4 +65,4 @@ def handler(event, context):
             }
         ]
     )
-    return {"statusCode": 200, "body": json.dumps({'txId': tx_id})}
+    return json_response(200, {'txId': tx_id})

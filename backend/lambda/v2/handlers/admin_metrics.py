@@ -2,6 +2,7 @@ import json
 import os
 import boto3
 from ..helpers.auth import get_user, require_admin, AuthError
+from ..helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')
@@ -13,7 +14,7 @@ def handler(event, context):
         claims = get_user(event)
         require_admin(claims)
     except AuthError:
-        return {"statusCode": 403, "body": json.dumps({"error": "forbidden"})}
+        return json_response(403, {"error": "forbidden"})
     users_resp = _dynamodb.scan(TableName=USERS_TABLE, Select='COUNT')
     users_count = users_resp.get('Count', 0)
     ledger_resp = _dynamodb.scan(TableName=LEDGER_TABLE, ProjectionExpression='amount, #t', ExpressionAttributeNames={'#t': 'type'})
@@ -24,4 +25,4 @@ def handler(event, context):
         'creditsPurchased': purchased,
         'creditsSpent': spent,
     }
-    return {"statusCode": 200, "body": json.dumps({'metrics': metrics})}
+    return json_response(200, {'metrics': metrics})

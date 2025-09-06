@@ -6,7 +6,7 @@ import hmac
 import hashlib
 
 import boto3
-import json as _json
+from ..helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')
@@ -39,18 +39,18 @@ def handler(event, context):
     raw_body = event.get('body') or ''
     if WEBHOOK_SECRET:
         if not _verify_stripe_signature(sig, raw_body, WEBHOOK_SECRET):
-            return {"statusCode": 401, "body": json.dumps({"error": "invalid signature"})}
+            return json_response(401, {"error": "invalid signature"})
     # Optionally fetch API key for verifying event origin if needed (not required for signature check)
     if not WEBHOOK_SECRET:
         # If no webhook secret is configured, reject to avoid shortcuts
-        return {"statusCode": 500, "body": json.dumps({"error": "webhook_secret_not_configured"})}
+        return json_response(500, {"error": "webhook_secret_not_configured"})
 
     body = json.loads(raw_body or '{}')
     # Expect a custom mapping to include userId and quantity resolved from line items
     user_id = body.get('userId')
     quantity = int(body.get('quantity', 0))
     if not user_id or quantity <= 0:
-        return {"statusCode": 400, "body": json.dumps({"error": "invalid payload"})}
+        return json_response(400, {"error": "invalid payload"})
 
     tx_id = body.get('id', f"STRIPE_{uuid.uuid4()}")
     ts = int(time.time() * 1000)
@@ -82,4 +82,4 @@ def handler(event, context):
         ]
     )
 
-    return {"statusCode": 200, "body": json.dumps({'received': True})}
+    return json_response(200, {'received': True})

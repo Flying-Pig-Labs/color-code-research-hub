@@ -2,6 +2,7 @@ import json
 import os
 import boto3
 from ..helpers.auth import get_user, require_admin, AuthError
+from ..helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')
@@ -14,12 +15,12 @@ def handler(event, context):
         claims = get_user(event)
         require_admin(claims)
     except AuthError:
-        return {"statusCode": 403, "body": json.dumps({"error": "forbidden"})}
+        return json_response(403, {"error": "forbidden"})
     user_id = event.get('pathParameters', {}).get('id')
     resp = _dynamodb.get_item(TableName=USERS_TABLE, Key={'userId': {'S': user_id}})
     item = resp.get('Item')
     if not item:
-        return {"statusCode": 404, "body": json.dumps({"error": "not found"})}
+        return json_response(404, {"error": "not found"})
     stats = {}
     if 'stats' in item:
         for k, v in item['stats']['M'].items():
@@ -64,4 +65,4 @@ def handler(event, context):
             'createdAt': int(i.get('createdAt', {'N': '0'})['N'])
         } for i in projects.get('Items', [])
     ]
-    return {"statusCode": 200, "body": json.dumps(user)}
+    return json_response(200, user)
