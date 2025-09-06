@@ -131,6 +131,24 @@ echo "⚙️  Profile: $PROFILE"
 echo ""
 
 DEPLOY_START=$(date +%s)
+
+# Compose parameter overrides safely (omit empty values)
+PARAM_OVERRIDES=(
+  "Environment=production"
+  "GitHubOrg=Flying-Pig-Labs"
+  "ClientCompanyName=Your Company"
+)
+
+if [ -n "${USER_POOL_ID:-}" ]; then
+  PARAM_OVERRIDES+=("CognitoUserPoolIdParam=${USER_POOL_ID}")
+fi
+if [ -n "${STRIPE_PRICE_CREDIT:-}" ]; then
+  PARAM_OVERRIDES+=("StripePriceCredit=${STRIPE_PRICE_CREDIT}")
+fi
+if [ -n "${STRIPE_WEBHOOK_SECRET:-}" ]; then
+  PARAM_OVERRIDES+=("StripeWebhookSecret=${STRIPE_WEBHOOK_SECRET}")
+fi
+
 sam deploy \
     --profile $PROFILE \
     --stack-name color-code-research-hub \
@@ -139,11 +157,7 @@ sam deploy \
     --no-confirm-changeset \
     --no-fail-on-empty-changeset \
     --region us-east-1 \
-    --parameter-overrides \
-        Environment=production \
-        GitHubOrg=Flying-Pig-Labs \
-        ClientCompanyName="Your Company" \
-        CognitoUserPoolIdParam=${USER_POOL_ID:-} 2>&1 | while IFS= read -r line; do
+    --parameter-overrides "${PARAM_OVERRIDES[@]}" 2>&1 | while IFS= read -r line; do
     echo "   DEPLOY: $line"
 done
 
