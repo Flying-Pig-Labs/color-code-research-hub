@@ -142,7 +142,8 @@ sam deploy \
     --parameter-overrides \
         Environment=production \
         GitHubOrg=Flying-Pig-Labs \
-        ClientCompanyName="Your Company" 2>&1 | while IFS= read -r line; do
+        ClientCompanyName="Your Company" \
+        CognitoUserPoolIdParam=${USER_POOL_ID:-} 2>&1 | while IFS= read -r line; do
     echo "   DEPLOY: $line"
 done
 

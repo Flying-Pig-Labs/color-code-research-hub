@@ -3,7 +3,7 @@ import { envConfig } from '@/config/environment';
 // Simplified API helper with Authorization header taken from sessionStorage.
 // In production this would use Amplify fetchAuthSession to get the id token.
 async function apiFetch(path: string, options: RequestInit = {}) {
-  const token = sessionStorage.getItem('idToken');
+  const token = sessionStorage.getItem('id_token') || sessionStorage.getItem('idToken');
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
