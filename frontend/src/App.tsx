@@ -38,6 +38,16 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 // Layout Components
 import AppLayout from "./components/layout/AppLayout";
 
+// V2 Pages and Components
+import AuthV2 from "./pages/v2/Auth";
+import Billing from "./pages/v2/Billing";
+import Projects from "./pages/v2/Projects";
+import ProjectDetail from "./pages/v2/ProjectDetail";
+import AdminDashboard from "./pages/v2/AdminDashboard";
+import AdminUsers from "./pages/v2/AdminUsers";
+import AdminUserDetail from "./pages/v2/AdminUserDetail";
+import AdminRoute from "./components/v2/AdminRoute";
+
 // Page Components - Public
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -109,6 +119,7 @@ const App = () => (
             {/* Public Pages - No authentication required */}
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/v2/auth" element={<AuthV2 />} />
             
             {/* Protected Routes - Require authentication */}
             
@@ -134,6 +145,14 @@ const App = () => (
             
             {/* Monitoring Dashboard - System observability */}
             <Route path="/monitoring" element={<ProtectedRoute><AppLayout><SwarmDashboard /></AppLayout></ProtectedRoute>} />
+
+            {/* V2 Screens */}
+            <Route path="/v2/billing" element={<ProtectedRoute><AppLayout><Billing /></AppLayout></ProtectedRoute>} />
+            <Route path="/v2/projects" element={<ProtectedRoute><AppLayout><Projects /></AppLayout></ProtectedRoute>} />
+            <Route path="/v2/projects/:projectId" element={<ProtectedRoute><AppLayout><ProjectDetail /></AppLayout></ProtectedRoute>} />
+            <Route path="/v2/admin" element={<ProtectedRoute><AdminRoute><AppLayout><AdminDashboard /></AppLayout></AdminRoute></ProtectedRoute>} />
+            <Route path="/v2/admin/users" element={<ProtectedRoute><AdminRoute><AppLayout><AdminUsers /></AppLayout></AdminRoute></ProtectedRoute>} />
+            <Route path="/v2/admin/users/:userId" element={<ProtectedRoute><AdminRoute><AppLayout><AdminUserDetail /></AppLayout></AdminRoute></ProtectedRoute>} />
             
             {/* Report Viewer - Research output visualization */}
             <Route path="/reports/:reportId" element={<ProtectedRoute><AppLayout><ReportView /></AppLayout></ProtectedRoute>} />

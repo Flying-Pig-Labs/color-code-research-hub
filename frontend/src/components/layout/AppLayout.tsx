@@ -28,6 +28,7 @@ import { LogOut, Search, Lightbulb, ClipboardList, Hammer } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useBalance } from "@/hooks/v2";
 
 /**
  * Props interface for the AppLayout component.
@@ -55,6 +56,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const location = useLocation();
   const { logout } = useAuth();
   const { actualTheme } = useTheme();
+  const { data: balance } = useBalance();
   
   // Track which tab is currently active based on the route
   const [activeTab, setActiveTab] = useState("research");
@@ -128,6 +130,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <div className="max-w-7xl mx-auto px-6 py-6">
           {/* Top controls - Theme toggle and Logout */}
           <div className="absolute top-4 right-6 flex items-center gap-2">
+            <span className="text-sm">Credits: {balance?.credits ?? 0}</span>
             <ThemeToggle />
             <Button
               onClick={handleLogout}
