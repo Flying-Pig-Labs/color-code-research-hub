@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7df3b200fb34bb4e102ab71a118ebaefe220dfc3de9bad482453044f85107fe9.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/33526d7ba4aa8b8f69d2dfff9bf453fd6b039ee398f6563374e67e5da52cff07.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -61,7 +61,7 @@
         "/ApiLayerStack/HttpApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiDeployment2ABEB12Ffabafcedd6440ec1d975af376e253feb"
+            "data": "HttpApiDeployment2ABEB12Ffdb8cfc54a91b89d02d09df3ca841000"
           }
         ],
         "/ApiLayerStack/HttpApi/DeploymentStage.prod/Resource": [
@@ -76,10 +76,22 @@
             "data": "HttpApiEndpoint9EC6E18F"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiOPTIONS7F4FABD6"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/billing/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApibilling441D09DB"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/billing/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApibillingOPTIONS9AD1E6B2"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/billing/stripe/Resource": [
@@ -88,10 +100,22 @@
             "data": "HttpApibillingstripe18EB62D8"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/billing/stripe/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApibillingstripeOPTIONSB56520B7"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApibillingstripecreatecheckoutsessionAD8B6E75"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApibillingstripecreatecheckoutsessionOPTIONSD543DA42"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..billing.stripe.create-checkout-session": [
@@ -118,6 +142,12 @@
             "data": "HttpApibillingstripewebhook0604D7BA"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/billing/stripe/webhook/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApibillingstripewebhookOPTIONS7032FEC9"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/billing/stripe/webhook/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..billing.stripe.webhook": [
           {
             "type": "aws:cdk:logicalId",
@@ -142,10 +172,22 @@
             "data": "HttpApicredits3EF59DEA"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/credits/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApicreditsOPTIONS46080978"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/credits/balance/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApicreditsbalance61FF8902"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/credits/balance/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApicreditsbalanceOPTIONS25D0BE73"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/credits/balance/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..credits.balance": [
@@ -170,6 +212,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiprojectsFD8E448F"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/projects/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsOPTIONSF4D74583"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/projects/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects": [
@@ -214,6 +262,12 @@
             "data": "HttpApiprojectsprojectId24F57D02"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIdOPTIONSF6DAC41A"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..projects.{projectId}": [
           {
             "type": "aws:cdk:logicalId",
@@ -238,10 +292,22 @@
             "data": "HttpApiprojectsprojectIdreportA76C9763"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/report/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIdreportOPTIONS04D99378"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiprojectsprojectIdreportstart43205E91"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIdreportstartOPTIONSEDF84176"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.report.start": [
@@ -268,10 +334,22 @@
             "data": "HttpApiprojectsprojectIdideationA3D65EF6"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIdideationOPTIONS39F949C3"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiprojectsprojectIdideationstartBC19B2F3"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIdideationstartOPTIONS59183DE2"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.ideation.start": [
@@ -298,10 +376,22 @@
             "data": "HttpApiprojectsprojectIddoubledown1074FBCC"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIddoubledownOPTIONS233C187F"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiprojectsprojectIddoubledownstart0893AFFD"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiprojectsprojectIddoubledownstartOPTIONSC99DCD02"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..projects.{projectId}.double-down.start": [
@@ -328,10 +418,22 @@
             "data": "HttpApireports09D0EC4E"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/reports/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsOPTIONSD0A52335"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/reports/{reportId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApireportsreportId05CA7834"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/{reportId}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsreportIdOPTIONS4601BDC8"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/reports/{reportId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..reports.{reportId}": [
@@ -358,10 +460,22 @@
             "data": "HttpApiideationsEC20B704"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/ideations/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiideationsOPTIONSFE7B96AE"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/ideations/{ideationId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiideationsideationId3E47D339"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/ideations/{ideationId}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiideationsideationIdOPTIONSEF35494F"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/ideations/{ideationId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..ideations.{ideationId}": [
@@ -388,10 +502,22 @@
             "data": "HttpApidoubledowns9CB6304A"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/double-downs/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApidoubledownsOPTIONSF142AF24"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApidoubledownsdoubleId700F590F"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApidoubledownsdoubleIdOPTIONS26020B5E"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..double-downs.{doubleId}": [
@@ -418,10 +544,22 @@
             "data": "HttpApiadminA9BE4721"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/admin/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminOPTIONSBDAEDA73"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/admin/users/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiadminusersA36D336F"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/admin/users/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminusersOPTIONS09A7E2E3"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/admin/users/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.users": [
@@ -448,6 +586,12 @@
             "data": "HttpApiadminusersid09FAEB79"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/admin/users/{id}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminusersidOPTIONSF621C4DA"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/admin/users/{id}/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.users.{id}": [
           {
             "type": "aws:cdk:logicalId",
@@ -472,10 +616,40 @@
             "data": "HttpApiadminmetrics4A2B57D2"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/admin/metrics/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminmetricsOPTIONS114EFFF5"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/admin/metrics/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.metrics": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminmetricsGETApiPermissionApiLayerStackHttpApi9A58276CGETadminmetrics358E2140"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/admin/metrics/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..admin.metrics": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminmetricsGETApiPermissionTestApiLayerStackHttpApi9A58276CGETadminmetrics47FE943B"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/admin/metrics/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminmetricsGETFD886412"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/admin/metrics/summary/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiadminmetricssummaryF2C5329E"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/admin/metrics/summary/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadminmetricssummaryOPTIONS695FDB3E"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/admin/metrics/summary/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.metrics.summary": [
@@ -502,10 +676,22 @@
             "data": "HttpApiadmincredits28BAB52E"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/admin/credits/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadmincreditsOPTIONSBECFB22C"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/admin/credits/adjust/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiadmincreditsadjustF9C1008B"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/admin/credits/adjust/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiadmincreditsadjustOPTIONSA3B96FE8"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/admin/credits/adjust/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..admin.credits.adjust": [
@@ -526,10 +712,28 @@
             "data": "HttpApiadmincreditsadjustPOST49C8E1A5"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default4xx/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiDefault4xxCAB925EA"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default5xx/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiDefault5xxA0CE396F"
+          }
+        ],
         "/ApiLayerStack/BillingStripeSession/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "BillingStripeSessionServiceRole5DDB8F4E"
+          }
+        ],
+        "/ApiLayerStack/BillingStripeSession/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BillingStripeSessionServiceRoleDefaultPolicy200D33A7"
           }
         ],
         "/ApiLayerStack/BillingStripeSession/Resource": [
@@ -544,6 +748,12 @@
             "data": "BillingStripeWebhookServiceRole7978B28D"
           }
         ],
+        "/ApiLayerStack/BillingStripeWebhook/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BillingStripeWebhookServiceRoleDefaultPolicy06645E5C"
+          }
+        ],
         "/ApiLayerStack/BillingStripeWebhook/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -554,6 +764,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "CreditsBalanceServiceRoleBB788369"
+          }
+        ],
+        "/ApiLayerStack/CreditsBalance/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CreditsBalanceServiceRoleDefaultPolicy034959A3"
           }
         ],
         "/ApiLayerStack/CreditsBalance/Resource": [
@@ -568,6 +784,12 @@
             "data": "ProjectsCreateServiceRoleBF7C69EF"
           }
         ],
+        "/ApiLayerStack/ProjectsCreate/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProjectsCreateServiceRoleDefaultPolicy01AFB5B6"
+          }
+        ],
         "/ApiLayerStack/ProjectsCreate/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -578,6 +800,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ProjectsListServiceRole2EE796E8"
+          }
+        ],
+        "/ApiLayerStack/ProjectsList/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProjectsListServiceRoleDefaultPolicyD89B9133"
           }
         ],
         "/ApiLayerStack/ProjectsList/Resource": [
@@ -592,6 +820,12 @@
             "data": "ProjectsGetServiceRoleA0721553"
           }
         ],
+        "/ApiLayerStack/ProjectsGet/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProjectsGetServiceRoleDefaultPolicyEC9469CD"
+          }
+        ],
         "/ApiLayerStack/ProjectsGet/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -602,6 +836,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ReportStartServiceRole922232D8"
+          }
+        ],
+        "/ApiLayerStack/ReportStart/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportStartServiceRoleDefaultPolicy85156763"
           }
         ],
         "/ApiLayerStack/ReportStart/Resource": [
@@ -616,6 +856,12 @@
             "data": "ReportGetServiceRoleEBAE137F"
           }
         ],
+        "/ApiLayerStack/ReportGet/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportGetServiceRoleDefaultPolicyBBB22402"
+          }
+        ],
         "/ApiLayerStack/ReportGet/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -626,6 +872,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "IdeationStartServiceRole66E4BEE3"
+          }
+        ],
+        "/ApiLayerStack/IdeationStart/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdeationStartServiceRoleDefaultPolicy92D4DFBA"
           }
         ],
         "/ApiLayerStack/IdeationStart/Resource": [
@@ -640,6 +892,12 @@
             "data": "IdeationGetServiceRoleEDC90AE0"
           }
         ],
+        "/ApiLayerStack/IdeationGet/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdeationGetServiceRoleDefaultPolicy88DF4BC5"
+          }
+        ],
         "/ApiLayerStack/IdeationGet/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -650,6 +908,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "DoubleStartServiceRoleDF7E4BC8"
+          }
+        ],
+        "/ApiLayerStack/DoubleStart/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DoubleStartServiceRoleDefaultPolicy00F6B57C"
           }
         ],
         "/ApiLayerStack/DoubleStart/Resource": [
@@ -664,6 +928,12 @@
             "data": "DoubleGetServiceRole8089B895"
           }
         ],
+        "/ApiLayerStack/DoubleGet/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DoubleGetServiceRoleDefaultPolicy85941551"
+          }
+        ],
         "/ApiLayerStack/DoubleGet/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -674,6 +944,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AdminUsersServiceRoleE61C321F"
+          }
+        ],
+        "/ApiLayerStack/AdminUsers/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AdminUsersServiceRoleDefaultPolicy678E43DD"
           }
         ],
         "/ApiLayerStack/AdminUsers/Resource": [
@@ -688,6 +964,12 @@
             "data": "AdminUserGetServiceRoleBD609C53"
           }
         ],
+        "/ApiLayerStack/AdminUserGet/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AdminUserGetServiceRoleDefaultPolicy517F3937"
+          }
+        ],
         "/ApiLayerStack/AdminUserGet/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -700,6 +982,12 @@
             "data": "AdminMetricsServiceRole33E85810"
           }
         ],
+        "/ApiLayerStack/AdminMetrics/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AdminMetricsServiceRoleDefaultPolicy3D09841F"
+          }
+        ],
         "/ApiLayerStack/AdminMetrics/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -710,6 +998,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AdminCreditsAdjustServiceRole40C06AAD"
+          }
+        ],
+        "/ApiLayerStack/AdminCreditsAdjust/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AdminCreditsAdjustServiceRoleDefaultPolicy971A57D2"
           }
         ],
         "/ApiLayerStack/AdminCreditsAdjust/Resource": [

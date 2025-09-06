@@ -66,6 +66,8 @@ export class ApiLayerStack extends Stack {
       STRIPE_API_KEY_SECRET_ARN: process.env.STRIPE_API_KEY_SECRET_ARN || '',
       STRIPE_SUCCESS_URL: process.env.STRIPE_SUCCESS_URL || '',
       STRIPE_CANCEL_URL: process.env.STRIPE_CANCEL_URL || '',
+      COGNITO_HOSTED_UI_DOMAIN: process.env.COGNITO_HOSTED_UI_DOMAIN || '',
+      COGNITO_CLIENT_ID: process.env.USER_POOL_CLIENT_ID || process.env.COGNITO_CLIENT_ID || '',
     };
 
     // Handlers live at backend/lambda/v2/handlers relative to this file
@@ -155,6 +157,10 @@ export class ApiLayerStack extends Stack {
     const adminAdjust = makeFn('AdminCreditsAdjust', 'admin_credits_adjust.handler');
     admin.addResource('credits').addResource('adjust')
       .addMethod('POST', new apigw.LambdaIntegration(adminAdjust), { authorizer });
+
+    // Public config endpoint for frontend to discover Cognito details at runtime
+    const configGet = makeFn('ConfigGet', 'config_get.handler');
+    api.root.addResource('config').addMethod('GET', new apigw.LambdaIntegration(configGet));
 
     // Grant IAM permissions to access DDB tables and S3 bucket
     const usersTable = environment.USERS_TABLE_NAME

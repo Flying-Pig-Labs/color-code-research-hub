@@ -92,10 +92,23 @@
     "aws:cdk:path": "AuthStack/UserPool/WebClient/Resource"
    }
   },
+  "AdminGroup": {
+   "Type": "AWS::Cognito::UserPoolGroup",
+   "Properties": {
+    "Description": "Administrators",
+    "GroupName": "admin",
+    "UserPoolId": {
+     "Ref": "UserPool6BA7E5F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuthStack/AdminGroup"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02KwQ6CMBBEv4V7u0LDxTPeNRrPppRqFsquoVs4EP7dGMRwmjdvxoApSsgzO0Xtmk4HrGG+iXWdslN8OH4RCsN8j364MAdVPenPG5y4t0j76We2WgX0JPvDapavOid5J1kUceOhjYfR5FAcoczaiKiHRIK9h+uaH4zIx/SwAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzI00TNQTCwv1k1OydbNyUzSqw4uSUzO1kksL45Pzk/PyyzJ16sOLU4tCsjPz9FxTsuDs2EMl/zcxMw8ZCmoCIzrnJOZmleCrABTxL0ov7SgFiTiX1pSUFpSq5OXn5Kql1WsX2ZkoGdoqWeimFWcmalbVJpXkpmbqhcEoQE0qA2MwQAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "AuthStack/CDKMetadata/Default"

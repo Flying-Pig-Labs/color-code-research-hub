@@ -252,6 +252,7 @@ if [ -d "$CDK_DIR" ]; then
             export USER_POOL_ID=$(echo "$AUTH_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="UserPoolId") | .OutputValue')
             export USER_POOL_CLIENT_ID=$(echo "$AUTH_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="UserPoolClientId") | .OutputValue')
             export COGNITO_HOSTED_UI_DOMAIN=$(echo "$AUTH_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="HostedUIDomain") | .OutputValue')
+            export COGNITO_CLIENT_ID="$USER_POOL_CLIENT_ID"
             echo "✅ AuthStack deployed"
             echo "   USER_POOL_ID=$USER_POOL_ID"
             echo "   USER_POOL_CLIENT_ID=$USER_POOL_CLIENT_ID"

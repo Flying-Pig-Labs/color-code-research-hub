@@ -100,7 +100,7 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Account"
    }
   },
-  "HttpApiDeployment2ABEB12Ffabafcedd6440ec1d975af376e253feb": {
+  "HttpApiDeployment2ABEB12Ffdb8cfc54a91b89d02d09df3ca841000": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "Automatically created by the RestApi construct",
@@ -109,49 +109,80 @@
     }
    },
    "DependsOn": [
+    "HttpApiadmincreditsadjustOPTIONSA3B96FE8",
     "HttpApiadmincreditsadjustPOST49C8E1A5",
     "HttpApiadmincreditsadjustF9C1008B",
+    "HttpApiadmincreditsOPTIONSBECFB22C",
     "HttpApiadmincredits28BAB52E",
+    "HttpApiadminmetricsGETFD886412",
+    "HttpApiadminmetricsOPTIONS114EFFF5",
     "HttpApiadminmetrics4A2B57D2",
     "HttpApiadminmetricssummaryGET9A2832C4",
+    "HttpApiadminmetricssummaryOPTIONS695FDB3E",
     "HttpApiadminmetricssummaryF2C5329E",
+    "HttpApiadminOPTIONSBDAEDA73",
     "HttpApiadminA9BE4721",
     "HttpApiadminusersidGET6EFC1447",
+    "HttpApiadminusersidOPTIONSF621C4DA",
     "HttpApiadminusersid09FAEB79",
     "HttpApiadminusersGET4D2A5EE2",
+    "HttpApiadminusersOPTIONS09A7E2E3",
     "HttpApiadminusersA36D336F",
+    "HttpApibillingOPTIONS9AD1E6B2",
     "HttpApibilling441D09DB",
+    "HttpApibillingstripecreatecheckoutsessionOPTIONSD543DA42",
     "HttpApibillingstripecreatecheckoutsessionPOST7BA12272",
     "HttpApibillingstripecreatecheckoutsessionAD8B6E75",
+    "HttpApibillingstripeOPTIONSB56520B7",
     "HttpApibillingstripe18EB62D8",
+    "HttpApibillingstripewebhookOPTIONS7032FEC9",
     "HttpApibillingstripewebhookPOST54687682",
     "HttpApibillingstripewebhook0604D7BA",
     "HttpApicreditsbalanceGETA8B07740",
+    "HttpApicreditsbalanceOPTIONS25D0BE73",
     "HttpApicreditsbalance61FF8902",
+    "HttpApicreditsOPTIONS46080978",
     "HttpApicredits3EF59DEA",
     "HttpApidoubledownsdoubleIdGET1E999A5A",
+    "HttpApidoubledownsdoubleIdOPTIONS26020B5E",
     "HttpApidoubledownsdoubleId700F590F",
+    "HttpApidoubledownsOPTIONSF142AF24",
     "HttpApidoubledowns9CB6304A",
     "HttpApiideationsideationIdGETF480AFF6",
+    "HttpApiideationsideationIdOPTIONSEF35494F",
     "HttpApiideationsideationId3E47D339",
+    "HttpApiideationsOPTIONSFE7B96AE",
     "HttpApiideationsEC20B704",
+    "HttpApiOPTIONS7F4FABD6",
+    "HttpApiprojectsprojectIddoubledownOPTIONS233C187F",
     "HttpApiprojectsprojectIddoubledown1074FBCC",
+    "HttpApiprojectsprojectIddoubledownstartOPTIONSC99DCD02",
     "HttpApiprojectsprojectIddoubledownstartPOST7AE6C4EF",
     "HttpApiprojectsprojectIddoubledownstart0893AFFD",
     "HttpApiprojectsprojectIdGET6A2E7B6B",
+    "HttpApiprojectsprojectIdideationOPTIONS39F949C3",
     "HttpApiprojectsprojectIdideationA3D65EF6",
+    "HttpApiprojectsprojectIdideationstartOPTIONS59183DE2",
     "HttpApiprojectsprojectIdideationstartPOST4690C073",
     "HttpApiprojectsprojectIdideationstartBC19B2F3",
+    "HttpApiprojectsprojectIdOPTIONSF6DAC41A",
+    "HttpApiprojectsprojectIdreportOPTIONS04D99378",
     "HttpApiprojectsprojectIdreportA76C9763",
+    "HttpApiprojectsprojectIdreportstartOPTIONSEDF84176",
     "HttpApiprojectsprojectIdreportstartPOSTA805CF02",
     "HttpApiprojectsprojectIdreportstart43205E91",
     "HttpApiprojectsprojectId24F57D02",
     "HttpApiprojectsGET23681AFF",
+    "HttpApiprojectsOPTIONSF4D74583",
     "HttpApiprojectsPOSTFD80D2EA",
     "HttpApiprojectsFD8E448F",
     "HttpApireportsreportIdGET827D0A54",
+    "HttpApireportsreportIdOPTIONS4601BDC8",
     "HttpApireportsreportId05CA7834",
-    "HttpApireports09D0EC4E"
+    "HttpApireportsOPTIONSD0A52335",
+    "HttpApireports09D0EC4E",
+    "HttpApiDefault4xxCAB925EA",
+    "HttpApiDefault5xxA0CE396F"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Deployment/Resource",
@@ -162,7 +193,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "HttpApiDeployment2ABEB12Ffabafcedd6440ec1d975af376e253feb"
+     "Ref": "HttpApiDeployment2ABEB12Ffdb8cfc54a91b89d02d09df3ca841000"
     },
     "RestApiId": {
      "Ref": "HttpApiF5A9A8A7"
@@ -174,6 +205,52 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "HttpApiOPTIONS7F4FABD6": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "HttpApiF5A9A8A7",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/OPTIONS/Resource"
    }
   },
   "HttpApibilling441D09DB": {
@@ -194,6 +271,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/Resource"
    }
   },
+  "HttpApibillingOPTIONS9AD1E6B2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApibilling441D09DB"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/OPTIONS/Resource"
+   }
+  },
   "HttpApibillingstripe18EB62D8": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -209,6 +329,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/Resource"
    }
   },
+  "HttpApibillingstripeOPTIONSB56520B7": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApibillingstripe18EB62D8"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/OPTIONS/Resource"
+   }
+  },
   "HttpApibillingstripecreatecheckoutsessionAD8B6E75": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -222,6 +385,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/Resource"
+   }
+  },
+  "HttpApibillingstripecreatecheckoutsessionOPTIONSD543DA42": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApibillingstripecreatecheckoutsessionAD8B6E75"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/create-checkout-session/OPTIONS/Resource"
    }
   },
   "HttpApibillingstripecreatecheckoutsessionPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTbillingstripecreatecheckoutsessionE783D6FF": {
@@ -369,6 +575,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/webhook/Resource"
    }
   },
+  "HttpApibillingstripewebhookOPTIONS7032FEC9": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApibillingstripewebhook0604D7BA"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/billing/stripe/webhook/OPTIONS/Resource"
+   }
+  },
   "HttpApibillingstripewebhookPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTbillingstripewebhookB8F32212": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
@@ -514,6 +763,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/Resource"
    }
   },
+  "HttpApicreditsOPTIONS46080978": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApicredits3EF59DEA"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/OPTIONS/Resource"
+   }
+  },
   "HttpApicreditsbalance61FF8902": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -527,6 +819,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/balance/Resource"
+   }
+  },
+  "HttpApicreditsbalanceOPTIONS25D0BE73": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApicreditsbalance61FF8902"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/credits/balance/OPTIONS/Resource"
    }
   },
   "HttpApicreditsbalanceGETApiPermissionApiLayerStackHttpApi9A58276CGETcreditsbalance388BE655": {
@@ -675,6 +1010,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/Resource"
+   }
+  },
+  "HttpApiprojectsOPTIONSF4D74583": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsFD8E448F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/OPTIONS/Resource"
    }
   },
   "HttpApiprojectsPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojects64815644": {
@@ -952,6 +1330,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/Resource"
    }
   },
+  "HttpApiprojectsprojectIdOPTIONSF6DAC41A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectId24F57D02"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/OPTIONS/Resource"
+   }
+  },
   "HttpApiprojectsprojectIdGETApiPermissionApiLayerStackHttpApi9A58276CGETprojectsprojectId86CF37E6": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
@@ -1097,6 +1518,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/Resource"
    }
   },
+  "HttpApiprojectsprojectIdreportOPTIONS04D99378": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIdreportA76C9763"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/OPTIONS/Resource"
+   }
+  },
   "HttpApiprojectsprojectIdreportstart43205E91": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -1110,6 +1574,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdreportstartOPTIONSEDF84176": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIdreportstart43205E91"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/report/start/OPTIONS/Resource"
    }
   },
   "HttpApiprojectsprojectIdreportstartPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojectsprojectIdreportstart3186E049": {
@@ -1257,6 +1764,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/Resource"
    }
   },
+  "HttpApiprojectsprojectIdideationOPTIONS39F949C3": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIdideationA3D65EF6"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/OPTIONS/Resource"
+   }
+  },
   "HttpApiprojectsprojectIdideationstartBC19B2F3": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -1270,6 +1820,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIdideationstartOPTIONS59183DE2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIdideationstartBC19B2F3"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/ideation/start/OPTIONS/Resource"
    }
   },
   "HttpApiprojectsprojectIdideationstartPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojectsprojectIdideationstart242948D7": {
@@ -1417,6 +2010,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/Resource"
    }
   },
+  "HttpApiprojectsprojectIddoubledownOPTIONS233C187F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIddoubledown1074FBCC"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/OPTIONS/Resource"
+   }
+  },
   "HttpApiprojectsprojectIddoubledownstart0893AFFD": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -1430,6 +2066,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/Resource"
+   }
+  },
+  "HttpApiprojectsprojectIddoubledownstartOPTIONSC99DCD02": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiprojectsprojectIddoubledownstart0893AFFD"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/projects/{projectId}/double-down/start/OPTIONS/Resource"
    }
   },
   "HttpApiprojectsprojectIddoubledownstartPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTprojectsprojectIddoubledownstart98444D3B": {
@@ -1580,6 +2259,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/Resource"
    }
   },
+  "HttpApireportsOPTIONSD0A52335": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApireports09D0EC4E"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/OPTIONS/Resource"
+   }
+  },
   "HttpApireportsreportId05CA7834": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -1593,6 +2315,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/{reportId}/Resource"
+   }
+  },
+  "HttpApireportsreportIdOPTIONS4601BDC8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApireportsreportId05CA7834"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/reports/{reportId}/OPTIONS/Resource"
    }
   },
   "HttpApireportsreportIdGETApiPermissionApiLayerStackHttpApi9A58276CGETreportsreportIdCFEFB462": {
@@ -1743,6 +2508,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/Resource"
    }
   },
+  "HttpApiideationsOPTIONSFE7B96AE": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiideationsEC20B704"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/OPTIONS/Resource"
+   }
+  },
   "HttpApiideationsideationId3E47D339": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -1756,6 +2564,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/{ideationId}/Resource"
+   }
+  },
+  "HttpApiideationsideationIdOPTIONSEF35494F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiideationsideationId3E47D339"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/ideations/{ideationId}/OPTIONS/Resource"
    }
   },
   "HttpApiideationsideationIdGETApiPermissionApiLayerStackHttpApi9A58276CGETideationsideationIdFF0F5E80": {
@@ -1906,6 +2757,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/Resource"
    }
   },
+  "HttpApidoubledownsOPTIONSF142AF24": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApidoubledowns9CB6304A"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/OPTIONS/Resource"
+   }
+  },
   "HttpApidoubledownsdoubleId700F590F": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -1919,6 +2813,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/Resource"
+   }
+  },
+  "HttpApidoubledownsdoubleIdOPTIONS26020B5E": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApidoubledownsdoubleId700F590F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/double-downs/{doubleId}/OPTIONS/Resource"
    }
   },
   "HttpApidoubledownsdoubleIdGETApiPermissionApiLayerStackHttpApi9A58276CGETdoubledownsdoubleId195A5717": {
@@ -2069,6 +3006,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/Resource"
    }
   },
+  "HttpApiadminOPTIONSBDAEDA73": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadminA9BE4721"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/OPTIONS/Resource"
+   }
+  },
   "HttpApiadminusersA36D336F": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -2082,6 +3062,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/Resource"
+   }
+  },
+  "HttpApiadminusersOPTIONS09A7E2E3": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadminusersA36D336F"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/OPTIONS/Resource"
    }
   },
   "HttpApiadminusersGETApiPermissionApiLayerStackHttpApi9A58276CGETadminusersC9D331C9": {
@@ -2229,6 +3252,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/{id}/Resource"
    }
   },
+  "HttpApiadminusersidOPTIONSF621C4DA": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadminusersid09FAEB79"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/users/{id}/OPTIONS/Resource"
+   }
+  },
   "HttpApiadminusersidGETApiPermissionApiLayerStackHttpApi9A58276CGETadminusersid6D712B8D": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
@@ -2374,6 +3440,179 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/Resource"
    }
   },
+  "HttpApiadminmetricsOPTIONS114EFFF5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadminmetrics4A2B57D2"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/OPTIONS/Resource"
+   }
+  },
+  "HttpApiadminmetricsGETApiPermissionApiLayerStackHttpApi9A58276CGETadminmetrics358E2140": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminMetricsA0D394C2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/",
+       {
+        "Ref": "HttpApiDeploymentStageprod7B463A5A"
+       },
+       "/GET/admin/metrics"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..admin.metrics"
+   }
+  },
+  "HttpApiadminmetricsGETApiPermissionTestApiLayerStackHttpApi9A58276CGETadminmetrics47FE943B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AdminMetricsA0D394C2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/test-invoke-stage/GET/admin/metrics"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..admin.metrics"
+   }
+  },
+  "HttpApiadminmetricsGETFD886412": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "AuthorizerBD825682"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AdminMetricsA0D394C2",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "HttpApiadminmetrics4A2B57D2"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/GET/Resource"
+   }
+  },
   "HttpApiadminmetricssummaryF2C5329E": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -2387,6 +3626,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/summary/Resource"
+   }
+  },
+  "HttpApiadminmetricssummaryOPTIONS695FDB3E": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadminmetricssummaryF2C5329E"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/metrics/summary/OPTIONS/Resource"
    }
   },
   "HttpApiadminmetricssummaryGETApiPermissionApiLayerStackHttpApi9A58276CGETadminmetricssummary024E3F3F": {
@@ -2534,6 +3816,49 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/Resource"
    }
   },
+  "HttpApiadmincreditsOPTIONSBECFB22C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadmincredits28BAB52E"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/OPTIONS/Resource"
+   }
+  },
   "HttpApiadmincreditsadjustF9C1008B": {
    "Type": "AWS::ApiGateway::Resource",
    "Properties": {
@@ -2547,6 +3872,49 @@
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/Resource"
+   }
+  },
+  "HttpApiadmincreditsadjustOPTIONSA3B96FE8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "HttpApiadmincreditsadjustF9C1008B"
+    },
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/OPTIONS/Resource"
    }
   },
   "HttpApiadmincreditsadjustPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTadmincreditsadjustADA95C13": {
@@ -2679,6 +4047,40 @@
     "aws:cdk:path": "ApiLayerStack/HttpApi/Default/admin/credits/adjust/POST/Resource"
    }
   },
+  "HttpApiDefault4xxCAB925EA": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Methods": "'*'"
+    },
+    "ResponseType": "DEFAULT_4XX",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default4xx/Resource"
+   }
+  },
+  "HttpApiDefault5xxA0CE396F": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Methods": "'*'"
+    },
+    "ResponseType": "DEFAULT_5XX",
+    "RestApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/HttpApi/Default5xx/Resource"
+   }
+  },
   "BillingStripeSessionServiceRole5DDB8F4E": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -2713,6 +4115,323 @@
     "aws:cdk:path": "ApiLayerStack/BillingStripeSession/ServiceRole/Resource"
    }
   },
+  "BillingStripeSessionServiceRoleDefaultPolicy200D33A7": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww"
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BillingStripeSessionServiceRoleDefaultPolicy200D33A7",
+    "Roles": [
+     {
+      "Ref": "BillingStripeSessionServiceRole5DDB8F4E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/BillingStripeSession/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "BillingStripeSession79B29DE0": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -2720,7 +4439,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -2733,7 +4452,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "billing_stripe_session.handler",
@@ -2746,11 +4468,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "BillingStripeSessionServiceRoleDefaultPolicy200D33A7",
     "BillingStripeSessionServiceRole5DDB8F4E"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/BillingStripeSession/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -2789,6 +4512,323 @@
     "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/ServiceRole/Resource"
    }
   },
+  "BillingStripeWebhookServiceRoleDefaultPolicy06645E5C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww"
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BillingStripeWebhookServiceRoleDefaultPolicy06645E5C",
+    "Roles": [
+     {
+      "Ref": "BillingStripeWebhookServiceRole7978B28D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "BillingStripeWebhook4EA50541": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -2796,7 +4836,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -2809,7 +4849,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "billing_stripe_webhook.handler",
@@ -2822,11 +4865,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "BillingStripeWebhookServiceRoleDefaultPolicy06645E5C",
     "BillingStripeWebhookServiceRole7978B28D"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -2865,6 +4909,318 @@
     "aws:cdk:path": "ApiLayerStack/CreditsBalance/ServiceRole/Resource"
    }
   },
+  "CreditsBalanceServiceRoleDefaultPolicy034959A3": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CreditsBalanceServiceRoleDefaultPolicy034959A3",
+    "Roles": [
+     {
+      "Ref": "CreditsBalanceServiceRoleBB788369"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/CreditsBalance/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "CreditsBalance3161737F": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -2872,7 +5228,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -2885,7 +5241,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "credits_balance.handler",
@@ -2898,11 +5257,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "CreditsBalanceServiceRoleDefaultPolicy034959A3",
     "CreditsBalanceServiceRoleBB788369"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/CreditsBalance/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -2941,6 +5301,318 @@
     "aws:cdk:path": "ApiLayerStack/ProjectsCreate/ServiceRole/Resource"
    }
   },
+  "ProjectsCreateServiceRoleDefaultPolicy01AFB5B6": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProjectsCreateServiceRoleDefaultPolicy01AFB5B6",
+    "Roles": [
+     {
+      "Ref": "ProjectsCreateServiceRoleBF7C69EF"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsCreate/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "ProjectsCreateCA66F0D2": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -2948,7 +5620,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -2961,7 +5633,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "projects_create.handler",
@@ -2974,11 +5649,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "ProjectsCreateServiceRoleDefaultPolicy01AFB5B6",
     "ProjectsCreateServiceRoleBF7C69EF"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsCreate/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3017,6 +5693,318 @@
     "aws:cdk:path": "ApiLayerStack/ProjectsList/ServiceRole/Resource"
    }
   },
+  "ProjectsListServiceRoleDefaultPolicyD89B9133": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProjectsListServiceRoleDefaultPolicyD89B9133",
+    "Roles": [
+     {
+      "Ref": "ProjectsListServiceRole2EE796E8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsList/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "ProjectsList7392543B": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3024,7 +6012,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3037,7 +6025,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "projects_list.handler",
@@ -3050,11 +6041,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "ProjectsListServiceRoleDefaultPolicyD89B9133",
     "ProjectsListServiceRole2EE796E8"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsList/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3093,6 +6085,318 @@
     "aws:cdk:path": "ApiLayerStack/ProjectsGet/ServiceRole/Resource"
    }
   },
+  "ProjectsGetServiceRoleDefaultPolicyEC9469CD": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProjectsGetServiceRoleDefaultPolicyEC9469CD",
+    "Roles": [
+     {
+      "Ref": "ProjectsGetServiceRoleA0721553"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ProjectsGet/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "ProjectsGet8C406C23": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3100,7 +6404,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3113,7 +6417,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "projects_get.handler",
@@ -3126,11 +6433,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "ProjectsGetServiceRoleDefaultPolicyEC9469CD",
     "ProjectsGetServiceRoleA0721553"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsGet/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3169,6 +6477,318 @@
     "aws:cdk:path": "ApiLayerStack/ReportStart/ServiceRole/Resource"
    }
   },
+  "ReportStartServiceRoleDefaultPolicy85156763": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ReportStartServiceRoleDefaultPolicy85156763",
+    "Roles": [
+     {
+      "Ref": "ReportStartServiceRole922232D8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ReportStart/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "ReportStartD6D0CB92": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3176,7 +6796,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3189,7 +6809,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "report_start.handler",
@@ -3202,11 +6825,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "ReportStartServiceRoleDefaultPolicy85156763",
     "ReportStartServiceRole922232D8"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportStart/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3245,6 +6869,318 @@
     "aws:cdk:path": "ApiLayerStack/ReportGet/ServiceRole/Resource"
    }
   },
+  "ReportGetServiceRoleDefaultPolicyBBB22402": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ReportGetServiceRoleDefaultPolicyBBB22402",
+    "Roles": [
+     {
+      "Ref": "ReportGetServiceRoleEBAE137F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/ReportGet/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "ReportGet3F9696DD": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3252,7 +7188,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3265,7 +7201,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "report_get.handler",
@@ -3278,11 +7217,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "ReportGetServiceRoleDefaultPolicyBBB22402",
     "ReportGetServiceRoleEBAE137F"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportGet/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3321,6 +7261,318 @@
     "aws:cdk:path": "ApiLayerStack/IdeationStart/ServiceRole/Resource"
    }
   },
+  "IdeationStartServiceRoleDefaultPolicy92D4DFBA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IdeationStartServiceRoleDefaultPolicy92D4DFBA",
+    "Roles": [
+     {
+      "Ref": "IdeationStartServiceRole66E4BEE3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/IdeationStart/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "IdeationStartFFFDE9B4": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3328,7 +7580,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3341,7 +7593,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "ideation_start.handler",
@@ -3354,11 +7609,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "IdeationStartServiceRoleDefaultPolicy92D4DFBA",
     "IdeationStartServiceRole66E4BEE3"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationStart/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3397,6 +7653,318 @@
     "aws:cdk:path": "ApiLayerStack/IdeationGet/ServiceRole/Resource"
    }
   },
+  "IdeationGetServiceRoleDefaultPolicy88DF4BC5": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IdeationGetServiceRoleDefaultPolicy88DF4BC5",
+    "Roles": [
+     {
+      "Ref": "IdeationGetServiceRoleEDC90AE0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/IdeationGet/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "IdeationGet394FAE64": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3404,7 +7972,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3417,7 +7985,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "ideation_get.handler",
@@ -3430,11 +8001,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "IdeationGetServiceRoleDefaultPolicy88DF4BC5",
     "IdeationGetServiceRoleEDC90AE0"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationGet/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3473,6 +8045,318 @@
     "aws:cdk:path": "ApiLayerStack/DoubleStart/ServiceRole/Resource"
    }
   },
+  "DoubleStartServiceRoleDefaultPolicy00F6B57C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DoubleStartServiceRoleDefaultPolicy00F6B57C",
+    "Roles": [
+     {
+      "Ref": "DoubleStartServiceRoleDF7E4BC8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/DoubleStart/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "DoubleStartF5D8C9F3": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3480,7 +8364,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3493,7 +8377,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "double_start.handler",
@@ -3506,11 +8393,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "DoubleStartServiceRoleDefaultPolicy00F6B57C",
     "DoubleStartServiceRoleDF7E4BC8"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/DoubleStart/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3549,6 +8437,318 @@
     "aws:cdk:path": "ApiLayerStack/DoubleGet/ServiceRole/Resource"
    }
   },
+  "DoubleGetServiceRoleDefaultPolicy85941551": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DoubleGetServiceRoleDefaultPolicy85941551",
+    "Roles": [
+     {
+      "Ref": "DoubleGetServiceRole8089B895"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/DoubleGet/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "DoubleGet0CB96C9E": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3556,7 +8756,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3569,7 +8769,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "double_get.handler",
@@ -3582,11 +8785,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "DoubleGetServiceRoleDefaultPolicy85941551",
     "DoubleGetServiceRole8089B895"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/DoubleGet/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3625,6 +8829,318 @@
     "aws:cdk:path": "ApiLayerStack/AdminUsers/ServiceRole/Resource"
    }
   },
+  "AdminUsersServiceRoleDefaultPolicy678E43DD": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AdminUsersServiceRoleDefaultPolicy678E43DD",
+    "Roles": [
+     {
+      "Ref": "AdminUsersServiceRoleE61C321F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminUsers/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "AdminUsers888C7CB2": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3632,7 +9148,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3645,7 +9161,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "admin_users.handler",
@@ -3658,11 +9177,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "AdminUsersServiceRoleDefaultPolicy678E43DD",
     "AdminUsersServiceRoleE61C321F"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminUsers/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3701,6 +9221,318 @@
     "aws:cdk:path": "ApiLayerStack/AdminUserGet/ServiceRole/Resource"
    }
   },
+  "AdminUserGetServiceRoleDefaultPolicy517F3937": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AdminUserGetServiceRoleDefaultPolicy517F3937",
+    "Roles": [
+     {
+      "Ref": "AdminUserGetServiceRoleBD609C53"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminUserGet/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "AdminUserGetA0ECEFBD": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3708,7 +9540,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3721,7 +9553,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "admin_user_get.handler",
@@ -3734,11 +9569,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "AdminUserGetServiceRoleDefaultPolicy517F3937",
     "AdminUserGetServiceRoleBD609C53"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminUserGet/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3777,6 +9613,318 @@
     "aws:cdk:path": "ApiLayerStack/AdminMetrics/ServiceRole/Resource"
    }
   },
+  "AdminMetricsServiceRoleDefaultPolicy3D09841F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AdminMetricsServiceRoleDefaultPolicy3D09841F",
+    "Roles": [
+     {
+      "Ref": "AdminMetricsServiceRole33E85810"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminMetrics/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "AdminMetricsA0D394C2": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3784,7 +9932,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3797,7 +9945,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "admin_metrics.handler",
@@ -3810,11 +9961,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "AdminMetricsServiceRoleDefaultPolicy3D09841F",
     "AdminMetricsServiceRole33E85810"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminMetrics/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3853,6 +10005,318 @@
     "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/ServiceRole/Resource"
    }
   },
+  "AdminCreditsAdjustServiceRoleDefaultPolicy971A57D2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Users"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/CreditLedger"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Projects"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Reports"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/Ideations"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":table/DoubleDowns"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::datalayerstack-artifacts/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AdminCreditsAdjustServiceRoleDefaultPolicy971A57D2",
+    "Roles": [
+     {
+      "Ref": "AdminCreditsAdjustServiceRole40C06AAD"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "AdminCreditsAdjust41FB01BC": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -3860,7 +10324,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f.zip"
+     "S3Key": "e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b.zip"
     },
     "Environment": {
      "Variables": {
@@ -3873,7 +10337,10 @@
       "ARTIFACTS_BUCKET_NAME": "datalayerstack-artifacts",
       "STRIPE_SECRET_KEY": "",
       "STRIPE_PRICE_CREDIT": "",
-      "STRIPE_WEBHOOK_SECRET": ""
+      "STRIPE_WEBHOOK_SECRET": "",
+      "STRIPE_API_KEY_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww",
+      "STRIPE_SUCCESS_URL": "",
+      "STRIPE_CANCEL_URL": ""
      }
     },
     "Handler": "admin_credits_adjust.handler",
@@ -3886,11 +10353,12 @@
     "Runtime": "python3.11"
    },
    "DependsOn": [
+    "AdminCreditsAdjustServiceRoleDefaultPolicy971A57D2",
     "AdminCreditsAdjustServiceRole40C06AAD"
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/Resource",
-    "aws:asset:path": "asset.83269976f7d0d2e69625d8c7ea4dbf0da25d422e3a4765703ee2b61715a1815f",
+    "aws:asset:path": "asset.e6900c3d566f7bfdaf2c5c6699ddf66f70e7bb231cbb99ab38ed6de1197f058b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -3898,7 +10366,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OwW7CMBBEv4W72ULg0mNIxa0qCuoZGWcTTBxv5F03olH+vXJT1JzmzexoNRlk2z1sVnrgtanatbNXGM+iTatKZIrBoNIDX0bd20YLDvoBY0GNt0KfjOFE5DiPcqNgvzGoovYLVyJL3tuULjA3hqIX9Ya9o0eHXlK6cGfRDaZshueQg+Z/8/dz5neUG1UpmmlSVncwluTmHjmclNPdtdIwFrU/YegssyWvjtEbSVDU/smT4t1FM6Mw5EkU7+AQTYuSNkyp+xGlj6J+z2mm9c2kPFUId375yjawfYX96s7WrkP0YjuEctYf+N4ek3MBAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12PQW/CMAyFfwv3kEHhsmNhYqdpqGxn5KamBNK4qp2hrup/n9KMCe3k7z3ryc+ZzpZrvZjBjeemus6dLfVwEDBXVSBT6AwquPFxgNbWIHiDXg9bqr0V+mTs9kSO8yBn6uw3dmp78g+qQJa8tdF9wNwYCl7UC7aO+ga9RPdBHQRqjF6Ce5ENMKo3lDNVcflLfzXTkcSvqWqB3JLnaffPGpWFRg8FuZSMc0/Omj7KRKNy0JQV6CFa2DWW2ZJXu+CNRNie/J1HxasjMKOwzuNQvNKbYK4oU++q99BQVeoPKN30yhjj70HaIGpKxG+tr0flqUJ94aevbKGXz3o9u7C18y54sQ3qIs0f6RapAboBAAA="
    },
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/CDKMetadata/Default"

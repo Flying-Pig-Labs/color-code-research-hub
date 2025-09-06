@@ -7,20 +7,12 @@ frontend:
         - npm ci
     build:
       commands:
-        # Inject backend outputs into frontend env for production build
-        - echo "Generating frontend/.env.production from CloudFormation outputs..."
-        - >
-          HOSTED_DOMAIN=$(aws cloudformation describe-stacks --stack-name AuthStack --region us-east-1 \
-            --query 'Stacks[0].Outputs[?OutputKey==`HostedUIDomain`].OutputValue' --output text 2>/dev/null || true) &&
-          USER_POOL_CLIENT_ID=$(aws cloudformation describe-stacks --stack-name AuthStack --region us-east-1 \
-            --query 'Stacks[0].Outputs[?OutputKey==`UserPoolClientId`].OutputValue' --output text 2>/dev/null || true) &&
-          API_URL=$(aws cloudformation describe-stacks --stack-name color-code-research-hub --region us-east-1 \
-            --query 'Stacks[0].Outputs[?OutputKey==`ApiGatewayUrl`].OutputValue' --output text 2>/dev/null || true) &&
-          echo "VITE_COGNITO_DOMAIN=$HOSTED_DOMAIN" > frontend/.env.production &&
-          echo "VITE_COGNITO_CLIENT_ID=$USER_POOL_CLIENT_ID" >> frontend/.env.production &&
-          echo "VITE_COGNITO_REDIRECT_URI=https://www.truflr.ai/v2/auth/callback" >> frontend/.env.production &&
-          echo "VITE_API_BASE_URL=$API_URL" >> frontend/.env.production &&
-          echo "Generated frontend/.env.production:" && cat frontend/.env.production
+        # Fail fast if required env vars are missing; rely on Amplify env config
+        - 'test -n "$VITE_COGNITO_DOMAIN" || (echo "Missing VITE_COGNITO_DOMAIN" && exit 1)'
+        - 'test -n "$VITE_COGNITO_CLIENT_ID" || (echo "Missing VITE_COGNITO_CLIENT_ID" && exit 1)'
+        - 'test -n "$VITE_COGNITO_REDIRECT_URI" || (echo "Missing VITE_COGNITO_REDIRECT_URI" && exit 1)'
+        - 'test -n "$VITE_API_BASE_URL" || (echo "Missing VITE_API_BASE_URL" && exit 1)'
+        - echo "Using env: $VITE_COGNITO_DOMAIN $VITE_COGNITO_CLIENT_ID $VITE_COGNITO_REDIRECT_URI $VITE_API_BASE_URL"
         - npm run build
         - ls -la frontend/  # Debug: Check frontend directory contents
         - ls -la frontend/dist || echo "dist directory not found"  # Debug: Check if dist exists
