@@ -7,12 +7,14 @@ frontend:
         - npm ci
     build:
       commands:
+        # If a .env.production file exists in the repo, load it into env first
+        - 'if [ -f frontend/.env.production ]; then set -a; . frontend/.env.production; set +a; fi'
         # Fail fast if required env vars are missing; rely on Amplify env config
         - 'test -n "$VITE_COGNITO_DOMAIN" || (echo "Missing VITE_COGNITO_DOMAIN" && exit 1)'
         - 'test -n "$VITE_COGNITO_CLIENT_ID" || (echo "Missing VITE_COGNITO_CLIENT_ID" && exit 1)'
         - 'test -n "$VITE_COGNITO_REDIRECT_URI" || (echo "Missing VITE_COGNITO_REDIRECT_URI" && exit 1)'
         - 'test -n "$VITE_API_BASE_URL" || (echo "Missing VITE_API_BASE_URL" && exit 1)'
-        - echo "Using env: $VITE_COGNITO_DOMAIN $VITE_COGNITO_CLIENT_ID $VITE_COGNITO_REDIRECT_URI $VITE_API_BASE_URL"
+        - 'echo "Using env: $VITE_COGNITO_DOMAIN $VITE_COGNITO_CLIENT_ID $VITE_COGNITO_REDIRECT_URI $VITE_API_BASE_URL"'
         - npm run build
         - ls -la frontend/  # Debug: Check frontend directory contents
         - ls -la frontend/dist || echo "dist directory not found"  # Debug: Check if dist exists
