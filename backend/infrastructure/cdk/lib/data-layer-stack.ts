@@ -3,7 +3,6 @@ import { Construct } from 'constructs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
 
 /**
  * Data layer resources for the V2 platform.
@@ -123,28 +122,6 @@ export class DataLayerStack extends Stack {
 
     [usersTable, ledgerTable, projectsTable, reportsTable, ideationsTable, doublesTable].forEach(t => t.grantReadWriteData(appRole));
     artifactsBucket.grantReadWrite(appRole);
-
-    const environment = {
-      USERS_TABLE_NAME: usersTable.tableName,
-      CREDIT_LEDGER_TABLE_NAME: ledgerTable.tableName,
-      PROJECTS_TABLE_NAME: projectsTable.tableName,
-      REPORTS_TABLE_NAME: reportsTable.tableName,
-      IDEATIONS_TABLE_NAME: ideationsTable.tableName,
-      DOUBLES_TABLE_NAME: doublesTable.tableName,
-      ARTIFACTS_BUCKET_NAME: artifactsBucket.bucketName,
-      STRIPE_SECRET_KEY_PARAM: '/app/STRIPE_SECRET_KEY',
-      STRIPE_WEBHOOK_SECRET_PARAM: '/app/STRIPE_WEBHOOK_SECRET',
-      STRIPE_PRICE_CREDIT_PARAM: '/app/STRIPE_PRICE_CREDIT',
-    };
-
-    // Placeholder lambda to demonstrate env wiring
-    new lambda.Function(this, 'EnvPlaceholder', {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromInline('export const handler = async () => {};'),
-      role: appRole,
-      environment,
-    });
 
     // Outputs for easier discovery
     new CfnOutput(this, 'UsersTableName', { value: usersTable.tableName });
