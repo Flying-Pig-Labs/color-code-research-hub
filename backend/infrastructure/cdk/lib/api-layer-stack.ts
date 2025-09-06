@@ -36,6 +36,7 @@ export class ApiLayerStack extends Stack {
       ARTIFACTS_BUCKET_NAME: process.env.ARTIFACTS_BUCKET_NAME || '',
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
       STRIPE_PRICE_CREDIT: process.env.STRIPE_PRICE_CREDIT || '',
+      STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
     };
 
     const code = lambda.Code.fromAsset(path.join(__dirname, '../../lambda/v2/handlers'));
@@ -48,7 +49,7 @@ export class ApiLayerStack extends Stack {
 
     // Billing
     const billingSession = makeFn('BillingStripeSession', 'billing_stripe_session.handler');
-    api.root.addResource('billing').addResource('stripe').addResource('session')
+    api.root.addResource('billing').addResource('stripe').addResource('create-checkout-session')
       .addMethod('POST', new apigw.LambdaIntegration(billingSession), { authorizer });
 
     const billingWebhook = makeFn('BillingStripeWebhook', 'billing_stripe_webhook.handler');
@@ -65,39 +66,46 @@ export class ApiLayerStack extends Stack {
     projects.addMethod('POST', new apigw.LambdaIntegration(projectCreate), { authorizer });
     const projectList = makeFn('ProjectsList', 'projects_list.handler');
     projects.addMethod('GET', new apigw.LambdaIntegration(projectList), { authorizer });
+    const projectItem = projects.addResource('{projectId}');
     const projectGetFn = makeFn('ProjectsGet', 'projects_get.handler');
-    projects.addResource('{id}').addMethod('GET', new apigw.LambdaIntegration(projectGetFn), { authorizer });
+    projectItem.addMethod('GET', new apigw.LambdaIntegration(projectGetFn), { authorizer });
 
     // Reports
     const reportStart = makeFn('ReportStart', 'report_start.handler');
-    api.root.addResource('report').addResource('start')
+    projectItem.addResource('report').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(reportStart), { authorizer });
     const reportGet = makeFn('ReportGet', 'report_get.handler');
-    api.root.getResource('report')!.addResource('get')
+    api.root.addResource('reports').addResource('{reportId}')
       .addMethod('GET', new apigw.LambdaIntegration(reportGet), { authorizer });
 
     // Ideation
     const ideationStart = makeFn('IdeationStart', 'ideation_start.handler');
-    api.root.addResource('ideation').addResource('start')
+    projectItem.addResource('ideation').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(ideationStart), { authorizer });
     const ideationGet = makeFn('IdeationGet', 'ideation_get.handler');
-    api.root.getResource('ideation')!.addResource('get')
+    api.root.addResource('ideations').addResource('{ideationId}')
       .addMethod('GET', new apigw.LambdaIntegration(ideationGet), { authorizer });
 
     // Double-down
     const doubleStart = makeFn('DoubleStart', 'double_start.handler');
-    api.root.addResource('double-down').addResource('start')
+    projectItem.addResource('double-down').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(doubleStart), { authorizer });
     const doubleGet = makeFn('DoubleGet', 'double_get.handler');
-    api.root.getResource('double-down')!.addResource('get')
+    api.root.addResource('double-downs').addResource('{doubleId}')
       .addMethod('GET', new apigw.LambdaIntegration(doubleGet), { authorizer });
 
     // Admin
+    const admin = api.root.addResource('admin');
     const adminUsers = makeFn('AdminUsers', 'admin_users.handler');
-    api.root.addResource('admin').addResource('users')
-      .addMethod('GET', new apigw.LambdaIntegration(adminUsers), { authorizer });
+    const adminUsersRes = admin.addResource('users');
+    adminUsersRes.addMethod('GET', new apigw.LambdaIntegration(adminUsers), { authorizer });
+    const adminUserGet = makeFn('AdminUserGet', 'admin_user_get.handler');
+    adminUsersRes.addResource('{id}').addMethod('GET', new apigw.LambdaIntegration(adminUserGet), { authorizer });
     const adminMetrics = makeFn('AdminMetrics', 'admin_metrics.handler');
-    api.root.getResource('admin')!.addResource('metrics')
+    admin.addResource('metrics').addResource('summary')
       .addMethod('GET', new apigw.LambdaIntegration(adminMetrics), { authorizer });
+    const adminAdjust = makeFn('AdminCreditsAdjust', 'admin_credits_adjust.handler');
+    admin.addResource('credits').addResource('adjust')
+      .addMethod('POST', new apigw.LambdaIntegration(adminAdjust), { authorizer });
   }
 }
