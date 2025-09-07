@@ -14,12 +14,23 @@ Globals:
       Variables:
         GITHUB_ORG: !Ref GitHubOrg
         CLIENT_COMPANY_NAME: !Ref ClientCompanyName
-  Api:
-    Cors:
-      AllowOrigin: "'*'"
-      AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'"
-      AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
-      MaxAge: "'86400'"
+  HttpApi:
+    CorsConfiguration:
+      AllowOrigins:
+        - "*"
+      AllowHeaders:
+        - "Content-Type"
+        - "Authorization"
+        - "X-Api-Key"
+        - "Accept"
+        - "Idempotency-Key"
+      AllowMethods:
+        - GET
+        - POST
+        - OPTIONS
+        - PUT
+        - DELETE
+      MaxAge: 86400
 
 Parameters:
   GitHubOrg:
@@ -260,7 +271,7 @@ Resources:
       Handler: health.handler
       Events:
         HealthCheck:
-          Type: Api
+          Type: HttpApi
           Properties:
             Path: /health
             Method: GET
@@ -286,13 +297,13 @@ Resources:
                 - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
       Events:
         ListRepos:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/github/repos
             Method: GET
         ListOrgRepos:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/github/repos/{org}
@@ -349,7 +360,7 @@ Resources:
               Resource: !GetAtt PlanOrchestratorFunction.Arn
       Events:
         StartJob:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/plan/async/start
@@ -406,7 +417,7 @@ Resources:
               Resource: !GetAtt PlanGenerationJobsTable.Arn
       Events:
         GetStatus:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/plan/async/status/{jobId}
@@ -433,13 +444,13 @@ Resources:
               Resource: !GetAtt PlanGenerationJobsTable.Arn
       Events:
         ListJobs:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/plan/async/list
             Method: GET
         OptionsListJobs:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/plan/async/list
@@ -502,49 +513,49 @@ Resources:
               Resource: !GetAtt ReportProcessingFunction.Arn
       Events:
         ResearchEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research
             Method: POST
         OptionsResearch:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research
             Method: OPTIONS
         ResearchStatusEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/status/{requestId}
             Method: GET
         OptionsResearchStatus:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/status/{requestId}
             Method: OPTIONS
         ResearchDownloadEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/download/{s3Key}
             Method: GET
         OptionsResearchDownload:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/download/{s3Key}
             Method: OPTIONS
         ResearchReportsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/reports
             Method: GET
         OptionsResearchReports:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/reports
@@ -590,37 +601,37 @@ Resources:
       Events:
         # Enhanced research endpoints with structured data
         EnhancedResearchEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/v2
             Method: POST
         OptionsEnhancedResearch:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/v2
             Method: OPTIONS
         EnhancedResearchStatusEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/v2/status/{requestId}
             Method: GET
         OptionsEnhancedResearchStatus:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/v2/status/{requestId}
             Method: OPTIONS
         EnhancedResearchReportsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/v2/reports
             Method: GET
         OptionsEnhancedResearchReports:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/v2/reports
@@ -740,86 +751,86 @@ Resources:
             Queue: !GetAtt ReportProcessingQueue.Arn
             BatchSize: 1  # Process one report at a time
         ProcessReportEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/reports/process
             Method: POST
         OptionsProcessReport:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/reports/process
             Method: OPTIONS
         EnhanceReportEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/reports/enhance/{reportId}
             Method: POST
         OptionsEnhanceReport:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/reports/enhance/{reportId}
             Method: OPTIONS
         LogsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/logs
             Method: GET
         MetricsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/metrics
             Method: GET
         SystemStatusEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/system/status
             Method: GET
         HealthEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/health
             Method: GET
         # OPTIONS methods for new endpoints
         OptionsSwarmsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/swarms
             Method: OPTIONS
         OptionsSwarmDetailsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/swarms/{id}
             Method: OPTIONS
         OptionsLogsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/logs
             Method: OPTIONS
         OptionsMetricsEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/metrics
             Method: OPTIONS
         OptionsSystemStatusEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/system/status
             Method: OPTIONS
         OptionsHealthEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/claude-flow/health
@@ -852,13 +863,13 @@ Resources:
                 - !GetAtt ResearchReportsTable.Arn
       Events:
         GetReportEndpoint:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/reports/{reportId}
             Method: GET
         OptionsGetReport:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /api/research/reports/{reportId}
@@ -887,7 +898,7 @@ Resources:
           STRIPE_API_KEY_SECRET_ARN: !Ref StripeApiKeySecretArn
       Events:
         CreateCheckout:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /billing/stripe/create-checkout-session
@@ -908,7 +919,7 @@ Resources:
           STRIPE_WEBHOOK_SECRET: !Ref StripeWebhookSecret
       Events:
         Webhook:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /billing/stripe/webhook
@@ -927,7 +938,7 @@ Resources:
           USERS_TABLE_NAME: !Ref UsersTableNameParam
       Events:
         GetBalance:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /credits/balance
@@ -946,7 +957,7 @@ Resources:
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         CreateProject:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /projects
@@ -965,7 +976,7 @@ Resources:
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         ListProjects:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /projects
@@ -984,7 +995,7 @@ Resources:
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         GetProject:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /projects/{projectId}
@@ -1006,7 +1017,7 @@ Resources:
           REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
       Events:
         StartReport:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /projects/{projectId}/report/start
@@ -1026,7 +1037,7 @@ Resources:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         GetReport:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /reports/{reportId}
@@ -1049,7 +1060,7 @@ Resources:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         StartIdeation:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /projects/{projectId}/ideation/start
@@ -1069,7 +1080,7 @@ Resources:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         GetIdeation:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /ideations/{ideationId}
@@ -1092,7 +1103,7 @@ Resources:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         StartDouble:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /projects/{projectId}/double-down/start
@@ -1112,7 +1123,7 @@ Resources:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         GetDouble:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /double-downs/{doubleId}
@@ -1131,7 +1142,7 @@ Resources:
           USERS_TABLE_NAME: !Ref UsersTableNameParam
       Events:
         AdminUsersList:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /admin/users
@@ -1152,7 +1163,7 @@ Resources:
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         AdminUserGetEvt:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /admin/users/{id}
@@ -1172,13 +1183,13 @@ Resources:
           CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
       Events:
         AdminMetricsGet:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /admin/metrics
             Method: GET
         AdminMetricsSummaryGet:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /admin/metrics/summary
@@ -1198,7 +1209,7 @@ Resources:
           CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
       Events:
         AdminAdjust:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /admin/credits/adjust
@@ -1217,7 +1228,7 @@ Resources:
           REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
       Events:
         ListReports:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /reports
@@ -1235,7 +1246,7 @@ Resources:
           IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
       Events:
         ListIdeations:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /ideations
@@ -1253,7 +1264,7 @@ Resources:
           DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
       Events:
         ListDoubles:
-          Type: Api
+          Type: HttpApi
           Properties:
             
             Path: /double-downs
@@ -1278,10 +1289,11 @@ Resources:
               Resource:
                 - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}/*
 
+
 Outputs:
   ApiGatewayUrl:
-    Description: API Gateway endpoint URL
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com
+    Description: HTTP API endpoint URL
+    Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com
     Export:
       Name: !Sub ${AWS::StackName}-ApiUrl
   
