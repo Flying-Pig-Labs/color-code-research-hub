@@ -902,6 +902,14 @@ Resources:
             Path: /billing/stripe/create-checkout-session
             Method: POST
 
+  V2BillingStripeSessionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2BillingStripeSession.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2BillingStripeWebhook:
     Type: AWS::Serverless::Function
     Properties:
@@ -922,6 +930,14 @@ Resources:
             Path: /billing/stripe/webhook
             Method: POST
 
+  V2BillingStripeWebhookInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2BillingStripeWebhook.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2CreditsBalance:
     Type: AWS::Serverless::Function
     Properties:
@@ -939,6 +955,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /credits/balance
             Method: GET
+
+  V2CreditsBalanceInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2CreditsBalance.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2ProjectsCreate:
     Type: AWS::Serverless::Function
@@ -958,6 +982,14 @@ Resources:
             Path: /projects
             Method: POST
 
+  V2ProjectsCreateInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2ProjectsCreate.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2ProjectsList:
     Type: AWS::Serverless::Function
     Properties:
@@ -976,6 +1008,14 @@ Resources:
             Path: /projects
             Method: GET
 
+  V2ProjectsListInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2ProjectsList.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2ProjectsGet:
     Type: AWS::Serverless::Function
     Properties:
@@ -993,6 +1033,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects/{projectId}
             Method: GET
+
+  V2ProjectsGetInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2ProjectsGet.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2ReportStart:
     Type: AWS::Serverless::Function
@@ -1015,6 +1063,14 @@ Resources:
             Path: /projects/{projectId}/report/start
             Method: POST
 
+  V2ReportStartInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2ReportStart.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2ReportGet:
     Type: AWS::Serverless::Function
     Properties:
@@ -1033,6 +1089,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /reports/{reportId}
             Method: GET
+
+  V2ReportGetInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2ReportGet.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2IdeationStart:
     Type: AWS::Serverless::Function
@@ -1056,6 +1120,14 @@ Resources:
             Path: /projects/{projectId}/ideation/start
             Method: POST
 
+  V2IdeationStartInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2IdeationStart.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2IdeationGet:
     Type: AWS::Serverless::Function
     Properties:
@@ -1074,6 +1146,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /ideations/{ideationId}
             Method: GET
+
+  V2IdeationGetInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2IdeationGet.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2DoubleStart:
     Type: AWS::Serverless::Function
@@ -1097,6 +1177,14 @@ Resources:
             Path: /projects/{projectId}/double-down/start
             Method: POST
 
+  V2DoubleStartInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2DoubleStart.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2DoubleGet:
     Type: AWS::Serverless::Function
     Properties:
@@ -1116,6 +1204,14 @@ Resources:
             Path: /double-downs/{doubleId}
             Method: GET
 
+  V2DoubleGetInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2DoubleGet.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2AdminUsers:
     Type: AWS::Serverless::Function
     Properties:
@@ -1133,6 +1229,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/users
             Method: GET
+
+  V2AdminUsersInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2AdminUsers.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2AdminUserGet:
     Type: AWS::Serverless::Function
@@ -1153,6 +1257,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/users/{id}
             Method: GET
+
+  V2AdminUserGetInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2AdminUserGet.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2AdminMetrics:
     Type: AWS::Serverless::Function
@@ -1179,6 +1291,14 @@ Resources:
             Path: /admin/metrics/summary
             Method: GET
 
+  V2AdminMetricsInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2AdminMetrics.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
+
   V2AdminCreditsAdjust:
     Type: AWS::Serverless::Function
     Properties:
@@ -1197,6 +1317,14 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/credits/adjust
             Method: POST
+
+  V2AdminCreditsAdjustInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt V2AdminCreditsAdjust.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ResearchHubApi}/*/*/*
 
   V2ReportsList:
     Type: AWS::Serverless::Function
