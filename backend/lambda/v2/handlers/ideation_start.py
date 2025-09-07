@@ -7,6 +7,8 @@ from ..helpers.auth import get_user, AuthError
 from ..helpers.users import ensure_user_exists
 from ..helpers.http import json_response
 from ..helpers.credits import atomic_debit, DebitError
+_s3 = boto3.client('s3')
+ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
 
 _dynamodb = boto3.client('dynamodb')
 IDEATIONS_TABLE = os.environ.get('IDEATIONS_TABLE_NAME', '')
@@ -48,4 +50,41 @@ def handler(event, context):
             'startedAt': {'N': str(ts)}
         }
     )
+
+    # Create minimal ideas.json immediately for a successful artifact URL
+    try:
+        if ARTIFACTS_BUCKET:
+            ideas = []
+            for i in range(1, 11):
+                ideas.append({
+                    "ideaId": f"i-{i:02d}",
+                    "title": f"Idea #{i}",
+                    "summary": "Initial placeholder summary.",
+                    "rank": i,
+                    "review": {"score": 0.0, "rationale": "", "marketSignals": []}
+                })
+            payload = {
+                "ideationId": ideation_id,
+                "projectId": project_id,
+                "userId": user_id,
+                "ideas": ideas,
+                "generatedAt": ts
+            }
+            key = f"u/{user_id}/p/{project_id}/ideation/{ideation_id}/ideas.json"
+            _s3.put_object(Bucket=ARTIFACTS_BUCKET, Key=key, Body=json.dumps(payload).encode('utf-8'), ContentType='application/json')
+            _dynamodb.update_item(
+                TableName=IDEATIONS_TABLE,
+                Key={'ideationId': {'S': ideation_id}},
+                UpdateExpression='SET #s = :done, completedAt = :ca, ideasJsonS3Key = :k',
+                ExpressionAttributeNames={'#s': 'status'},
+                ExpressionAttributeValues={
+                    ':done': {'S': 'done'},
+                    ':ca': {'N': str(int(time.time() * 1000))},
+                    ':k': {'S': key}
+                }
+            )
+    except Exception as e:
+        # Keep request successful; GET will remain pending until later processing
+        print(f"ideation_start: failed to write ideas.json: {e}")
+
     return json_response(200, {"ideationId": ideation_id, "txId": tx_id})

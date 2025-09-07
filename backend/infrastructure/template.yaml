@@ -124,10 +124,18 @@ Resources:
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref StripeApiKeySecretArn
+        - PolicyName: V2InvokePdf
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
               - Effect: Allow
                 Action:
-                  - secretsmanager:GetSecretValue
-                Resource: !Ref StripeApiKeySecretArn
+                  - lambda:InvokeFunction
+                Resource: !GetAtt V2GeneratePdfFunction.Arn
   # SQS Queue for Report Processing
   ReportProcessingQueue:
     Type: AWS::SQS::Queue
@@ -1045,6 +1053,7 @@ Resources:
           CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
           IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
           REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         StartIdeation:
           Type: Api
@@ -1085,6 +1094,7 @@ Resources:
           CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
           IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
           DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
       Events:
         StartDouble:
           Type: Api
@@ -1197,6 +1207,79 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/credits/adjust
             Method: POST
+
+  V2ReportsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: reports_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+      Events:
+        ListReports:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /reports
+            Method: GET
+
+  V2IdeationsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: ideations_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
+      Events:
+        ListIdeations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /ideations
+            Method: GET
+
+  V2DoublesList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: doubles_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
+      Events:
+        ListDoubles:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ResearchHubApi
+            Path: /double-downs
+            Method: GET
+
+  V2GeneratePdfFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: generatePdf.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource:
+                - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}/*
 
 Outputs:
   ApiGatewayUrl:

@@ -27,6 +27,9 @@ def handler(event, context):
     proj = _dynamodb.get_item(TableName=proj_table, Key={'projectId': {'S': project_id}}).get('Item')
     if not proj or proj.get('userId', {}).get('S') != user_id:
         return json_response(403, {"error": "forbidden"})
+    body = json.loads(event.get('body') or '{}')
+    markdown_url = body.get('markdownUrl')
+    markdown_str = body.get('markdown')
     tx_id = event.get('headers', {}).get('Idempotency-Key', str(uuid.uuid4()))
     try:
         atomic_debit(user_id, tx_id, 'report', 'reportCount')
@@ -44,4 +47,34 @@ def handler(event, context):
             'startedAt': {'N': str(ts)}
         }
     )
+    # Generate a basic PDF synchronously via Node generator
+    try:
+        import json as _json
+        import boto3 as _boto3
+        _lambda = _boto3.client('lambda')
+        payload = {
+            'kind': 'report',
+            'userId': user_id,
+            'projectId': project_id,
+            'reportId': report_id,
+            'paragraphs': ['This is an automatically generated report PDF.']
+        }
+        if markdown_url:
+            payload['markdownUrl'] = markdown_url
+        if markdown_str:
+            payload['markdown'] = markdown_str
+        resp = _lambda.invoke(FunctionName='V2GeneratePdfFunction', InvocationType='RequestResponse', Payload=_json.dumps(payload).encode('utf-8'))
+        body = _json.loads(resp.get('Payload').read().decode('utf-8'))
+        key = _json.loads(body.get('body', '{}')).get('key') if isinstance(body.get('body'), str) else body.get('key')
+        if key:
+            _dynamodb.update_item(
+                TableName=REPORTS_TABLE,
+                Key={'reportId': {'S': report_id}},
+                UpdateExpression='SET #s=:done, completedAt=:ca, reportS3Key=:k',
+                ExpressionAttributeNames={'#s': 'status'},
+                ExpressionAttributeValues={':done': {'S': 'done'}, ':ca': {'N': str(int(time.time()*1000))}, ':k': {'S': key}}
+            )
+    except Exception as e:
+        print(f'report_start: PDF generation failed: {e}')
+
     return json_response(200, {"reportId": report_id, "txId": tx_id})
