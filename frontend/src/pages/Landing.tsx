@@ -21,32 +21,64 @@ import { ArrowRight, Play, LogIn, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 /**
  * Landing page component providing marketing introduction to the platform.
  * 
  * Serves as the public entry point for new users, showcasing the platform's
- * capabilities and guiding users toward authentication. Features responsive
- * design and professional branding elements.
+ * capabilities and guiding users toward Cognito authentication. Automatically
+ * redirects authenticated users to the app.
  * 
  * @returns {JSX.Element} Complete landing page with branding and navigation
  */
 const Landing = () => {
   const navigate = useNavigate();
   const { actualTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
+
+  // Redirect authenticated users to the app
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/v2/projects", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Build Cognito authorization URL
+  const buildCognitoUrl = (screenHint?: 'signup' | 'signin') => {
+    const domain = import.meta.env.VITE_COGNITO_DOMAIN as string | undefined;
+    const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID as string | undefined;
+    const redirectUri = import.meta.env.VITE_COGNITO_REDIRECT_URI as string | undefined;
+    
+    if (!domain || !clientId || !redirectUri) {
+      // Fallback to auth page if env vars missing
+      return '/v2/auth';
+    }
+    
+    const params = new URLSearchParams({
+      client_id: clientId,
+      response_type: 'token',
+      scope: 'openid email profile',
+      redirect_uri: redirectUri,
+    });
+    
+    if (screenHint) params.set('screen_hint', screenHint);
+    return `https://${domain}/oauth2/authorize?${params.toString()}`;
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative">
       {/* Top controls - Theme toggle and Login */}
       <div className="absolute top-6 right-6 flex items-center gap-2">
         <ThemeToggle />
-        <button
-          onClick={() => navigate("/login")}
+        <a
+          href={buildCognitoUrl('signin')}
           className="text-muted-foreground hover:text-accent transition-gentle p-2 rounded-lg hover:bg-muted/50"
-          aria-label="Login"
+          aria-label="Sign In"
         >
           <LogIn className="h-5 w-5" />
-        </button>
+        </a>
       </div>
 
       {/* Main Content - Typography focused hero */}
@@ -85,18 +117,23 @@ const Landing = () => {
             <Button 
               size="xl" 
               className="bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-gentle shadow-card hover:shadow-elevated"
-              onClick={() => navigate("/login")}
+              asChild
             >
-              Request Beta Access 
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <a href={buildCognitoUrl('signup')}>
+                Get Started Now
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
             </Button>
             <Button 
               size="xl" 
               variant="outline" 
               className="border-border text-foreground hover:bg-muted/50 font-medium transition-gentle"
+              asChild
             >
-              <Play className="mr-2 h-5 w-5" /> 
-              Watch Demo
+              <a href={buildCognitoUrl('signin')}>
+                <LogIn className="mr-2 h-5 w-5" /> 
+                Sign In
+              </a>
             </Button>
           </div>
         </div>

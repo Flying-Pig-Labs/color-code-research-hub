@@ -145,14 +145,6 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: !Ref StripeApiKeySecretArn
-        - PolicyName: V2InvokePdf
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - lambda:InvokeFunction
-                Resource: !GetAtt V2GeneratePdfFunction.Arn
   # SQS Queue for Report Processing
   ReportProcessingQueue:
     Type: AWS::SQS::Queue
@@ -1280,14 +1272,6 @@ Resources:
       Environment:
         Variables:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - s3:PutObject
-              Resource:
-                - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}/*
 
 
 Outputs:

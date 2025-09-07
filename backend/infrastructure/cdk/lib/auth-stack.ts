@@ -1,8 +1,7 @@
-import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CfnUserPoolGroup } from 'aws-cdk-lib/aws-cognito';
-import { CfnOutput, Duration } from 'aws-cdk-lib';
 import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager';
 import * as fs from 'fs';
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,24 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect authenticated users to the app
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/v2/projects", { replace: true });
+      return;
+    }
+
+    // Auto-redirect unauthenticated users to Cognito after a short delay
+    // This gives users a chance to see they're being redirected
+    const timer = setTimeout(() => {
+      navigate("/v2/auth", { replace: true });
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +63,27 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Login Form */}
-        <div className="bg-card border border-border rounded-lg shadow-card p-6">
+        {/* Redirect Notice */}
+        <div className="bg-card border border-border rounded-lg shadow-card p-6 text-center">
+          <div className="space-y-4">
+            <div className="text-muted-foreground">
+              Redirecting to secure sign-in...
+            </div>
+            <div className="text-sm text-muted-foreground">
+              You'll be taken to our secure authentication page in a moment.
+            </div>
+            <Button
+              onClick={() => navigate("/v2/auth")}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground"
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              Continue to Sign In
+            </Button>
+          </div>
+        </div>
+
+        {/* Legacy Login Form (hidden by default, kept for fallback) */}
+        <div className="bg-card border border-border rounded-lg shadow-card p-6" style={{ display: 'none' }}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-foreground">

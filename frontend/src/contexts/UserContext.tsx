@@ -36,6 +36,10 @@ interface UserContextType {
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
   /** Refresh user data from server */
   refreshUser: () => Promise<void>;
+  /** Complete user profile setup (for new users) */
+  completeProfile: (name: string) => Promise<void>;
+  /** Check if user needs onboarding */
+  needsOnboarding: boolean;
 }
 
 /**
@@ -58,17 +62,43 @@ export const useUser = () => {
 };
 
 /**
- * Default user profile for authenticated users.
- * In a real application, this would be fetched from an API.
+ * Base64URL decode utility for JWT tokens.
  */
-const createDefaultUser = (): UserProfile => ({
-  id: 'user-001',
-  name: 'Beta User',
-  email: 'beta@truflr.ai',
-  avatarUrl: undefined,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-});
+function base64UrlDecode(input: string): string {
+  const base64 = input.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = base64.length % 4 === 0 ? '' : '='.repeat(4 - (base64.length % 4));
+  const decoded = atob(base64 + pad);
+  try {
+    return decoded;
+  } catch {
+    return decoded;
+  }
+}
+
+/**
+ * Extract user info from Cognito JWT token.
+ */
+const extractUserFromToken = (): { id: string; email: string; name?: string } | null => {
+  const idToken = sessionStorage.getItem('id_token');
+  if (!idToken) return null;
+
+  try {
+    const parts = idToken.split('.');
+    if (parts.length !== 3) return null;
+
+    const payloadJson = base64UrlDecode(parts[1]);
+    const payload = JSON.parse(payloadJson);
+
+    return {
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name || payload.given_name || null,
+    };
+  } catch (error) {
+    console.error('Failed to extract user from token:', error);
+    return null;
+  }
+};
 
 /**
  * User Provider component that manages user profile state.
@@ -84,10 +114,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { isAuthenticated } = useAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   /**
    * Load user profile data.
-   * In a real application, this would fetch from an API.
+   * Checks if user has completed profile setup, or needs onboarding.
    */
   const loadUser = async () => {
     if (!isAuthenticated) {
@@ -98,30 +129,47 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
-      // Simulate API call to load user data
-      // In real implementation, this would be an actual API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Get user data from Cognito token
+      const tokenUser = extractUserFromToken();
+      if (!tokenUser) {
+        // No token data - should not happen if authenticated
+        setUser(null);
+        return;
+      }
       
-      // Check if we have stored user data in localStorage
+      // Check if we have a complete user profile stored
       const storedUser = localStorage.getItem('userProfile');
       if (storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
+          // Verify the stored user has required fields and matches current token user
+          if (parsedUser.id === tokenUser.id && parsedUser.name && parsedUser.email) {
+            // Update email from token in case it changed
+            parsedUser.email = tokenUser.email;
+            setUser(parsedUser);
+            setNeedsOnboarding(false);
+            return;
+          }
         } catch (error) {
           console.error('Failed to parse stored user data:', error);
-          setUser(createDefaultUser());
+          localStorage.removeItem('userProfile');
         }
-      } else {
-        // Create default user and store it
-        const defaultUser = createDefaultUser();
-        localStorage.setItem('userProfile', JSON.stringify(defaultUser));
-        setUser(defaultUser);
       }
+      
+      // User needs to complete their profile
+      setUser(null);
+      setNeedsOnboarding(true);
+      
+      // Store incomplete user data for onboarding component to use
+      sessionStorage.setItem('incompleteUser', JSON.stringify({
+        id: tokenUser.id,
+        email: tokenUser.email,
+        name: tokenUser.name || null,
+      }));
+      
     } catch (error) {
       console.error('Failed to load user data:', error);
-      // Fallback to default user
-      setUser(createDefaultUser());
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -169,6 +217,39 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   /**
+   * Complete user profile setup for new users.
+   * 
+   * @param name - Full name provided by the user
+   */
+  const completeProfile = async (name: string) => {
+    const incompleteUserData = sessionStorage.getItem('incompleteUser');
+    if (!incompleteUserData) {
+      throw new Error('No incomplete user data found');
+    }
+
+    const incompleteUser = JSON.parse(incompleteUserData);
+    
+    const completeUser: UserProfile = {
+      id: incompleteUser.id,
+      name: name.trim(),
+      email: incompleteUser.email,
+      avatarUrl: undefined,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Store complete user profile
+    localStorage.setItem('userProfile', JSON.stringify(completeUser));
+    
+    // Clear incomplete user data
+    sessionStorage.removeItem('incompleteUser');
+    
+    // Update state
+    setUser(completeUser);
+    setNeedsOnboarding(false);
+  };
+
+  /**
    * Load user data when authentication state changes.
    */
   useEffect(() => {
@@ -191,6 +272,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoading,
       updateProfile,
       refreshUser,
+      completeProfile,
+      needsOnboarding,
     }}>
       {children}
     </UserContext.Provider>

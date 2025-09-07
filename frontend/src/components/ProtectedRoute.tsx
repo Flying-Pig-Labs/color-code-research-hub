@@ -13,6 +13,8 @@
 
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/UserContext';
+import UserOnboarding from '@/components/UserOnboarding';
 
 /**
  * Props interface for the ProtectedRoute component.
@@ -25,15 +27,16 @@ interface ProtectedRouteProps {
 }
 
 /**
- * Protected route component that enforces authentication requirements.
+ * Protected route component that enforces authentication and onboarding requirements.
  * 
- * Checks the current authentication status and either renders the protected
- * content or redirects to the login page. Uses React Router's Navigate
- * component with replace flag to prevent back button issues.
+ * Checks the current authentication status and user profile completion:
+ * - Redirects to login page if not authenticated
+ * - Shows onboarding flow if authenticated but profile incomplete
+ * - Renders protected content if authenticated and profile complete
  * 
  * @param {ProtectedRouteProps} props - Component props
- * @param {React.ReactNode} props.children - Content to render if authenticated
- * @returns {JSX.Element} Either the protected content or a redirect to login
+ * @param {React.ReactNode} props.children - Content to render if authenticated and onboarded
+ * @returns {JSX.Element} Either the protected content, onboarding flow, or redirect to login
  * 
  * @example
  * ```tsx
@@ -44,14 +47,30 @@ interface ProtectedRouteProps {
  */
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
+  const { needsOnboarding, isLoading } = useUser();
 
-  // Redirect to login if not authenticated
-  // replace=true prevents the protected route from appearing in browser history
+  // Redirect to Cognito login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/v2/auth" replace />;
   }
 
-  // Render protected content if authenticated
+  // Show loading state while user data is being loaded
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show onboarding if user needs to complete profile
+  if (needsOnboarding) {
+    return <UserOnboarding />;
+  }
+
+  // Render protected content if authenticated and profile complete
   return <>{children}</>;
 };
 
