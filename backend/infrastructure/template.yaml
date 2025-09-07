@@ -14,6 +14,12 @@ Globals:
       Variables:
         GITHUB_ORG: !Ref GitHubOrg
         CLIENT_COMPANY_NAME: !Ref ClientCompanyName
+  Api:
+    Cors:
+      AllowOrigin: "'*'"
+      AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'"
+      AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
+      MaxAge: "'86400'"
 
 Parameters:
   GitHubOrg:
@@ -242,20 +248,6 @@ Resources:
         - Key: Application
           Value: color-code-research-hub
 
-  # API Gateway - Main REST API
-  # Handles all HTTP requests with CORS support
-  # Routes to appropriate Lambda functions
-  ResearchHubApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: production
-      Cors:
-        AllowOrigin: "'*'"
-        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'"
-        AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
-        MaxAge: "'86400'"
-      Auth:
-        ApiKeyRequired: false # Set to true if you want API key authentication
 
   # Reference to existing Secrets Manager secret
   # The secret is already created and contains the necessary configuration
@@ -270,7 +262,6 @@ Resources:
         HealthCheck:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
             Path: /health
             Method: GET
 
@@ -297,13 +288,13 @@ Resources:
         ListRepos:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/github/repos
             Method: GET
         ListOrgRepos:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/github/repos/{org}
             Method: GET
 
@@ -360,7 +351,7 @@ Resources:
         StartJob:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/plan/async/start
             Method: POST
 
@@ -417,7 +408,7 @@ Resources:
         GetStatus:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/plan/async/status/{jobId}
             Method: GET
 
@@ -444,13 +435,13 @@ Resources:
         ListJobs:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/plan/async/list
             Method: GET
         OptionsListJobs:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/plan/async/list
             Method: OPTIONS
 
@@ -513,49 +504,49 @@ Resources:
         ResearchEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research
             Method: POST
         OptionsResearch:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research
             Method: OPTIONS
         ResearchStatusEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/status/{requestId}
             Method: GET
         OptionsResearchStatus:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/status/{requestId}
             Method: OPTIONS
         ResearchDownloadEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/download/{s3Key}
             Method: GET
         OptionsResearchDownload:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/download/{s3Key}
             Method: OPTIONS
         ResearchReportsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/reports
             Method: GET
         OptionsResearchReports:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/reports
             Method: OPTIONS
 
@@ -601,37 +592,37 @@ Resources:
         EnhancedResearchEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/v2
             Method: POST
         OptionsEnhancedResearch:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/v2
             Method: OPTIONS
         EnhancedResearchStatusEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/v2/status/{requestId}
             Method: GET
         OptionsEnhancedResearchStatus:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/v2/status/{requestId}
             Method: OPTIONS
         EnhancedResearchReportsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/v2/reports
             Method: GET
         OptionsEnhancedResearchReports:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/v2/reports
             Method: OPTIONS
 
@@ -751,86 +742,86 @@ Resources:
         ProcessReportEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/reports/process
             Method: POST
         OptionsProcessReport:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/reports/process
             Method: OPTIONS
         EnhanceReportEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/reports/enhance/{reportId}
             Method: POST
         OptionsEnhanceReport:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/reports/enhance/{reportId}
             Method: OPTIONS
         LogsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/logs
             Method: GET
         MetricsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/metrics
             Method: GET
         SystemStatusEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/system/status
             Method: GET
         HealthEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/health
             Method: GET
         # OPTIONS methods for new endpoints
         OptionsSwarmsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/swarms
             Method: OPTIONS
         OptionsSwarmDetailsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/swarms/{id}
             Method: OPTIONS
         OptionsLogsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/logs
             Method: OPTIONS
         OptionsMetricsEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/metrics
             Method: OPTIONS
         OptionsSystemStatusEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/system/status
             Method: OPTIONS
         OptionsHealthEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/claude-flow/health
             Method: OPTIONS
 
@@ -863,13 +854,13 @@ Resources:
         GetReportEndpoint:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/reports/{reportId}
             Method: GET
         OptionsGetReport:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /api/research/reports/{reportId}
             Method: OPTIONS
 
@@ -898,7 +889,7 @@ Resources:
         CreateCheckout:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /billing/stripe/create-checkout-session
             Method: POST
 
@@ -919,7 +910,7 @@ Resources:
         Webhook:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /billing/stripe/webhook
             Method: POST
 
@@ -938,7 +929,7 @@ Resources:
         GetBalance:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /credits/balance
             Method: GET
 
@@ -957,7 +948,7 @@ Resources:
         CreateProject:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /projects
             Method: POST
 
@@ -976,7 +967,7 @@ Resources:
         ListProjects:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /projects
             Method: GET
 
@@ -995,7 +986,7 @@ Resources:
         GetProject:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /projects/{projectId}
             Method: GET
 
@@ -1017,7 +1008,7 @@ Resources:
         StartReport:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /projects/{projectId}/report/start
             Method: POST
 
@@ -1037,7 +1028,7 @@ Resources:
         GetReport:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /reports/{reportId}
             Method: GET
 
@@ -1060,7 +1051,7 @@ Resources:
         StartIdeation:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /projects/{projectId}/ideation/start
             Method: POST
 
@@ -1080,7 +1071,7 @@ Resources:
         GetIdeation:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /ideations/{ideationId}
             Method: GET
 
@@ -1103,7 +1094,7 @@ Resources:
         StartDouble:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /projects/{projectId}/double-down/start
             Method: POST
 
@@ -1123,7 +1114,7 @@ Resources:
         GetDouble:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /double-downs/{doubleId}
             Method: GET
 
@@ -1142,7 +1133,7 @@ Resources:
         AdminUsersList:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /admin/users
             Method: GET
 
@@ -1163,7 +1154,7 @@ Resources:
         AdminUserGetEvt:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /admin/users/{id}
             Method: GET
 
@@ -1183,13 +1174,13 @@ Resources:
         AdminMetricsGet:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /admin/metrics
             Method: GET
         AdminMetricsSummaryGet:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /admin/metrics/summary
             Method: GET
 
@@ -1209,7 +1200,7 @@ Resources:
         AdminAdjust:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /admin/credits/adjust
             Method: POST
 
@@ -1228,7 +1219,7 @@ Resources:
         ListReports:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /reports
             Method: GET
 
@@ -1246,7 +1237,7 @@ Resources:
         ListIdeations:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /ideations
             Method: GET
 
@@ -1264,7 +1255,7 @@ Resources:
         ListDoubles:
           Type: Api
           Properties:
-            RestApiId: !Ref ResearchHubApi
+            
             Path: /double-downs
             Method: GET
 
@@ -1290,7 +1281,7 @@ Resources:
 Outputs:
   ApiGatewayUrl:
     Description: API Gateway endpoint URL
-    Value: !Sub https://${ResearchHubApi}.execute-api.${AWS::Region}.amazonaws.com/production
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com
     Export:
       Name: !Sub ${AWS::StackName}-ApiUrl
   
