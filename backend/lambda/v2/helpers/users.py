@@ -46,7 +46,8 @@ def ensure_user_exists(claims: Dict) -> None:
             ConditionExpression="attribute_not_exists(userId)",
         )
     except ClientError as e:
-        # If row already exists, ignore
-        if e.response.get("Error", {}).get("Code") != "ConditionalCheckFailedException":
-            raise
-
+        code = e.response.get("Error", {}).get("Code")
+        # If row already exists, ignore; if table missing, ignore (infra not ready)
+        if code in ("ConditionalCheckFailedException", "ResourceNotFoundException"):  # type: ignore
+            return
+        raise

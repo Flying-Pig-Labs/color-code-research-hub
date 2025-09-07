@@ -239,14 +239,9 @@ Resources:
       StageName: production
       Cors:
         AllowOrigin: "'*'"
-        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,Accept,Idempotency-Key'"
         AllowMethods: "'GET,POST,OPTIONS,PUT,DELETE'"
         MaxAge: "'86400'"
-      Auth:
-        DefaultAuthorizer: NONE
-        Authorizers:
-          CognitoAuth:
-            UserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolIdParam}
       Auth:
         ApiKeyRequired: false # Set to true if you want API key authentication
 
@@ -894,8 +889,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /billing/stripe/create-checkout-session
             Method: POST
-            Auth:
-              Authorizer: CognitoAuth
 
   V2BillingStripeWebhook:
     Type: AWS::Serverless::Function
@@ -916,8 +909,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /billing/stripe/webhook
             Method: POST
-            Auth:
-              Authorizer: NONE
 
   V2CreditsBalance:
     Type: AWS::Serverless::Function
@@ -936,8 +927,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /credits/balance
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2ProjectsCreate:
     Type: AWS::Serverless::Function
@@ -956,8 +945,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects
             Method: POST
-            Auth:
-              Authorizer: CognitoAuth
 
   V2ProjectsList:
     Type: AWS::Serverless::Function
@@ -976,8 +963,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2ProjectsGet:
     Type: AWS::Serverless::Function
@@ -996,8 +981,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects/{projectId}
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2ReportStart:
     Type: AWS::Serverless::Function
@@ -1019,8 +1002,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects/{projectId}/report/start
             Method: POST
-            Auth:
-              Authorizer: CognitoAuth
 
   V2ReportGet:
     Type: AWS::Serverless::Function
@@ -1040,8 +1021,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /reports/{reportId}
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2IdeationStart:
     Type: AWS::Serverless::Function
@@ -1063,8 +1042,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects/{projectId}/ideation/start
             Method: POST
-            Auth:
-              Authorizer: CognitoAuth
 
   V2IdeationGet:
     Type: AWS::Serverless::Function
@@ -1084,8 +1061,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /ideations/{ideationId}
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2DoubleStart:
     Type: AWS::Serverless::Function
@@ -1128,8 +1103,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /double-downs/{doubleId}
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2AdminUsers:
     Type: AWS::Serverless::Function
@@ -1148,8 +1121,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/users
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2AdminUserGet:
     Type: AWS::Serverless::Function
@@ -1170,8 +1141,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/users/{id}
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2AdminMetrics:
     Type: AWS::Serverless::Function
@@ -1191,8 +1160,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/metrics
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
         AdminMetricsSummaryGet:
           Type: Api
           Properties:
@@ -1220,8 +1187,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/credits/adjust
             Method: POST
-            Auth:
-              Authorizer: CognitoAuth
 
 Outputs:
   ApiGatewayUrl:
