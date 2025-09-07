@@ -20,13 +20,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { User, LogOut, Moon, Sun, Monitor, Settings } from "lucide-react";
+import { User, LogOut, Moon, Sun, Monitor, Settings, FolderOpen } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import { useBalance } from "@/hooks/v2";
 import { UserProfileModal } from "./UserProfileModal";
 import { LogoutConfirmDialog } from "./LogoutConfirmDialog";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Props interface for UserProfileDropdown component.
@@ -109,6 +110,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   const { theme, setTheme } = useTheme();
   const { user } = useUser();
   const { data: balance } = useBalance();
+  const navigate = useNavigate();
 
   // Use user context data if available, fallback to props
   const userName = user?.name || propUserName || 'User';
@@ -126,6 +128,14 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   const handleThemeToggle = () => {
     const nextTheme = getNextTheme(theme);
     setTheme(nextTheme);
+    setIsDropdownOpen(false);
+  };
+
+  /**
+   * Handle projects navigation.
+   */
+  const handleProjectsClick = () => {
+    navigate('/v2/projects');
     setIsDropdownOpen(false);
   };
 
@@ -196,6 +206,15 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
           </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
+
+          {/* Projects */}
+          <DropdownMenuItem 
+            onClick={handleProjectsClick}
+            className="cursor-pointer px-2 py-2.5 focus:bg-muted"
+          >
+            <FolderOpen className="h-4 w-4 mr-2" />
+            My Projects
+          </DropdownMenuItem>
 
           {/* Profile Settings */}
           <DropdownMenuItem 

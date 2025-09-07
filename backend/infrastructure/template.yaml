@@ -1096,8 +1096,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /projects/{projectId}/double-down/start
             Method: POST
-            Auth:
-              Authorizer: CognitoAuth
 
   V2DoubleGet:
     Type: AWS::Serverless::Function
@@ -1180,8 +1178,6 @@ Resources:
             RestApiId: !Ref ResearchHubApi
             Path: /admin/metrics/summary
             Method: GET
-            Auth:
-              Authorizer: CognitoAuth
 
   V2AdminCreditsAdjust:
     Type: AWS::Serverless::Function
