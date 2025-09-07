@@ -15,6 +15,13 @@ help:
 	@echo "  make lambda-sam          - Deploy only SAM (skip CDK)"
 	@echo "  make lambda-nocache      - SAM build without cache (slower, safer)"
 	@echo "  make lambda-validate     - Validate SAM template only"
+	@echo "  make auth:brand:apply    - Apply Cognito Hosted UI branding (CSS+logo)"
+	@echo "  make auth:brand:status   - Show branding + domain config"
+	@echo "  make auth:brand:rollback - Remove branding (revert to default)"
+	@echo "  make auth:managed:apply  - Apply Managed Login branding (colors, mode, font)"
+	@echo "  make auth:managed:status - Show Managed Login branding settings"
+	@echo "  make auth:managed:reset  - Reset Managed Login branding to defaults"
+	@echo "  make auth:managed:check  - Best-effort drift check (non-failing by default)"
 	@echo "  make stop     - Stop all servers"
 	@echo "  make clean    - Kill all related processes"
 	@echo "  make install  - Install dependencies"
@@ -94,6 +101,62 @@ lambda-nocache:
 lambda-validate:
 	@echo "🧪 Validating SAM template..."
 	@cd backend/infrastructure && sam validate
+
+# ===== Cognito Hosted UI Branding =====
+# Required env: COGNITO_USER_POOL_ID, optional COGNITO_APP_CLIENT_ID
+# Optional assets: infrastructure/cognito/hosted-ui.css, public/logo-dark.png
+auth:brand:apply:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@echo "🎨 Applying Hosted UI CSS..."
+	@if [ -f infrastructure/cognito/hosted-ui.css ]; then \
+		aws cognito-idp set-ui-customization \
+			--user-pool-id $$COGNITO_USER_POOL_ID \
+			$${COGNITO_APP_CLIENT_ID:+--client-id $$COGNITO_APP_CLIENT_ID} \
+			--css fileb://infrastructure/cognito/hosted-ui.css >/dev/null; \
+		else echo "(skip) No hosted-ui.css found"; fi
+	@if [ -f public/logo-dark.png ]; then \
+		echo "🖼️  Uploading logo..."; \
+		aws cognito-idp set-ui-customization \
+			--user-pool-id $$COGNITO_USER_POOL_ID \
+			$${COGNITO_APP_CLIENT_ID:+--client-id $$COGNITO_APP_CLIENT_ID} \
+			--image-file fileb://public/logo-dark.png >/dev/null; \
+		else echo "(skip) No public/logo-dark.png found"; fi
+	@echo "✅ Branding applied"
+
+auth:brand:status:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@echo "🔎 Hosted UI Branding Status:"
+	@aws cognito-idp get-ui-customization --user-pool-id $$COGNITO_USER_POOL_ID $${COGNITO_APP_CLIENT_ID:+--client-id $$COGNITO_APP_CLIENT_ID} | sed 's/"Css":.*/"Css":"<inline css omitted>",/'
+	@echo "\n🔎 Domain config:"
+	@aws cognito-idp describe-user-pool --user-pool-id $$COGNITO_USER_POOL_ID --query 'UserPool.Domain' --output text || true
+
+auth:brand:rollback:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@echo "↩️  Rolling back branding to defaults..."
+	@aws cognito-idp set-ui-customization --user-pool-id $$COGNITO_USER_POOL_ID $${COGNITO_APP_CLIENT_ID:+--client-id $$COGNITO_APP_CLIENT_ID} --css '' >/dev/null || true
+	@aws cognito-idp set-ui-customization --user-pool-id $$COGNITO_USER_POOL_ID $${COGNITO_APP_CLIENT_ID:+--client-id $$COGNITO_APP_CLIENT_ID} --image-file fileb:///dev/null >/dev/null || true
+	@echo "✅ Branding reset to defaults"
+
+# ===== Cognito Managed Login Branding =====
+# Uses AWS CLI Managed Login branding APIs (if available in your CLI version).
+# Env: COGNITO_USER_POOL_ID (required), COGNITO_APP_CLIENT_ID (optional, defaults ALL)
+# Settings file: brand/managed-login/settings.json
+auth:managed:apply:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@SETTINGS_PATH=brand/managed-login/settings.json COGNITO_APP_CLIENT_ID=$${COGNITO_APP_CLIENT_ID:-ALL} \
+		bash scripts/branding/managed-login.sh apply
+
+auth:managed:status:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@COGNITO_APP_CLIENT_ID=$${COGNITO_APP_CLIENT_ID:-ALL} bash scripts/branding/managed-login.sh status
+
+auth:managed:reset:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@COGNITO_APP_CLIENT_ID=$${COGNITO_APP_CLIENT_ID:-ALL} bash scripts/branding/managed-login.sh reset
+
+auth:managed:check:
+	@test -n "$$COGNITO_USER_POOL_ID" || (echo "Missing COGNITO_USER_POOL_ID" && exit 1)
+	@COGNITO_APP_CLIENT_ID=$${COGNITO_APP_CLIENT_ID:-} bash scripts/branding/check.sh
 
 # Install dependencies
 install:

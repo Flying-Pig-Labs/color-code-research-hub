@@ -1,0 +1,51 @@
+/* Cognito Classic Hosted UI customization (no CSS variables to satisfy parser) */
+
+/* Headings */
+.heading-customizable {
+  color: #f8fafc !important; /* slate-50 */
+  font-weight: 700 !important;
+}
+.idpDescription-customizable {
+  color: #f8fafc !important;
+}
+
+/* Links */
+.redirect-customizable a {
+  color: #0ea5e9 !important; /* cyan-500 */
+}
+.redirect-customizable a:hover {
+  color: #0284c7 !important; /* cyan-600 */
+}
+.legalText-customizable a { color: #0ea5e9 !important; }
+.legalText-customizable a:hover { color: #0284c7 !important; }
+
+/* Inputs */
+.formFieldInput-customizable,
+input[type="text"], input[type="email"], input[type="password"], select {
+  background: #0b1220 !important;
+  border: 1px solid #1f2937 !important;
+  color: #e5e7eb !important;
+  border-radius: 8px !important;
+}
+.formFieldInput-customizable:focus, input:focus, select:focus {
+  outline: none !important;
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.2) !important;
+}
+
+/* Buttons */
+.button-customizable {
+  background: #0ea5e9 !important; /* cyan-500 */
+  border: 0 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+.button-customizable:hover {
+  background: #0284c7 !important; /* cyan-600 */
+}
+
+/* Error text */
+.errorMessage-customizable {
+  color: #fca5a5 !important; /* red-300 */
+}

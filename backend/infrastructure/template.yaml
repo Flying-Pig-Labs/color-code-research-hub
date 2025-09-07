@@ -62,6 +62,10 @@ Parameters:
     Type: String
     Default: ""
   
+  CognitoUserPoolArnParam:
+    Type: String
+    Default: ""
+  
 
 Resources:
   # Shared execution role for V2 Python Lambdas
@@ -244,6 +248,12 @@ Resources:
         MaxAge: "'86400'"
       Auth:
         ApiKeyRequired: false # Set to true if you want API key authentication
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn: !Ref CognitoUserPoolArnParam
+            Identity:
+              Header: Authorization
+              ReauthorizeEvery: 0
 
   # Reference to existing Secrets Manager secret
   # The secret is already created and contains the necessary configuration

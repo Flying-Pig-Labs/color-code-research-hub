@@ -141,6 +141,9 @@ PARAM_OVERRIDES=(
 
 if [ -n "${USER_POOL_ID:-}" ]; then
   PARAM_OVERRIDES+=("CognitoUserPoolIdParam=${USER_POOL_ID}")
+  # Construct the ARN from the User Pool ID
+  USER_POOL_ARN="arn:aws:cognito-idp:${AWS_REGION}:${ACCOUNT_ID}:userpool/${USER_POOL_ID}"
+  PARAM_OVERRIDES+=("CognitoUserPoolArnParam=${USER_POOL_ARN}")
 fi
 if [ -n "${STRIPE_PRICE_CREDIT:-}" ]; then
   PARAM_OVERRIDES+=("StripePriceCredit=${STRIPE_PRICE_CREDIT}")

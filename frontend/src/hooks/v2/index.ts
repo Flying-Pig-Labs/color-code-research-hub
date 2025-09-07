@@ -13,7 +13,10 @@ export function useProjects() {
 
 export function useCreateProject() {
   const qc = useQueryClient();
-  return useMutation(v2Api.createProject, { onSuccess: () => qc.invalidateQueries({ queryKey: ['projects'] }) });
+  return useMutation({
+    mutationFn: v2Api.createProject,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['projects'] }),
+  });
 }
 
 export function useProject(projectId: string) {
@@ -23,7 +26,8 @@ export function useProject(projectId: string) {
 // Actions
 export function useStartReport(projectId: string) {
   const qc = useQueryClient();
-  return useMutation(() => v2Api.startReport(projectId), {
+  return useMutation({
+    mutationFn: () => v2Api.startReport(projectId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['project', projectId] }),
   });
 }
@@ -34,7 +38,8 @@ export function useReport(reportId?: string) {
 
 export function useStartIdeation(projectId: string) {
   const qc = useQueryClient();
-  return useMutation((body: { reportId: string }) => v2Api.startIdeation(projectId, body), {
+  return useMutation({
+    mutationFn: (body: { reportId: string }) => v2Api.startIdeation(projectId, body),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['project', projectId] }),
   });
 }
@@ -45,7 +50,8 @@ export function useIdeation(ideationId?: string) {
 
 export function useStartDouble(projectId: string) {
   const qc = useQueryClient();
-  return useMutation((body: { ideationId: string; ideaId: string; feedback?: string }) => v2Api.startDouble(projectId, body), {
+  return useMutation({
+    mutationFn: (body: { ideationId: string; ideaId: string; feedback?: string }) => v2Api.startDouble(projectId, body),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['project', projectId] }),
   });
 }
@@ -69,7 +75,8 @@ export function useAdminUser(userId: string) {
 
 export function useAdminAdjustCredits(userId: string) {
   const qc = useQueryClient();
-  return useMutation((body: { amount: number; reason: string }) => v2Api.adminAdjustCredits(userId, body), {
+  return useMutation({
+    mutationFn: (body: { amount: number; reason: string }) => v2Api.adminAdjustCredits(userId, body),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['adminUser', userId] });
       qc.invalidateQueries({ queryKey: ['adminUsers'] });
