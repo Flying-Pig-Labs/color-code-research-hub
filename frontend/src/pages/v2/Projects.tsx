@@ -21,7 +21,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MermaidDiagram } from '@/components/MermaidDiagram';
 import { 
   FolderPlus, 
@@ -58,9 +57,6 @@ const Projects: React.FC = () => {
   const { data: projects, isLoading } = useProjects();
   const createProject = useCreateProject();
   const { toast } = useToast();
-  
-  // Tab state
-  const [activeTab, setActiveTab] = useState('projects');
   
   // Form state
   const [title, setTitle] = useState('');
@@ -182,28 +178,6 @@ const Projects: React.FC = () => {
           Organize your research-to-patent workflow
         </p>
       </div>
-      
-      {/* Tab Navigation */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 mb-8 rounded-lg">
-          <TabsTrigger 
-            value="projects" 
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
-          >
-            <FolderPlus className="h-4 w-4 mr-2" />
-            Projects
-          </TabsTrigger>
-          <TabsTrigger 
-            value="workflow" 
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
-          >
-            <GitBranch className="h-4 w-4 mr-2" />
-            Workflow
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Projects Tab Content */}
-        <TabsContent value="projects" className="mt-0 space-y-8">
 
       {/* Onboarding for new users */}
       {!hasProjects && (
@@ -293,6 +267,36 @@ const Projects: React.FC = () => {
           </Card>
         </div>
       )}
+
+      {/* Compact Workflow Diagram */}
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <GitBranch className="h-5 w-5 text-accent" />
+            Workflow Overview
+          </CardTitle>
+          <CardDescription>
+            The 3-phase research-to-patent process
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="w-full overflow-x-auto">
+            <MermaidDiagram 
+              chart={`flowchart LR
+    A[🔍 Research] --> B[💡 Ideation]
+    B --> C[📄 Double-Down]
+    C --> D[🎯 Patent]
+    
+    classDef phase fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,font-size:11px
+    classDef final fill:#d4edda,stroke:#28a745,stroke-width:2px,font-size:11px
+    
+    class A,B,C phase
+    class D final`}
+              id="compact-workflow"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Create Project Form */}
       <Card className="bg-card border-border shadow-card">
@@ -453,166 +457,6 @@ const Projects: React.FC = () => {
           </CardContent>
         </Card>
       )}
-        </TabsContent>
-
-        {/* Workflow Tab Content */}
-        <TabsContent value="workflow" className="mt-0 space-y-8">
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <GitBranch className="h-5 w-5 text-accent" />
-                Research-to-Patent Workflow
-              </CardTitle>
-              <CardDescription>
-                Visual overview of the 3-phase research-to-patent process
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="w-full overflow-x-auto">
-                <MermaidDiagram 
-                  chart={`flowchart TD
-    A[📋 PROJECT START] --> B[🔍 RESEARCH PHASE]
-    
-    %% Research Phase Details
-    B --> B1[Market Research<br/>& Competitive Analysis]
-    B1 --> B2[📊 Research Report Generated]
-    B2 --> B3[✅ Phase 1 Complete<br/>1 Credit Used]
-    
-    %% Ideation Phase
-    B3 --> C[💡 IDEATION PHASE]
-    C --> C1[AI Analysis of<br/>Research Data]
-    C1 --> C2[Generate & Rank<br/>10 Business Ideas]
-    C2 --> C3[📋 Idea Evaluation<br/>with Market Scoring]
-    C3 --> C4[✅ Phase 2 Complete<br/>1 Credit Used]
-    
-    %% Double-Down Phase
-    C4 --> D[📄 DOUBLE-DOWN PHASE]
-    D --> D1[Select Best Idea<br/>for Development]
-    D1 --> D2[Generate Patent-Ready<br/>Documentation]
-    D2 --> D3[📑 Final PDF Package<br/>& Provisional Filing]
-    D3 --> D4[✅ Phase 3 Complete<br/>1 Credit Used]
-    
-    %% Final Output
-    D4 --> E[🎯 PATENT-READY<br/>INTELLECTUAL PROPERTY]
-    
-    %% Sequential Flow Indicators
-    F[Sequential Workflow] --> G[Each Phase Builds<br/>on Previous Phase]
-    G --> H[Complete in Order<br/>Research → Ideation → Double-Down]
-    
-    %% Visual Styling
-    classDef startEnd fill:#e1f5fe,stroke:#01579b,stroke-width:3px
-    classDef research fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef ideation fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    classDef doubledown fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef complete fill:#e0f2f1,stroke:#004d40,stroke-width:2px
-    classDef info fill:#f5f5f5,stroke:#424242,stroke-width:1px
-    
-    class A,E startEnd
-    class B,B1,B2,B3 research
-    class C,C1,C2,C3,C4 ideation
-    class D,D1,D2,D3,D4 doubledown
-    class F,G,H info`}
-                  id="projects-workflow"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Workflow Details */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle>Phase Details</CardTitle>
-              <CardDescription>
-                Understanding each phase of the research-to-patent workflow
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Phase 1 Details */}
-              <div className="flex items-start gap-4 p-4 bg-purple-50/50 dark:bg-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500/10 text-purple-600 font-semibold text-sm">
-                  1
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Search className="h-4 w-4 text-purple-600" />
-                    <h3 className="font-semibold text-foreground">Research Phase</h3>
-                    <Badge variant="secondary" className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-                      1 Credit
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Comprehensive market research and competitive analysis to understand your domain landscape.
-                  </p>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>• Market size and growth analysis</li>
-                    <li>• Competitor landscape mapping</li>
-                    <li>• Technology trends and opportunities</li>
-                    <li>• Regulatory environment assessment</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Phase 2 Details */}
-              <div className="flex items-start gap-4 p-4 bg-green-50/50 dark:bg-green-900/10 rounded-lg border border-green-200 dark:border-green-800">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/10 text-green-600 font-semibold text-sm">
-                  2
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="h-4 w-4 text-green-600" />
-                    <h3 className="font-semibold text-foreground">Ideation Phase</h3>
-                    <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-                      1 Credit
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    AI-powered analysis generates and evaluates innovative business opportunities.
-                  </p>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>• 10 ranked business ideas generated</li>
-                    <li>• Market viability scoring</li>
-                    <li>• Technical feasibility assessment</li>
-                    <li>• Competitive differentiation analysis</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Phase 3 Details */}
-              <div className="flex items-start gap-4 p-4 bg-orange-50/50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-800">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500/10 text-orange-600 font-semibold text-sm">
-                  3
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileText className="h-4 w-4 text-orange-600" />
-                    <h3 className="font-semibold text-foreground">Double-Down Phase</h3>
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">
-                      1 Credit
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Transform your best idea into patent-ready intellectual property documentation.
-                  </p>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>• Detailed technical specifications</li>
-                    <li>• Patent application draft</li>
-                    <li>• Prior art analysis</li>
-                    <li>• Provisional filing package</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground pt-4 border-t border-border">
-                <AlertCircle className="h-4 w-4" />
-                <span>
-                  <strong>Total Investment:</strong> 3 credits per complete project workflow. 
-                  Each phase must be completed sequentially to unlock the next phase.
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };

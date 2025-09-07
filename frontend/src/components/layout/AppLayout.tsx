@@ -23,7 +23,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Search, Lightbulb, ClipboardList, Hammer } from "lucide-react";
+import { Search, Lightbulb, ClipboardList, Hammer, FolderOpen } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import { UserProfileDropdown } from "@/components/UserProfileDropdown";
@@ -65,8 +65,12 @@ const AppLayout = ({ children }: AppLayoutProps) => {
    * with browser history and direct URL access.
    */
   useEffect(() => {
+    // Projects tab - Project management and workflow
+    if (location.pathname.startsWith("/v2/projects")) {
+      setActiveTab("projects");
+    }
     // Plan tab - Project planning and milestones
-    if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/plan")) {
+    else if (location.pathname.startsWith("/milestones") || location.pathname.startsWith("/plan")) {
       setActiveTab("plan");
     } 
     // Build tab - Build and deployment
@@ -97,6 +101,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     switch (value) {
+      case "projects":
+        navigate("/v2/projects"); // Project management and workflow
+        break;
       case "research":
         navigate("/home"); // Main research dashboard
         break;
@@ -154,7 +161,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           {/* Clean, minimalist tab navigation - truflr.ai product development flow */}
-          <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 mb-12 rounded-lg">
+          <TabsList className="grid w-full grid-cols-5 bg-muted/50 p-1 mb-12 rounded-lg">
+            <TabsTrigger 
+              value="projects" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
+            >
+              <FolderOpen className="h-4 w-4 mr-2" />
+              projects
+            </TabsTrigger>
             <TabsTrigger 
               value="research" 
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-card text-muted-foreground transition-gentle font-medium"
