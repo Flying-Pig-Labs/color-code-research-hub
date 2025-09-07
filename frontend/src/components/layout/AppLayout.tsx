@@ -21,14 +21,12 @@
  */
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { LogOut, Search, Lightbulb, ClipboardList, Hammer } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Search, Lightbulb, ClipboardList, Hammer } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useBalance } from "@/hooks/v2";
+import { useUser } from "@/contexts/UserContext";
+import { UserProfileDropdown } from "@/components/UserProfileDropdown";
 
 /**
  * Props interface for the AppLayout component.
@@ -54,21 +52,12 @@ interface AppLayoutProps {
 const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
   const { actualTheme } = useTheme();
-  const { data: balance } = useBalance();
+  const { user } = useUser();
   
   // Track which tab is currently active based on the route
   const [activeTab, setActiveTab] = useState("research");
 
-  /**
-   * Handle user logout process.
-   * Clears authentication state and navigates to landing page.
-   */
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   /**
    * Synchronize active tab with current route.
@@ -128,19 +117,12 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Clean, sophisticated header with typography focus */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm relative">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          {/* Top controls - Theme toggle and Logout */}
+          {/* Top controls - User Profile Dropdown */}
           <div className="absolute top-4 right-6 flex items-center gap-2">
-            <span className="text-sm">Credits: {balance?.credits ?? 0}</span>
-            <ThemeToggle />
-            <Button
-              onClick={handleLogout}
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-accent transition-gentle"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              logout
-            </Button>
+            <UserProfileDropdown 
+              userName={user?.name} 
+              avatarUrl={user?.avatarUrl} 
+            />
           </div>
           
           {/* Clean, typography-focused truflr.ai branding with logo */}

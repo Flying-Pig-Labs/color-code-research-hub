@@ -35,6 +35,9 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 // Theme Management
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
+// User Management
+import { UserProvider } from "@/contexts/UserContext";
+
 // Layout Components
 import AppLayout from "./components/layout/AppLayout";
 
@@ -116,6 +119,7 @@ const App = () => (
         
         <BrowserRouter>
           <AuthProvider>
+            <UserProvider>
           <Routes>
             {/* Public Pages - No authentication required */}
             <Route path="/" element={<Landing />} />
@@ -169,6 +173,7 @@ const App = () => (
             {/* 404 Handler */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+            </UserProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
