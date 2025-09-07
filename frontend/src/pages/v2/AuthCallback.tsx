@@ -20,10 +20,17 @@ const AuthCallback: React.FC = () => {
     try {
       // Cognito Hosted UI returns tokens in URL hash fragment for response_type=token
       const hash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash;
+      console.log('AuthCallback - Full URL:', window.location.href);
+      console.log('AuthCallback - Hash fragment:', window.location.hash);
+      console.log('AuthCallback - Processed hash:', hash);
+      
       const params = new URLSearchParams(hash);
       const idToken = params.get('id_token');
       const accessToken = params.get('access_token');
       const expiresIn = params.get('expires_in');
+      
+      console.log('AuthCallback - ID Token present:', !!idToken);
+      console.log('AuthCallback - Access Token present:', !!accessToken);
 
       if (idToken) {
         sessionStorage.setItem('id_token', idToken);
@@ -46,14 +53,17 @@ const AuthCallback: React.FC = () => {
         // Mark app as authenticated for current simple guard
         sessionStorage.setItem('isAuthenticated', 'true');
 
+        console.log('AuthCallback - Successfully processed tokens, redirecting to /v2/projects');
         // Redirect into app
         navigate('/v2/projects', { replace: true });
         return;
       }
-    } catch {
+    } catch (error) {
+      console.error('AuthCallback - Error processing authentication:', error);
       // fall through to redirect
     }
     // If no token present, go back to auth start
+    console.log('AuthCallback - No token found, redirecting back to /v2/auth');
     navigate('/v2/auth', { replace: true });
   }, [navigate]);
 

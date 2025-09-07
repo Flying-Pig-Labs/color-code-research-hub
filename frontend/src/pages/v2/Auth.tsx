@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { LogIn, UserPlus } from 'lucide-react';
+import React, { useMemo, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function buildAuthorizeUrl(screenHint?: 'signup' | 'signin') {
   const domain = import.meta.env.VITE_COGNITO_DOMAIN as string | undefined;
@@ -19,134 +18,73 @@ function buildAuthorizeUrl(screenHint?: 'signup' | 'signin') {
 }
 
 const Auth: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const signInUrl = useMemo(() => buildAuthorizeUrl('signin'), []);
   const signUpUrl = useMemo(() => buildAuthorizeUrl('signup'), []);
   const missingEnv = !signInUrl || !signUpUrl;
-  
-  // State for password manager compatibility form
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
 
-  // Handle form submission - redirects to appropriate Cognito URL
-  const handleSubmit = (e: React.FormEvent, mode: 'signin' | 'signup') => {
-    e.preventDefault();
-    const url = mode === 'signin' ? signInUrl : signUpUrl;
-    if (url) {
-      window.location.href = url;
+  // Auto-redirect authenticated users to the app
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/v2/projects", { replace: true });
+      return;
     }
-  };
+
+    // Auto-redirect to Cognito signin by default
+    // Users can manually go to signup if needed
+    if (signInUrl && !missingEnv) {
+      // Small delay to show loading message, then redirect
+      const timer = setTimeout(() => {
+        window.location.href = signInUrl;
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, navigate, signInUrl, missingEnv]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-semibold">Welcome to truflr.ai</h1>
-          <p className="text-muted-foreground">Sign in to your account or create a new one</p>
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+              truflr.ai
+            </h1>
+            <img 
+              src="/logo-light.png"
+              alt="truflr.ai Logo" 
+              className="w-12 h-12 md:w-16 md:h-16"
+            />
+          </div>
+          
+          <h2 className="text-2xl font-semibold">Redirecting to secure sign-in...</h2>
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          </div>
+          <p className="text-muted-foreground">
+            Taking you to the authentication page
+          </p>
         </div>
 
-        {/* Password manager compatible form */}
+        {/* Manual options if auto-redirect doesn't work */}
         {!missingEnv && (
-          <div className="bg-card border border-border rounded-lg shadow-card p-6">
-            <form onSubmit={(e) => handleSubmit(e, isSignUp ? 'signup' : 'signin')} className="space-y-4">
-              {/* Toggle between Sign In / Sign Up */}
-              <div className="flex rounded-md bg-muted p-1">
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(false)}
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
-                    !isSignUp 
-                      ? 'bg-background text-foreground shadow' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(true)}
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
-                    isSignUp 
-                      ? 'bg-background text-foreground shadow' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  Sign Up
-                </button>
-              </div>
-
-              {/* Email field for password managers */}
-              <div className="space-y-2">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-accent"
-                />
-              </div>
-
-              {/* Password field for password managers */}
-              <div className="space-y-2">
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete={isSignUp ? "new-password" : "current-password"}
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-accent"
-                />
-              </div>
-
-              {/* Submit button */}
-              <Button
-                type="submit"
-                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground shadow-card hover:shadow-elevated transition-all"
-              >
-                {isSignUp ? (
-                  <>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Create Account
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Sign In
-                  </>
-                )}
-              </Button>
-
-              <div className="text-xs text-center text-muted-foreground">
-                Secure authentication powered by AWS Cognito
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Fallback: Direct links if form doesn't work */}
-        {!missingEnv && (
-          <div className="text-center">
-            <div className="text-xs text-muted-foreground mb-2">
-              Having trouble? Use direct links:
+          <div className="bg-card border border-border rounded-lg shadow-card p-6 text-center space-y-4">
+            <div className="text-sm text-muted-foreground">
+              If you're not redirected automatically:
             </div>
-            <div className="flex gap-2 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3">
               <a 
-                href={signInUrl} 
-                className="text-xs text-accent hover:underline"
+                href={signInUrl}
+                className="flex-1 inline-flex items-center justify-center rounded-md bg-accent px-4 py-2 text-accent-foreground hover:bg-accent/90 transition-colors"
               >
                 Sign In
               </a>
-              <span className="text-xs text-muted-foreground">•</span>
               <a 
-                href={signUpUrl} 
-                className="text-xs text-accent hover:underline"
+                href={signUpUrl}
+                className="flex-1 inline-flex items-center justify-center rounded-md border border-border px-4 py-2 hover:bg-muted transition-colors"
               >
-                Sign Up
+                Create Account
               </a>
             </div>
           </div>
@@ -155,8 +93,11 @@ const Auth: React.FC = () => {
         {/* Missing environment variables error */}
         {missingEnv && (
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 text-center">
-            <p className="text-destructive text-sm">
-              Authentication configuration missing. Please check environment variables.
+            <p className="text-destructive text-sm font-medium">
+              Authentication Error
+            </p>
+            <p className="text-destructive text-xs mt-1">
+              Configuration missing. Please contact support.
             </p>
           </div>
         )}
