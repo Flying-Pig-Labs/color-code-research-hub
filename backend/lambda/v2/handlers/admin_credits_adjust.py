@@ -3,8 +3,7 @@ import os
 import time
 import uuid
 import boto3
-from ..helpers.auth import get_user, require_admin, AuthError
-from ..helpers.http import json_response
+import base64
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')
