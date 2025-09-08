@@ -11,7 +11,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { v2Api } from '../services/v2/api';
-import type { Project, Report, Ideation, Double, Repository } from '../services/v2/api';
+import type { Project, Report, Ideation, Double, PipelineRepo, PipelineIssue, PipelineReposResponse } from '../services/v2/api';
 
 interface EntityCounts {
   projects: number;
@@ -19,13 +19,14 @@ interface EntityCounts {
   ideations: number;
   doubles: number;
   repositories: number;
+  issues: number;
 }
 
 interface UserDashboardProps {
   className?: string;
 }
 
-type EntityType = 'projects' | 'reports' | 'ideations' | 'doubles' | 'repositories';
+type EntityType = 'projects' | 'reports' | 'ideations' | 'doubles' | 'repositories' | 'issues';
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
   const { user } = useUser();
@@ -39,14 +40,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
   const [reports, setReports] = useState<Report[]>([]);
   const [ideations, setIdeations] = useState<Ideation[]>([]);
   const [doubles, setDoubles] = useState<Double[]>([]);
-  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [repositories, setRepositories] = useState<PipelineRepo[]>([]);
+  const [issues, setIssues] = useState<PipelineIssue[]>([]);
 
   const [counts, setCounts] = useState<EntityCounts>({
     projects: 0,
     reports: 0,
     ideations: 0,
     doubles: 0,
-    repositories: 0
+    repositories: 0,
+    issues: 0
   });
 
   // Load all user entities
@@ -57,26 +60,33 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
     setError(null);
     
     try {
-      const [projectsData, reportsData, ideationsData, doublesData, repositoriesData] = await Promise.all([
+      const [projectsData, reportsData, ideationsData, doublesData, pipelineReposData] = await Promise.all([
         v2Api.listProjects(),
         v2Api.listReports(),
         v2Api.listIdeations(), 
         v2Api.listDoubles(),
-        v2Api.listRepositories()
+        v2Api.listPipelineRepos('all') as Promise<PipelineReposResponse>
       ]);
 
       setProjects(projectsData || []);
       setReports(reportsData || []);
       setIdeations(ideationsData || []);
       setDoubles(doublesData || []);
-      setRepositories(repositoriesData || []);
+      
+      // Handle PipelineRepos response structure
+      const reposData = pipelineReposData?.repositories || [];
+      const issuesData = pipelineReposData?.issues || [];
+      
+      setRepositories(reposData);
+      setIssues(issuesData);
 
       setCounts({
         projects: projectsData?.length || 0,
         reports: reportsData?.length || 0,
         ideations: ideationsData?.length || 0,
         doubles: doublesData?.length || 0,
-        repositories: repositoriesData?.length || 0
+        repositories: reposData.length,
+        issues: issuesData.length
       });
     } catch (err) {
       console.error('Error loading user entities:', err);
@@ -108,6 +118,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
       case 'ideations': return filterEntities(ideations);
       case 'doubles': return filterEntities(doubles);
       case 'repositories': return filterEntities(repositories);
+      case 'issues': return filterEntities(issues);
       default: return [];
     }
   };
@@ -140,6 +151,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
         case 'ideations': return entity.ideationId;
         case 'doubles': return entity.doubleId;
         case 'repositories': return entity.id;
+        case 'issues': return entity.id;
         default: return 'unknown';
       }
     };
@@ -150,10 +162,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
 
     const getSubtitle = () => {
       switch (type) {
-        case 'reports': return `Project: ${entity.projectId}`;
-        case 'ideations': return `Report: ${entity.reportId}`;
+        case 'reports': return `Team: ${entity.team || 'Unknown'} | Requester: ${entity.requester || 'Unknown'}`;
+        case 'ideations': return `Job Type: ${entity.jobType || 'Unknown'} | Status: ${entity.status}`;
         case 'doubles': return `Idea: ${entity.ideaId}`;
-        case 'repositories': return entity.description || entity.language;
+        case 'repositories': return entity.description || entity.language || `Language: ${entity.language || 'Unknown'}`;
+        case 'issues': return `Issue #${entity.number} | State: ${entity.state}`;
         default: return entity.domain;
       }
     };
@@ -226,7 +239,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
       </div>
 
       {/* Entity counts overview */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
         {Object.entries(counts).map(([key, count]) => (
           <div key={key} className="bg-white border border-gray-200 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-blue-600">{count}</div>
@@ -249,7 +262,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
       {/* Tab navigation */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="flex space-x-8">
-          {(['projects', 'reports', 'ideations', 'doubles', 'repositories'] as EntityType[]).map((tab) => (
+          {(['projects', 'reports', 'ideations', 'doubles', 'repositories', 'issues'] as EntityType[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}

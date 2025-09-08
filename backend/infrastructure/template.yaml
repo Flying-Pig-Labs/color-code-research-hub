@@ -55,13 +55,16 @@ Parameters:
     Default: Projects
   ReportsTableNameParam:
     Type: String
-    Default: Reports
+    Default: ResearchReports
   IdeationsTableNameParam:
     Type: String
-    Default: Ideations
+    Default: PipelineBatchJobs
   DoubleDownsTableNameParam:
     Type: String
     Default: DoubleDowns
+  PipelineReposTableNameParam:
+    Type: String
+    Default: PipelineRepos
   ArtifactsBucketNameParam:
     Type: String
     Default: datalayerstack-artifacts
@@ -120,6 +123,7 @@ Resources:
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ReportsTableNameParam}
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IdeationsTableNameParam}
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DoubleDownsTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PipelineReposTableNameParam}
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ReportsTableNameParam}/index/*
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ProjectsTableNameParam}/index/*
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CreditLedgerTableNameParam}/index/*
@@ -1331,6 +1335,58 @@ Resources:
       Environment:
         Variables:
           ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+
+  # Pipeline Tables Functions (Real Data)
+  V2ResearchReportsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: research_reports_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          RESEARCH_REPORTS_TABLE: !Ref ReportsTableNameParam
+      Events:
+        ListResearchReports:
+          Type: HttpApi
+          Properties:
+            Path: /research-reports
+            Method: GET
+
+  V2PipelineIdeationsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: pipeline_ideations_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          PIPELINE_BATCH_JOBS_TABLE: !Ref IdeationsTableNameParam
+      Events:
+        ListPipelineIdeations:
+          Type: HttpApi
+          Properties:
+            Path: /pipeline-ideations
+            Method: GET
+
+  V2PipelineReposList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: pipeline_repos_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          PIPELINE_REPOS_TABLE: !Ref PipelineReposTableNameParam
+      Events:
+        ListPipelineRepos:
+          Type: HttpApi
+          Properties:
+            Path: /pipeline-repos
+            Method: GET
 
 
 Outputs:

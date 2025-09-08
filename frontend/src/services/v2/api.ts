@@ -47,7 +47,7 @@ export const v2Api = {
   startReport: (projectId: string) =>
     apiFetch(`/projects/${projectId}/report/start`, { method: 'POST', body: JSON.stringify({}) }),
   getReport: (reportId: string) => apiFetch(`/reports/${reportId}`),
-  listReports: () => apiFetch('/reports'),
+  listReports: () => apiFetch('/research-reports'),
 
   startIdeation: (projectId: string, body: { reportId: string }) =>
     apiFetch(`/projects/${projectId}/ideation/start`, {
@@ -55,7 +55,7 @@ export const v2Api = {
       body: JSON.stringify(body),
     }),
   getIdeation: (ideationId: string) => apiFetch(`/ideations/${ideationId}`),
-  listIdeations: () => apiFetch('/ideations'),
+  listIdeations: () => apiFetch('/pipeline-ideations'),
 
   startDouble: (projectId: string, body: { ideationId: string; ideaId: string; feedback?: string }) =>
     apiFetch(`/projects/${projectId}/double-down/start`, {
@@ -65,8 +65,9 @@ export const v2Api = {
   getDouble: (doubleId: string) => apiFetch(`/double-downs/${doubleId}`),
   listDoubles: () => apiFetch('/double-downs'),
 
-  // Repositories (DynamoDB-backed)
-  listRepositories: () => apiFetch('/api/repositories'),
+  // Pipeline Data (Real user data)
+  listPipelineRepos: (itemType?: 'repo' | 'issue' | 'all') => 
+    apiFetch(`/pipeline-repos${itemType ? `?item_type=${itemType}` : ''}`),
   getRepositoryIssues: (repoId: string) => apiFetch(`/api/repositories/${repoId}/issues`),
   getRepositoryPulls: (repoId: string) => apiFetch(`/api/repositories/${repoId}/pulls`),
   getRepositoryBuilds: (repoId: string) => apiFetch(`/api/repositories/${repoId}/builds`),
@@ -92,23 +93,33 @@ export type DoubleStatus = { status: string; finalPdfUrl?: string; zipUrl?: stri
 
 export type Report = {
   reportId: string;
-  projectId: string;
+  title: string;
   status: string;
-  title?: string;
-  createdAt: number;
-  updatedAt: number;
+  team?: string;
+  requester?: string;
+  createdAt: number | string;
+  updatedAt?: number | string;
   reportUrl?: string;
+  username?: string;
+  tags?: string[];
+  wordCount?: number;
+  confidence?: number;
 };
 
 export type Ideation = {
   ideationId: string;
-  projectId: string;
-  reportId: string;
+  title: string;
   status: string;
-  title?: string;
-  createdAt: number;
-  updatedAt: number;
-  ideasUrl?: string;
+  description?: string;
+  createdAt: number | string;
+  updatedAt?: number | string;
+  username?: string;
+  jobType?: string;
+  batchJobId?: string;
+  inputs?: any;
+  outputs?: any;
+  duration?: number;
+  error?: string;
 };
 
 export type Double = {
@@ -122,6 +133,48 @@ export type Double = {
   updatedAt: number;
   finalPdfUrl?: string;
   zipUrl?: string;
+};
+
+export type PipelineRepo = {
+  id: string;
+  name: string;
+  full_name?: string;
+  description?: string;
+  body: string; // README content for repos, issue description for issues
+  html_url?: string;
+  language?: string;
+  stargazers_count?: number;
+  created_at: number | string;
+  updated_at?: number | string;
+  username: string;
+  itemType: string; // 'REPO' or 'ISSUE#1', 'ISSUE#2', etc.
+  repoId?: string;
+  visibility?: string;
+};
+
+export type PipelineIssue = {
+  id: string;
+  number: number;
+  title: string;
+  body: string; // Issue description
+  state: string;
+  created_at: number | string;
+  updated_at?: number | string;
+  username: string;
+  itemType: string; // 'ISSUE#1', 'ISSUE#2', etc.
+  repoId?: string;
+  repository_id?: string;
+  labels?: string[];
+  assignees?: string[];
+};
+
+export type PipelineReposResponse = {
+  repositories: PipelineRepo[];
+  issues: PipelineIssue[];
+  total: {
+    repositories: number;
+    issues: number;
+  };
 };
 
 export type Repository = {
