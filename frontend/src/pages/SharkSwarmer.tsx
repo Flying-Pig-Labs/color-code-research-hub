@@ -12,6 +12,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
 import SharkLeaderboard from "@/components/SharkLeaderboard";
 import { PipelineJobsTable } from "@/components/PipelineJobsTable";
+import { useIsAdmin } from '@/hooks/useAdmin';
 
 interface GitHubRepo {
   id: number;
@@ -27,6 +28,7 @@ interface GitHubRepo {
 
 const SharkSwarmer = () => {
   const { toast } = useToast();
+  const isAdmin = useIsAdmin();
   const [pipelineJobsExpanded, setPipelineJobsExpanded] = useState(false);
   const [howModalOpen, setHowModalOpen] = useState(false);
   
@@ -55,36 +57,38 @@ const SharkSwarmer = () => {
       <section className="py-12 lg:py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="space-y-6">
-            {/* Collapsible Pipeline Jobs Section */}
-            <Card className="bg-card border-border shadow-card">
-              <CardHeader 
-                className="cursor-pointer hover:bg-muted/50 transition-gentle"
-                onClick={() => setPipelineJobsExpanded(!pipelineJobsExpanded)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-accent/10">
-                      <Target className="h-5 w-5 text-accent" />
+            {/* Collapsible Pipeline Jobs Section - Admin Only */}
+            {isAdmin && (
+              <Card className="bg-card border-border shadow-card">
+                <CardHeader 
+                  className="cursor-pointer hover:bg-muted/50 transition-gentle"
+                  onClick={() => setPipelineJobsExpanded(!pipelineJobsExpanded)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-accent/10">
+                        <Target className="h-5 w-5 text-accent" />
+                      </div>
+                      <div>
+                        <CardDescription>track running ideation processes and outputs</CardDescription>
+                      </div>
                     </div>
-                    <div>
-                      <CardDescription>track running ideation processes and outputs</CardDescription>
-                    </div>
+                    <Button variant="ghost" size="sm">
+                      {pipelineJobsExpanded ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    {pipelineJobsExpanded ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </CardHeader>
-              {pipelineJobsExpanded && (
-                <CardContent className="pt-0">
-                  <PipelineJobsTable />
-                </CardContent>
-              )}
-            </Card>
+                </CardHeader>
+                {pipelineJobsExpanded && (
+                  <CardContent className="pt-0">
+                    <PipelineJobsTable />
+                  </CardContent>
+                )}
+              </Card>
+            )}
 
             {/* Leaderboard */}
             <SharkLeaderboard />
