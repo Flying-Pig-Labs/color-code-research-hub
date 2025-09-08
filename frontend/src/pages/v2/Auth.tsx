@@ -23,6 +23,10 @@ const Auth: React.FC = () => {
   const signInUrl = useMemo(() => buildAuthorizeUrl('signin'), []);
   const signUpUrl = useMemo(() => buildAuthorizeUrl('signup'), []);
   const missingEnv = !signInUrl || !signUpUrl;
+  
+  // Debug URLs
+  console.log('Auth - Sign In URL:', signInUrl);
+  console.log('Auth - Sign Up URL:', signUpUrl);
 
   // Auto-redirect authenticated users to the app
   useEffect(() => {
@@ -75,16 +79,18 @@ const Auth: React.FC = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <a 
-                href={signInUrl}
-                className="flex-1 inline-flex items-center justify-center rounded-md bg-accent px-4 py-2 text-accent-foreground hover:bg-accent/90 transition-colors"
-              >
-                Sign In
-              </a>
-              <a 
                 href={signUpUrl}
-                className="flex-1 inline-flex items-center justify-center rounded-md border border-border px-4 py-2 hover:bg-muted transition-colors"
+                className="flex-1 inline-flex items-center justify-center rounded-md bg-accent px-4 py-2 text-accent-foreground hover:bg-accent/90 transition-colors"
+                id="create-account-btn"
               >
                 Create Account
+              </a>
+              <a 
+                href={signInUrl}
+                className="flex-1 inline-flex items-center justify-center rounded-md border border-border px-4 py-2 hover:bg-muted transition-colors"
+                id="sign-in-btn"
+              >
+                Sign In
               </a>
             </div>
           </div>
