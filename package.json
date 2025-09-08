@@ -8,7 +8,8 @@
     "dev": "cd frontend && vite",
     "build": "cd frontend && vite build",
     "preview": "cd frontend && vite preview",
-    "test": "cd frontend && vitest run"
+    "test": "cd frontend && vitest run",
+    "migrate:github": "node scripts/github-to-dynamodb.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.18.0",
