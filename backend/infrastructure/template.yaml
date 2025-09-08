@@ -327,6 +327,7 @@ Resources:
                 - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/BuildHistory
                 - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Issues
                 - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PullRequests
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SharkTankReviews
       Events:
         ListRepositories:
           Type: HttpApi
@@ -352,6 +353,11 @@ Resources:
           Type: HttpApi
           Properties:
             Path: /api/issues/{issueId}/comments
+            Method: GET
+        GetRepositoriesFromIdeations:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/from-ideations
             Method: GET
 
   # Lambda Execution Role
