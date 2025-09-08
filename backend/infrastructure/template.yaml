@@ -1009,6 +1009,7 @@ Resources:
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
         Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         CreateProject:
@@ -1028,6 +1029,7 @@ Resources:
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
         Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         ListProjects:
@@ -1047,6 +1049,7 @@ Resources:
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
         Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
           PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
       Events:
         GetProject:
@@ -1280,6 +1283,7 @@ Resources:
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
         Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
           REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
       Events:
         ListReports:
@@ -1298,6 +1302,7 @@ Resources:
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
         Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
           IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
       Events:
         ListIdeations:
@@ -1316,6 +1321,7 @@ Resources:
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
         Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
           DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
       Events:
         ListDoubles:

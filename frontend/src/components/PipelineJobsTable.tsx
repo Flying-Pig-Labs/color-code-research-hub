@@ -21,7 +21,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { listResearchReports, ResearchReport } from '@/services/researchApi';
+import { v2Api } from '@/services/v2/api';
+import type { Report } from '@/services/v2/api';
 import { ProgressTracker } from './ProgressTracker';
 import { ProcessingJob } from '../types/pipeline';
 
@@ -46,12 +47,12 @@ export const PipelineJobsTable = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [researchReports, setResearchReports] = useState<ResearchReport[]>([]);
+  const [researchReports, setResearchReports] = useState<Report[]>([]);
 
   // Fetch research reports to get objectives
   const fetchResearchReports = async () => {
     try {
-      const reports = await listResearchReports(undefined, 100); // Get all recent reports
+      const reports = await v2Api.listReports(); // Get all recent reports
       setResearchReports(reports);
     } catch (error) {
       console.error('Error fetching research reports:', error);

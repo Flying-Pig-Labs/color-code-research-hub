@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { v2Api } from '@/services/v2/api';
 
 function base64UrlDecode(input: string): string {
   const base64 = input.replace(/-/g, '+').replace(/_/g, '/');
@@ -53,6 +54,10 @@ const AuthCallback: React.FC = () => {
         // Mark app as authenticated for current simple guard
         sessionStorage.setItem('isAuthenticated', 'true');
 
+        // Kick off user initialization in backend (creates Users row on first login)
+        // Fire-and-forget; navigation proceeds immediately
+        void v2Api.getBalance().catch(() => {/* ignore */});
+
         console.log('AuthCallback - Successfully processed tokens, redirecting to /v2/projects');
         // Redirect into app
         navigate('/v2/projects', { replace: true });
@@ -78,4 +83,3 @@ const AuthCallback: React.FC = () => {
 };
 
 export default AuthCallback;
-

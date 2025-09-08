@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { listResearchReports, ResearchReport } from '../services/researchApi';
+import { v2Api } from '../services/v2/api';
+import type { Report } from '../services/v2/api';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ExternalLink, Eye } from 'lucide-react';
@@ -14,10 +15,10 @@ interface ResearchReportHistoryProps {
 }
 
 export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistoryProps) {
-  const [reports, setReports] = useState<ResearchReport[]>([]);
+  const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedReport, setSelectedReport] = useState<ResearchReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [modalMode, setModalMode] = useState<'preview' | 'full'>('preview');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,7 +32,7 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
       setError(null);
       
       // Get all reports from API first (this should query DynamoDB for actual status)
-      const apiReports = await listResearchReports(team, limit);
+      const apiReports = await v2Api.listReports();
       
       // Get local tasks for any additional context, but don't rely on their status
       const localTasks = JSON.parse(localStorage.getItem('researchTasks') || '[]');
