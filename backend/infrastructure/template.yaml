@@ -326,6 +326,7 @@ Resources:
                 - dynamodb:Scan
                 - dynamodb:Query
                 - dynamodb:GetItem
+                - dynamodb:PutItem
               Resource: 
                 - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Repositories
                 - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/BuildHistory
@@ -338,6 +339,11 @@ Resources:
           Properties:
             Path: /api/repositories
             Method: GET
+        CreateRepository:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories
+            Method: POST
         GetRepositoryIssues:
           Type: HttpApi
           Properties:

@@ -43,6 +43,7 @@ import { Badge } from "@/components/ui/badge";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
 import { submitResearch, formatRedTeamPrompt } from "@/services/researchApi";
+import { useUser } from "@/contexts/UserContext";
 
 /**
  * Props interface for the ResearchSwarmForm component.
@@ -80,6 +81,7 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const apiEnvironment = useApiEnvironment();
+  const { user } = useUser();
 
   // Remove polling - let the main table handle it
 
@@ -136,7 +138,8 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
         team: 'red', // This is Red Team research
         companyName: companyName,
         vendorName: companyName, // Add vendor name for better tracking
-        targetCompany: companyName // Specifically for red team target display
+        targetCompany: companyName, // Specifically for red team target display
+        username: user?.name || "fprior" // Use authenticated user's name, fallback to "fprior"
       });
       
       toast.success(`Research swarm launched for ${companyName || 'Unknown Company'}!`, {
@@ -238,6 +241,9 @@ const ResearchSwarmForm = ({ children }: ResearchSwarmFormProps) => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Company Name</CardTitle>
+              <CardDescription>
+                Research results will be tracked under your username ({user?.name || "fprior"}) in the PipelineRepos table for both REPO and ISSUE# item types.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Input

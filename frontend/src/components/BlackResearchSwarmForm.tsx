@@ -20,6 +20,7 @@ import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
 import { submitResearch, formatBlackTeamPrompt } from "@/services/researchApi";
+import { useUser } from "@/contexts/UserContext";
 
 interface BlackResearchSwarmFormProps {
   children: React.ReactNode;
@@ -41,6 +42,7 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
   
   // API state
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useUser();
   const [jobId, setJobId] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<ResearchJob | null>(null);
   const [isPolling, setIsPolling] = useState(false);
@@ -171,7 +173,8 @@ const BlackResearchSwarmForm = ({ children }: BlackResearchSwarmFormProps) => {
         team: 'black',
         companyName: companyName || 'Not specified',
         vendorName: targetVendor,
-        targetVendor: targetVendor // Specifically for black team target display
+        targetVendor: targetVendor, // Specifically for black team target display
+        username: user?.name || "fprior" // Use authenticated user's name, fallback to "fprior"
       });
       
       // Store the request ID for tracking

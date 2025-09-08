@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
 import { BacklogGenerationHistory } from "@/components/BacklogGenerationHistory";
+import { useUser } from "@/contexts/UserContext";
 
 interface GitHubRepo {
   id: number;
@@ -22,11 +23,13 @@ interface GitHubRepo {
   language: string;
   updated_at: string;
   stargazers_count: number;
+  body?: string; // README content from DynamoDB
 }
 
 const MilestonesTab = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user, token } = useUser();
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,20 +50,36 @@ const MilestonesTab = () => {
 
   useEffect(() => {
     fetchMvpBuilderRepos();
-  }, []);
+  }, [user, token]);
 
   const fetchMvpBuilderRepos = async () => {
+    if (!user || !token) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      // Use the GitHub service directly instead of a backend API
-      const { githubService } = await import('../services/githubService');
-      const repos = await githubService.listRecentRepos('', 50); // Get more repos, no prefix filter
+      // Use the DynamoDB Repositories API instead of GitHub
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/repositories`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch repositories: ${response.statusText}`);
+      }
+
+      const repos = await response.json();
       setRepos(repos);
     } catch (error) {
       console.error("Error fetching repos:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch truflr.ai repositories. Please check your GitHub token.",
+        description: "Failed to fetch your repositories. Please make sure you're logged in.",
         variant: "destructive",
       });
     } finally {
@@ -92,7 +111,7 @@ const MilestonesTab = () => {
             repository: repo.html_url,
             branch: 'main'
           },
-          readmeContent: `# ${repo.name}\n\n${repo.description || 'No description available'}`,
+          readmeContent: repo.body || `# ${repo.name}\n\n${repo.description || 'No description available'}`,
           githubConfig: {
             createIssues: true,
             repository: repo.full_name,
@@ -203,7 +222,7 @@ const MilestonesTab = () => {
                 <div>
                   <CardTitle className="text-2xl font-bold text-foreground">plan gtm</CardTitle>
                   <CardDescription className="text-muted-foreground mt-1">
-                    choose a repository from truflr.ai to generate your project plan
+                    choose from your created repositories to generate your project plan
                   </CardDescription>
                 </div>
               </div>

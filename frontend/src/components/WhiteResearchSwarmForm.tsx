@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { generateRepoId, generateUniqueRepoId } from "@/utils/idGenerator";
 import { githubService } from "@/services/githubService";
 import { submitResearch, formatWhiteTeamPrompt } from "@/services/researchApi";
+import { useUser } from "@/contexts/UserContext";
 
 interface WhiteResearchSwarmFormProps {
   children: React.ReactNode;
@@ -48,6 +49,7 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
   const [showLogs, setShowLogs] = useState(false);
   
   const apiEnvironment = useApiEnvironment();
+  const { user } = useUser();
 
   // Polling effect for status updates
   useEffect(() => {
@@ -173,7 +175,8 @@ const WhiteResearchSwarmForm = ({ children }: WhiteResearchSwarmFormProps) => {
         task: researchPrompt,
         team: 'white',
         companyName: companyName || 'Not specified',
-        vendorName: opportunityTypes.join(', ') || 'White space opportunity'
+        vendorName: opportunityTypes.join(', ') || 'White space opportunity',
+        username: user?.name || "fprior" // Use authenticated user's name, fallback to "fprior"
       });
       
       // Store the request ID for tracking

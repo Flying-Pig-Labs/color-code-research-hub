@@ -4,7 +4,26 @@
  */
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, ScanCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, ScanCommand, QueryCommand, PutCommand } = require('@aws-sdk/lib-dynamodb');
+
+/**
+ * Extract username from JWT token in Authorization header
+ */
+function getAuthenticatedUsername(event) {
+  const authHeader = event.headers?.Authorization || event.headers?.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  try {
+    const token = authHeader.substring(7);
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    return payload.name || payload.username || null;
+  } catch (error) {
+    console.error('Error parsing JWT token:', error);
+    return null;
+  }
+}
 
 const ddb = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const docClient = DynamoDBDocumentClient.from(ddb);
@@ -21,8 +40,8 @@ exports.handler = async (event) => {
   const corsHeaders = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key',
-    'Access-Control-Allow-Methods': 'GET,OPTIONS'
+    'Access-Control-Allow-Headers': 'Content-Type,X-Api-Key,Authorization',
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
   };
 
   if (event.httpMethod === 'OPTIONS') {
@@ -36,31 +55,104 @@ exports.handler = async (event) => {
   try {
     const pathSegments = event.path.split('/').filter(Boolean);
 
-    // GET /api/repositories - List all repositories
+    // GET /api/repositories - List repositories for authenticated user
     if (pathSegments.length === 2 && pathSegments[0] === 'api' && pathSegments[1] === 'repositories') {
+      const username = getAuthenticatedUsername(event);
+      if (!username) {
+        return {
+          statusCode: 401,
+          headers: corsHeaders,
+          body: JSON.stringify({ error: 'Authentication required' })
+        };
+      }
+
       const command = new ScanCommand({
-        TableName: TABLE_NAMES.REPOSITORIES
+        TableName: TABLE_NAMES.REPOSITORIES,
+        FilterExpression: 'username = :username',
+        ExpressionAttributeValues: {
+          ':username': username
+        }
       });
       
       const result = await docClient.send(command);
       
       // Transform to GitHub API format
       const repositories = result.Items.map(item => ({
-        id: parseInt(item.repoId),
+        id: parseInt(item.repoId) || parseInt(item.id) || Date.now(),
         name: item.name,
-        full_name: `owner/${item.name}`, // You might want to store owner separately
+        full_name: item.full_name || `${username}/${item.name}`,
         description: item.description,
-        html_url: item.url,
+        html_url: item.html_url || item.url,
         language: item.language,
-        stargazers_count: item.stars || 0,
-        created_at: item.createdAt,
-        updated_at: item.updatedAt
+        stargazers_count: item.stars || item.stargazers_count || 0,
+        created_at: item.createdAt || item.created_at,
+        updated_at: item.updatedAt || item.updated_at,
+        private: item.private || false,
+        body: item.body // Include README content
       }));
 
       return {
         statusCode: 200,
         headers: corsHeaders,
         body: JSON.stringify(repositories)
+      };
+    }
+
+    // POST /api/repositories - Create a new repository record
+    if (pathSegments.length === 2 && pathSegments[0] === 'api' && pathSegments[1] === 'repositories' && event.httpMethod === 'POST') {
+      const username = getAuthenticatedUsername(event);
+      if (!username) {
+        return {
+          statusCode: 401,
+          headers: corsHeaders,
+          body: JSON.stringify({ error: 'Authentication required' })
+        };
+      }
+
+      let repositoryData;
+      try {
+        repositoryData = JSON.parse(event.body);
+      } catch (error) {
+        return {
+          statusCode: 400,
+          headers: corsHeaders,
+          body: JSON.stringify({ error: 'Invalid JSON in request body' })
+        };
+      }
+
+      // Generate a unique repository ID
+      const repoId = repositoryData.name ? `${username}-${repositoryData.name}-${Date.now()}` : `${username}-${Date.now()}`;
+      
+      const repositoryRecord = {
+        repoId: repoId,
+        username: username,
+        name: repositoryData.name,
+        full_name: repositoryData.full_name,
+        description: repositoryData.description,
+        html_url: repositoryData.html_url,
+        language: repositoryData.language || 'Unknown',
+        stargazers_count: repositoryData.stargazers_count || 0,
+        private: repositoryData.private || false,
+        created_at: repositoryData.created_at || new Date().toISOString(),
+        updated_at: repositoryData.updated_at || new Date().toISOString(),
+        body: repositoryData.body || '', // README content
+      };
+
+      const command = new PutCommand({
+        TableName: TABLE_NAMES.REPOSITORIES,
+        Item: repositoryRecord
+      });
+
+      await docClient.send(command);
+
+      return {
+        statusCode: 201,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          success: true,
+          repository: repositoryRecord,
+          message: 'Repository record created successfully'
+        })
       };
     }
 

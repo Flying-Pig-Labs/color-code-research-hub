@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Trophy, TrendingUp, DollarSign, ExternalLink, Rocket, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/contexts/UserContext';
 import {
   Table,
   TableBody,
@@ -61,6 +62,7 @@ interface BuildResponse {
 
 const SharkLeaderboard = () => {
   const { toast } = useToast();
+  const { user, token } = useUser();
   const [ideas, setIdeas] = useState<LeaderboardIdea[]>([]);
   const [allIdeas, setAllIdeas] = useState<LeaderboardIdea[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,6 +140,42 @@ const SharkLeaderboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const saveRepositoryToDynamoDB = async (responseData: any, idea: LeaderboardIdea) => {
+    if (!user || !token) {
+      throw new Error('User authentication required');
+    }
+
+    const repositoryData = {
+      name: responseData.repo_name || idea.issueTitle,
+      full_name: responseData.repository?.full_name || `${user.name}/${responseData.repo_name}`,
+      description: responseData.repository?.description || idea.description || idea.issueTitle,
+      html_url: responseData.repo_url,
+      language: 'JavaScript', // Default, could be inferred from repo
+      stargazers_count: 0,
+      private: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      username: user.name,
+      body: responseData.readme_content || `# ${responseData.repo_name || idea.issueTitle}\n\n${idea.description || 'Repository created from ideation process.'}\n\n## Shark Tank Details\n- **Rank**: ${idea.rank}\n- **Score**: ${idea.sharkScore}\n- **Investment**: ${idea.investmentDisplay}\n- **Issue**: ${idea.issueNumber}`
+    };
+
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/repositories`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(repositoryData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to save repository to DynamoDB: ${errorText}`);
+    }
+
+    return await response.json();
+  };
+
   const handleBuild = async (idea: LeaderboardIdea) => {
     try {
       setBuildingIdea(idea.issueNumber);
@@ -186,6 +224,14 @@ const SharkLeaderboard = () => {
         throw new Error(responseData.error || 'Failed to build repository');
       }
       
+      // Save repository data to DynamoDB Repositories table
+      try {
+        await saveRepositoryToDynamoDB(responseData, idea);
+      } catch (dynamoError) {
+        console.warn('Failed to save repository to DynamoDB:', dynamoError);
+        // Continue with success toast even if DynamoDB save fails
+      }
+
       toast({
         title: "Success! 🚀",
         description: (
