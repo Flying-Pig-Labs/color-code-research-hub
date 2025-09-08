@@ -47,6 +47,7 @@ export const v2Api = {
   startReport: (projectId: string) =>
     apiFetch(`/projects/${projectId}/report/start`, { method: 'POST', body: JSON.stringify({}) }),
   getReport: (reportId: string) => apiFetch(`/reports/${reportId}`),
+  listReports: () => apiFetch('/reports'),
 
   startIdeation: (projectId: string, body: { reportId: string }) =>
     apiFetch(`/projects/${projectId}/ideation/start`, {
@@ -54,6 +55,7 @@ export const v2Api = {
       body: JSON.stringify(body),
     }),
   getIdeation: (ideationId: string) => apiFetch(`/ideations/${ideationId}`),
+  listIdeations: () => apiFetch('/ideations'),
 
   startDouble: (projectId: string, body: { ideationId: string; ideaId: string; feedback?: string }) =>
     apiFetch(`/projects/${projectId}/double-down/start`, {
@@ -61,6 +63,7 @@ export const v2Api = {
       body: JSON.stringify(body),
     }),
   getDouble: (doubleId: string) => apiFetch(`/double-downs/${doubleId}`),
+  listDoubles: () => apiFetch('/double-downs'),
 
   // Repositories (DynamoDB-backed)
   listRepositories: () => apiFetch('/api/repositories'),
@@ -86,6 +89,40 @@ export type Project = { projectId: string; title: string; domain?: string; creat
 export type ReportStatus = { status: string; reportUrl?: string };
 export type IdeationStatus = { status: string; ideasUrl?: string };
 export type DoubleStatus = { status: string; finalPdfUrl?: string; zipUrl?: string };
+
+export type Report = {
+  reportId: string;
+  projectId: string;
+  status: string;
+  title?: string;
+  createdAt: number;
+  updatedAt: number;
+  reportUrl?: string;
+};
+
+export type Ideation = {
+  ideationId: string;
+  projectId: string;
+  reportId: string;
+  status: string;
+  title?: string;
+  createdAt: number;
+  updatedAt: number;
+  ideasUrl?: string;
+};
+
+export type Double = {
+  doubleId: string;
+  projectId: string;
+  ideationId: string;
+  ideaId: string;
+  status: string;
+  title?: string;
+  createdAt: number;
+  updatedAt: number;
+  finalPdfUrl?: string;
+  zipUrl?: string;
+};
 
 export type Repository = {
   id: number;
