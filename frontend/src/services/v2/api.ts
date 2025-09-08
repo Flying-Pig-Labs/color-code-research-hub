@@ -62,6 +62,14 @@ export const v2Api = {
     }),
   getDouble: (doubleId: string) => apiFetch(`/double-downs/${doubleId}`),
 
+  // Repositories (DynamoDB-backed)
+  listRepositories: () => apiFetch('/api/repositories'),
+  getRepositoryIssues: (repoId: string) => apiFetch(`/api/repositories/${repoId}/issues`),
+  getRepositoryPulls: (repoId: string) => apiFetch(`/api/repositories/${repoId}/pulls`),
+  getRepositoryBuilds: (repoId: string) => apiFetch(`/api/repositories/${repoId}/builds`),
+  getIssueComments: (issueId: string) => apiFetch(`/api/issues/${issueId}/comments`),
+  getRepositoriesFromIdeations: () => apiFetch('/api/repositories/from-ideations'),
+
   // Admin
   adminMetrics: () => apiFetch('/admin/metrics'),
   adminUsers: () => apiFetch('/admin/users'),
@@ -78,3 +86,58 @@ export type Project = { projectId: string; title: string; domain?: string; creat
 export type ReportStatus = { status: string; reportUrl?: string };
 export type IdeationStatus = { status: string; ideasUrl?: string };
 export type DoubleStatus = { status: string; finalPdfUrl?: string; zipUrl?: string };
+
+export type Repository = {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string;
+  html_url: string;
+  language: string;
+  stargazers_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Issue = {
+  id: number;
+  number: number;
+  title: string;
+  state: string;
+  created_at: string;
+  updated_at: string;
+  repository_id: number;
+};
+
+export type PullRequest = {
+  id: number;
+  number: number;
+  title: string;
+  state: string;
+  created_at: string;
+  updated_at: string;
+  merged_at: string | null;
+  repository_id: number;
+};
+
+export type BuildHistory = {
+  id: number;
+  status: string;
+  start_time: string;
+  end_time: string;
+  logs_url: string;
+  artifacts_url: string;
+  repository_id: number;
+};
+
+export type IssueComment = {
+  issue_id: string;
+  shark_name: string;
+  decision: string;
+  review_content: string;
+  investment_amount: number;
+  equity_percentage: number;
+  confidence_score: number;
+  review_timestamp: string;
+  repository: string;
+};

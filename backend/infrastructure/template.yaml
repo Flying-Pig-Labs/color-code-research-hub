@@ -268,7 +268,7 @@ Resources:
             Path: /health
             Method: GET
 
-  # GitHub Repository Function
+  # GitHub Repository Function (Legacy - calls GitHub API)
   GitHubReposFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -299,6 +299,59 @@ Resources:
           Properties:
             
             Path: /api/github/repos/{org}
+            Method: GET
+
+  # Repository Data Function (DynamoDB-backed - faster, no rate limits)
+  RepositoryDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: repositoryData.handler
+      Environment:
+        Variables:
+          REPOSITORIES_TABLE: Repositories
+          BUILD_HISTORY_TABLE: BuildHistory  
+          ISSUES_TABLE: Issues
+          PRS_TABLE: PullRequests
+          SHARK_REVIEWS_TABLE: SharkTankReviews
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Scan
+                - dynamodb:Query
+                - dynamodb:GetItem
+              Resource: 
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Repositories
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/BuildHistory
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Issues
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PullRequests
+      Events:
+        ListRepositories:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories
+            Method: GET
+        GetRepositoryIssues:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/{repoId}/issues
+            Method: GET
+        GetRepositoryPulls:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/{repoId}/pulls
+            Method: GET
+        GetRepositoryBuilds:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/{repoId}/builds
+            Method: GET
+        GetIssueComments:
+          Type: HttpApi
+          Properties:
+            Path: /api/issues/{issueId}/comments
             Method: GET
 
   # Lambda Execution Role
