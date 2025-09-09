@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PipelineOverview from '@/components/v2/PipelineOverview';
+import IdeationOverview from '@/components/v2/IdeationOverview';
 
 /**
  * Format timestamp to readable date.
@@ -442,8 +443,9 @@ const Projects: React.FC = () => {
       )}
 
       {/* Pipeline overview (repos and ideas) */}
-      <div className="mt-8">
+      <div className="mt-8 space-y-8">
         <PipelineOverview />
+        <IdeationOverview />
       </div>
 
       {/* Empty State */}
