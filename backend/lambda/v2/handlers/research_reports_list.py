@@ -7,7 +7,6 @@ import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
 from utils.user_mapping import get_authenticated_username_with_mapping
-from helpers.auth import is_public_mode
 
 # Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -33,29 +32,6 @@ def handler(event, context):
     try:
         # Get authenticated username from JWT token with mapping
         username = get_authenticated_username_with_mapping(event)
-
-        # Public/demo mode: if no auth, return a small demo dataset only
-        if not username and is_public_mode():
-            demo = [
-                {
-                    'reportId': 'demo-001',
-                    'title': 'Demo Market Scan',
-                    'status': 'completed',
-                    'team': 'white',
-                    'createdAt': 1700000000000,
-                    'username': 'demo'
-                },
-                {
-                    'reportId': 'demo-002',
-                    'title': 'Demo Competitive Report',
-                    'status': 'completed',
-                    'team': 'red',
-                    'createdAt': 1690000000000,
-                    'username': 'demo'
-                },
-            ]
-            return create_cors_response(200, demo)
-
         if not username:
             return create_cors_response(401, {'error': 'Authentication required'})
         

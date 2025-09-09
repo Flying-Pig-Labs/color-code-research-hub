@@ -32,53 +32,64 @@ def handler(event, context):
     List all repositories and issues for the authenticated user from PipelineRepos
     Query params:
     - item_type: 'repo', 'issue', or 'all' (default: 'all')
+    In PUBLIC_MODE without auth:
+      - If item_type specified: returns demo repos/issues payload
+      - If item_type not specified: returns demo Projects[] payload for UI compatibility
     """
     try:
         # Get authenticated username from JWT token with mapping
         username = get_authenticated_username_with_mapping(event)
 
-        # Public/demo mode: if no auth, return small demo dataset
+        # Public/demo mode: if no auth, return demo payload
         if not username and is_public_mode():
-            demo_repos = [
-                {
-                    'id': 'demo-repo-1',
-                    'name': 'demo-repo',
-                    'full_name': 'demo/demo-repo',
-                    'description': 'Sample repository for demo mode',
-                    'body': '# Demo Repo\nThis is a demo README.',
-                    'html_url': 'https://github.com/demo/demo-repo',
-                    'language': 'TypeScript',
-                    'stargazers_count': 42,
-                    'created_at': 1700000000000,
-                    'updated_at': 1700100000000,
-                    'username': 'demo',
-                    'itemType': 'REPO',
-                    'repoId': 'demo-repo-1',
-                    'visibility': 'public'
-                }
+            # If UI calls with item_type, serve repos/issues demo
+            if item_type_filter in ('repo', 'issue', 'all') and 'item_type' in (event.get('queryStringParameters') or {}):
+                demo_repos = [
+                    {
+                        'id': 'demo-repo-1',
+                        'name': 'demo-repo',
+                        'full_name': 'demo/demo-repo',
+                        'description': 'Sample repository for demo mode',
+                        'body': '# Demo Repo\nThis is a demo README.',
+                        'html_url': 'https://github.com/demo/demo-repo',
+                        'language': 'TypeScript',
+                        'stargazers_count': 42,
+                        'created_at': 1700000000000,
+                        'updated_at': 1700100000000,
+                        'username': 'demo',
+                        'itemType': 'REPO',
+                        'repoId': 'demo-repo-1',
+                        'visibility': 'public'
+                    }
+                ]
+                demo_issues = [
+                    {
+                        'id': 'demo-issue-1',
+                        'number': 1,
+                        'title': 'Improve onboarding flow',
+                        'body': 'As a user, I want a simpler onboarding.',
+                        'state': 'open',
+                        'created_at': 1700200000000,
+                        'updated_at': 1700205000000,
+                        'username': 'demo',
+                        'itemType': 'ISSUE#1',
+                        'repoId': 'demo-repo-1',
+                        'repository_id': 'demo-repo-1',
+                        'labels': ['enhancement'],
+                        'assignees': []
+                    }
+                ]
+                return create_cors_response(200, {
+                    'repositories': demo_repos,
+                    'issues': demo_issues,
+                    'total': {'repositories': len(demo_repos), 'issues': len(demo_issues)}
+                })
+            # Otherwise, satisfy UI that expects Project[] from /projects
+            demo_projects = [
+                { 'projectId': 'demo-project-1', 'title': 'Demo Project One', 'createdAt': 1700000000000 },
+                { 'projectId': 'demo-project-2', 'title': 'Demo Project Two', 'createdAt': 1700100000000 },
             ]
-            demo_issues = [
-                {
-                    'id': 'demo-issue-1',
-                    'number': 1,
-                    'title': 'Improve onboarding flow',
-                    'body': 'As a user, I want a simpler onboarding.',
-                    'state': 'open',
-                    'created_at': 1700200000000,
-                    'updated_at': 1700205000000,
-                    'username': 'demo',
-                    'itemType': 'ISSUE#1',
-                    'repoId': 'demo-repo-1',
-                    'repository_id': 'demo-repo-1',
-                    'labels': ['enhancement'],
-                    'assignees': []
-                }
-            ]
-            return create_cors_response(200, {
-                'repositories': demo_repos,
-                'issues': demo_issues,
-                'total': {'repositories': len(demo_repos), 'issues': len(demo_issues)}
-            })
+            return create_cors_response(200, demo_projects)
 
         if not username:
             return create_cors_response(401, {'error': 'Authentication required'})
