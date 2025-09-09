@@ -25,15 +25,37 @@ const Auth: React.FC = () => {
   const signUpUrl = useMemo(() => buildAuthorizeUrl('signup'), []);
   const missingEnv = !signInUrl || !signUpUrl;
   
+  // If arriving at /v2/auth with an existing Hosted UI session, ensure a fresh choice is possible
+  // Optional: clear local tokens when force=true is present
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('force') === 'true') {
+      try {
+        sessionStorage.removeItem('id_token');
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('token_expires_in');
+        sessionStorage.removeItem('cognitoGroups');
+        sessionStorage.removeItem('isAuthenticated');
+      } catch { /* ignore */ }
+    }
+  }, []);
+  
   // Debug URLs
   console.log('Auth - Sign In URL:', signInUrl);
   console.log('Auth - Sign Up URL:', signUpUrl);
 
-  // Redirect authenticated users to the app; avoid auto-redirect loops for unauthenticated
+  // Redirect authenticated users to the app; optionally auto-forward unauthenticated to Hosted UI
   useEffect(() => {
     if (AUTH_DISABLED || isAuthenticated) {
       navigate("/v2/projects", { replace: true });
       return;
+    }
+    // Auto-kick to Cognito Hosted UI if configuration is present, to avoid lingering on spinner
+    if (!missingEnv && signInUrl) {
+      const t = setTimeout(() => {
+        window.location.assign(signInUrl);
+      }, 800);
+      return () => clearTimeout(t);
     }
   }, [isAuthenticated, navigate, signInUrl, missingEnv]);
 
@@ -80,6 +102,10 @@ const Auth: React.FC = () => {
               >
                 Sign In
               </a>
+            </div>
+            <div className="text-xs text-muted-foreground mt-2">
+              To switch accounts, first <a href="/v2/auth?force=true" className="underline">clear local session</a> or use the
+              app menu’s Sign out, then choose the desired user in the Cognito page.
             </div>
           </div>
         )}

@@ -139,6 +139,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sessionStorage.removeItem('token_expires_in');
     sessionStorage.removeItem('cognitoGroups');
     sessionStorage.removeItem('isAuthenticated');
+
+    // Also clear the Cognito Hosted UI session so next login can choose a different user
+    try {
+      const domain = (import.meta as any)?.env?.VITE_COGNITO_DOMAIN as string | undefined;
+      const clientId = (import.meta as any)?.env?.VITE_COGNITO_CLIENT_ID as string | undefined;
+      const logoutRedirect = (import.meta as any)?.env?.VITE_COGNITO_LOGOUT_REDIRECT_URI as string | undefined
+        || window.location.origin + '/';
+      if (domain && clientId) {
+        const url = new URL(`https://${domain}/logout`);
+        url.searchParams.set('client_id', clientId);
+        url.searchParams.set('logout_uri', logoutRedirect);
+        // Perform a hard navigation to ensure Cognito cookies are cleared
+        window.location.assign(url.toString());
+        return;
+      }
+    } catch {
+      // Swallow errors; caller can navigate after logout if needed
+    }
     // Navigation will be handled by the component that calls logout
   };
 
