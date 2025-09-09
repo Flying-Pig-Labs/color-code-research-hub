@@ -1,9 +1,19 @@
 import { envConfig } from '@/config/environment';
 
-// Simplified API helper with Authorization header taken from sessionStorage.
-// In production this would use Amplify fetchAuthSession to get the id token.
+// API helper that attaches Cognito ID token and handles auth redirects.
+// If no token is present (or token is rejected), we redirect to /v2/auth.
 async function apiFetch(path: string, options: RequestInit = {}) {
   const token = sessionStorage.getItem('id_token') || sessionStorage.getItem('idToken');
+  // If there's no token at all, force re-auth to acquire one
+  if (!token) {
+    // Best-effort clear and redirect to Cognito flow
+    sessionStorage.removeItem('isAuthenticated');
+    // Use hard redirect to avoid react-router dependency here
+    if (typeof window !== 'undefined') {
+      window.location.assign('/v2/auth');
+    }
+    throw new Error('Not authenticated: missing ID token');
+  }
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
@@ -16,6 +26,14 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     headers,
   });
   if (!res.ok) {
+    // On 401, clear any stale session flags and redirect to auth
+    if (res.status === 401) {
+      sessionStorage.removeItem('isAuthenticated');
+      // Do not remove id_token here; backend may be temporarily rejecting or token may be expired
+      if (typeof window !== 'undefined') {
+        window.location.assign('/v2/auth');
+      }
+    }
     throw new Error(`API error ${res.status}`);
   }
   if (res.status === 204) {

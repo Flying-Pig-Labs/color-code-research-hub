@@ -85,10 +85,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    */
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (AUTH_DISABLED) return true;
-    // Consider either our simple flag or presence of an id_token from Cognito Hosted UI
-    const authStatus = sessionStorage.getItem('isAuthenticated') === 'true';
+    // Require a Cognito ID token for V2 protected routes to avoid 401s
     const hasIdToken = !!sessionStorage.getItem('id_token');
-    return authStatus || hasIdToken;
+    return hasIdToken;
   });
 
   /**
@@ -98,6 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Update sessionStorage when auth state changes
     if (AUTH_DISABLED) return;
+    // Reflect the current token-backed auth state; do not allow flag-only auth
     if (isAuthenticated) sessionStorage.setItem('isAuthenticated', 'true');
     else sessionStorage.removeItem('isAuthenticated');
   }, [isAuthenticated]);
@@ -116,8 +116,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Hardcoded credentials for beta access
     // TODO: Replace with proper authentication service in production
     if (username === 'beta' && password === 'f@stf@shion') {
-      setIsAuthenticated(true);
-      return true;
+      // Legacy fallback no longer grants API access; guide user to Cognito
+      // Keep UX flow working, but force Cognito acquisition of id_token
+      setIsAuthenticated(false);
+      if (typeof window !== 'undefined') {
+        window.location.assign('/v2/auth');
+      }
+      return false;
     }
     return false;
   };
@@ -133,6 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('token_expires_in');
     sessionStorage.removeItem('cognitoGroups');
+    sessionStorage.removeItem('isAuthenticated');
     // Navigation will be handled by the component that calls logout
   };
 

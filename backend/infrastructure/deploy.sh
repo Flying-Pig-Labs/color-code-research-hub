@@ -95,6 +95,47 @@ echo "---------------------------------------"
 "$(dirname "$0")/copy-prompts-for-build.sh"
 echo "✅ Prompts copied"
 
+# Preflight validations (fail-fast)
+echo ""
+echo "🧪 Step 3.1: Validating SAM template..."
+echo "---------------------------------------"
+SAM_VALIDATE_OUT=$(sam validate 2>&1) || {
+    echo "❌ SAM template validation failed!"
+    echo "$SAM_VALIDATE_OUT"
+    exit 1
+}
+echo "✅ SAM template is valid"
+
+# Optional CDK synth preflight (skipped if SKIP_CDK=1)
+if [ "${SKIP_CDK:-}" != "1" ] && [ "${SKIP_CDK:-}" != "true" ]; then
+  CDK_DIR="$SCRIPT_DIR/cdk"
+  if [ -d "$CDK_DIR" ] && [ -f "$CDK_DIR/package.json" ]; then
+    echo ""
+    echo "🧪 Step 3.2: CDK synth preflight (Auth/Data/API) ..."
+    echo "---------------------------------------"
+    pushd "$CDK_DIR" >/dev/null
+    npm install >/dev/null
+    set +e
+    npx cdk -a 'npx ts-node bin/auth-layer.ts' synth AuthStack >/dev/null
+    AUTH_SYNTH_RC=$?
+    npx cdk -a 'npx ts-node bin/data-layer.ts' synth DataLayerStack >/dev/null
+    DATA_SYNTH_RC=$?
+    npx cdk -a 'npx ts-node bin/api-layer.ts' synth ApiLayerStack >/dev/null
+    API_SYNTH_RC=$?
+    set -e
+    if [ $AUTH_SYNTH_RC -ne 0 ] || [ $DATA_SYNTH_RC -ne 0 ] || [ $API_SYNTH_RC -ne 0 ]; then
+      echo "❌ CDK synth failed: Auth=$AUTH_SYNTH_RC, Data=$DATA_SYNTH_RC, API=$API_SYNTH_RC"
+      echo "   Run with DEBUG=true for detailed output."
+      popd >/dev/null
+      exit 1
+    fi
+    popd >/dev/null
+    echo "✅ CDK synth passed for Auth/Data/API"
+  else
+    echo "ℹ️  CDK project not found; skipping CDK synth preflight."
+  fi
+fi
+
 # Build the SAM application with parallel and caching
 echo ""
 echo "🏗️  Step 4: Building SAM application..."

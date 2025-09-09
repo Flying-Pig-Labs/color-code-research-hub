@@ -5060,7 +5060,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -5086,7 +5086,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "billing_stripe_session.handler",
+    "Handler": "handlers/billing_stripe_session.handler",
     "Role": {
      "Fn::GetAtt": [
       "BillingStripeSessionServiceRole5DDB8F4E",
@@ -5101,7 +5101,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/BillingStripeSession/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -5632,7 +5632,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -5658,7 +5658,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "billing_stripe_webhook.handler",
+    "Handler": "handlers/billing_stripe_webhook.handler",
     "Role": {
      "Fn::GetAtt": [
       "BillingStripeWebhookServiceRole7978B28D",
@@ -5673,7 +5673,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6199,7 +6199,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -6225,7 +6225,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "credits_balance.handler",
+    "Handler": "handlers/credits_balance.handler",
     "Role": {
      "Fn::GetAtt": [
       "CreditsBalanceServiceRoleBB788369",
@@ -6240,7 +6240,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/CreditsBalance/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6766,7 +6766,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -6792,7 +6792,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "projects_create.handler",
+    "Handler": "handlers/projects_create.handler",
     "Role": {
      "Fn::GetAtt": [
       "ProjectsCreateServiceRoleBF7C69EF",
@@ -6807,7 +6807,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsCreate/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7333,7 +7333,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -7359,7 +7359,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "pipeline_repos_list.handler",
+    "Handler": "handlers/projects_list.handler",
     "Role": {
      "Fn::GetAtt": [
       "ProjectsListServiceRole2EE796E8",
@@ -7374,7 +7374,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsList/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7900,7 +7900,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -7926,7 +7926,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "projects_get.handler",
+    "Handler": "handlers/projects_get.handler",
     "Role": {
      "Fn::GetAtt": [
       "ProjectsGetServiceRoleA0721553",
@@ -7941,7 +7941,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsGet/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8467,7 +8467,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -8493,7 +8493,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "report_start.handler",
+    "Handler": "handlers/report_start.handler",
     "Role": {
      "Fn::GetAtt": [
       "ReportStartServiceRole922232D8",
@@ -8508,7 +8508,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportStart/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9034,7 +9034,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -9060,7 +9060,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "research_reports_list.handler",
+    "Handler": "handlers/research_reports_list.handler",
     "Role": {
      "Fn::GetAtt": [
       "ReportsListServiceRole4587523C",
@@ -9075,7 +9075,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportsList/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9601,7 +9601,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -9627,7 +9627,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "report_get.handler",
+    "Handler": "handlers/report_get.handler",
     "Role": {
      "Fn::GetAtt": [
       "ReportGetServiceRoleEBAE137F",
@@ -9642,7 +9642,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportGet/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10168,7 +10168,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -10194,7 +10194,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "ideation_start.handler",
+    "Handler": "handlers/ideation_start.handler",
     "Role": {
      "Fn::GetAtt": [
       "IdeationStartServiceRole66E4BEE3",
@@ -10209,7 +10209,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationStart/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10735,7 +10735,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -10761,7 +10761,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "pipeline_ideations_list.handler",
+    "Handler": "handlers/pipeline_ideations_list.handler",
     "Role": {
      "Fn::GetAtt": [
       "IdeationsListServiceRole6F38D17E",
@@ -10776,7 +10776,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationsList/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11302,7 +11302,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -11328,7 +11328,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "ideation_get.handler",
+    "Handler": "handlers/ideation_get.handler",
     "Role": {
      "Fn::GetAtt": [
       "IdeationGetServiceRoleEDC90AE0",
@@ -11343,7 +11343,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationGet/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11869,7 +11869,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -11895,7 +11895,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "double_start.handler",
+    "Handler": "handlers/double_start.handler",
     "Role": {
      "Fn::GetAtt": [
       "DoubleStartServiceRoleDF7E4BC8",
@@ -11910,7 +11910,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/DoubleStart/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12436,7 +12436,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -12462,7 +12462,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "double_get.handler",
+    "Handler": "handlers/double_get.handler",
     "Role": {
      "Fn::GetAtt": [
       "DoubleGetServiceRole8089B895",
@@ -12477,7 +12477,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/DoubleGet/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -13003,7 +13003,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -13029,7 +13029,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "admin_users.handler",
+    "Handler": "handlers/admin_users.handler",
     "Role": {
      "Fn::GetAtt": [
       "AdminUsersServiceRoleE61C321F",
@@ -13044,7 +13044,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminUsers/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -13570,7 +13570,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -13596,7 +13596,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "admin_user_get.handler",
+    "Handler": "handlers/admin_user_get.handler",
     "Role": {
      "Fn::GetAtt": [
       "AdminUserGetServiceRoleBD609C53",
@@ -13611,7 +13611,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminUserGet/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14137,7 +14137,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -14163,7 +14163,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "admin_metrics.handler",
+    "Handler": "handlers/admin_metrics.handler",
     "Role": {
      "Fn::GetAtt": [
       "AdminMetricsServiceRole33E85810",
@@ -14178,7 +14178,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminMetrics/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14704,7 +14704,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -14730,7 +14730,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "admin_credits_adjust.handler",
+    "Handler": "handlers/admin_credits_adjust.handler",
     "Role": {
      "Fn::GetAtt": [
       "AdminCreditsAdjustServiceRole40C06AAD",
@@ -14745,7 +14745,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -15271,7 +15271,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
+     "S3Key": "c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f.zip"
     },
     "Environment": {
      "Variables": {
@@ -15297,7 +15297,7 @@
       "PUBLIC_MODE": ""
      }
     },
-    "Handler": "config_get.handler",
+    "Handler": "handlers/config_get.handler",
     "Role": {
      "Fn::GetAtt": [
       "ConfigGetServiceRole18E52F30",
@@ -15312,7 +15312,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ConfigGet/Resource",
-    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
+    "aws:asset:path": "asset.c1a01a2d1c68acf094f41e2a906a6301a47bc0a99e04922bd965930166d3bf3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
