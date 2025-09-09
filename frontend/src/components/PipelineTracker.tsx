@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronUp, ChevronDown, RefreshCw, Clock, CheckCircle2, Circle, Github } from 'lucide-react';
+import { ChevronUp, ChevronDown, RefreshCw, Clock, CheckCircle2, Circle } from 'lucide-react';
+import { v2Api, type Report } from '@/services/v2/api';
 
 interface PipelineJob {
   id: string;
@@ -93,37 +94,46 @@ function getCurrentPhaseInfo(startTime: number, totalDurationMs: number) {
   };
 }
 
-// Mock data - starts 1 minute ago for demo
-const mockPipelineJob: PipelineJob = {
-  id: 'pipeline-123',
-  title: 'Market Opportunity Discovery',
-  type: 'innovation',
-  status: 'in-progress',
-  startTime: Date.now() - (60 * 1000), // Started 1 minute ago
-  totalDurationMs: 7 * 60 * 1000 // 7 minutes
-};
-
 export function PipelineTracker() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [pipelineJobs, setPipelineJobs] = useState<PipelineJob[]>([]);
   const [currentTime, setCurrentTime] = useState(Date.now());
-  
-  // Mock data for demonstration - replace with actual API call
+
+  const fetchPipelineJobs = async () => {
+    try {
+      const reports: Report[] = await v2Api.listReports();
+      const activeReports = reports.filter((r) =>
+        ['processing', 'pending', 'submitted'].includes(r.status)
+      );
+      const jobs: PipelineJob[] = activeReports.map((r) => ({
+        id: r.reportId,
+        title: r.title || 'Research Report',
+        type: (r as any).jobType || 'research',
+        status: 'in-progress',
+        startTime: new Date(r.createdAt).getTime(),
+        totalDurationMs: 7 * 60 * 1000,
+      }));
+      setPipelineJobs(jobs);
+    } catch (err) {
+      console.error('Failed to load pipeline jobs:', err);
+      setPipelineJobs([]);
+    }
+  };
+
   useEffect(() => {
-    // Simulate having an active job
-    setPipelineJobs([mockPipelineJob]);
+    fetchPipelineJobs();
   }, []);
 
-  // Update current time every second for live countdown
+  // Update current time every second and refresh jobs when auto-refresh is enabled
   useEffect(() => {
     if (!autoRefresh) return;
-    
+
     const interval = setInterval(() => {
       setCurrentTime(Date.now());
-      // TODO: Also fetch pipeline status from API here
+      fetchPipelineJobs();
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, [autoRefresh]);
 
