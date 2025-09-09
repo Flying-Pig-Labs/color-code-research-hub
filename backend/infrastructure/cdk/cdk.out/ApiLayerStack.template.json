@@ -5060,7 +5060,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -5082,7 +5082,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "billing_stripe_session.handler",
@@ -5100,7 +5101,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/BillingStripeSession/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -5631,7 +5632,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -5653,7 +5654,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "billing_stripe_webhook.handler",
@@ -5671,7 +5673,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/BillingStripeWebhook/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6197,7 +6199,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -6219,7 +6221,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "credits_balance.handler",
@@ -6237,7 +6240,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/CreditsBalance/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6763,7 +6766,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -6785,7 +6788,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "projects_create.handler",
@@ -6803,7 +6807,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsCreate/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7329,7 +7333,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -7351,7 +7355,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "pipeline_repos_list.handler",
@@ -7369,7 +7374,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsList/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7895,7 +7900,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -7917,7 +7922,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "projects_get.handler",
@@ -7935,7 +7941,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ProjectsGet/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8461,7 +8467,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -8483,7 +8489,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "report_start.handler",
@@ -8501,7 +8508,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportStart/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9027,7 +9034,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -9049,7 +9056,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "research_reports_list.handler",
@@ -9067,7 +9075,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportsList/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9593,7 +9601,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -9615,7 +9623,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "report_get.handler",
@@ -9633,7 +9642,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ReportGet/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10159,7 +10168,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -10181,7 +10190,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "ideation_start.handler",
@@ -10199,7 +10209,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationStart/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10725,7 +10735,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -10747,7 +10757,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "pipeline_ideations_list.handler",
@@ -10765,7 +10776,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationsList/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11291,7 +11302,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -11313,7 +11324,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "ideation_get.handler",
@@ -11331,7 +11343,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/IdeationGet/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11857,7 +11869,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -11879,7 +11891,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "double_start.handler",
@@ -11897,7 +11910,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/DoubleStart/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12423,7 +12436,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -12445,7 +12458,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "double_get.handler",
@@ -12463,7 +12477,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/DoubleGet/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12989,7 +13003,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -13011,7 +13025,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "admin_users.handler",
@@ -13029,7 +13044,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminUsers/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -13555,7 +13570,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -13577,7 +13592,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "admin_user_get.handler",
@@ -13595,7 +13611,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminUserGet/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14121,7 +14137,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -14143,7 +14159,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "admin_metrics.handler",
@@ -14161,7 +14178,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminMetrics/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14687,7 +14704,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -14709,7 +14726,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "admin_credits_adjust.handler",
@@ -14727,7 +14745,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/AdminCreditsAdjust/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -15253,7 +15271,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b.zip"
+     "S3Key": "c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3.zip"
     },
     "Environment": {
      "Variables": {
@@ -15275,7 +15293,8 @@
       "STRIPE_SUCCESS_URL": "",
       "STRIPE_CANCEL_URL": "",
       "COGNITO_HOSTED_UI_DOMAIN": "truflr-ai-prod",
-      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4"
+      "COGNITO_CLIENT_ID": "3sqlej98hh2s5vo117ha3hg0i4",
+      "PUBLIC_MODE": ""
      }
     },
     "Handler": "config_get.handler",
@@ -15293,7 +15312,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ApiLayerStack/ConfigGet/Resource",
-    "aws:asset:path": "asset.83a01e8c4c60efaa291b95fbe4c4683f237adcac8314be93bdaa6e33dc827d9b",
+    "aws:asset:path": "asset.c8feb3eb82589bd4a0cfcb33e0db65295694e6b07394a2116d1add3f0ff136d3",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

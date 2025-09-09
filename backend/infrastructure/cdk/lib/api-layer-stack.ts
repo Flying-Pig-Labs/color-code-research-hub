@@ -76,8 +76,9 @@ export class ApiLayerStack extends Stack {
       PUBLIC_MODE: process.env.PUBLIC_MODE || '',
     };
 
-    // Handlers live at backend/lambda/v2/handlers relative to this file
-    const code = lambda.Code.fromAsset(path.join(__dirname, '../../../lambda/v2/handlers'));
+    // Package both handlers/ and helpers/ so Python imports work
+    // Handlers live under backend/lambda/v2/handlers, helpers under backend/lambda/v2/helpers
+    const code = lambda.Code.fromAsset(path.join(__dirname, '../../../lambda/v2'));
     const fns: lambda.Function[] = [];
     const makeFn = (id: string, handler: string) => {
       const fn = new lambda.Function(this, id, {
@@ -91,11 +92,11 @@ export class ApiLayerStack extends Stack {
     };
 
     // Billing
-    const billingSession = makeFn('BillingStripeSession', 'billing_stripe_session.handler');
+    const billingSession = makeFn('BillingStripeSession', 'handlers/billing_stripe_session.handler');
     api.root.addResource('billing').addResource('stripe').addResource('create-checkout-session')
       .addMethod('POST', new apigw.LambdaIntegration(billingSession), { authorizer });
 
-    const billingWebhook = makeFn('BillingStripeWebhook', 'billing_stripe_webhook.handler');
+    const billingWebhook = makeFn('BillingStripeWebhook', 'handlers/billing_stripe_webhook.handler');
     api.root.getResource('billing')!.getResource('stripe')!.addResource('webhook')
       .addMethod('POST', new apigw.LambdaIntegration(billingWebhook));
 
@@ -110,68 +111,69 @@ export class ApiLayerStack extends Stack {
       billingWebhook.addToRolePolicy(policy);
     }
 
-    const balance = makeFn('CreditsBalance', 'credits_balance.handler');
+    const balance = makeFn('CreditsBalance', 'handlers/credits_balance.handler');
     api.root.addResource('credits').addResource('balance')
       .addMethod('GET', new apigw.LambdaIntegration(balance), { authorizer });
 
     // Projects (using legacy PipelineRepos table)
     const projects = api.root.addResource('projects');
-    const projectCreate = makeFn('ProjectsCreate', 'projects_create.handler');
+    const projectCreate = makeFn('ProjectsCreate', 'handlers/projects_create.handler');
     projects.addMethod('POST', new apigw.LambdaIntegration(projectCreate), { authorizer });
-    const projectList = makeFn('ProjectsList', 'pipeline_repos_list.handler');
+    // Return proper Projects[]; legacy repos/issues available via query param in handler
+    const projectList = makeFn('ProjectsList', 'handlers/projects_list.handler');
     projects.addMethod('GET', new apigw.LambdaIntegration(projectList), { authorizer });
     const projectItem = projects.addResource('{projectId}');
-    const projectGetFn = makeFn('ProjectsGet', 'projects_get.handler');
+    const projectGetFn = makeFn('ProjectsGet', 'handlers/projects_get.handler');
     projectItem.addMethod('GET', new apigw.LambdaIntegration(projectGetFn), { authorizer });
 
     // Reports (using legacy ResearchReports table)
-    const reportStart = makeFn('ReportStart', 'report_start.handler');
+    const reportStart = makeFn('ReportStart', 'handlers/report_start.handler');
     projectItem.addResource('report').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(reportStart), { authorizer });
     const reports = api.root.addResource('reports');
-    const reportsList = makeFn('ReportsList', 'research_reports_list.handler');
+    const reportsList = makeFn('ReportsList', 'handlers/research_reports_list.handler');
     reports.addMethod('GET', new apigw.LambdaIntegration(reportsList), { authorizer });
-    const reportGet = makeFn('ReportGet', 'report_get.handler');
+    const reportGet = makeFn('ReportGet', 'handlers/report_get.handler');
     reports.addResource('{reportId}')
       .addMethod('GET', new apigw.LambdaIntegration(reportGet), { authorizer });
 
     // Ideation (using legacy PipelineBatchJobs table)
-    const ideationStart = makeFn('IdeationStart', 'ideation_start.handler');
+    const ideationStart = makeFn('IdeationStart', 'handlers/ideation_start.handler');
     projectItem.addResource('ideation').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(ideationStart), { authorizer });
     const ideations = api.root.addResource('ideations');
-    const ideationsList = makeFn('IdeationsList', 'pipeline_ideations_list.handler');
+    const ideationsList = makeFn('IdeationsList', 'handlers/pipeline_ideations_list.handler');
     ideations.addMethod('GET', new apigw.LambdaIntegration(ideationsList), { authorizer });
-    const ideationGet = makeFn('IdeationGet', 'ideation_get.handler');
+    const ideationGet = makeFn('IdeationGet', 'handlers/ideation_get.handler');
     ideations.addResource('{ideationId}')
       .addMethod('GET', new apigw.LambdaIntegration(ideationGet), { authorizer });
 
     // Double-down
-    const doubleStart = makeFn('DoubleStart', 'double_start.handler');
+    const doubleStart = makeFn('DoubleStart', 'handlers/double_start.handler');
     projectItem.addResource('double-down').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(doubleStart), { authorizer });
-    const doubleGet = makeFn('DoubleGet', 'double_get.handler');
+    const doubleGet = makeFn('DoubleGet', 'handlers/double_get.handler');
     api.root.addResource('double-downs').addResource('{doubleId}')
       .addMethod('GET', new apigw.LambdaIntegration(doubleGet), { authorizer });
 
     // Admin
     const admin = api.root.addResource('admin');
-    const adminUsers = makeFn('AdminUsers', 'admin_users.handler');
+    const adminUsers = makeFn('AdminUsers', 'handlers/admin_users.handler');
     const adminUsersRes = admin.addResource('users');
     adminUsersRes.addMethod('GET', new apigw.LambdaIntegration(adminUsers), { authorizer });
-    const adminUserGet = makeFn('AdminUserGet', 'admin_user_get.handler');
+    const adminUserGet = makeFn('AdminUserGet', 'handlers/admin_user_get.handler');
     adminUsersRes.addResource('{id}').addMethod('GET', new apigw.LambdaIntegration(adminUserGet), { authorizer });
-    const adminMetrics = makeFn('AdminMetrics', 'admin_metrics.handler');
+    const adminMetrics = makeFn('AdminMetrics', 'handlers/admin_metrics.handler');
     const metricsRes = admin.addResource('metrics');
     metricsRes.addMethod('GET', new apigw.LambdaIntegration(adminMetrics), { authorizer });
     metricsRes.addResource('summary')
       .addMethod('GET', new apigw.LambdaIntegration(adminMetrics), { authorizer });
-    const adminAdjust = makeFn('AdminCreditsAdjust', 'admin_credits_adjust.handler');
+    const adminAdjust = makeFn('AdminCreditsAdjust', 'handlers/admin_credits_adjust.handler');
     admin.addResource('credits').addResource('adjust')
       .addMethod('POST', new apigw.LambdaIntegration(adminAdjust), { authorizer });
 
     // Public config endpoint for frontend to discover Cognito details at runtime
-    const configGet = makeFn('ConfigGet', 'config_get.handler');
+    const configGet = makeFn('ConfigGet', 'handlers/config_get.handler');
     api.root.addResource('config').addMethod('GET', new apigw.LambdaIntegration(configGet));
 
     // Grant IAM permissions to access DDB tables and S3 bucket
