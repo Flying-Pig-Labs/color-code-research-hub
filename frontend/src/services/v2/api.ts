@@ -94,6 +94,7 @@ export const v2Api = {
   // Pipeline Data (Real user data)
   listPipelineRepos: (itemType?: 'repo' | 'issue' | 'all') => 
     apiFetch(`/projects${itemType ? `?item_type=${itemType}` : ''}`),
+  listPipelineJobs: () => apiFetch('/projects?item_type=jobs'),
   getRepositoryIssues: (repoId: string) => apiFetch(`/api/repositories/${repoId}/issues`),
   getRepositoryPulls: (repoId: string) => apiFetch(`/api/repositories/${repoId}/pulls`),
   getRepositoryBuilds: (repoId: string) => apiFetch(`/api/repositories/${repoId}/builds`),
