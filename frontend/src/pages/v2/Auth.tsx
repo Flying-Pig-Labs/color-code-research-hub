@@ -29,22 +29,11 @@ const Auth: React.FC = () => {
   console.log('Auth - Sign In URL:', signInUrl);
   console.log('Auth - Sign Up URL:', signUpUrl);
 
-  // Auto-redirect authenticated users to the app
+  // Redirect authenticated users to the app; avoid auto-redirect loops for unauthenticated
   useEffect(() => {
     if (AUTH_DISABLED || isAuthenticated) {
       navigate("/v2/projects", { replace: true });
       return;
-    }
-
-    // Auto-redirect to Cognito signin by default
-    // Users can manually go to signup if needed
-    if (signInUrl && !missingEnv) {
-      // Small delay to show loading message, then redirect
-      const timer = setTimeout(() => {
-        window.location.href = signInUrl;
-      }, 1000);
-
-      return () => clearTimeout(timer);
     }
   }, [isAuthenticated, navigate, signInUrl, missingEnv]);
 
@@ -63,13 +52,11 @@ const Auth: React.FC = () => {
             />
           </div>
           
-          <h2 className="text-2xl font-semibold">Redirecting to secure sign-in...</h2>
+          <h2 className="text-2xl font-semibold">Secure sign-in</h2>
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
           </div>
-          <p className="text-muted-foreground">
-            Taking you to the authentication page
-          </p>
+          <p className="text-muted-foreground">Use the buttons below to continue.</p>
         </div>
 
         {/* Manual options if auto-redirect doesn't work */}

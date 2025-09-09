@@ -3,12 +3,22 @@ import { v2Api, BalanceResponse, Project, ReportStatus, IdeationStatus, DoubleSt
 
 // Balance
 export function useBalance() {
-  return useQuery<BalanceResponse>({ queryKey: ['balance'], queryFn: v2Api.getBalance });
+  return useQuery<BalanceResponse>({
+    queryKey: ['balance'],
+    queryFn: v2Api.getBalance,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 // Projects list
 export function useProjects() {
-  return useQuery<Project[]>({ queryKey: ['projects'], queryFn: v2Api.listProjects });
+  return useQuery<Project[]>({
+    queryKey: ['projects'],
+    queryFn: v2Api.listProjects,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useCreateProject() {
@@ -20,7 +30,13 @@ export function useCreateProject() {
 }
 
 export function useProject(projectId: string) {
-  return useQuery<Project>({ queryKey: ['project', projectId], queryFn: () => v2Api.getProject(projectId), enabled: !!projectId });
+  return useQuery<Project>({
+    queryKey: ['project', projectId],
+    queryFn: () => v2Api.getProject(projectId),
+    enabled: !!projectId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 // Actions
@@ -33,7 +49,13 @@ export function useStartReport(projectId: string) {
 }
 
 export function useReport(reportId?: string) {
-  return useQuery<ReportStatus>({ queryKey: ['report', reportId], queryFn: () => v2Api.getReport(reportId!), enabled: !!reportId });
+  return useQuery<ReportStatus>({
+    queryKey: ['report', reportId],
+    queryFn: () => v2Api.getReport(reportId!),
+    enabled: !!reportId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useStartIdeation(projectId: string) {
@@ -45,7 +67,13 @@ export function useStartIdeation(projectId: string) {
 }
 
 export function useIdeation(ideationId?: string) {
-  return useQuery<IdeationStatus>({ queryKey: ['ideation', ideationId], queryFn: () => v2Api.getIdeation(ideationId!), enabled: !!ideationId });
+  return useQuery<IdeationStatus>({
+    queryKey: ['ideation', ideationId],
+    queryFn: () => v2Api.getIdeation(ideationId!),
+    enabled: !!ideationId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useStartDouble(projectId: string) {
@@ -57,20 +85,42 @@ export function useStartDouble(projectId: string) {
 }
 
 export function useDouble(doubleId?: string) {
-  return useQuery<DoubleStatus>({ queryKey: ['double', doubleId], queryFn: () => v2Api.getDouble(doubleId!), enabled: !!doubleId });
+  return useQuery<DoubleStatus>({
+    queryKey: ['double', doubleId],
+    queryFn: () => v2Api.getDouble(doubleId!),
+    enabled: !!doubleId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 // Admin
 export function useAdminMetrics() {
-  return useQuery({ queryKey: ['adminMetrics'], queryFn: v2Api.adminMetrics });
+  return useQuery({
+    queryKey: ['adminMetrics'],
+    queryFn: v2Api.adminMetrics,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useAdminUsers() {
-  return useQuery({ queryKey: ['adminUsers'], queryFn: v2Api.adminUsers });
+  return useQuery({
+    queryKey: ['adminUsers'],
+    queryFn: v2Api.adminUsers,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useAdminUser(userId: string) {
-  return useQuery({ queryKey: ['adminUser', userId], queryFn: () => v2Api.adminUserDetail(userId), enabled: !!userId });
+  return useQuery({
+    queryKey: ['adminUser', userId],
+    queryFn: () => v2Api.adminUserDetail(userId),
+    enabled: !!userId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useAdminAdjustCredits(userId: string) {

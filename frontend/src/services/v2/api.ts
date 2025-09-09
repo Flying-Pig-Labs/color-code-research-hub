@@ -1,17 +1,27 @@
 import { envConfig } from '@/config/environment';
 
+// Throttle auth redirects to prevent rapid refresh loops
+let lastAuthRedirect = 0;
+const AUTH_REDIRECT_COOLDOWN_MS = 5000;
+function maybeRedirectToAuth() {
+  if (typeof window === 'undefined') return;
+  const path = window.location.pathname || '';
+  // Never redirect from the auth routes themselves
+  if (path.startsWith('/v2/auth')) return;
+  const now = Date.now();
+  if (now - lastAuthRedirect < AUTH_REDIRECT_COOLDOWN_MS) return;
+  lastAuthRedirect = now;
+  window.location.assign('/v2/auth');
+}
+
 // API helper that attaches Cognito ID token and handles auth redirects.
 // If no token is present (or token is rejected), we redirect to /v2/auth.
 async function apiFetch(path: string, options: RequestInit = {}) {
   const token = sessionStorage.getItem('id_token') || sessionStorage.getItem('idToken');
   // If there's no token at all, force re-auth to acquire one
   if (!token) {
-    // Best-effort clear and redirect to Cognito flow
     sessionStorage.removeItem('isAuthenticated');
-    // Use hard redirect to avoid react-router dependency here
-    if (typeof window !== 'undefined') {
-      window.location.assign('/v2/auth');
-    }
+    maybeRedirectToAuth();
     throw new Error('Not authenticated: missing ID token');
   }
   const headers: Record<string, string> = {
@@ -30,9 +40,7 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     if (res.status === 401) {
       sessionStorage.removeItem('isAuthenticated');
       // Do not remove id_token here; backend may be temporarily rejecting or token may be expired
-      if (typeof window !== 'undefined') {
-        window.location.assign('/v2/auth');
-      }
+      maybeRedirectToAuth();
     }
     throw new Error(`API error ${res.status}`);
   }
