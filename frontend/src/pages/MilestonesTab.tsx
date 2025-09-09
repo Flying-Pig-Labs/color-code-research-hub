@@ -12,6 +12,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 import Header from "@/components/Header";
 import { BacklogGenerationHistory } from "@/components/BacklogGenerationHistory";
 import { useUser } from "@/contexts/UserContext";
+import { v2Api } from '@/services/v2/api';
 
 interface GitHubRepo {
   id: number;
@@ -53,28 +54,25 @@ const MilestonesTab = () => {
   }, [user, token]);
 
   const fetchMvpBuilderRepos = async () => {
-    if (!user || !token) {
-      setLoading(false);
-      return;
-    }
-
     try {
       setLoading(true);
-      // Use the DynamoDB Repositories API instead of GitHub
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/repositories`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch repositories: ${response.statusText}`);
-      }
-
-      const repos = await response.json();
-      setRepos(repos);
+      // Use v2 API backed by PipelineRepos
+      const resp = await v2Api.listPipelineRepos('repo');
+      const items = (resp?.repositories || []) as any[];
+      // Normalize to GitHubRepo shape expected by UI
+      const mapped: GitHubRepo[] = items.map((r: any) => ({
+        id: r.id || 0,
+        name: r.name || r.repoName,
+        full_name: r.full_name || r.repoName || r.name,
+        description: r.description || (r.body?.slice(0, 200) ?? ''),
+        private: r.private ?? false,
+        html_url: r.html_url || r.repoUrl || '#',
+        language: r.language || 'markdown',
+        updated_at: r.updated_at || r.created_at || r.createdAt || new Date().toISOString(),
+        stargazers_count: r.stargazers_count || 0,
+        body: r.body,
+      }));
+      setRepos(mapped);
     } catch (error) {
       console.error("Error fetching repos:", error);
       toast({

@@ -57,8 +57,8 @@ const SharkSwarmer = () => {
       <section className="py-12 lg:py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="space-y-6">
-            {/* Collapsible Pipeline Jobs Section - Admin Only */}
-            {isAdmin && (
+            {/* Collapsible Pipeline Jobs Section */}
+            {true && (
               <Card className="bg-card border-border shadow-card">
                 <CardHeader 
                   className="cursor-pointer hover:bg-muted/50 transition-gentle"

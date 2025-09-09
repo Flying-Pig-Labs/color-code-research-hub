@@ -59,60 +59,33 @@ export const PipelineJobsTable = () => {
     }
   };
 
-  // Fetch all jobs (running and completed) from API
+  // Fetch all jobs (running and completed) from v2 API (PipelineBatchJobs)
   const fetchJobs = async () => {
     try {
-      // Use the Pipeline API Gateway where these endpoints are deployed
-      const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
-                     'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
-      
-      // Use the running endpoint that exists
-      const response = await fetch(`${apiBase}/api/status/running`);
-      
-      if (!response.ok) {
-        // If endpoint doesn't exist yet, show empty state
-        if (response.status === 404) {
-          setJobs([]);
-          return;
-        }
-        throw new Error('Failed to fetch pipeline jobs');
-      }
-      
-      const data = await response.json();
-      const newJobs = data.jobs || [];
-      
-      // Merge new data with existing data, preserving fields that aren't returned
-      // Also try to match objectives from research reports
-      setJobs(prevJobs => {
-        return newJobs.map(newJob => {
-          const existingJob = prevJobs.find(j => j.jobId === newJob.jobId);
-          
-          // Try to find the research report for this job to get the objective
-          const matchingReport = researchReports.find(r => r.reportId === newJob.researchId);
-          const objective = matchingReport?.objective || existingJob?.objective;
-          
-          if (existingJob) {
-            // Merge, preserving existing values if new ones are undefined
-            return {
-              ...existingJob,
-              ...newJob,
-              objective: objective || existingJob.objective,
-              currentStage: newJob.currentStage !== undefined ? newJob.currentStage : existingJob.currentStage,
-              overallProgress: newJob.overallProgress !== undefined ? newJob.overallProgress : existingJob.overallProgress,
-              elapsedMinutes: newJob.elapsedMinutes !== undefined ? newJob.elapsedMinutes : existingJob.elapsedMinutes,
-              issuesCreated: newJob.issuesCreated !== undefined ? newJob.issuesCreated : existingJob.issuesCreated,
-              error: newJob.error !== undefined ? newJob.error : existingJob.error
-            };
-          }
-          return {
-            ...newJob,
-            objective: objective
-          };
-        });
-      });
+      const list = await v2Api.listPipelineJobs();
+      const newJobs = Array.isArray(list) ? list : [];
+      setJobs(prevJobs => newJobs.map((nj: any) => {
+        const existing = prevJobs.find(j => j.jobId === nj.jobId);
+        const matchingReport = researchReports.find(r => r.reportId === (nj.researchId || nj.jobId));
+        const objective = matchingReport?.objective || existing?.objective;
+        return {
+          jobId: nj.jobId,
+          researchId: nj.researchId || nj.jobId,
+          username: nj.username,
+          objective,
+          startTime: nj.startTime || nj.created_at || nj.createdAt,
+          endTime: nj.endTime,
+          status: (nj.status || 'SUCCEEDED') as PipelineJob['status'],
+          currentStage: nj.currentStage,
+          overallProgress: nj.overallProgress,
+          elapsedMinutes: nj.elapsedMinutes,
+          githubRepoUrl: nj.githubRepoUrl,
+          issuesCreated: nj.issuesCreated,
+          error: nj.error,
+        } as PipelineJob;
+      }));
     } catch (error) {
       console.error('Error fetching pipeline jobs:', error);
-      // Don't show error toast on initial load if API doesn't exist yet
       if (!loading) {
         toast.error('Failed to load pipeline jobs');
       }
@@ -125,39 +98,8 @@ export const PipelineJobsTable = () => {
   const refreshJob = async (jobId: string) => {
     setRefreshing(jobId);
     try {
-      // Use the Pipeline API Gateway where these endpoints are deployed
-      const apiBase = import.meta.env.VITE_BATCH_PIPELINE_URL || 
-                     'https://9hv22ga3uh.execute-api.us-east-1.amazonaws.com/prod';
-      
-      const response = await fetch(`${apiBase}/api/plan/async/status/${jobId}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to refresh job');
-      }
-      
-      const data = await response.json();
-      
-      // Update the job in our local state, preserving existing values if not provided
-      setJobs(prevJobs => 
-        prevJobs.map(job => 
-          job.jobId === jobId 
-            ? {
-                ...job,
-                status: data.status || job.status,
-                currentStage: data.currentStage !== undefined ? data.currentStage : job.currentStage,
-                overallProgress: data.overallProgress !== undefined ? data.overallProgress : job.overallProgress,
-                elapsedMinutes: data.elapsedMinutes !== undefined ? data.elapsedMinutes : job.elapsedMinutes,
-                endTime: data.endTime || job.endTime,
-                githubRepoUrl: data.results?.githubRepository?.url || job.githubRepoUrl,
-                issuesCreated: data.results?.githubRepository?.issuesCreated !== undefined 
-                  ? data.results.githubRepository.issuesCreated 
-                  : job.issuesCreated,
-                error: data.error !== undefined ? data.error : job.error
-              }
-            : job
-        )
-      );
-      
+      await fetchResearchReports();
+      await fetchJobs();
       toast.success('Job status refreshed');
     } catch (error) {
       console.error('Error refreshing job:', error);
