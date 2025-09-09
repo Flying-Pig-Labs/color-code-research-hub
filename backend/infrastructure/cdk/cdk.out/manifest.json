@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/40b0e3c1f2473a98f778b152ec10d508fbc2befbf922c08456fd42ec56465b7d.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/aca51e9fe28c19bbad8ff22792c08c039313c60327be9884e593ef5326e55120.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -61,7 +61,7 @@
         "/ApiLayerStack/HttpApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiDeployment2ABEB12F99f9f3d1e4e94f58ffbeab9bb8972977"
+            "data": "HttpApiDeployment2ABEB12F4c26a9399adaf2ccb285472efd4fc0a5"
           }
         ],
         "/ApiLayerStack/HttpApi/DeploymentStage.prod/Resource": [
@@ -424,6 +424,24 @@
             "data": "HttpApireportsOPTIONSD0A52335"
           }
         ],
+        "/ApiLayerStack/HttpApi/Default/reports/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..reports": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsGETApiPermissionApiLayerStackHttpApi9A58276CGETreports255A2B10"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..reports": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsGETApiPermissionTestApiLayerStackHttpApi9A58276CGETreports4004F30B"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsGET78BD5A4B"
+          }
+        ],
         "/ApiLayerStack/HttpApi/Default/reports/{reportId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -464,6 +482,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiideationsOPTIONSFE7B96AE"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/ideations/GET/ApiPermission.ApiLayerStackHttpApi9A58276C.GET..ideations": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiideationsGETApiPermissionApiLayerStackHttpApi9A58276CGETideations350EB9BB"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/ideations/GET/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.GET..ideations": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiideationsGETApiPermissionTestApiLayerStackHttpApi9A58276CGETideations26D90D8A"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/ideations/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiideationsGETD8D445D3"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/ideations/{ideationId}/Resource": [
@@ -880,6 +916,24 @@
             "data": "ReportStartD6D0CB92"
           }
         ],
+        "/ApiLayerStack/ReportsList/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportsListServiceRole4587523C"
+          }
+        ],
+        "/ApiLayerStack/ReportsList/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportsListServiceRoleDefaultPolicyFA97FAE7"
+          }
+        ],
+        "/ApiLayerStack/ReportsList/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportsList3FC4E06D"
+          }
+        ],
         "/ApiLayerStack/ReportGet/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -914,6 +968,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "IdeationStartFFFDE9B4"
+          }
+        ],
+        "/ApiLayerStack/IdeationsList/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdeationsListServiceRole6F38D17E"
+          }
+        ],
+        "/ApiLayerStack/IdeationsList/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdeationsListServiceRoleDefaultPolicyD225DE25"
+          }
+        ],
+        "/ApiLayerStack/IdeationsList/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdeationsListD5D4F57B"
           }
         ],
         "/ApiLayerStack/IdeationGet/ServiceRole/Resource": [

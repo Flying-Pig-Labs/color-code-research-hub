@@ -7,7 +7,7 @@ import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
 import os
-import base64
+from .utils.user_mapping import get_authenticated_username_with_mapping
 
 # Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -26,45 +26,6 @@ def create_cors_response(status_code, body):
         'body': json.dumps(body) if isinstance(body, (dict, list)) else str(body)
     }
 
-def get_authenticated_username(event):
-    """
-    Extract username from JWT token in Authorization header
-    """
-    try:
-        # Get Authorization header
-        headers = event.get('headers', {})
-        auth_header = headers.get('Authorization') or headers.get('authorization')
-        
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return None
-        
-        # Extract JWT token
-        token = auth_header.replace('Bearer ', '')
-        
-        # Decode JWT (without verification for now)
-        parts = token.split('.')
-        if len(parts) != 3:
-            return None
-        
-        # Add padding if needed
-        payload_b64 = parts[1]
-        padding = 4 - len(payload_b64) % 4
-        if padding != 4:
-            payload_b64 += '=' * padding
-        
-        # Decode payload
-        payload_bytes = base64.urlsafe_b64decode(payload_b64)
-        payload = json.loads(payload_bytes)
-        
-        # Extract username (prefer 'name', fallback to 'email' or 'sub')
-        username = payload.get('name') or payload.get('email') or payload.get('sub')
-        
-        return username
-        
-    except Exception as e:
-        print(f"Error extracting username from token: {e}")
-        return None
-
 def handler(event, context):
     """
     List all repositories and issues for the authenticated user from PipelineRepos
@@ -72,8 +33,8 @@ def handler(event, context):
     - item_type: 'repo', 'issue', or 'all' (default: 'all')
     """
     try:
-        # Get authenticated username from JWT token
-        username = get_authenticated_username(event)
+        # Get authenticated username from JWT token with mapping
+        username = get_authenticated_username_with_mapping(event)
         if not username:
             return create_cors_response(401, {'error': 'Authentication required'})
         

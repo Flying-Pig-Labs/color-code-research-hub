@@ -60,6 +60,11 @@ export class ApiLayerStack extends Stack {
       IDEATIONS_TABLE_NAME: process.env.IDEATIONS_TABLE_NAME || '',
       DOUBLES_TABLE_NAME: process.env.DOUBLES_TABLE_NAME || '',
       ARTIFACTS_BUCKET_NAME: process.env.ARTIFACTS_BUCKET_NAME || '',
+      // Legacy table names for backward compatibility
+      PIPELINE_REPOS_TABLE: 'PipelineRepos',
+      RESEARCH_REPORTS_TABLE: 'ResearchReports',
+      PIPELINE_BATCH_JOBS_TABLE: 'PipelineBatchJobs',
+      SHARK_TANK_REVIEWS_TABLE: 'SharkTankReviews',
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
       STRIPE_PRICE_CREDIT: process.env.STRIPE_PRICE_CREDIT || '',
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
@@ -108,30 +113,36 @@ export class ApiLayerStack extends Stack {
     api.root.addResource('credits').addResource('balance')
       .addMethod('GET', new apigw.LambdaIntegration(balance), { authorizer });
 
-    // Projects
+    // Projects (using legacy PipelineRepos table)
     const projects = api.root.addResource('projects');
     const projectCreate = makeFn('ProjectsCreate', 'projects_create.handler');
     projects.addMethod('POST', new apigw.LambdaIntegration(projectCreate), { authorizer });
-    const projectList = makeFn('ProjectsList', 'projects_list.handler');
+    const projectList = makeFn('ProjectsList', 'pipeline_repos_list.handler');
     projects.addMethod('GET', new apigw.LambdaIntegration(projectList), { authorizer });
     const projectItem = projects.addResource('{projectId}');
     const projectGetFn = makeFn('ProjectsGet', 'projects_get.handler');
     projectItem.addMethod('GET', new apigw.LambdaIntegration(projectGetFn), { authorizer });
 
-    // Reports
+    // Reports (using legacy ResearchReports table)
     const reportStart = makeFn('ReportStart', 'report_start.handler');
     projectItem.addResource('report').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(reportStart), { authorizer });
+    const reports = api.root.addResource('reports');
+    const reportsList = makeFn('ReportsList', 'research_reports_list.handler');
+    reports.addMethod('GET', new apigw.LambdaIntegration(reportsList), { authorizer });
     const reportGet = makeFn('ReportGet', 'report_get.handler');
-    api.root.addResource('reports').addResource('{reportId}')
+    reports.addResource('{reportId}')
       .addMethod('GET', new apigw.LambdaIntegration(reportGet), { authorizer });
 
-    // Ideation
+    // Ideation (using legacy PipelineBatchJobs table)
     const ideationStart = makeFn('IdeationStart', 'ideation_start.handler');
     projectItem.addResource('ideation').addResource('start')
       .addMethod('POST', new apigw.LambdaIntegration(ideationStart), { authorizer });
+    const ideations = api.root.addResource('ideations');
+    const ideationsList = makeFn('IdeationsList', 'pipeline_ideations_list.handler');
+    ideations.addMethod('GET', new apigw.LambdaIntegration(ideationsList), { authorizer });
     const ideationGet = makeFn('IdeationGet', 'ideation_get.handler');
-    api.root.addResource('ideations').addResource('{ideationId}')
+    ideations.addResource('{ideationId}')
       .addMethod('GET', new apigw.LambdaIntegration(ideationGet), { authorizer });
 
     // Double-down
@@ -198,5 +209,18 @@ export class ApiLayerStack extends Stack {
     if (artifactsBucket) {
       fns.forEach(fn => artifactsBucket.grantReadWrite(fn));
     }
+
+    // Grant access to legacy tables
+    const legacyTables = [
+      'PipelineRepos',
+      'ResearchReports', 
+      'PipelineBatchJobs',
+      'SharkTankReviews'
+    ];
+    
+    legacyTables.forEach(tableName => {
+      const legacyTable = dynamodb.Table.fromTableName(this, `${tableName}Ref`, tableName);
+      grantRw(legacyTable);
+    });
   }
 }

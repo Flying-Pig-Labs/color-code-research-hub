@@ -47,7 +47,7 @@ export const v2Api = {
   startReport: (projectId: string) =>
     apiFetch(`/projects/${projectId}/report/start`, { method: 'POST', body: JSON.stringify({}) }),
   getReport: (reportId: string) => apiFetch(`/reports/${reportId}`),
-  listReports: () => apiFetch('/research-reports'),
+  listReports: () => apiFetch('/reports'),
 
   startIdeation: (projectId: string, body: { reportId: string }) =>
     apiFetch(`/projects/${projectId}/ideation/start`, {
@@ -55,7 +55,7 @@ export const v2Api = {
       body: JSON.stringify(body),
     }),
   getIdeation: (ideationId: string) => apiFetch(`/ideations/${ideationId}`),
-  listIdeations: () => apiFetch('/pipeline-ideations'),
+  listIdeations: () => apiFetch('/ideations'),
 
   startDouble: (projectId: string, body: { ideationId: string; ideaId: string; feedback?: string }) =>
     apiFetch(`/projects/${projectId}/double-down/start`, {
@@ -67,7 +67,7 @@ export const v2Api = {
 
   // Pipeline Data (Real user data)
   listPipelineRepos: (itemType?: 'repo' | 'issue' | 'all') => 
-    apiFetch(`/pipeline-repos${itemType ? `?item_type=${itemType}` : ''}`),
+    apiFetch(`/projects${itemType ? `?item_type=${itemType}` : ''}`),
   getRepositoryIssues: (repoId: string) => apiFetch(`/api/repositories/${repoId}/issues`),
   getRepositoryPulls: (repoId: string) => apiFetch(`/api/repositories/${repoId}/pulls`),
   getRepositoryBuilds: (repoId: string) => apiFetch(`/api/repositories/${repoId}/builds`),
