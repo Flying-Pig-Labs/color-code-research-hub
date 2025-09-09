@@ -3,9 +3,9 @@ import os
 import time
 import uuid
 import boto3
-from ..helpers.auth import get_user, AuthError
-from ..helpers.users import ensure_user_exists
-from ..helpers.http import json_response
+from helpers.auth import get_user, AuthError
+from helpers.users import ensure_user_exists
+from helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 PROJECTS_TABLE = os.environ.get('PROJECTS_TABLE_NAME', '')

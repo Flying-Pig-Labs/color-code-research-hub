@@ -1,5 +1,5 @@
 import os
-from ..helpers.http import json_response
+from helpers.http import json_response
 
 
 def handler(event, context):
@@ -11,4 +11,3 @@ def handler(event, context):
         'cognitoClientId': client_id,
         'redirectUri': redirect_uri,
     })
-

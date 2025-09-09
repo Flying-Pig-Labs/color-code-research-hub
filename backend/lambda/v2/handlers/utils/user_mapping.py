@@ -18,7 +18,8 @@ def get_authenticated_username_with_mapping(event):
         # Get Authorization header
         headers = event.get('headers', {})
         auth_header = headers.get('Authorization') or headers.get('authorization')
-        
+
+        # If no Authorization header, return None; public/demo is handled by handlers
         if not auth_header or not auth_header.startswith('Bearer '):
             return None
         

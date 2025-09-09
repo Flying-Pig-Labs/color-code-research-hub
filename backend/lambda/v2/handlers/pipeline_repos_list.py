@@ -3,11 +3,12 @@ List repositories and issues for authenticated user from PipelineRepos table
 Handles both REPO and ISSUE#{number} itemTypes
 """
 import json
+import os
 import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
-import os
-from .utils.user_mapping import get_authenticated_username_with_mapping
+from utils.user_mapping import get_authenticated_username_with_mapping
+from helpers.auth import is_public_mode
 
 # Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -35,6 +36,50 @@ def handler(event, context):
     try:
         # Get authenticated username from JWT token with mapping
         username = get_authenticated_username_with_mapping(event)
+
+        # Public/demo mode: if no auth, return small demo dataset
+        if not username and is_public_mode():
+            demo_repos = [
+                {
+                    'id': 'demo-repo-1',
+                    'name': 'demo-repo',
+                    'full_name': 'demo/demo-repo',
+                    'description': 'Sample repository for demo mode',
+                    'body': '# Demo Repo\nThis is a demo README.',
+                    'html_url': 'https://github.com/demo/demo-repo',
+                    'language': 'TypeScript',
+                    'stargazers_count': 42,
+                    'created_at': 1700000000000,
+                    'updated_at': 1700100000000,
+                    'username': 'demo',
+                    'itemType': 'REPO',
+                    'repoId': 'demo-repo-1',
+                    'visibility': 'public'
+                }
+            ]
+            demo_issues = [
+                {
+                    'id': 'demo-issue-1',
+                    'number': 1,
+                    'title': 'Improve onboarding flow',
+                    'body': 'As a user, I want a simpler onboarding.',
+                    'state': 'open',
+                    'created_at': 1700200000000,
+                    'updated_at': 1700205000000,
+                    'username': 'demo',
+                    'itemType': 'ISSUE#1',
+                    'repoId': 'demo-repo-1',
+                    'repository_id': 'demo-repo-1',
+                    'labels': ['enhancement'],
+                    'assignees': []
+                }
+            ]
+            return create_cors_response(200, {
+                'repositories': demo_repos,
+                'issues': demo_issues,
+                'total': {'repositories': len(demo_repos), 'issues': len(demo_issues)}
+            })
+
         if not username:
             return create_cors_response(401, {'error': 'Authentication required'})
         

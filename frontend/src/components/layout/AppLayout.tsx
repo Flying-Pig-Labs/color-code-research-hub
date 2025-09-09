@@ -54,6 +54,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const location = useLocation();
   const { actualTheme } = useTheme();
   const { user } = useUser();
+  const DEMO_MODE = (import.meta as any)?.env?.VITE_AUTH_DISABLED === 'true';
   
   // Track which tab is currently active based on the route
   const [activeTab, setActiveTab] = useState("research");
@@ -121,6 +122,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
+      {DEMO_MODE && (
+        <div className="w-full bg-yellow-500/10 border-b border-yellow-500/30 text-yellow-900 text-sm px-4 py-2 text-center">
+          Demo mode: authentication disabled and showing sample data
+        </div>
+      )}
       {/* Clean, sophisticated header with typography focus */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm relative">
         <div className="max-w-7xl mx-auto px-6 py-6">

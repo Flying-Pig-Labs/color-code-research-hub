@@ -2,11 +2,12 @@
 List ideations for authenticated user from PipelineBatchJobs table
 """
 import json
+import os
 import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
-import os
-from .utils.user_mapping import get_authenticated_username_with_mapping
+from utils.user_mapping import get_authenticated_username_with_mapping
+from helpers.auth import is_public_mode
 
 # Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -32,6 +33,21 @@ def handler(event, context):
     try:
         # Get authenticated username from JWT token with mapping
         username = get_authenticated_username_with_mapping(event)
+
+        # Public/demo mode: if no auth, return small demo dataset
+        if not username and is_public_mode():
+            demo = [
+                {
+                    'ideationId': 'demo-idea-1',
+                    'title': 'AI Research Brainstorm',
+                    'status': 'SUCCEEDED',
+                    'createdAt': 1700000000000,
+                    'updatedAt': 1700005000000,
+                    'username': 'demo'
+                }
+            ]
+            return create_cors_response(200, demo)
+
         if not username:
             return create_cors_response(401, {'error': 'Authentication required'})
         
@@ -60,8 +76,8 @@ def handler(event, context):
             }
             ideations.append(ideation)
         
-        # Sort by creation date (newest first)
-        ideations.sort(key=lambda x: x.get('createdAt', 0), reverse=True)
+        # Sort by creation date (newest first) - handle missing values
+        ideations.sort(key=lambda x: (x.get('createdAt') or 0), reverse=True)
         
         return create_cors_response(200, ideations)
         

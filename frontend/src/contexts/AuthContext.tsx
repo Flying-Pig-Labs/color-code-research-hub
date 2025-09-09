@@ -17,6 +17,9 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
+// Optional: disable auth guards entirely for demo/public mode
+const AUTH_DISABLED = (import.meta as any)?.env?.VITE_AUTH_DISABLED === 'true';
+
 /**
  * Authentication context interface defining available auth operations.
  * 
@@ -81,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * Initializes from sessionStorage on component mount to maintain login across refreshes.
    */
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (AUTH_DISABLED) return true;
     // Consider either our simple flag or presence of an id_token from Cognito Hosted UI
     const authStatus = sessionStorage.getItem('isAuthenticated') === 'true';
     const hasIdToken = !!sessionStorage.getItem('id_token');
@@ -93,6 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    */
   useEffect(() => {
     // Update sessionStorage when auth state changes
+    if (AUTH_DISABLED) return;
     if (isAuthenticated) sessionStorage.setItem('isAuthenticated', 'true');
     else sessionStorage.removeItem('isAuthenticated');
   }, [isAuthenticated]);

@@ -73,6 +73,7 @@ export class ApiLayerStack extends Stack {
       STRIPE_CANCEL_URL: process.env.STRIPE_CANCEL_URL || '',
       COGNITO_HOSTED_UI_DOMAIN: process.env.COGNITO_HOSTED_UI_DOMAIN || '',
       COGNITO_CLIENT_ID: process.env.USER_POOL_CLIENT_ID || process.env.COGNITO_CLIENT_ID || '',
+      PUBLIC_MODE: process.env.PUBLIC_MODE || '',
     };
 
     // Handlers live at backend/lambda/v2/handlers relative to this file

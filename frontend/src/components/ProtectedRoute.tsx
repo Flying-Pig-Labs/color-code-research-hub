@@ -45,9 +45,15 @@ interface ProtectedRouteProps {
  * </ProtectedRoute>
  * ```
  */
+const AUTH_DISABLED = (import.meta as any)?.env?.VITE_AUTH_DISABLED === 'true';
+
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const { needsOnboarding, isLoading } = useUser();
+
+  if (AUTH_DISABLED) {
+    return <>{children}</>;
+  }
 
   // Redirect to Cognito login if not authenticated
   if (!isAuthenticated) {

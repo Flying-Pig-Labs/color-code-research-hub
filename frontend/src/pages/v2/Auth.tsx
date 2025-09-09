@@ -20,6 +20,7 @@ function buildAuthorizeUrl(screenHint?: 'signup' | 'signin') {
 const Auth: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const AUTH_DISABLED = (import.meta as any)?.env?.VITE_AUTH_DISABLED === 'true';
   const signInUrl = useMemo(() => buildAuthorizeUrl('signin'), []);
   const signUpUrl = useMemo(() => buildAuthorizeUrl('signup'), []);
   const missingEnv = !signInUrl || !signUpUrl;
@@ -30,7 +31,7 @@ const Auth: React.FC = () => {
 
   // Auto-redirect authenticated users to the app
   useEffect(() => {
-    if (isAuthenticated) {
+    if (AUTH_DISABLED || isAuthenticated) {
       navigate("/v2/projects", { replace: true });
       return;
     }
