@@ -19,6 +19,9 @@ def handler(event, context):
 
     # Ensure user row exists (first login)
     ensure_user_exists(claims)
+    # Validate env to avoid opaque 502s
+    if not PROJECTS_TABLE:
+        return json_response(500, {"error": "PROJECTS_TABLE_NAME not configured"})
     body = json.loads(event.get('body') or '{}')
     title = body.get('title')
     if not title:
@@ -39,5 +42,8 @@ def handler(event, context):
     if inputs:
         item['inputs'] = {'S': json.dumps(inputs)}
 
-    _dynamodb.put_item(TableName=PROJECTS_TABLE, Item=item)
+    try:
+        _dynamodb.put_item(TableName=PROJECTS_TABLE, Item=item)
+    except Exception as e:
+        return json_response(500, {"error": "internal_error", "detail": str(e)})
     return json_response(200, {"projectId": project_id})

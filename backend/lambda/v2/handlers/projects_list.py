@@ -5,6 +5,7 @@ from boto3.dynamodb.conditions import Attr
 from helpers.auth import get_user, get_optional_user, AuthError
 from helpers.users import ensure_user_exists
 from helpers.http import json_response
+from botocore.exceptions import ClientError
 
 _dynamodb = boto3.client('dynamodb')
 _dynamo_res = boto3.resource('dynamodb')
@@ -74,22 +75,48 @@ def handler(event, context):
         claims = get_user(event)
     except AuthError:
         return json_response(401, {"error": "unauthorized"})
+
+    # Quick sanity check to avoid opaque 502s when env is misconfigured
+    if not PROJECTS_TABLE:
+        return json_response(500, {"error": "PROJECTS_TABLE_NAME not configured"})
+
     ensure_user_exists(claims)
     user_id = claims.get('sub')
-    resp = _dynamodb.query(
-        TableName=PROJECTS_TABLE,
-        IndexName='GSI_ProjectsByUser',
-        KeyConditionExpression='userId = :u',
-        ExpressionAttributeValues={':u': {'S': user_id}},
-        ScanIndexForward=False
-    )
-    items = [
-        {
-            'projectId': i['projectId']['S'],
-            'title': i.get('title', {}).get('S', ''),
-            'createdAt': int(i.get('createdAt', {'N': '0'})['N'])
-        }
-        for i in resp.get('Items', [])
-    ]
-    # For UI compatibility, return array (not wrapped)
-    return json_response(200, items)
+    try:
+        resp = _dynamodb.query(
+            TableName=PROJECTS_TABLE,
+            IndexName='GSI_ProjectsByUser',
+            KeyConditionExpression='userId = :u',
+            ExpressionAttributeValues={':u': {'S': user_id}},
+            ScanIndexForward=False
+        )
+        items = [
+            {
+                'projectId': i['projectId']['S'],
+                'title': i.get('title', {}).get('S', ''),
+                'createdAt': int(i.get('createdAt', {'N': '0'})['N'])
+            }
+            for i in resp.get('Items', [])
+        ]
+        return json_response(200, items)
+    except ClientError as e:
+        code = e.response.get('Error', {}).get('Code')
+        # Graceful fallback if GSI isn't available yet: do a scan by userId
+        if code in ('ValidationException', 'ResourceNotFoundException'):
+            try:
+                table = _dynamo_res.Table(PROJECTS_TABLE)
+                scan = table.scan(FilterExpression=Attr('userId').eq(user_id))
+                items = [
+                    {
+                        'projectId': it.get('projectId'),
+                        'title': it.get('title', ''),
+                        'createdAt': int(it.get('createdAt', 0)) if isinstance(it.get('createdAt'), (int, float, str)) else 0,
+                    }
+                    for it in scan.get('Items', [])
+                ]
+                return json_response(200, items)
+            except Exception:
+                # Fall through to generic error below
+                pass
+        # Unknown error: return structured 500 to prevent APIGW 502
+        return json_response(500, {"error": "internal_error", "detail": str(e)})
