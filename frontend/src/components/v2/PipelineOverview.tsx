@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v2Api, PipelineRepo, PipelineIssue } from '@/services/v2/api';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { envConfig } from '@/config/environment';
 
 export const PipelineOverview: React.FC = () => {
   const [repos, setRepos] = useState<PipelineRepo[]>([]);
@@ -27,11 +28,17 @@ export const PipelineOverview: React.FC = () => {
           html_url: r.html_url || r.repoUrl,
           created_at: r.created_at || r.createdAt,
         }));
-        const issues = (issueResp.issues || []).map((i: any) => ({
-          ...i,
-          title: i.title || i.body?.slice(0, 60) || 'Issue',
-          created_at: i.created_at || i.createdAt,
-        }));
+        const issues = (issueResp.issues || []).map((i: any) => {
+          const org = envConfig.githubOrg;
+          const derivedUrl = (i.url || i.html_url) ||
+            (org && (i.repoName && i.issueNumber) ? `https://github.com/${org}/${i.repoName}/issues/${i.issueNumber}` : undefined);
+          return {
+            ...i,
+            title: i.title || i.body?.slice(0, 60) || 'Issue',
+            created_at: i.created_at || i.createdAt,
+            url: derivedUrl,
+          };
+        });
         setRepos(repos);
         setIssues(issues);
       } catch (e: any) {
@@ -189,15 +196,10 @@ export const PipelineOverview: React.FC = () => {
                   <tr key={`${i.id || i.number || i.title}-${i.number || i.created_at}`} className="border-t">
                     <td className="px-3 py-2">{i.title}</td>
                     <td className="px-3 py-2">{i.created_at ? new Date(i.created_at).toLocaleString() : '-'}</td>
-                    <td className="px-3 py-2">
-                      {i.repository_id || i.id ? (
-                        <Button variant="link" className="h-auto p-0" onClick={() => {
-                          const url = (i as any).url || (i as any).html_url;
-                          if (url) window.open(url, '_blank');
-                        }}>Open</Button>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
+                    <td className="px-3 py-2 break-all">
+                      {i.url ? (
+                        <a href={i.url} target="_blank" rel="noreferrer" className="text-blue-600 underline">{i.url}</a>
+                      ) : <span className="text-muted-foreground">—</span>}
                     </td>
                     <td className="px-3 py-2">
                       <Button variant="outline" size="sm" onClick={() => buildFromIssue(i)}>Build</Button>
