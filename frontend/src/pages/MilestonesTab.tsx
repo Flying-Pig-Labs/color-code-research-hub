@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Github, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer, ChevronDown, ChevronUp, Target } from 'lucide-react';
+import { Loader2, Github, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer, ChevronDown, ChevronUp, Target, Lightbulb, GitBranch, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
@@ -32,6 +32,7 @@ const MilestonesTab = () => {
   const navigate = useNavigate();
   const { user, token } = useUser();
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [milestoneItems, setMilestoneItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
@@ -59,6 +60,25 @@ const MilestonesTab = () => {
       // Use v2 API backed by DoubleDowns
       const items = await v2Api.listDoubleDowns();
       const list: any[] = Array.isArray(items) ? items : [];
+      // Also fetch issues to compute idea counts per repo
+      let issuesByRepo: Record<string, number> = {};
+      try {
+        const issuesResp: any = await v2Api.listPipelineRepos('issue');
+        const issues: any[] = (issuesResp?.issues || []) as any[];
+        for (const it of issues) {
+          let repo = it.repoName as string | undefined;
+          if (!repo && it.url) {
+            try {
+              const u = new URL(it.url);
+              const seg = u.pathname.split('/').filter(Boolean); // org, repo, issues, n
+              repo = seg[1];
+            } catch {}
+          }
+          if (repo) {
+            issuesByRepo[repo] = (issuesByRepo[repo] || 0) + 1;
+          }
+        }
+      } catch {}
       // Normalize to GitHubRepo shape expected by UI
       const mapped: GitHubRepo[] = list.map((d: any) => ({
         id: d.doubleId ? d.doubleId.length : 0,
@@ -73,6 +93,16 @@ const MilestonesTab = () => {
         body: d.body,
       }));
       setRepos(mapped);
+      // Enriched items for big Idea cards
+      const enriched = list.map((d: any) => ({
+        repoName: d.repoName,
+        repoUrl: d.repoUrl,
+        createdAt: d.createdAt || d.created_at,
+        status: d.status || 'completed',
+        body: d.body,
+        ideasCount: issuesByRepo[d.repoName] || 0,
+      }));
+      setMilestoneItems(enriched);
     } catch (error) {
       console.error("Error fetching repos:", error);
       toast({
@@ -85,9 +115,9 @@ const MilestonesTab = () => {
     }
   };
 
-  const filteredRepos = repos.filter(repo =>
-    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredItems = milestoneItems.filter(item =>
+    (item.repoName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.body || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleRepoSelect = async (repo: GitHubRepo) => {
@@ -237,66 +267,75 @@ const MilestonesTab = () => {
                   />
                 </div>
 
-                <ScrollArea className="h-[400px] pr-4">
-                  <div className="space-y-3">
-                    {filteredRepos.length === 0 ? (
+                <ScrollArea className="h-[600px] pr-4">
+                  <div className="space-y-4">
+                    {filteredItems.length === 0 ? (
                       <Card>
                         <CardContent className="pt-6">
                           <p className="text-center text-muted-foreground">
-                            {searchTerm ? "No repositories found matching your search." : "No repositories found."}
+                            {searchTerm ? "No manifested ideas found matching your search." : "No manifested ideas yet."}
                           </p>
                         </CardContent>
                       </Card>
                     ) : (
-                      filteredRepos.map((repo) => (
-                        <Card
-                          key={repo.id}
-                          className={`group cursor-pointer bg-card/80 border-carmax-blue/20 hover:border-carmax-blue/40 hover:bg-carmax-blue/5 shadow-smooth-md hover:shadow-smooth-lg transform hover:scale-[1.02] transition-all duration-300 ${submitting && selectedRepo?.id === repo.id ? 'opacity-50' : ''}`}
-                          onClick={() => !submitting && handleRepoSelect(repo)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">{repo.name}</h3>
-                                  <Badge variant={repo.private ? "secondary" : "outline"} className="text-xs bg-carmax-yellow/10 border-carmax-yellow/30 text-foreground">
-                                    {repo.private ? (
-                                      <>
-                                        <Lock className="w-3 h-3 mr-1" />
-                                        Private
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Globe className="w-3 h-3 mr-1" />
-                                        Public
-                                      </>
-                                    )}
-                                  </Badge>
-                                  {repo.language && (
-                                    <Badge variant="outline" className="text-xs bg-carmax-blue/10 border-carmax-blue/30 text-foreground">
-                                      {repo.language}
-                                    </Badge>
+                      filteredItems.map((item) => {
+                        const repo: GitHubRepo = {
+                          id: item.repoName?.length || 0,
+                          name: item.repoName,
+                          full_name: item.repoName,
+                          description: item.body?.slice(0, 200) || '',
+                          private: false,
+                          html_url: item.repoUrl,
+                          language: 'markdown',
+                          updated_at: item.createdAt || new Date().toISOString(),
+                          stargazers_count: 0,
+                          body: item.body,
+                        };
+                        return (
+                          <Card
+                            key={item.repoName}
+                            className={`group cursor-pointer bg-gradient-to-r from-amber-50/70 to-blue-50/70 dark:from-zinc-900 dark:to-zinc-800 border border-border shadow-card hover:shadow-elevated transition-all duration-300 ${submitting && selectedRepo?.name === repo.name ? 'opacity-50' : ''}`}
+                            onClick={() => !submitting && handleRepoSelect(repo)}
+                          >
+                            <CardContent className="p-6">
+                              <div className="flex items-start justify-between gap-6">
+                                <div className="flex-1 space-y-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-md bg-amber-100 dark:bg-zinc-700"><Lightbulb className="h-4 w-4 text-amber-700 dark:text-amber-300"/></div>
+                                    <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">{item.repoName}</h3>
+                                    <Badge variant="outline" className="text-xs">{item.status || 'completed'}</Badge>
+                                  </div>
+                                  {item.body && (
+                                    <p className="text-sm text-muted-foreground line-clamp-3">
+                                      {item.body}
+                                    </p>
                                   )}
+                                  <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                                    <span className="inline-flex items-center gap-1"><GitBranch className="h-3 w-3"/> {item.ideasCount} ideas</span>
+                                    <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3"/> {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-'}</span>
+                                  </div>
                                 </div>
-                                {repo.description && (
-                                  <p className="text-sm text-muted-foreground mb-2">
-                                    {repo.description}
-                                  </p>
-                                )}
-                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                  <span>⭐ {repo.stargazers_count}</span>
-                                  <span>Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
+                                <div className="flex flex-col items-end gap-2">
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={(e) => { e.stopPropagation(); window.open(item.repoUrl, '_blank'); }}
+                                  >
+                                    <Github className="h-4 w-4 mr-1"/> Open Repo
+                                  </Button>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={(e) => { e.stopPropagation(); handleRepoSelect(repo); }}
+                                  >
+                                    <Hammer className="h-4 w-4 mr-1"/> Generate Plan
+                                  </Button>
                                 </div>
                               </div>
-                              {submitting && selectedRepo?.id === repo.id ? (
-                                <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                              ) : (
-                                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))
+                            </CardContent>
+                          </Card>
+                        );
+                      })
                     )}
                   </div>
                 </ScrollArea>

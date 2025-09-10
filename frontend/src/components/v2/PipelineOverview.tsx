@@ -124,9 +124,38 @@ export const PipelineOverview: React.FC = () => {
       });
       const text = await resp.text();
       let data: any;
-      try { data = JSON.parse(text); } catch { throw new Error('Invalid response from build API'); }
-      if (!resp.ok || !data.success) {
-        throw new Error(data?.error || 'Build failed');
+      try { data = JSON.parse(text); } catch { /* ignore parse; may be non-JSON error */ }
+      if (!resp.ok || !data?.success) {
+        // Handle repo already exists gracefully
+        const alreadyExists = (resp.status === 422) && /name already exists/i.test(text) || /name already exists/i.test(String(data?.error));
+        const repoNameFromData = data?.repo_name || (repoFullName?.split('/')[1]);
+        const link = repoFullName ? `https://github.com/${repoFullName}` : undefined;
+        if (alreadyExists && repoNameFromData && link) {
+          // Ensure a DoubleDowns record exists for manifest tracking
+          try {
+            await fetch(`${(import.meta as any).env?.VITE_API_BASE_URL || ''}/projects`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('id_token') || ''}` },
+              body: JSON.stringify({
+                action: 'save_double',
+                repoName: repoNameFromData,
+                repoUrl: link,
+                body: `# ${repoNameFromData}\n\nRepository already existed; linked to existing repo.`,
+                createdAt: new Date().toISOString(),
+              }),
+            });
+          } catch { /* non-fatal */ }
+          toast.info(
+            (
+              <span>
+                Repository already exists. <a href={link} target="_blank" rel="noreferrer" className="underline">Open {repoNameFromData}</a>
+              </span>
+            ) as any
+          );
+          // Continue to refresh lists
+        } else {
+          throw new Error(data?.error || `Build failed (${resp.status})`);
+        }
       }
 
       // Persist to PipelineRepos via v2 API (ProjectsCreate hotfix)
@@ -142,7 +171,9 @@ export const PipelineOverview: React.FC = () => {
         }),
       });
 
-      toast.success('Repository build triggered');
+      if (resp.ok && data?.success) {
+        toast.success('Repository build triggered');
+      }
       // Refresh lists
       const [repoResp, issueResp] = await Promise.all([
         v2Api.listPipelineRepos('repo'),

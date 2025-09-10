@@ -215,6 +215,22 @@ const SharkLeaderboard = () => {
       
       if (!response.ok || !responseData.success) {
         console.error('Build API error:', responseData);
+        const exists = (response.status === 422) && /name already exists/i.test(responseText);
+        if (exists && idea.repository) {
+          const link = `https://github.com/${idea.repository}`;
+          // Save DoubleDown record for manifest tracking
+          try { await saveRepositoryToDynamoDB({ repo_name: idea.repository.split('/')[1], repo_url: link, readme_content: `# ${idea.issueTitle}` }, idea); } catch {}
+          toast({
+            title: 'Repository already exists',
+            description: (
+              <span>
+                <a href={link} target="_blank" rel="noreferrer" className="underline">Open {idea.repository}</a>
+              </span>
+            ),
+          });
+          setBuildingIdea(null);
+          return;
+        }
         throw new Error(responseData.error || 'Failed to build repository');
       }
       
