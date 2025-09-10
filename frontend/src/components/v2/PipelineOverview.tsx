@@ -53,10 +53,29 @@ export const PipelineOverview: React.FC = () => {
 
   const buildFromIssue = async (issue: any) => {
     try {
-      // Assume repository is the first repo in our list (or derive from issue if available)
-      const repoFullName = issue.repository || issue.repo_name || (issue.repo && issue.repo.full_name);
-      const issueNumber = issue.issueNumber || issue.issue_number || issue.number;
+      // Derive repository owner/name and issue number from multiple possible shapes
+      let repoFullName: string | undefined = issue.repository || issue.repo_name || (issue.repo && issue.repo.full_name);
+      let issueNumber: number | string | undefined = issue.issueNumber || issue.issue_number || issue.number;
       const title = issue.title || 'Generated Idea';
+
+      // Fallback: parse owner/repo/number from GitHub issue URL
+      if ((!repoFullName || !issueNumber) && issue.url) {
+        const m = String(issue.url).match(/github\.com\/(.+?)\/(.+?)\/issues\/(\d+)/i);
+        if (m) {
+          repoFullName = repoFullName || `${m[1]}/${m[2]}`;
+          issueNumber = issueNumber || m[3];
+        }
+      }
+
+      // Fallback: construct from org + repoName and parse itemType ISSUE#n
+      if (!repoFullName && envConfig.githubOrg && issue.repoName) {
+        repoFullName = `${envConfig.githubOrg}/${issue.repoName}`;
+      }
+      if (!issueNumber && issue.itemType) {
+        const mm = String(issue.itemType).match(/ISSUE#(\d+)/i);
+        if (mm) issueNumber = mm[1];
+      }
+
       if (!repoFullName || !issueNumber) {
         toast.error('Missing repository or issue number for build');
         return;
@@ -89,7 +108,7 @@ export const PipelineOverview: React.FC = () => {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('id_token') || ''}` },
         body: JSON.stringify({
           action: 'save_repo',
-          repoName: data.repo_name || title.replace(/\s+/g, '-').toLowerCase(),
+          repoName: data.repo_name || (repoFullName.split('/')[1] || title.replace(/\s+/g, '-').toLowerCase()),
           repoUrl: data.repo_url,
           body: data.readme_content || `# ${title}`,
           createdAt: new Date().toISOString(),
