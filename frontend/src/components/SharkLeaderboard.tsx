@@ -144,35 +144,29 @@ const SharkLeaderboard = () => {
     if (!user || !token) {
       throw new Error('User authentication required');
     }
-
-    const repositoryData = {
-      name: responseData.repo_name || idea.issueTitle,
-      full_name: responseData.repository?.full_name || `${user.name}/${responseData.repo_name}`,
-      description: responseData.repository?.description || idea.description || idea.issueTitle,
-      html_url: responseData.repo_url,
-      language: 'JavaScript', // Default, could be inferred from repo
-      stargazers_count: 0,
-      private: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      username: user.name,
-      body: responseData.readme_content || `# ${responseData.repo_name || idea.issueTitle}\n\n${idea.description || 'Repository created from ideation process.'}\n\n## Shark Tank Details\n- **Rank**: ${idea.rank}\n- **Score**: ${idea.sharkScore}\n- **Investment**: ${idea.investmentDisplay}\n- **Issue**: ${idea.issueNumber}`
+    // Save as a DoubleDowns record via v2 endpoint
+    const repoName = responseData.repo_name || idea.issueTitle;
+    const repoUrl = responseData.repo_url;
+    const body = responseData.readme_content || `# ${repoName}\n\n${idea.description || 'Repository created from ideation process.'}`;
+    const payload = {
+      action: 'save_double',
+      repoName,
+      repoUrl,
+      body,
+      createdAt: new Date().toISOString(),
     };
-
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/repositories`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/projects`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(repositoryData),
+      body: JSON.stringify(payload),
     });
-
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to save repository to DynamoDB: ${errorText}`);
+      throw new Error(`Failed to save DoubleDowns record: ${errorText}`);
     }
-
     return await response.json();
   };
 

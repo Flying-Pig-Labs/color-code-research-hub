@@ -95,6 +95,7 @@ export const v2Api = {
   listPipelineRepos: (itemType?: 'repo' | 'issue' | 'all') => 
     apiFetch(`/projects${itemType ? `?item_type=${itemType}` : ''}`),
   listPipelineJobs: () => apiFetch('/projects?item_type=jobs'),
+  listDoubleDowns: () => apiFetch('/projects?item_type=doubles'),
   getRepositoryIssues: (repoId: string) => apiFetch(`/api/repositories/${repoId}/issues`),
   getRepositoryPulls: (repoId: string) => apiFetch(`/api/repositories/${repoId}/pulls`),
   getRepositoryBuilds: (repoId: string) => apiFetch(`/api/repositories/${repoId}/builds`),

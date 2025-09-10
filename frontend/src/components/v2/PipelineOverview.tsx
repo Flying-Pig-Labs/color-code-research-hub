@@ -134,7 +134,7 @@ export const PipelineOverview: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('id_token') || ''}` },
         body: JSON.stringify({
-          action: 'save_repo',
+          action: 'save_double',
           repoName: data.repo_name || (repoFullName.split('/')[1] || title.replace(/\s+/g, '-').toLowerCase()),
           repoUrl: data.repo_url,
           body: data.readme_content || `# ${title}`,

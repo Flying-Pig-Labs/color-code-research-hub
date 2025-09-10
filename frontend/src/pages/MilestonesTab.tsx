@@ -56,21 +56,21 @@ const MilestonesTab = () => {
   const fetchMvpBuilderRepos = async () => {
     try {
       setLoading(true);
-      // Use v2 API backed by PipelineRepos
-      const resp = await v2Api.listPipelineRepos('repo');
-      const items = (resp?.repositories || []) as any[];
+      // Use v2 API backed by DoubleDowns
+      const items = await v2Api.listDoubleDowns();
+      const list: any[] = Array.isArray(items) ? items : [];
       // Normalize to GitHubRepo shape expected by UI
-      const mapped: GitHubRepo[] = items.map((r: any) => ({
-        id: r.id || 0,
-        name: r.name || r.repoName,
-        full_name: r.full_name || r.repoName || r.name,
-        description: r.description || (r.body?.slice(0, 200) ?? ''),
-        private: r.private ?? false,
-        html_url: r.html_url || r.repoUrl || '#',
-        language: r.language || 'markdown',
-        updated_at: r.updated_at || r.created_at || r.createdAt || new Date().toISOString(),
-        stargazers_count: r.stargazers_count || 0,
-        body: r.body,
+      const mapped: GitHubRepo[] = list.map((d: any) => ({
+        id: d.doubleId ? d.doubleId.length : 0,
+        name: d.repoName || d.title || 'repository',
+        full_name: d.repoName || d.title || 'repository',
+        description: d.description || d.body?.slice(0, 200) || '',
+        private: false,
+        html_url: d.repoUrl || '#',
+        language: 'markdown',
+        updated_at: d.updatedAt || d.created_at || d.createdAt || new Date().toISOString(),
+        stargazers_count: 0,
+        body: d.body,
       }));
       setRepos(mapped);
     } catch (error) {
