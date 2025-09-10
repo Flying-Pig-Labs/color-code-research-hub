@@ -32,11 +32,38 @@ export const PipelineOverview: React.FC = () => {
           const org = envConfig.githubOrg;
           const derivedUrl = (i.url || i.html_url) ||
             (org && (i.repoName && i.issueNumber) ? `https://github.com/${org}/${i.repoName}/issues/${i.issueNumber}` : undefined);
+          // Derive clean link text like "repo/issues/123"
+          let linkText: string | undefined;
+          let repoName: string | undefined = i.repoName;
+          let issueNumber: string | number | undefined = i.issueNumber || i.number || i.issue_number;
+          if (!repoName && (i as any).repo && (i as any).repo.full_name) {
+            const full: string = (i as any).repo.full_name;
+            const parts = full.split('/');
+            repoName = parts[1] || parts[0];
+          }
+          if ((!repoName || !issueNumber) && (i.url || derivedUrl)) {
+            try {
+              const u = new URL((i.url || derivedUrl) as string);
+              const seg = u.pathname.split('/').filter(Boolean); // [org, repo, 'issues', n]
+              if (seg.length >= 4) {
+                repoName = repoName || seg[1];
+                issueNumber = issueNumber || seg[3];
+              }
+            } catch {}
+          }
+          if (!issueNumber && i.itemType) {
+            const m = String(i.itemType).match(/ISSUE#(\d+)/i);
+            if (m) issueNumber = m[1];
+          }
+          if (repoName && issueNumber) {
+            linkText = `${repoName}/issues/${issueNumber}`;
+          }
           return {
             ...i,
             title: i.title || i.body?.slice(0, 60) || 'Issue',
             created_at: i.created_at || i.createdAt,
             url: derivedUrl,
+            linkText,
           };
         });
         setRepos(repos);
@@ -217,7 +244,7 @@ export const PipelineOverview: React.FC = () => {
                     <td className="px-3 py-2">{i.created_at ? new Date(i.created_at).toLocaleString() : '-'}</td>
                     <td className="px-3 py-2 break-all">
                       {i.url ? (
-                        <a href={i.url} target="_blank" rel="noreferrer" className="text-blue-600 underline">{i.url}</a>
+                        <a href={i.url} target="_blank" rel="noreferrer" className="text-blue-600 underline">{i.linkText || i.url}</a>
                       ) : <span className="text-muted-foreground">—</span>}
                     </td>
                     <td className="px-3 py-2">
