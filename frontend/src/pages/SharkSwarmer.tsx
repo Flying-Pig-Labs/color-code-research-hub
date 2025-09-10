@@ -13,6 +13,7 @@ import Header from "@/components/Header";
 import SharkLeaderboard from "@/components/SharkLeaderboard";
 import { PipelineJobsTable } from "@/components/PipelineJobsTable";
 import { useIsAdmin } from '@/hooks/useAdmin';
+import PipelineOverview from '@/components/v2/PipelineOverview';
 
 interface GitHubRepo {
   id: number;
@@ -57,6 +58,15 @@ const SharkSwarmer = () => {
       <section className="py-12 lg:py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="space-y-6">
+            {/* Generated Repositories & Ideas from PipelineRepos */}
+            <Card className="bg-card border-border shadow-card">
+              <CardHeader>
+                <CardTitle>Generated Repositories & Ideas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PipelineOverview />
+              </CardContent>
+            </Card>
             {/* Collapsible Pipeline Jobs Section */}
             {true && (
               <Card className="bg-card border-border shadow-card">

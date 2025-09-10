@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { v2Api, PipelineRepo, PipelineIssue } from '@/services/v2/api';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export const PipelineOverview: React.FC = () => {
   const [repos, setRepos] = useState<PipelineRepo[]>([]);
@@ -42,6 +43,71 @@ export const PipelineOverview: React.FC = () => {
     })();
     return () => { mounted = false; };
   }, []);
+
+  const buildFromIssue = async (issue: any) => {
+    try {
+      // Assume repository is the first repo in our list (or derive from issue if available)
+      const repoFullName = issue.repository || issue.repo_name || (issue.repo && issue.repo.full_name);
+      const issueNumber = issue.issueNumber || issue.issue_number || issue.number;
+      const title = issue.title || 'Generated Idea';
+      if (!repoFullName || !issueNumber) {
+        toast.error('Missing repository or issue number for build');
+        return;
+      }
+
+      // Trigger external build (existing API used elsewhere in app)
+      const buildPayload = {
+        repository: repoFullName,
+        issue_number: issueNumber,
+        title,
+        score: issue.sharkScore || 0,
+        investment_display: issue.investmentDisplay || '$0',
+        rank: issue.rank || 0,
+      };
+      const resp = await fetch('https://9y4n7ifoql.execute-api.us-east-1.amazonaws.com/prod/build', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(buildPayload),
+      });
+      const text = await resp.text();
+      let data: any;
+      try { data = JSON.parse(text); } catch { throw new Error('Invalid response from build API'); }
+      if (!resp.ok || !data.success) {
+        throw new Error(data?.error || 'Build failed');
+      }
+
+      // Persist to PipelineRepos via v2 API (ProjectsCreate hotfix)
+      await fetch(`${(import.meta as any).env?.VITE_API_BASE_URL || ''}/projects`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('id_token') || ''}` },
+        body: JSON.stringify({
+          action: 'save_repo',
+          repoName: data.repo_name || title.replace(/\s+/g, '-').toLowerCase(),
+          repoUrl: data.repo_url,
+          body: data.readme_content || `# ${title}`,
+          createdAt: new Date().toISOString(),
+        }),
+      });
+
+      toast.success('Repository build triggered');
+      // Refresh lists
+      const [repoResp, issueResp] = await Promise.all([
+        v2Api.listPipelineRepos('repo'),
+        v2Api.listPipelineRepos('issue'),
+      ]);
+      const reposNew = (repoResp.repositories || []).map((r: any) => ({
+        ...r, name: r.name || r.repoName || r.full_name, html_url: r.html_url || r.repoUrl, created_at: r.created_at || r.createdAt,
+      }));
+      const issuesNew = (issueResp.issues || []).map((i: any) => ({
+        ...i, title: i.title || i.body?.slice(0, 60) || 'Issue', created_at: i.created_at || i.createdAt,
+      }));
+      setRepos(reposNew);
+      setIssues(issuesNew);
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e?.message || 'Failed to build repository');
+    }
+  };
 
   if (loading) {
     return (
@@ -115,11 +181,12 @@ export const PipelineOverview: React.FC = () => {
                   <th className="px-3 py-2 text-left">Title</th>
                   <th className="px-3 py-2 text-left">Created</th>
                   <th className="px-3 py-2 text-left">Link</th>
+                  <th className="px-3 py-2 text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {issues.slice(0, 8).map((i) => (
-                  <tr key={`${i.id}-${i.number}`} className="border-t">
+                  <tr key={`${i.id || i.number || i.title}-${i.number || i.created_at}`} className="border-t">
                     <td className="px-3 py-2">{i.title}</td>
                     <td className="px-3 py-2">{i.created_at ? new Date(i.created_at).toLocaleString() : '-'}</td>
                     <td className="px-3 py-2">
@@ -131,6 +198,9 @@ export const PipelineOverview: React.FC = () => {
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
+                    </td>
+                    <td className="px-3 py-2">
+                      <Button variant="outline" size="sm" onClick={() => buildFromIssue(i)}>Build</Button>
                     </td>
                   </tr>
                 ))}
