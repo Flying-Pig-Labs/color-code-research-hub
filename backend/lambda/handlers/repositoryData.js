@@ -44,7 +44,11 @@ exports.handler = async (event) => {
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
   };
 
-  if (event.httpMethod === 'OPTIONS') {
+  // Handle API Gateway v2 event format
+  const method = event.requestContext?.http?.method || event.httpMethod || '';
+  const path = event.rawPath || event.path || '';
+
+  if (method === 'OPTIONS') {
     return {
       statusCode: 200,
       headers: corsHeaders,
@@ -53,7 +57,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const pathSegments = event.path.split('/').filter(Boolean);
+    const pathSegments = path.split('/').filter(Boolean);
 
     // GET /api/repositories - List repositories for authenticated user
     if (pathSegments.length === 2 && pathSegments[0] === 'api' && pathSegments[1] === 'repositories') {
@@ -99,7 +103,7 @@ exports.handler = async (event) => {
     }
 
     // POST /api/repositories - Create a new repository record
-    if (pathSegments.length === 2 && pathSegments[0] === 'api' && pathSegments[1] === 'repositories' && event.httpMethod === 'POST') {
+    if (pathSegments.length === 2 && pathSegments[0] === 'api' && pathSegments[1] === 'repositories' && method === 'POST') {
       const username = getAuthenticatedUsername(event);
       if (!username) {
         return {
