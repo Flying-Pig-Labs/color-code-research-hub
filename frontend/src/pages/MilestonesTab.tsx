@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Github, ChevronRight, Search, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer, ChevronDown, ChevronUp, Target, Lightbulb, GitBranch, Calendar } from 'lucide-react';
+import { Loader2, Github, ChevronRight, Globe, Lock, AlertCircle, ShipWheel, CircleHelp, Hammer, ChevronDown, ChevronUp, Target, Lightbulb, GitBranch, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SectionWrapper from "@/components/SectionWrapper";
@@ -34,7 +33,7 @@ const MilestonesTab = () => {
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [milestoneItems, setMilestoneItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  // Search removed per production UX; show all manifested ideas
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [howModalOpen, setHowModalOpen] = useState(false);
@@ -60,8 +59,10 @@ const MilestonesTab = () => {
       // Use v2 API backed by DoubleDowns
       const items = await v2Api.listDoubleDowns();
       const list: any[] = Array.isArray(items) ? items : [];
-      // Also fetch issues to compute idea counts per repo
+      // Also fetch issues to compute idea counts and primary titles per repo
       let issuesByRepo: Record<string, number> = {};
+      let titleByRepo: Record<string, string> = {};
+      let issueLinkByRepo: Record<string, string> = {};
       try {
         const issuesResp: any = await v2Api.listPipelineRepos('issue');
         const issues: any[] = (issuesResp?.issues || []) as any[];
@@ -76,6 +77,19 @@ const MilestonesTab = () => {
           }
           if (repo) {
             issuesByRepo[repo] = (issuesByRepo[repo] || 0) + 1;
+            if (!titleByRepo[repo]) {
+              // Prefer explicit title; fallback to trimmed body
+              const t = it.title || (it.body ? String(it.body).split('\n')[0].slice(0, 120) : 'Idea');
+              titleByRepo[repo] = t;
+              // Save a nice link path (repo/issues/N) if possible
+              if (it.url) {
+                try {
+                  const u = new URL(it.url);
+                  const seg = u.pathname.split('/').filter(Boolean);
+                  if (seg.length >= 4) issueLinkByRepo[repo] = `${seg[1]}/issues/${seg[3]}`;
+                } catch {}
+              }
+            }
           }
         }
       } catch {}
@@ -94,14 +108,25 @@ const MilestonesTab = () => {
       }));
       setRepos(mapped);
       // Enriched items for big Idea cards
-      const enriched = list.map((d: any) => ({
+      const enriched = list.map((d: any) => {
+        // Parse a display title from the README body (first markdown heading) if present
+        let parsedTitle: string | undefined;
+        if (typeof d.body === 'string') {
+          const m = d.body.match(/^\s*#\s+(.+)$/m);
+          if (m) parsedTitle = m[1].trim();
+        }
+        const repo = d.repoName;
+        const titleFromIssues = repo ? titleByRepo[repo] : undefined;
+        return {
         repoName: d.repoName,
         repoUrl: d.repoUrl,
         createdAt: d.createdAt || d.created_at,
         status: d.status || 'completed',
         body: d.body,
         ideasCount: issuesByRepo[d.repoName] || 0,
-      }));
+        title: parsedTitle || titleFromIssues || d.repoName,
+        ideaLink: repo && issueLinkByRepo[repo] ? issueLinkByRepo[repo] : undefined,
+      }});
       setMilestoneItems(enriched);
     } catch (error) {
       console.error("Error fetching repos:", error);
@@ -115,10 +140,7 @@ const MilestonesTab = () => {
     }
   };
 
-  const filteredItems = milestoneItems.filter(item =>
-    (item.repoName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (item.body || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredItems = milestoneItems;
 
   const handleRepoSelect = async (repo: GitHubRepo) => {
     setSelectedRepo(repo);
@@ -257,24 +279,12 @@ const MilestonesTab = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input
-                    placeholder="search repositories..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 h-12 bg-background/80 border-carmax-blue/20 focus:border-carmax-blue focus:ring-2 focus:ring-carmax-blue/20 transition-all duration-300"
-                  />
-                </div>
-
                 <ScrollArea className="h-[600px] pr-4">
                   <div className="space-y-4">
                     {filteredItems.length === 0 ? (
                       <Card>
                         <CardContent className="pt-6">
-                          <p className="text-center text-muted-foreground">
-                            {searchTerm ? "No manifested ideas found matching your search." : "No manifested ideas yet."}
-                          </p>
+                          <p className="text-center text-muted-foreground">No manifested ideas yet.</p>
                         </CardContent>
                       </Card>
                     ) : (
@@ -302,7 +312,7 @@ const MilestonesTab = () => {
                                 <div className="flex-1 space-y-3">
                                   <div className="flex items-center gap-3">
                                     <div className="p-2 rounded-md bg-amber-100 dark:bg-zinc-700"><Lightbulb className="h-4 w-4 text-amber-700 dark:text-amber-300"/></div>
-                                    <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">{item.repoName}</h3>
+                                    <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">{item.title || item.repoName}</h3>
                                     <Badge variant="outline" className="text-xs">{item.status || 'completed'}</Badge>
                                   </div>
                                   {item.body && (
@@ -313,6 +323,11 @@ const MilestonesTab = () => {
                                   <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                                     <span className="inline-flex items-center gap-1"><GitBranch className="h-3 w-3"/> {item.ideasCount} ideas</span>
                                     <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3"/> {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-'}</span>
+                                    {item.ideaLink && (
+                                      <span className="inline-flex items-center gap-1">
+                                        <a className="underline" href={`https://github.com/${item.ideaLink}`} target="_blank" rel="noreferrer">{item.ideaLink}</a>
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">

@@ -1,8 +1,9 @@
 // Report Service for fetching and processing research reports from S3
 import { toast } from "sonner";
+import { envConfig } from '@/config/environment';
 
 // Get configuration from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL = envConfig.apiBaseUrl;
 
 // Report data structure based on research API schema
 export interface ReportSection {
@@ -56,11 +57,14 @@ export class ReportServiceError extends Error {
  */
 export async function fetchReportData(reportId: string): Promise<RawReportData> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/research/reports/${reportId}`, {
+    // Use v2 endpoint: /reports/{id} with Authorization header
+    const idToken = sessionStorage.getItem('id_token') || sessionStorage.getItem('idToken') || '';
+    const response = await fetch(`${API_BASE_URL}/reports/${reportId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        ...(idToken ? { 'Authorization': `Bearer ${idToken}` } : {}),
       },
       credentials: 'omit',
     });

@@ -58,17 +58,17 @@ const ProjectDetail: React.FC = () => {
         <p className="text-sm text-red-600">No credits available. Please purchase credits.</p>
       )}
 
-      {/* Report Section */}
+      {/* Report Section (actions removed for production-only view) */}
       <section className="space-y-2">
         <h2 className="font-medium">Report</h2>
         {report?.data?.status === 'done' && report.data.reportUrl ? (
           <a href={report.data.reportUrl} target="_blank" rel="noopener" className="text-blue-600 underline">Download Report</a>
         ) : (
-          <Button onClick={triggerReport} disabled={startReport.isPending || (balance?.credits ?? 0) === 0}>Run Report (1 credit)</Button>
+          <p className="text-sm text-muted-foreground">No report available yet.</p>
         )}
       </section>
 
-      {/* Ideations Section */}
+      {/* Ideations Section (actions removed) */}
       <section className="space-y-2">
         <h2 className="font-medium">Ideations</h2>
         {ideas.length > 0 ? (
@@ -81,18 +81,13 @@ const ProjectDetail: React.FC = () => {
                     <td className="p-1">{idx + 1}</td>
                     <td className="p-1">{idea.title}</td>
                     <td className="p-1">{idea.score}</td>
-                    <td className="p-1 space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => setSelectedIdea(idea)}>Select</Button>
-                      <FeedbackDialog triggerLabel="Feedback" onSubmit={(fb) => triggerDouble(fb)} />
-                    </td>
+                    <td className="p-1" />
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        ) : (
-          <Button onClick={triggerIdeation} disabled={!reportId || startIdeation.isPending || (balance?.credits ?? 0) === 0}>Run Ideation (1 credit)</Button>
-        )}
+        ) : (<p className="text-sm text-muted-foreground">No ideation available yet.</p>)}
       </section>
 
       {/* Double Down Section */}
@@ -104,11 +99,7 @@ const ProjectDetail: React.FC = () => {
             {double.data.zipUrl && <a href={double.data.zipUrl} target="_blank" rel="noopener" download className="text-blue-600 underline">Download ZIP</a>}
             <p className="text-xs text-muted-foreground">Informational only; not legal advice; user must file & pay fees via USPTO Patent Center.</p>
           </div>
-        ) : (
-          selectedIdea && (
-            <Button onClick={() => triggerDouble()} disabled={startDouble.isPending || (balance?.credits ?? 0) === 0}>Double-Down (1 credit)</Button>
-          )
-        )}
+        ) : (<p className="text-sm text-muted-foreground">No double-down artifacts yet.</p>)}
       </section>
     </div>
   );

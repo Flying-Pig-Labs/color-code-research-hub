@@ -38,8 +38,7 @@ import {
   GitBranch
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import PipelineOverview from '@/components/v2/PipelineOverview';
-import IdeationOverview from '@/components/v2/IdeationOverview';
+import { v2Api } from '@/services/v2/api';
 
 /**
  * Format timestamp to readable date.
@@ -65,6 +64,37 @@ const Projects: React.FC = () => {
   const [domain, setDomain] = useState('');
   const [errors, setErrors] = useState<{ title?: string; domain?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ideaCounts, setIdeaCounts] = useState<Record<string, number>>({});
+  const [doubleLinks, setDoubleLinks] = useState<Record<string, string>>({});
+
+  // Enrich projects with ideas count & final repo (DoubleDowns)
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const [issuesResp, doubles] = await Promise.all([
+          v2Api.listPipelineRepos('issue'),
+          v2Api.listDoubleDowns().catch(() => []),
+        ]);
+        const issues: any[] = (issuesResp?.issues || []) as any[];
+        const counts: Record<string, number> = {};
+        for (const it of issues) {
+          const rn = (it.repoName || '').toString();
+          if (rn) counts[rn] = (counts[rn] || 0) + 1;
+        }
+        setIdeaCounts(counts);
+        const links: Record<string, string> = {};
+        if (Array.isArray(doubles)) {
+          for (const d of doubles as any[]) {
+            if (d?.repoName && d?.repoUrl) links[d.repoName] = d.repoUrl;
+          }
+        }
+        setDoubleLinks(links);
+      } catch {
+        setIdeaCounts({});
+        setDoubleLinks({});
+      }
+    })();
+  }, []);
 
   /**
    * Validate form inputs.
@@ -392,6 +422,11 @@ const Projects: React.FC = () => {
         </CardContent>
       </Card>
 
+      {/* Explanation */}
+      <div className="mb-6 text-sm text-muted-foreground">
+        We use Projects to keep track of everything: research, ideation, and planning all connected together.
+      </div>
+
       {/* Projects List */}
       {hasProjects && (
         <div className="space-y-4">
@@ -422,9 +457,31 @@ const Projects: React.FC = () => {
                             </Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          Created {formatDate(project.createdAt)}
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>Created {formatDate(project.createdAt)}</span>
+                          <span>•</span>
+                          <span>Ideas: {ideaCounts[project.title] || 0}</span>
+                          {doubleLinks[project.title] && (
+                            <>
+                              <span>•</span>
+                              <a
+                                href={doubleLinks[project.title]}
+                                target="_blank" rel="noreferrer"
+                                className="underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Final Repo
+                              </a>
+                            </>
+                          )}
+                          <span>•</span>
+                          <Link to="/shark-swarmer" className="underline" onClick={(e) => e.stopPropagation()}>
+                            View Ideation
+                          </Link>
+                          <span>•</span>
+                          <Link to="/milestones" className="underline" onClick={(e) => e.stopPropagation()}>
+                            View Planning
+                          </Link>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -441,12 +498,6 @@ const Projects: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Pipeline overview (repos and ideas) */}
-      <div className="mt-8 space-y-8">
-        <PipelineOverview />
-        <IdeationOverview />
-      </div>
 
       {/* Empty State */}
       {!hasProjects && (
