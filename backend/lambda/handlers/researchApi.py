@@ -825,19 +825,22 @@ def handler(event, context):
 
     # Handle CORS preflight requests immediately
     # Browsers send OPTIONS requests before actual API calls
-    if event.get("httpMethod") == "OPTIONS":
+    method = event.get("requestContext", {}).get("http", {}).get("method", event.get("httpMethod", ""))
+    if method == "OPTIONS":
         return {"statusCode": 200, "headers": cors_headers, "body": ""}
 
     try:
-        # Extract and normalize request path
-        # API Gateway may include stage prefix that needs removal
-        path = event.get("path", "")
+        # Extract and normalize request path - handle API Gateway v2 event format
+        # API Gateway v2 uses rawPath instead of path, and different method location
+        path = event.get("rawPath", event.get("path", ""))
+        method = event.get("requestContext", {}).get("http", {}).get("method", event.get("httpMethod", ""))
+        
         # Strip stage prefix if present (e.g., /production/api/... -> /api/...)
         if path.startswith("/production"):
             path = path[11:]  # Remove "/production" prefix
 
         # Route: POST /api/research - Create new research job
-        if path == "/api/research" and event.get("httpMethod") == "POST":
+        if path == "/api/research" and method == "POST":
             # Parse request body
             body = json.loads(event.get("body", "{}"))
 
@@ -1022,7 +1025,7 @@ def handler(event, context):
         # Handle download URL generation
         elif (
             path.startswith("/api/research/download/")
-            and event.get("httpMethod") == "GET"
+            and method == "GET"
         ):
             # Extract s3_key from path (expects base64 encoded key)
             try:
@@ -1082,7 +1085,7 @@ def handler(event, context):
         # This endpoint is called repeatedly by frontend until job completes
         elif (
             path.startswith("/api/research/status/")
-            and event.get("httpMethod") == "GET"
+            and method == "GET"
         ):
             # Extract Perplexity request ID from URL path
             request_id = path.split("/")[-1]
@@ -1207,7 +1210,7 @@ def handler(event, context):
 
         # Route: GET /api/research/reports - List all research reports
         # Returns paginated list with AI-generated summaries and download links
-        elif path == "/api/research/reports" and event.get("httpMethod") == "GET":
+        elif path == "/api/research/reports" and method == "GET":
             try:
                 # Parse query parameters for filtering and pagination
                 query_params = event.get("queryStringParameters", {}) or {}
