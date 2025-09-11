@@ -3,10 +3,10 @@ import os
 import time
 import uuid
 import boto3
-from ..helpers.auth import get_user, AuthError
-from ..helpers.users import ensure_user_exists
-from ..helpers.http import json_response
-from ..helpers.credits import atomic_debit, DebitError
+from helpers.auth import get_user, AuthError
+from helpers.users import ensure_user_exists
+from helpers.http import json_response
+from helpers.credits import atomic_debit, DebitError
 _s3 = boto3.client('s3')
 ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
 

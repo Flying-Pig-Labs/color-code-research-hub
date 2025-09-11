@@ -1241,15 +1241,23 @@ def handler(event, context):
                         download_url = generate_presigned_url(item["fullReportS3Key"])
                         if download_url:
                             item["downloadUrl"] = download_url
+                    elif item.get("s3ReportKey"):
+                        # Formatted markdown report key (newer processors)
+                        download_url = generate_presigned_url(item["s3ReportKey"])
+                        if download_url:
+                            item["downloadUrl"] = download_url
                     elif item.get("s3Key"):
                         # Fallback to old s3Key field for backward compatibility
                         download_url = generate_presigned_url(item["s3Key"])
                         if download_url:
                             item["downloadUrl"] = download_url
                     
-                    # Ensure summary is included if available
+                    # Ensure summary is included if available; fallback to contentSummary
                     if item.get("processedSummary"):
                         item["summary"] = item["processedSummary"]
+                        item["summaryWordCount"] = item.get("summaryWordCount", 0)
+                    elif item.get("contentSummary"):
+                        item["summary"] = item["contentSummary"]
                         item["summaryWordCount"] = item.get("summaryWordCount", 0)
                     
                     # Calculate duration if both timestamps exist

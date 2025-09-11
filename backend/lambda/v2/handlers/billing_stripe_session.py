@@ -4,7 +4,7 @@ import base64
 import urllib.parse
 import urllib.request
 import boto3
-from ..helpers.http import json_response
+from helpers.http import json_response
 
 _secrets = boto3.client('secretsmanager')
 _cached_key = None

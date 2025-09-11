@@ -5,10 +5,10 @@ import uuid
 import boto3
 import io
 import zipfile
-from ..helpers.auth import get_user, AuthError
-from ..helpers.users import ensure_user_exists
-from ..helpers.http import json_response
-from ..helpers.credits import atomic_debit, DebitError
+from helpers.auth import get_user, AuthError
+from helpers.users import ensure_user_exists
+from helpers.http import json_response
+from helpers.credits import atomic_debit, DebitError
 
 _dynamodb = boto3.client('dynamodb')
 DOUBLES_TABLE = os.environ.get('DOUBLES_TABLE_NAME', '')

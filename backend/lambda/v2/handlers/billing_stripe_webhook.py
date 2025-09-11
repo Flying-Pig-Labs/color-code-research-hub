@@ -6,7 +6,7 @@ import hmac
 import hashlib
 
 import boto3
-from ..helpers.http import json_response
+from helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')

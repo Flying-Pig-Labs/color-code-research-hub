@@ -1,8 +1,8 @@
 import json
 import os
 import boto3
-from ..helpers.auth import get_user, require_admin, AuthError
-from ..helpers.http import json_response
+from helpers.auth import get_user, require_admin, AuthError
+from helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
 USERS_TABLE = os.environ.get('USERS_TABLE_NAME', '')
