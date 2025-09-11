@@ -40,10 +40,14 @@ def handler(event, context):
         # Get authenticated username from JWT token with mapping
         username = get_authenticated_username_with_mapping(event)
 
+        # Get query parameters first to check item_type
+        query_params = event.get('queryStringParameters') or {}
+        item_type_filter = query_params.get('item_type', 'all').lower()
+        
         # Public/demo mode: if no auth, return demo payload
         if not username and is_public_mode():
             # If UI calls with item_type, serve repos/issues demo
-            if item_type_filter in ('repo', 'issue', 'all') and 'item_type' in (event.get('queryStringParameters') or {}):
+            if item_type_filter in ('repo', 'issue', 'all') and 'item_type' in query_params:
                 demo_repos = [
                     {
                         'id': 'demo-repo-1',
@@ -93,10 +97,6 @@ def handler(event, context):
 
         if not username:
             return create_cors_response(401, {'error': 'Authentication required'})
-        
-        # Get query parameters
-        query_params = event.get('queryStringParameters') or {}
-        item_type_filter = query_params.get('item_type', 'all').lower()
         
         # Query PipelineRepos table filtering by username
         response = table.scan(

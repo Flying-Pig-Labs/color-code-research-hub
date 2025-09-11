@@ -18,8 +18,9 @@ def handler(event, context):
     Returns repositories grouped by repo name with their issues
     """
     
-    # Handle CORS preflight
-    if event.get('httpMethod') == 'OPTIONS':
+    # Handle CORS preflight - support API Gateway v2 event format
+    method = event.get("requestContext", {}).get("http", {}).get("method", event.get("httpMethod", ""))
+    if method == 'OPTIONS':
         return handle_cors_preflight()
     
     try:
