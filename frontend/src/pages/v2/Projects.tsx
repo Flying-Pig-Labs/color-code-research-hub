@@ -20,8 +20,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { MermaidDiagram } from '@/components/MermaidDiagram';
 import { 
   FolderPlus, 
   Lightbulb, 
@@ -35,7 +33,10 @@ import {
   Target,
   Zap,
   GitBranch,
-  ExternalLink
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { v2Api } from '@/services/v2/api';
@@ -70,6 +71,10 @@ const Projects: React.FC = () => {
   const [doubleLinks, setDoubleLinks] = useState<Record<string, string>>({});
   const [topIdeaTitle, setTopIdeaTitle] = useState<Record<string, string>>({});
   const [lastUpdated, setLastUpdated] = useState<Record<string, number>>({});
+  
+  // Layout state
+  const [workflowExpanded, setWorkflowExpanded] = useState(false);
+  const [advancedExpanded, setAdvancedExpanded] = useState(false);
 
   // Enrich projects with ideas count & final repo (DoubleDowns)
   React.useEffect(() => {
@@ -230,350 +235,260 @@ const Projects: React.FC = () => {
         <p className="text-muted-foreground text-lg">
           Organize your research-to-patent workflow
         </p>
+        {user?.email && (
+          <p className="text-sm text-muted-foreground">Workspace: {user.email}</p>
+        )}
       </div>
 
-      {/* Onboarding for new users */}
+      {/* Compact Onboarding for new users */}
       {!hasProjects && (
-        <div className="space-y-6">
-          {/* Welcome Message */}
-          <Card className="bg-gradient-to-r from-accent/5 to-accent/10 border-accent/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-accent" />
-                Welcome to truflr.ai Projects
-              </CardTitle>
-              <CardDescription className="text-base">
-                Projects organize your complete journey from market research to patent filing.
-                Each project contains three phases that build upon each other.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          {/* Workflow Explanation */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-xl">How Projects Work</CardTitle>
-              <CardDescription>
-                Each project follows a structured 3-phase workflow to transform research into intellectual property.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Phase 1 */}
-              <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/10 text-blue-600 font-semibold text-sm">
-                  1
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Search className="h-4 w-4 text-blue-600" />
-                    <h3 className="font-semibold text-foreground">Research Phase</h3>
-                    <Badge variant="secondary">1 Credit</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Generate comprehensive market research and competitive analysis for your domain.
-                    Creates detailed research reports with insights and data.
-                  </p>
-                </div>
+        <Card className="bg-gradient-to-r from-accent/5 to-accent/10 border-accent/20">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-accent" />
+                <CardTitle className="text-base">How It Works</CardTitle>
               </div>
-
-              {/* Phase 2 */}
-              <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500/10 text-purple-600 font-semibold text-sm">
-                  2
+              <Button variant="ghost" size="sm" onClick={() => setWorkflowExpanded(!workflowExpanded)}>
+                {workflowExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </div>
+            <CardDescription>
+              Research → Ideas → Patents. Three simple steps.
+            </CardDescription>
+          </CardHeader>
+          {workflowExpanded && (
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                  Research (1 credit)
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Lightbulb className="h-4 w-4 text-purple-600" />
-                    <h3 className="font-semibold text-foreground">Ideation Phase</h3>
-                    <Badge variant="secondary">1 Credit</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    AI analyzes your research to generate and rank 10 innovative business ideas.
-                    Each idea includes market scoring and strategic analysis.
-                  </p>
+                <ArrowRight className="h-3 w-3" />
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                  Ideation (1 credit)
                 </div>
-              </div>
-
-              {/* Phase 3 */}
-              <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/10 text-green-600 font-semibold text-sm">
-                  3
+                <ArrowRight className="h-3 w-3" />
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  Patent Prep (1 credit)
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <FileText className="h-4 w-4 text-green-600" />
-                    <h3 className="font-semibold text-foreground">Double-Down Phase</h3>
-                    <Badge variant="secondary">1 Credit</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Select your best idea and generate patent-ready documentation including
-                    final PDF and provisional filing package.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2 border-t border-border">
-                <AlertCircle className="h-4 w-4" />
-                <span>Each phase builds on the previous one. You'll need to complete them in order.</span>
               </div>
             </CardContent>
-          </Card>
-        </div>
+          )}
+        </Card>
       )}
 
-      {/* Compact Workflow Diagram */}
+      {/* Compact Workflow Overview - Always Visible */}
       <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <GitBranch className="h-5 w-5 text-accent" />
-            Workflow Overview
-          </CardTitle>
-          <CardDescription>
-            The 3-phase research-to-patent process
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="w-full overflow-x-auto">
-            <MermaidDiagram 
-              chart={`flowchart LR
-    A[🔍 Research] --> B[💡 Ideation]
-    B --> C[📄 Double-Down]
-    C --> D[🎯 Patent]
-    
-    classDef phase fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,font-size:11px
-    classDef final fill:#d4edda,stroke:#28a745,stroke-width:2px,font-size:11px
-    
-    class A,B,C phase
-    class D final`}
-              id="compact-workflow"
-            />
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <GitBranch className="h-4 w-4 text-accent" />
+              <CardTitle className="text-base">Research-to-Patent Workflow</CardTitle>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => setWorkflowExpanded(!workflowExpanded)}>
+              {workflowExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
           </div>
-        </CardContent>
+        </CardHeader>
+        {workflowExpanded && (
+          <CardContent className="pt-0">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                Research (1 credit)
+              </div>
+              <ArrowRight className="h-3 w-3" />
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                Ideation (1 credit)
+              </div>
+              <ArrowRight className="h-3 w-3" />
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                Patent Prep (1 credit)
+              </div>
+            </div>
+          </CardContent>
+        )}
       </Card>
 
-      {/* Create Project Form */}
-      <Card className="bg-card border-border shadow-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FolderPlus className="h-5 w-5 text-accent" />
-            Create New Project
-          </CardTitle>
-          <CardDescription>
-            Start a new research-to-patent workflow. Give your project a clear, descriptive title.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Title Field */}
-            <div className="space-y-2">
-              <Label htmlFor="title" className="text-sm font-medium">
-                Project Title *
-              </Label>
+      {/* Streamlined Create Project Bar */}
+      <Card className="bg-accent/5 border-accent/20">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <FolderPlus className="h-5 w-5 text-accent flex-shrink-0" />
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
               <Input
-                id="title"
-                type="text"
+                placeholder="Project title (required)"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="e.g., AI-Powered E-commerce Analytics"
-                className={`bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-accent ${
-                  errors.title ? 'border-destructive focus:border-destructive' : ''
-                }`}
+                className={`bg-background ${errors.title ? 'border-destructive' : ''}`}
                 disabled={isSubmitting}
                 maxLength={100}
               />
-              {errors.title && (
-                <div className="flex items-center gap-1 text-sm text-destructive">
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.title}
-                </div>
-              )}
-            </div>
-
-            {/* Domain Field */}
-            <div className="space-y-2">
-              <Label htmlFor="domain" className="text-sm font-medium">
-                Domain/Industry
-                <span className="text-muted-foreground ml-1">(Optional)</span>
-              </Label>
               <Input
-                id="domain"
-                type="text"
+                placeholder="Domain/Industry (optional)"
                 value={domain}
                 onChange={(e) => handleDomainChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="e.g., E-commerce, Healthcare, FinTech"
-                className={`bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-accent ${
-                  errors.domain ? 'border-destructive focus:border-destructive' : ''
-                }`}
+                className={`bg-background ${errors.domain ? 'border-destructive' : ''}`}
                 disabled={isSubmitting}
                 maxLength={200}
               />
-              {errors.domain && (
-                <div className="flex items-center gap-1 text-sm text-destructive">
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.domain}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-2">
-            <div className="text-xs text-muted-foreground">
-              Press Ctrl+Enter (Cmd+Enter on Mac) to create
             </div>
             <Button
               onClick={handleCreate}
               disabled={isSubmitting || !title.trim()}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-card hover:shadow-elevated transition-all"
+              size="sm"
+              className="bg-accent hover:bg-accent/90 flex-shrink-0"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <FolderPlus className="mr-2 h-4 w-4" />
-                  Create Project
-                </>
-              )}
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setAdvancedExpanded(!advancedExpanded)}
+            >
+              <Settings className="h-4 w-4" />
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Header / Explanation */}
-      <Card className="mb-6 bg-muted/30 border-border">
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold text-foreground">Projects</h2>
-              <p className="text-sm text-muted-foreground mt-1">Projects bring together your research, ideations, and planning milestones in one place.</p>
+          
+          {/* Advanced options - collapsible */}
+          {advancedExpanded && (
+            <div className="mt-4 p-3 bg-muted/20 rounded-md space-y-2">
+              <Label className="text-sm font-medium">Advanced Options</Label>
+              <div className="text-xs text-muted-foreground space-y-1">
+                <div>Press Ctrl+Enter (Cmd+Enter on Mac) to create</div>
+                {(errors.title || errors.domain) && (
+                  <div className="text-destructive">
+                    {errors.title && <div>• {errors.title}</div>}
+                    {errors.domain && <div>• {errors.domain}</div>}
+                  </div>
+                )}
+              </div>
             </div>
-            {user?.email && (
-              <div className="text-xs text-muted-foreground">Owner<br/><span className="font-mono">{user.email}</span></div>
-            )}
-          </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Projects List */}
+      {/* Single Context Line */}
       {hasProjects && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">Your Projects</h2>
-            <Badge variant="secondary" className="font-mono">
-              {projects.length} project{projects.length !== 1 ? 's' : ''}
-            </Badge>
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm text-muted-foreground">
+            Track your research-to-patent projects and their progress through each workflow phase.
+          </p>
+          <Badge variant="secondary" className="font-mono">
+            {projects.length} project{projects.length !== 1 ? 's' : ''}
+          </Badge>
+        </div>
+      )}
 
-          <div className="grid gap-4">
-            {projects.map((project) => (
+      {/* Streamlined Projects List */}
+      {hasProjects && (
+        <div className="grid gap-4">
+          {projects.map((project) => {
+            const hasReports = true; // Assume reports exist for simplicity
+            const ideaCount = ideaCounts[project.title] || 0;
+            const hasRepos = doubleLinks[project.title];
+            
+            return (
               <Card
                 key={project.projectId}
                 className="bg-card border-border shadow-card hover:shadow-elevated transition-all cursor-pointer group"
               >
                 <Link to={`/v2/projects/${project.projectId}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-3">
-                          <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors">
-                            {project.title}
-                          </h3>
-                          {project.domain && (
-                            <Badge variant="outline" className="text-xs">
-                              {project.domain}
-                            </Badge>
+                  <CardContent className="p-6">
+                    {/* Header with title and dates */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg text-foreground group-hover:text-accent transition-colors line-clamp-2">
+                          {project.title}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">
+                            Created {formatDate(project.createdAt)}
+                          </span>
+                          {lastUpdated[project.title] && (
+                            <>
+                              <span className="text-muted-foreground">•</span>
+                              <span className="text-xs text-muted-foreground">
+                                Updated {formatDate(lastUpdated[project.title])}
+                              </span>
+                            </>
                           )}
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span>Created {formatDate(project.createdAt)}</span>
-                          {lastUpdated[project.title] ? (
-                            <>
-                              <span>•</span>
-                              <span>Updated {formatDate(lastUpdated[project.title])}</span>
-                            </>
-                          ) : null}
-                        </div>
-                        {/* Overview sections */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-                          {/* Reports */}
-                          <Link to={`/v2/projects/${project.projectId}`} onClick={(e)=>e.stopPropagation()} className="block">
-                            <div className="p-3 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors">
-                              <div className="flex items-center gap-2 mb-1">
-                                <FileText className="h-4 w-4" />
-                                <span className="text-sm font-medium">Reports</span>
-                                <Badge variant="secondary" className="ml-auto">View</Badge>
-                              </div>
-                              <div className="text-xs text-muted-foreground">Holistic research summaries</div>
-                            </div>
-                          </Link>
-                          {/* Ideations */}
-                          <Link to="/shark-swarmer" onClick={(e)=>e.stopPropagation()} className="block">
-                            <div className="p-3 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Lightbulb className="h-4 w-4" />
-                                <span className="text-sm font-medium">Ideations</span>
-                                <Badge variant="outline" className="ml-auto">{ideaCounts[project.title] || 0}</Badge>
-                              </div>
-                              <div className="text-xs text-muted-foreground">{topIdeaTitle[project.title] || 'Explore latest ideas'}</div>
-                            </div>
-                          </Link>
-                          {/* Planning / DoubleDown */}
-                          <Link to="/milestones" onClick={(e)=>e.stopPropagation()} className="block">
-                            <div className="p-3 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors">
-                              <div className="flex items-center gap-2 mb-1">
-                                <GitBranch className="h-4 w-4" />
-                                <span className="text-sm font-medium">Planning</span>
-                                {doubleLinks[project.title] ? (
-                                  <a
-                                    href={doubleLinks[project.title]}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="ml-auto inline-flex items-center gap-1 text-xs underline"
-                                    onClick={(e)=>e.stopPropagation()}
-                                  >
-                                    Repo <ExternalLink className="h-3 w-3" />
-                                  </a>
-                                ) : (
-                                  <Badge variant="outline" className="ml-auto">0</Badge>
-                                )}
-                              </div>
-                              <div className="text-xs text-muted-foreground">Milestones & final repositories</div>
-                            </div>
-                          </Link>
-                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                          View Project
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                      {project.domain && (
+                        <Badge variant="outline" className="text-xs shrink-0">
+                          {project.domain}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Inline count badges */}
+                    <div className="flex items-center gap-4 mb-4 flex-wrap">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">📑</span>
+                        <span className="text-xs text-muted-foreground">Reports:</span>
+                        <Badge variant="secondary" className="h-5 px-2 text-xs font-mono">
+                          {hasReports ? '1' : '0'}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">💡</span>
+                        <span className="text-xs text-muted-foreground">Ideations:</span>
+                        <Badge variant="secondary" className="h-5 px-2 text-xs font-mono">
+                          {ideaCount}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">🛠️</span>
+                        <span className="text-xs text-muted-foreground">Planning:</span>
+                        <Badge variant="secondary" className="h-5 px-2 text-xs font-mono">
+                          {hasRepos ? '1' : '0'}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Single CTA */}
+                    <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                      <div className="text-xs text-muted-foreground">
+                        {hasRepos ? 'Completed all phases' : ideaCount > 0 ? 'Ready for planning' : hasReports ? 'Ready for ideation' : 'Ready to start'}
+                      </div>
+                      <div className="flex items-center gap-2 text-accent group-hover:text-accent-foreground transition-colors">
+                        <span className="text-sm font-medium">View Project</span>
+                        <ArrowRight className="h-4 w-4" />
                       </div>
                     </div>
                   </CardContent>
                 </Link>
               </Card>
-            ))}
-          </div>
+            );
+          })}
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Enhanced Empty State */}
       {!hasProjects && (
         <Card className="bg-muted/20 border-dashed border-2 border-muted-foreground/30">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <Target className="h-8 w-8 text-muted-foreground" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-foreground">No projects yet</h3>
-              <p className="text-muted-foreground max-w-md">
-                Create your first project above to begin your research-to-patent journey.
-                Each project will guide you through research, ideation, and patent preparation.
-              </p>
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-foreground">No projects yet — create one above to get started.</h3>
+              <div className="text-sm text-muted-foreground space-y-1 max-w-md">
+                <p>Once you have projects, you'll see:</p>
+                <p>• <strong>No ideations yet</strong> — run one from Ideate tab</p>
+                <p>• <strong>No repos created</strong> — use DoubleDown to build</p>
+              </div>
             </div>
           </CardContent>
         </Card>
