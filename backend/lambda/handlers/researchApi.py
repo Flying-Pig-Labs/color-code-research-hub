@@ -1252,12 +1252,9 @@ def handler(event, context):
                         if download_url:
                             item["downloadUrl"] = download_url
                     
-                    # Ensure summary is included if available; fallback to contentSummary
+                    # Ensure summary is included only if processedSummary is available
                     if item.get("processedSummary"):
                         item["summary"] = item["processedSummary"]
-                        item["summaryWordCount"] = item.get("summaryWordCount", 0)
-                    elif item.get("contentSummary"):
-                        item["summary"] = item["contentSummary"]
                         item["summaryWordCount"] = item.get("summaryWordCount", 0)
                     
                     # Calculate duration if both timestamps exist
