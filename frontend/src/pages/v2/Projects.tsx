@@ -24,7 +24,6 @@ import { Separator } from '@/components/ui/separator';
 import { MermaidDiagram } from '@/components/MermaidDiagram';
 import { 
   FolderPlus, 
-  Search, 
   Lightbulb, 
   FileText, 
   ChevronRight, 
@@ -35,10 +34,12 @@ import {
   BookOpen,
   Target,
   Zap,
-  GitBranch
+  GitBranch,
+  ExternalLink
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { v2Api } from '@/services/v2/api';
+import { useUser } from '@/contexts/UserContext';
 
 /**
  * Format timestamp to readable date.
@@ -58,6 +59,7 @@ const Projects: React.FC = () => {
   const { data: projects, isLoading } = useProjects();
   const createProject = useCreateProject();
   const { toast } = useToast();
+  const { user } = useUser();
   
   // Form state
   const [title, setTitle] = useState('');
@@ -66,6 +68,8 @@ const Projects: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ideaCounts, setIdeaCounts] = useState<Record<string, number>>({});
   const [doubleLinks, setDoubleLinks] = useState<Record<string, string>>({});
+  const [topIdeaTitle, setTopIdeaTitle] = useState<Record<string, string>>({});
+  const [lastUpdated, setLastUpdated] = useState<Record<string, number>>({});
 
   // Enrich projects with ideas count & final repo (DoubleDowns)
   React.useEffect(() => {
@@ -77,21 +81,38 @@ const Projects: React.FC = () => {
         ]);
         const issues: any[] = (issuesResp?.issues || []) as any[];
         const counts: Record<string, number> = {};
+        const titles: Record<string, string> = {};
+        const lastIdea: Record<string, number> = {};
         for (const it of issues) {
           const rn = (it.repoName || '').toString();
-          if (rn) counts[rn] = (counts[rn] || 0) + 1;
+          if (!rn) continue;
+          counts[rn] = (counts[rn] || 0) + 1;
+          if (!titles[rn]) titles[rn] = it.title || (it.body ? String(it.body).split('\n')[0].slice(0, 100) : 'Idea');
+          const dt = new Date(it.created_at || it.createdAt || Date.now()).getTime();
+          lastIdea[rn] = Math.max(lastIdea[rn] || 0, dt);
         }
         setIdeaCounts(counts);
+        setTopIdeaTitle(titles);
         const links: Record<string, string> = {};
+        const lastRepo: Record<string, number> = {};
         if (Array.isArray(doubles)) {
           for (const d of doubles as any[]) {
             if (d?.repoName && d?.repoUrl) links[d.repoName] = d.repoUrl;
+            if (d?.repoName && (d?.createdAt || d?.created_at)) {
+              lastRepo[d.repoName] = Math.max(lastRepo[d.repoName] || 0, new Date(d.createdAt || d.created_at).getTime());
+            }
           }
         }
         setDoubleLinks(links);
+        const lu: Record<string, number> = {};
+        const keys = new Set<string>([...Object.keys(lastIdea), ...Object.keys(lastRepo)]);
+        keys.forEach(k => lu[k] = Math.max(lastIdea[k] || 0, lastRepo[k] || 0));
+        setLastUpdated(lu);
       } catch {
         setIdeaCounts({});
         setDoubleLinks({});
+        setTopIdeaTitle({});
+        setLastUpdated({});
       }
     })();
   }, []);
@@ -422,10 +443,20 @@ const Projects: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Explanation */}
-      <div className="mb-6 text-sm text-muted-foreground">
-        We use Projects to keep track of everything: research, ideation, and planning all connected together.
-      </div>
+      {/* Header / Explanation */}
+      <Card className="mb-6 bg-muted/30 border-border">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Projects</h2>
+              <p className="text-sm text-muted-foreground mt-1">Projects bring together your research, ideations, and planning milestones in one place.</p>
+            </div>
+            {user?.email && (
+              <div className="text-xs text-muted-foreground">Owner<br/><span className="font-mono">{user.email}</span></div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Projects List */}
       {hasProjects && (
@@ -459,28 +490,59 @@ const Projects: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span>Created {formatDate(project.createdAt)}</span>
-                          <span>•</span>
-                          <span>Ideas: {ideaCounts[project.title] || 0}</span>
-                          {doubleLinks[project.title] && (
+                          {lastUpdated[project.title] ? (
                             <>
                               <span>•</span>
-                              <a
-                                href={doubleLinks[project.title]}
-                                target="_blank" rel="noreferrer"
-                                className="underline"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                Final Repo
-                              </a>
+                              <span>Updated {formatDate(lastUpdated[project.title])}</span>
                             </>
-                          )}
-                          <span>•</span>
-                          <Link to="/shark-swarmer" className="underline" onClick={(e) => e.stopPropagation()}>
-                            View Ideation
+                          ) : null}
+                        </div>
+                        {/* Overview sections */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                          {/* Reports */}
+                          <Link to={`/v2/projects/${project.projectId}`} onClick={(e)=>e.stopPropagation()} className="block">
+                            <div className="p-3 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors">
+                              <div className="flex items-center gap-2 mb-1">
+                                <FileText className="h-4 w-4" />
+                                <span className="text-sm font-medium">Reports</span>
+                                <Badge variant="secondary" className="ml-auto">View</Badge>
+                              </div>
+                              <div className="text-xs text-muted-foreground">Holistic research summaries</div>
+                            </div>
                           </Link>
-                          <span>•</span>
-                          <Link to="/milestones" className="underline" onClick={(e) => e.stopPropagation()}>
-                            View Planning
+                          {/* Ideations */}
+                          <Link to="/shark-swarmer" onClick={(e)=>e.stopPropagation()} className="block">
+                            <div className="p-3 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Lightbulb className="h-4 w-4" />
+                                <span className="text-sm font-medium">Ideations</span>
+                                <Badge variant="outline" className="ml-auto">{ideaCounts[project.title] || 0}</Badge>
+                              </div>
+                              <div className="text-xs text-muted-foreground">{topIdeaTitle[project.title] || 'Explore latest ideas'}</div>
+                            </div>
+                          </Link>
+                          {/* Planning / DoubleDown */}
+                          <Link to="/milestones" onClick={(e)=>e.stopPropagation()} className="block">
+                            <div className="p-3 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors">
+                              <div className="flex items-center gap-2 mb-1">
+                                <GitBranch className="h-4 w-4" />
+                                <span className="text-sm font-medium">Planning</span>
+                                {doubleLinks[project.title] ? (
+                                  <a
+                                    href={doubleLinks[project.title]}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="ml-auto inline-flex items-center gap-1 text-xs underline"
+                                    onClick={(e)=>e.stopPropagation()}
+                                  >
+                                    Repo <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                ) : (
+                                  <Badge variant="outline" className="ml-auto">0</Badge>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground">Milestones & final repositories</div>
+                            </div>
                           </Link>
                         </div>
                       </div>
