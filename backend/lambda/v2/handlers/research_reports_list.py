@@ -53,7 +53,7 @@ def handler(event, context):
             # Map ResearchReports fields to standardized format
             report = {
                 'reportId': item.get('reportId', item.get('id')),
-                'title': item.get('title', f"Report {item.get('reportId', 'Unknown')}"),
+                'title': item.get('title') or item.get('objective') or f"Report {item.get('reportId', 'Unknown')}",
                 'status': item.get('status', 'completed'),
                 'team': item.get('team'),
                 'requester': item.get('requester'),
@@ -63,7 +63,12 @@ def handler(event, context):
                 'username': item.get('username'),
                 'tags': item.get('tags', []),
                 'wordCount': item.get('wordCount'),
-                'confidence': item.get('confidence')
+                'confidence': item.get('confidence'),
+                # Frontend button fields
+                'processedSummary': item.get('processedSummary'),  # For Preview button
+                's3ReportKey': item.get('s3ReportKey'),  # For Download button
+                's3Key': item.get('s3Key'),  # Alternative download field
+                'objective': item.get('objective')  # For title fallback
             }
             reports.append(report)
         

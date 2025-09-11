@@ -55,7 +55,6 @@ export class ApiLayerStack extends Stack {
     const environment = {
       USERS_TABLE_NAME: process.env.USERS_TABLE_NAME || '',
       CREDIT_LEDGER_TABLE_NAME: process.env.CREDIT_LEDGER_TABLE_NAME || '',
-      PROJECTS_TABLE_NAME: process.env.PROJECTS_TABLE_NAME || '',
       REPORTS_TABLE_NAME: process.env.REPORTS_TABLE_NAME || '',
       IDEATIONS_TABLE_NAME: process.env.IDEATIONS_TABLE_NAME || '',
       DOUBLES_TABLE_NAME: process.env.DOUBLES_TABLE_NAME || '',
@@ -65,6 +64,8 @@ export class ApiLayerStack extends Stack {
       RESEARCH_REPORTS_TABLE: 'ResearchReports',
       PIPELINE_BATCH_JOBS_TABLE: 'PipelineBatchJobs',
       SHARK_TANK_REVIEWS_TABLE: 'SharkTankReviews',
+      RESEARCH_BUCKET: 'color-code-research-results-984906149037',
+      PROJECTS_TABLE_NAME: process.env.PROJECTS_TABLE_NAME || 'Projects',
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
       STRIPE_PRICE_CREDIT: process.env.STRIPE_PRICE_CREDIT || '',
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
@@ -198,6 +199,9 @@ export class ApiLayerStack extends Stack {
     const artifactsBucket = environment.ARTIFACTS_BUCKET_NAME
       ? s3.Bucket.fromBucketName(this, 'ArtifactsBucketRef', environment.ARTIFACTS_BUCKET_NAME)
       : undefined;
+    const researchBucket = environment.RESEARCH_BUCKET
+      ? s3.Bucket.fromBucketName(this, 'ResearchBucketRef', environment.RESEARCH_BUCKET)
+      : undefined;
 
     const grantRw = (table?: dynamodb.ITable) => {
       if (!table) return;
@@ -211,6 +215,9 @@ export class ApiLayerStack extends Stack {
     grantRw(doublesTable);
     if (artifactsBucket) {
       fns.forEach(fn => artifactsBucket.grantReadWrite(fn));
+    }
+    if (researchBucket) {
+      fns.forEach(fn => researchBucket.grantReadWrite(fn));
     }
 
     // Ensure functions can query GSIs explicitly (belt-and-suspenders)

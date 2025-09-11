@@ -144,6 +144,8 @@ Resources:
                 Resource:
                   - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}
                   - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}/*
+                  - !Sub arn:aws:s3:::${ResearchResultsBucket}
+                  - !Sub arn:aws:s3:::${ResearchResultsBucket}/*
         - PolicyName: V2StripeSecret
           PolicyDocument:
             Version: '2012-10-17'
@@ -1358,8 +1360,8 @@ Resources:
   V2ResearchReportsList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambda/v2/handlers/
-      Handler: research_reports_list.handler
+      CodeUri: ../lambda/v2/
+      Handler: handlers.research_reports_list.handler
       Runtime: python3.11
       Role: !GetAtt V2LambdaExecutionRole.Arn
       Environment:
