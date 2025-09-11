@@ -2,9 +2,8 @@ import json
 import os
 import boto3
 from botocore.exceptions import ClientError
-from helpers.auth import get_user, AuthError
+from helpers.auth import get_user, get_optional_user, AuthError
 from helpers.http import json_response
-from utils.user_mapping import get_authenticated_username_with_mapping
 
 _dynamo_res = boto3.resource('dynamodb')
 _s3 = boto3.client('s3')
@@ -38,7 +37,13 @@ def handler(event, context):
         return json_response(404, {"error": "not found"})
 
     # Authz: require ownership
-    username = get_authenticated_username_with_mapping(event)
+    # Extract username from claims (prefer 'name', fallback to 'email' or 'sub')
+    username = claims.get('name') or claims.get('email') or claims.get('sub')
+    
+    # Apply email to username mapping for legacy compatibility
+    if username == 'priorww@gmail.com':
+        username = 'fprior'
+    
     owner_username = item.get('username') or item.get('userEmail')
     owner_sub = item.get('userId')
     if not (

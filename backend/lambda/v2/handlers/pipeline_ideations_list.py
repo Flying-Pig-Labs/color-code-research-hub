@@ -6,7 +6,7 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
-from utils.user_mapping import get_authenticated_username_with_mapping
+from helpers.auth import get_optional_user
 
 # Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -30,10 +30,18 @@ def handler(event, context):
     List all ideations for the authenticated user from PipelineBatchJobs
     """
     try:
-        # Get authenticated username from JWT token with mapping
-        username = get_authenticated_username_with_mapping(event)
-        if not username:
+        # Get authenticated user claims
+        user_claims = get_optional_user(event)
+        
+        if not user_claims:
             return create_cors_response(401, {'error': 'Authentication required'})
+        
+        # Extract username from claims (prefer 'name', fallback to 'email' or 'sub')
+        username = user_claims.get('name') or user_claims.get('email') or user_claims.get('sub')
+        
+        # Apply email to username mapping for legacy compatibility
+        if username == 'priorww@gmail.com':
+            username = 'fprior'
         
         # Query PipelineBatchJobs table filtering by username
         response = table.scan(

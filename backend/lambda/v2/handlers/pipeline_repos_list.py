@@ -7,8 +7,7 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
-from utils.user_mapping import get_authenticated_username_with_mapping
-from helpers.auth import is_public_mode
+from helpers.auth import get_optional_user
 
 # Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -37,66 +36,22 @@ def handler(event, context):
       - If item_type not specified: returns demo Projects[] payload for UI compatibility
     """
     try:
-        # Get authenticated username from JWT token with mapping
-        username = get_authenticated_username_with_mapping(event)
-
         # Get query parameters first to check item_type
         query_params = event.get('queryStringParameters') or {}
         item_type_filter = query_params.get('item_type', 'all').lower()
         
-        # Public/demo mode: if no auth, return demo payload
-        if not username and is_public_mode():
-            # If UI calls with item_type, serve repos/issues demo
-            if item_type_filter in ('repo', 'issue', 'all') and 'item_type' in query_params:
-                demo_repos = [
-                    {
-                        'id': 'demo-repo-1',
-                        'name': 'demo-repo',
-                        'full_name': 'demo/demo-repo',
-                        'description': 'Sample repository for demo mode',
-                        'body': '# Demo Repo\nThis is a demo README.',
-                        'html_url': 'https://github.com/demo/demo-repo',
-                        'language': 'TypeScript',
-                        'stargazers_count': 42,
-                        'created_at': 1700000000000,
-                        'updated_at': 1700100000000,
-                        'username': 'demo',
-                        'itemType': 'REPO',
-                        'repoId': 'demo-repo-1',
-                        'visibility': 'public'
-                    }
-                ]
-                demo_issues = [
-                    {
-                        'id': 'demo-issue-1',
-                        'number': 1,
-                        'title': 'Improve onboarding flow',
-                        'body': 'As a user, I want a simpler onboarding.',
-                        'state': 'open',
-                        'created_at': 1700200000000,
-                        'updated_at': 1700205000000,
-                        'username': 'demo',
-                        'itemType': 'ISSUE#1',
-                        'repoId': 'demo-repo-1',
-                        'repository_id': 'demo-repo-1',
-                        'labels': ['enhancement'],
-                        'assignees': []
-                    }
-                ]
-                return create_cors_response(200, {
-                    'repositories': demo_repos,
-                    'issues': demo_issues,
-                    'total': {'repositories': len(demo_repos), 'issues': len(demo_issues)}
-                })
-            # Otherwise, satisfy UI that expects Project[] from /projects
-            demo_projects = [
-                { 'projectId': 'demo-project-1', 'title': 'Demo Project One', 'createdAt': 1700000000000 },
-                { 'projectId': 'demo-project-2', 'title': 'Demo Project Two', 'createdAt': 1700100000000 },
-            ]
-            return create_cors_response(200, demo_projects)
-
-        if not username:
+        # Get authenticated user claims
+        user_claims = get_optional_user(event)
+        
+        if not user_claims:
             return create_cors_response(401, {'error': 'Authentication required'})
+        
+        # Extract username from claims (prefer 'name', fallback to 'email' or 'sub')
+        username = user_claims.get('name') or user_claims.get('email') or user_claims.get('sub')
+        
+        # Apply email to username mapping for legacy compatibility
+        if username == 'priorww@gmail.com':
+            username = 'fprior'
         
         # Query PipelineRepos table filtering by username
         response = table.scan(

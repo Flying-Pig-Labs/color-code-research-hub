@@ -124,6 +124,9 @@ Resources:
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IdeationsTableNameParam}
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DoubleDownsTableNameParam}
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PipelineReposTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ResearchReports
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PipelineBatchJobs
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PipelineRepos
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ReportsTableNameParam}/index/*
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ProjectsTableNameParam}/index/*
                   - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CreditLedgerTableNameParam}/index/*
