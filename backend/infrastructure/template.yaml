@@ -539,6 +539,8 @@ Resources:
       Runtime: python3.11
       Timeout: 900
       MemorySize: 512
+      Layers:
+        - !Ref PythonDependenciesLayer
       Environment:
         Variables:
           RESEARCH_BUCKET: !Ref ResearchResultsBucket
