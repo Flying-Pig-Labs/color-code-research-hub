@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProject, useStartReport, useReport, useStartIdeation, useIdeation, useStartDouble, useDouble, useBalance } from '@/hooks/v2';
 import { Button } from '@/components/ui/button';
+import { v2Api } from '@/services/v2/api';
 import { FeedbackDialog } from '@/components/v2/FeedbackDialog';
 
 interface Idea { ideaId: string; title: string; score: number; }
@@ -34,6 +35,32 @@ const ProjectDetail: React.FC = () => {
   const startDouble = useStartDouble(projectId!);
   const double = useDouble(doubleId);
 
+  // Holistic summary (account-level overview)
+  const [summary, setSummary] = useState<{reports:number; ideas:number; jobs:number; repos:{name:string; url:string}[]}>({reports:0,ideas:0,jobs:0,repos:[]});
+  useEffect(() => {
+    (async () => {
+      try {
+        const [reports, issuesResp, jobs, doubles] = await Promise.all([
+          v2Api.listReports().catch(() => [] as any[]),
+          v2Api.listPipelineRepos('issue').catch(() => ({ issues: [] })),
+          v2Api.listPipelineJobs().catch(() => [] as any[]),
+          v2Api.listDoubleDowns().catch(() => [] as any[]),
+        ]);
+        const repos = Array.isArray(doubles) ? (doubles as any[])
+          .filter(d => d?.repoUrl && d?.repoName)
+          .map(d => ({ name: d.repoName as string, url: d.repoUrl as string })) : [];
+        setSummary({
+          reports: Array.isArray(reports) ? reports.length : 0,
+          ideas: Array.isArray((issuesResp as any).issues) ? (issuesResp as any).issues.length : 0,
+          jobs: Array.isArray(jobs) ? jobs.length : 0,
+          repos,
+        });
+      } catch {
+        setSummary({ reports: 0, ideas: 0, jobs: 0, repos: [] });
+      }
+    })();
+  }, []);
+
   const triggerReport = async () => {
     const res: any = await startReport.mutateAsync();
     setReportId(res.reportId);
@@ -58,19 +85,19 @@ const ProjectDetail: React.FC = () => {
         <p className="text-sm text-red-600">No credits available. Please purchase credits.</p>
       )}
 
-      {/* Report Section (actions removed for production-only view) */}
+      {/* Report Section (production-only overview) */}
       <section className="space-y-2">
         <h2 className="font-medium">Report</h2>
+        <div className="text-sm text-muted-foreground">Research reports: {summary.reports}</div>
         {report?.data?.status === 'done' && report.data.reportUrl ? (
-          <a href={report.data.reportUrl} target="_blank" rel="noopener" className="text-blue-600 underline">Download Report</a>
-        ) : (
-          <p className="text-sm text-muted-foreground">No report available yet.</p>
-        )}
+          <a href={report.data.reportUrl} target="_blank" rel="noopener" className="text-blue-600 underline">Download Latest</a>
+        ) : null}
       </section>
 
-      {/* Ideations Section (actions removed) */}
+      {/* Ideations Section (production-only overview) */}
       <section className="space-y-2">
         <h2 className="font-medium">Ideations</h2>
+        <div className="text-sm text-muted-foreground">Ideas generated: {summary.ideas} • Runs: {summary.jobs}</div>
         {ideas.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -87,19 +114,19 @@ const ProjectDetail: React.FC = () => {
               </tbody>
             </table>
           </div>
-        ) : (<p className="text-sm text-muted-foreground">No ideation available yet.</p>)}
+        ) : null}
       </section>
 
-      {/* Double Down Section */}
+      {/* Double Down Section (production-only overview) */}
       <section className="space-y-2">
         <h2 className="font-medium">Double-Down</h2>
-        {double?.data?.status === 'done' ? (
-          <div className="space-y-1">
-            {double.data.finalPdfUrl && <a href={double.data.finalPdfUrl} target="_blank" rel="noopener" download className="text-blue-600 underline">Download PDF</a>}
-            {double.data.zipUrl && <a href={double.data.zipUrl} target="_blank" rel="noopener" download className="text-blue-600 underline">Download ZIP</a>}
-            <p className="text-xs text-muted-foreground">Informational only; not legal advice; user must file & pay fees via USPTO Patent Center.</p>
-          </div>
-        ) : (<p className="text-sm text-muted-foreground">No double-down artifacts yet.</p>)}
+        {summary.repos.length > 0 ? (
+          <ul className="list-disc pl-5 text-sm">
+            {summary.repos.slice(0,3).map(r => (
+              <li key={r.url}><a href={r.url} target="_blank" rel="noreferrer" className="underline">{r.name}</a></li>
+            ))}
+          </ul>
+        ) : (<p className="text-sm text-muted-foreground">No final repositories yet.</p>)}
       </section>
     </div>
   );
