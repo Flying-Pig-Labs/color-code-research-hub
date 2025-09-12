@@ -1,58 +1,79 @@
 import { envConfig } from '@/config/environment';
+import { authStateManager } from '@/lib/authStateManager';
 
-// Global redirect guard to prevent concurrent redirects
-let isRedirecting = false;
+// Abort controller for in-flight requests
+let abortController: AbortController | null = null;
 
 function maybeRedirectToAuth() {
   if (typeof window === 'undefined') return;
-  if (isRedirecting) return; // Already redirecting, don't fire again
   
-  const path = window.location.pathname || '';
-  // Never redirect from the auth routes themselves
-  if (path.startsWith('/v2/auth')) {
-    isRedirecting = false; // Reset flag when we're back on auth page
-    return;
+  // Use centralized auth state manager for all redirect logic
+  const redirected = authStateManager.attemptRedirect();
+  
+  if (redirected) {
+    // Abort all in-flight requests to prevent concurrent 401s
+    if (abortController) {
+      abortController.abort();
+      abortController = null;
+    }
   }
-  
-  isRedirecting = true;
-  console.log('Single redirect to auth initiated');
-  window.location.assign('/v2/auth');
 }
 
 // API helper that attaches Cognito ID token and handles auth redirects.
 // If no token is present (or token is rejected), we redirect to /v2/auth.
 async function apiFetch(path: string, options: RequestInit = {}) {
   const token = sessionStorage.getItem('id_token') || sessionStorage.getItem('idToken');
+  
   // If there's no token at all, force re-auth to acquire one
   if (!token) {
     sessionStorage.removeItem('isAuthenticated');
     maybeRedirectToAuth();
     throw new Error('Not authenticated: missing ID token');
   }
+
+  // Create abort controller for this request
+  const controller = new AbortController();
+  abortController = controller;
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
+  
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  const res = await fetch(`${envConfig.apiBaseUrl}${path}`, {
-    ...options,
-    headers,
-  });
-  if (!res.ok) {
-    // On 401, clear any stale session flags and redirect to auth
-    if (res.status === 401) {
-      sessionStorage.removeItem('isAuthenticated');
-      // Do not remove id_token here; backend may be temporarily rejecting or token may be expired
-      maybeRedirectToAuth();
+
+  try {
+    const res = await fetch(`${envConfig.apiBaseUrl}${path}`, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      // On 401, clear any stale session flags and redirect to auth
+      if (res.status === 401) {
+        sessionStorage.removeItem('isAuthenticated');
+        // Do not remove id_token here; backend may be temporarily rejecting or token may be expired
+        maybeRedirectToAuth();
+      }
+      throw new Error(`API error ${res.status}`);
     }
-    throw new Error(`API error ${res.status}`);
+    
+    if (res.status === 204) {
+      return null;
+    }
+    
+    return res.json();
+  } catch (error) {
+    // Don't throw abort errors as they're intentional
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.log('API request aborted');
+      return null;
+    }
+    throw error;
   }
-  if (res.status === 204) {
-    return null;
-  }
-  return res.json();
 }
 
 // REST endpoints used by the V2 frontend

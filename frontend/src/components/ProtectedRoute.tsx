@@ -14,6 +14,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
+import { useAuthGate } from '@/hooks/useAuthGate';
 import UserOnboarding from '@/components/UserOnboarding';
 
 /**
@@ -49,26 +50,29 @@ const AUTH_DISABLED = (import.meta as any)?.env?.VITE_AUTH_DISABLED === 'true';
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  const { needsOnboarding, isLoading } = useUser();
+  const { needsOnboarding, isLoading: userLoading } = useUser();
+  const { ready: authReady, isLoading: authLoading } = useAuthGate();
 
   if (AUTH_DISABLED) {
     return <>{children}</>;
   }
 
-  // Redirect to Cognito login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/v2/auth" replace />;
-  }
-
-  // Show loading state while user data is being loaded
-  if (isLoading) {
+  // Show loading while auth is not ready
+  if (!authReady || authLoading || userLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-2">
           <div className="animate-pulse">Loading...</div>
+          <div className="text-sm text-gray-500">Checking authentication...</div>
         </div>
       </div>
     );
+  }
+
+  // Only redirect if auth is ready and user is not authenticated
+  // This prevents race conditions with the API layer
+  if (authReady && !isAuthenticated) {
+    return <Navigate to="/v2/auth" replace />;
   }
 
   // Show onboarding if user needs to complete profile

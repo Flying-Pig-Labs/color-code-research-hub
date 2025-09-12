@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { v2Api } from '../services/v2/api';
 import type { Report } from '../services/v2/api';
+import { useAuthGate } from '@/hooks/useAuthGate';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ExternalLink, Eye } from 'lucide-react';
@@ -21,10 +22,18 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [modalMode, setModalMode] = useState<'preview' | 'full'>('preview');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const { ready, isAuthenticated } = useAuthGate();
 
   useEffect(() => {
-    loadReports();
-  }, [team, limit]);
+    // Only load reports when auth is ready and user is authenticated
+    if (ready && isAuthenticated) {
+      loadReports();
+    } else if (ready && !isAuthenticated) {
+      setLoading(false);
+      setReports([]);
+    }
+  }, [ready, isAuthenticated, team, limit]);
 
   const loadReports = async () => {
     try {
@@ -176,6 +185,20 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   //   // Call API to delete from DynamoDB and S3
   //   // Refresh the report list
   // };
+
+  // Don't render anything until auth is ready
+  if (!ready) {
+    return null;
+  }
+
+  // Don't render content if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <p>Please log in to view research reports</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
