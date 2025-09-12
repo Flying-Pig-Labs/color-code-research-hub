@@ -9,7 +9,10 @@ function maybeRedirectToAuth() {
   
   const path = window.location.pathname || '';
   // Never redirect from the auth routes themselves
-  if (path.startsWith('/v2/auth')) return;
+  if (path.startsWith('/v2/auth')) {
+    isRedirecting = false; // Reset flag when we're back on auth page
+    return;
+  }
   
   isRedirecting = true;
   console.log('Single redirect to auth initiated');
