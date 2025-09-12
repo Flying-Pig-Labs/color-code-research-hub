@@ -1,4 +1,5 @@
-export { apiFetch } from '@/lib/apiFetch';
+import { apiFetch } from '@/lib/apiFetch';
+export { apiFetch };
 
 // REST endpoints used by the V2 frontend
 export const v2Api = {

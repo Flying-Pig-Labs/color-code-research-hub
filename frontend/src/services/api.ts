@@ -147,7 +147,8 @@ function createTimeoutController(timeout: number = API_TIMEOUT): AbortController
   return controller;
 }
 
-export { apiFetch } from '@/lib/apiFetch';
+import { apiFetch } from '@/lib/apiFetch';
+export { apiFetch };
 
 // Keep existing error handling types for backward compatibility
 async function fetchWithErrorHandling<T>(
