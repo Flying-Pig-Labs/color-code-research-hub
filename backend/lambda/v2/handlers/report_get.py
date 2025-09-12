@@ -10,7 +10,6 @@ _s3 = boto3.client('s3')
 
 # Canonical source for research reports
 RESEARCH_REPORTS_TABLE = os.environ.get('RESEARCH_REPORTS_TABLE', 'ResearchReports')
-ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
 RESEARCH_BUCKET = os.environ.get('RESEARCH_BUCKET', '')
 
 

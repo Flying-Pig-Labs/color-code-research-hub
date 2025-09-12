@@ -8,10 +8,11 @@ from helpers.users import ensure_user_exists
 from helpers.http import json_response
 from helpers.credits import atomic_debit, DebitError
 _s3 = boto3.client('s3')
-ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
+RESEARCH_BUCKET = os.environ.get('RESEARCH_BUCKET', '')
 
 _dynamodb = boto3.client('dynamodb')
-IDEATIONS_TABLE = os.environ.get('IDEATIONS_TABLE_NAME', '')
+PIPELINE_BATCH_JOBS_TABLE = os.environ.get('PIPELINE_BATCH_JOBS_TABLE', '')
+RESEARCH_REPORTS_TABLE = os.environ.get('RESEARCH_REPORTS_TABLE', '')
 
 
 def handler(event, context):
@@ -27,8 +28,7 @@ def handler(event, context):
     if not project_id or not report_id:
         return json_response(422, {"error": "projectId and reportId required"})
     # Verify referenced report belongs to user and project
-    reports_table = os.environ.get('REPORTS_TABLE_NAME', '')
-    report_item = _dynamodb.get_item(TableName=reports_table, Key={'reportId': {'S': report_id}}).get('Item')
+    report_item = _dynamodb.get_item(TableName=RESEARCH_REPORTS_TABLE, Key={'reportId': {'S': report_id}}).get('Item')
     if not report_item or report_item.get('userId', {}).get('S') != user_id or report_item.get('projectId', {}).get('S') != project_id:
         return json_response(403, {"error": "forbidden"})
 
@@ -40,7 +40,7 @@ def handler(event, context):
     ideation_id = str(uuid.uuid4())
     ts = int(time.time() * 1000)
     _dynamodb.put_item(
-        TableName=IDEATIONS_TABLE,
+        TableName=PIPELINE_BATCH_JOBS_TABLE,
         Item={
             'ideationId': {'S': ideation_id},
             'projectId': {'S': project_id},
@@ -53,7 +53,7 @@ def handler(event, context):
 
     # Create minimal ideas.json immediately for a successful artifact URL
     try:
-        if ARTIFACTS_BUCKET:
+        if RESEARCH_BUCKET:
             ideas = []
             for i in range(1, 11):
                 ideas.append({
@@ -71,9 +71,9 @@ def handler(event, context):
                 "generatedAt": ts
             }
             key = f"u/{user_id}/p/{project_id}/ideation/{ideation_id}/ideas.json"
-            _s3.put_object(Bucket=ARTIFACTS_BUCKET, Key=key, Body=json.dumps(payload).encode('utf-8'), ContentType='application/json')
+            _s3.put_object(Bucket=RESEARCH_BUCKET, Key=key, Body=json.dumps(payload).encode('utf-8'), ContentType='application/json')
             _dynamodb.update_item(
-                TableName=IDEATIONS_TABLE,
+                TableName=PIPELINE_BATCH_JOBS_TABLE,
                 Key={'ideationId': {'S': ideation_id}},
                 UpdateExpression='SET #s = :done, completedAt = :ca, ideasJsonS3Key = :k',
                 ExpressionAttributeNames={'#s': 'status'},

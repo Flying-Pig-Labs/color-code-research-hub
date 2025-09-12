@@ -55,10 +55,7 @@ export class ApiLayerStack extends Stack {
     const environment = {
       USERS_TABLE_NAME: process.env.USERS_TABLE_NAME || '',
       CREDIT_LEDGER_TABLE_NAME: process.env.CREDIT_LEDGER_TABLE_NAME || '',
-      REPORTS_TABLE_NAME: process.env.REPORTS_TABLE_NAME || '',
-      IDEATIONS_TABLE_NAME: process.env.IDEATIONS_TABLE_NAME || '',
       DOUBLES_TABLE_NAME: process.env.DOUBLES_TABLE_NAME || '',
-      ARTIFACTS_BUCKET_NAME: process.env.ARTIFACTS_BUCKET_NAME || '',
       // Legacy table names for backward compatibility
       PIPELINE_REPOS_TABLE: 'PipelineRepos',
       RESEARCH_REPORTS_TABLE: 'ResearchReports',
@@ -192,17 +189,8 @@ export class ApiLayerStack extends Stack {
     const projectsTable = environment.PROJECTS_TABLE_NAME
       ? dynamodb.Table.fromTableName(this, 'ProjectsTableRef', environment.PROJECTS_TABLE_NAME)
       : undefined;
-    const reportsTable = environment.REPORTS_TABLE_NAME
-      ? dynamodb.Table.fromTableName(this, 'ReportsTableRef', environment.REPORTS_TABLE_NAME)
-      : undefined;
-    const ideationsTable = environment.IDEATIONS_TABLE_NAME
-      ? dynamodb.Table.fromTableName(this, 'IdeationsTableRef', environment.IDEATIONS_TABLE_NAME)
-      : undefined;
     const doublesTable = environment.DOUBLES_TABLE_NAME
       ? dynamodb.Table.fromTableName(this, 'DoublesTableRef', environment.DOUBLES_TABLE_NAME)
-      : undefined;
-    const artifactsBucket = environment.ARTIFACTS_BUCKET_NAME
-      ? s3.Bucket.fromBucketName(this, 'ArtifactsBucketRef', environment.ARTIFACTS_BUCKET_NAME)
       : undefined;
     const researchBucket = environment.RESEARCH_BUCKET
       ? s3.Bucket.fromBucketName(this, 'ResearchBucketRef', environment.RESEARCH_BUCKET)
@@ -215,12 +203,7 @@ export class ApiLayerStack extends Stack {
     grantRw(usersTable);
     grantRw(ledgerTable);
     grantRw(projectsTable);
-    grantRw(reportsTable);
-    grantRw(ideationsTable);
     grantRw(doublesTable);
-    if (artifactsBucket) {
-      fns.forEach(fn => artifactsBucket.grantReadWrite(fn));
-    }
     if (researchBucket) {
       fns.forEach(fn => researchBucket.grantReadWrite(fn));
     }
@@ -231,20 +214,6 @@ export class ApiLayerStack extends Stack {
       fns.forEach(fn => fn.addToRolePolicy(new iam.PolicyStatement({
         actions: ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:DescribeTable'],
         resources: [projectsIndexArn],
-      })));
-    }
-    if (reportsTable) {
-      const reportsIndexArn = `${reportsTable.tableArn}/index/*`;
-      fns.forEach(fn => fn.addToRolePolicy(new iam.PolicyStatement({
-        actions: ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:DescribeTable'],
-        resources: [reportsIndexArn],
-      })));
-    }
-    if (ideationsTable) {
-      const ideationsIndexArn = `${ideationsTable.tableArn}/index/*`;
-      fns.forEach(fn => fn.addToRolePolicy(new iam.PolicyStatement({
-        actions: ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:DescribeTable'],
-        resources: [ideationsIndexArn],
       })));
     }
 

@@ -9,7 +9,7 @@ from helpers.http import json_response
 from helpers.credits import atomic_debit, DebitError
 
 _dynamodb = boto3.client('dynamodb')
-REPORTS_TABLE = os.environ.get('REPORTS_TABLE_NAME', '')
+RESEARCH_REPORTS_TABLE = os.environ.get('RESEARCH_REPORTS_TABLE', '')
 
 
 def handler(event, context):
@@ -38,7 +38,7 @@ def handler(event, context):
     report_id = str(uuid.uuid4())
     ts = int(time.time() * 1000)
     _dynamodb.put_item(
-        TableName=REPORTS_TABLE,
+        TableName=RESEARCH_REPORTS_TABLE,
         Item={
             'reportId': {'S': report_id},
             'projectId': {'S': project_id},
@@ -68,7 +68,7 @@ def handler(event, context):
         key = _json.loads(body.get('body', '{}')).get('key') if isinstance(body.get('body'), str) else body.get('key')
         if key:
             _dynamodb.update_item(
-                TableName=REPORTS_TABLE,
+                TableName=RESEARCH_REPORTS_TABLE,
                 Key={'reportId': {'S': report_id}},
                 UpdateExpression='SET #s=:done, completedAt=:ca, reportS3Key=:k',
                 ExpressionAttributeNames={'#s': 'status'},

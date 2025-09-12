@@ -3,7 +3,7 @@ const PDFDocument = require('pdfkit');
 const { marked } = require('marked');
 
 const s3 = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
-const BUCKET = process.env.ARTIFACTS_BUCKET_NAME;
+const BUCKET = process.env.RESEARCH_BUCKET;
 
 function renderPdfBuffer({ title, subtitle, paragraphs, disclaimer, markdown }) {
   return new Promise((resolve, reject) => {
@@ -101,7 +101,7 @@ exports.handler = async (event) => {
   const doubleId = body.doubleId;
 
   if (!BUCKET) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'Missing ARTIFACTS_BUCKET_NAME' }) };
+    return { statusCode: 500, body: JSON.stringify({ error: 'Missing RESEARCH_BUCKET' }) };
   }
 
   let key, title, subtitle, paragraphs, disclaimer;

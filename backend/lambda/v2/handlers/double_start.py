@@ -13,7 +13,7 @@ from helpers.credits import atomic_debit, DebitError
 _dynamodb = boto3.client('dynamodb')
 DOUBLES_TABLE = os.environ.get('DOUBLES_TABLE_NAME', '')
 _s3 = boto3.client('s3')
-ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
+RESEARCH_BUCKET = os.environ.get('RESEARCH_BUCKET', '')
 
 
 def handler(event, context):
@@ -31,7 +31,7 @@ def handler(event, context):
     if not project_id or not ideation_id or not idea_id:
         return json_response(422, {"error": "missing parameters"})
     # Verify referenced ideation belongs to user and project
-    ideations_table = os.environ.get('IDEATIONS_TABLE_NAME', '')
+    ideations_table = os.environ.get('PIPELINE_BATCH_JOBS_TABLE', '')
     ideation_item = _dynamodb.get_item(TableName=ideations_table, Key={'ideationId': {'S': ideation_id}}).get('Item')
     if not ideation_item or ideation_item.get('userId', {}).get('S') != user_id or ideation_item.get('projectId', {}).get('S') != project_id:
         return json_response(403, {"error": "forbidden"})
@@ -59,7 +59,7 @@ def handler(event, context):
 
     # Create a provisional ZIP package with placeholders
     try:
-        if ARTIFACTS_BUCKET:
+        if RESEARCH_BUCKET:
             buf = io.BytesIO()
             with zipfile.ZipFile(buf, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
                 zf.writestr('readme_filing_steps.md', (
@@ -74,7 +74,7 @@ def handler(event, context):
                 zf.writestr('drawings.pdf', 'Placeholder for drawings PDF.')
             buf.seek(0)
             key = f"u/{user_id}/p/{project_id}/double/{double_id}/provisional_package.zip"
-            _s3.put_object(Bucket=ARTIFACTS_BUCKET, Key=key, Body=buf.getvalue(), ContentType='application/zip')
+            _s3.put_object(Bucket=RESEARCH_BUCKET, Key=key, Body=buf.getvalue(), ContentType='application/zip')
             _dynamodb.update_item(
                 TableName=DOUBLES_TABLE,
                 Key={'doubleId': {'S': double_id}},

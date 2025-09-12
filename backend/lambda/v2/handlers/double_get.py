@@ -7,7 +7,7 @@ from helpers.http import json_response
 _dynamodb = boto3.client('dynamodb')
 _s3 = boto3.client('s3')
 DOUBLES_TABLE = os.environ.get('DOUBLES_TABLE_NAME', '')
-ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
+RESEARCH_BUCKET = os.environ.get('RESEARCH_BUCKET', '')
 
 
 def handler(event, context):
@@ -28,7 +28,7 @@ def handler(event, context):
     zip_key = item.get('finalZipS3Key', {}).get('S')
     if result['status'] == 'done':
         if pdf_key:
-            result['finalPdfUrl'] = _s3.generate_presigned_url('get_object', Params={'Bucket': ARTIFACTS_BUCKET, 'Key': pdf_key}, ExpiresIn=300)
+            result['finalPdfUrl'] = _s3.generate_presigned_url('get_object', Params={'Bucket': RESEARCH_BUCKET, 'Key': pdf_key}, ExpiresIn=300)
         if zip_key:
-            result['zipUrl'] = _s3.generate_presigned_url('get_object', Params={'Bucket': ARTIFACTS_BUCKET, 'Key': zip_key}, ExpiresIn=300)
+            result['zipUrl'] = _s3.generate_presigned_url('get_object', Params={'Bucket': RESEARCH_BUCKET, 'Key': zip_key}, ExpiresIn=300)
     return json_response(200, result)

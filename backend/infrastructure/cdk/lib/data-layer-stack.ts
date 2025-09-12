@@ -63,34 +63,6 @@ export class DataLayerStack extends Stack {
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // Reports table
-    const reportsTable = new dynamodb.Table(this, 'ReportsTable', {
-      tableName: 'Reports',
-      partitionKey: { name: 'reportId', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: RemovalPolicy.RETAIN,
-    });
-    reportsTable.addGlobalSecondaryIndex({
-      indexName: 'GSI_ReportsByProject',
-      partitionKey: { name: 'projectId', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'startedAt', type: dynamodb.AttributeType.NUMBER },
-      projectionType: dynamodb.ProjectionType.ALL,
-    });
-
-    // Ideations table
-    const ideationsTable = new dynamodb.Table(this, 'IdeationsTable', {
-      tableName: 'Ideations',
-      partitionKey: { name: 'ideationId', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: RemovalPolicy.RETAIN,
-    });
-    ideationsTable.addGlobalSecondaryIndex({
-      indexName: 'GSI_IdeationsByProject',
-      partitionKey: { name: 'projectId', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'startedAt', type: dynamodb.AttributeType.NUMBER },
-      projectionType: dynamodb.ProjectionType.ALL,
-    });
-
     // Double-downs table
     const doublesTable = new dynamodb.Table(this, 'DoubleDownsTable', {
       tableName: 'DoubleDowns',
@@ -105,32 +77,19 @@ export class DataLayerStack extends Stack {
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // S3 bucket for artifacts
-    const artifactsBucket = new s3.Bucket(this, 'ArtifactsBucket', {
-      bucketName: `${this.stackName.toLowerCase()}-artifacts`,
-      encryption: s3.BucketEncryption.S3_MANAGED,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      enforceSSL: true,
-      removalPolicy: RemovalPolicy.RETAIN,
-    });
-
     // IAM role for application Lambdas
     const appRole = new iam.Role(this, 'AppLambdaRole', {
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
     });
     appRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'));
 
-    [usersTable, ledgerTable, projectsTable, reportsTable, ideationsTable, doublesTable].forEach(t => t.grantReadWriteData(appRole));
-    artifactsBucket.grantReadWrite(appRole);
+    [usersTable, ledgerTable, projectsTable, doublesTable].forEach(t => t.grantReadWriteData(appRole));
 
     // Outputs for easier discovery
     new CfnOutput(this, 'UsersTableName', { value: usersTable.tableName });
     new CfnOutput(this, 'CreditLedgerTableName', { value: ledgerTable.tableName });
     new CfnOutput(this, 'ProjectsTableName', { value: projectsTable.tableName });
-    new CfnOutput(this, 'ReportsTableName', { value: reportsTable.tableName });
-    new CfnOutput(this, 'IdeationsTableName', { value: ideationsTable.tableName });
     new CfnOutput(this, 'DoubleDownsTableName', { value: doublesTable.tableName });
-    new CfnOutput(this, 'ArtifactsBucketName', { value: artifactsBucket.bucketName });
   }
 }
 

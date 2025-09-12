@@ -345,19 +345,13 @@ if [ -d "$CDK_DIR" ]; then
             export USERS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="UsersTableName") | .OutputValue')
             export CREDIT_LEDGER_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="CreditLedgerTableName") | .OutputValue')
             export PROJECTS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ProjectsTableName") | .OutputValue')
-            export REPORTS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ReportsTableName") | .OutputValue')
-            export IDEATIONS_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="IdeationsTableName") | .OutputValue')
             export DOUBLES_TABLE_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="DoubleDownsTableName") | .OutputValue')
-            export ARTIFACTS_BUCKET_NAME=$(echo "$DATA_STACK_INFO" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ArtifactsBucketName") | .OutputValue')
 
             echo "✅ DataLayer outputs exported as env vars for ApiLayerStack"
             echo "   USERS_TABLE_NAME=$USERS_TABLE_NAME"
             echo "   CREDIT_LEDGER_TABLE_NAME=$CREDIT_LEDGER_TABLE_NAME"
             echo "   PROJECTS_TABLE_NAME=$PROJECTS_TABLE_NAME"
-            echo "   REPORTS_TABLE_NAME=$REPORTS_TABLE_NAME"
-            echo "   IDEATIONS_TABLE_NAME=$IDEATIONS_TABLE_NAME"
             echo "   DOUBLES_TABLE_NAME=$DOUBLES_TABLE_NAME"
-            echo "   ARTIFACTS_BUCKET_NAME=$ARTIFACTS_BUCKET_NAME"
 
             if [ -z "${USER_POOL_ID:-}" ]; then
                 echo "⚠️  USER_POOL_ID is not set. ApiLayerStack requires a Cognito User Pool ID."

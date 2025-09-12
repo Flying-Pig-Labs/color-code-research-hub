@@ -6,7 +6,7 @@ from helpers.users import ensure_user_exists
 from helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
-REPORTS_TABLE = os.environ.get('REPORTS_TABLE_NAME', '')
+RESEARCH_REPORTS_TABLE = os.environ.get('RESEARCH_REPORTS_TABLE', '')
 
 
 def handler(event, context):
@@ -19,7 +19,7 @@ def handler(event, context):
     
     # Scan reports filtered by userId (temporary until GSI_ReportsByUser is added)
     resp = _dynamodb.scan(
-        TableName=REPORTS_TABLE,
+        TableName=RESEARCH_REPORTS_TABLE,
         FilterExpression='userId = :u',
         ExpressionAttributeValues={':u': {'S': user_id}}
     )

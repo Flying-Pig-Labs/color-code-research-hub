@@ -18,7 +18,6 @@ import re
 s3 = boto3.client('s3')
 dynamo = boto3.resource('dynamodb')
 
-ARTIFACTS_BUCKET = os.environ.get('ARTIFACTS_BUCKET_NAME', '')
 RESEARCH_BUCKET = os.environ.get('RESEARCH_BUCKET', '')
 RESEARCH_REPORTS_TABLE = os.environ.get('RESEARCH_REPORTS_TABLE', 'ResearchReports')
 
@@ -41,14 +40,14 @@ def handler(event, context):
     try:
         # Check if PDF already exists in S3
         pdf_key = f"reports/{report_id}/report.pdf"
-        
+
         # Try to get existing PDF first
         try:
-            s3.head_object(Bucket=ARTIFACTS_BUCKET, Key=pdf_key)
+            s3.head_object(Bucket=RESEARCH_BUCKET, Key=pdf_key)
             # PDF exists, generate presigned URL
             pdf_url = s3.generate_presigned_url(
                 'get_object',
-                Params={'Bucket': ARTIFACTS_BUCKET, 'Key': pdf_key},
+                Params={'Bucket': RESEARCH_BUCKET, 'Key': pdf_key},
                 ExpiresIn=3600  # 1 hour
             )
             return json_response(200, {
@@ -90,7 +89,7 @@ def handler(event, context):
         
         # Upload HTML to S3 as "PDF"
         s3.put_object(
-            Bucket=ARTIFACTS_BUCKET,
+            Bucket=RESEARCH_BUCKET,
             Key=pdf_key,
             Body=html_buffer.getvalue(),
             ContentType='text/html',
@@ -101,11 +100,11 @@ def handler(event, context):
                 'username': username
             }
         )
-        
+
         # Generate presigned URL
         pdf_url = s3.generate_presigned_url(
             'get_object',
-            Params={'Bucket': ARTIFACTS_BUCKET, 'Key': pdf_key},
+            Params={'Bucket': RESEARCH_BUCKET, 'Key': pdf_key},
             ExpiresIn=3600
         )
         

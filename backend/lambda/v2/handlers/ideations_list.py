@@ -6,7 +6,7 @@ from helpers.users import ensure_user_exists
 from helpers.http import json_response
 
 _dynamodb = boto3.client('dynamodb')
-IDEATIONS_TABLE = os.environ.get('IDEATIONS_TABLE_NAME', '')
+PIPELINE_BATCH_JOBS_TABLE = os.environ.get('PIPELINE_BATCH_JOBS_TABLE', '')
 
 
 def handler(event, context):
@@ -19,7 +19,7 @@ def handler(event, context):
     
     # Scan ideations filtered by userId (temporary until GSI_IdeationsByUser is added)
     resp = _dynamodb.scan(
-        TableName=IDEATIONS_TABLE,
+        TableName=PIPELINE_BATCH_JOBS_TABLE,
         FilterExpression='userId = :u',
         ExpressionAttributeValues={':u': {'S': user_id}}
     )
