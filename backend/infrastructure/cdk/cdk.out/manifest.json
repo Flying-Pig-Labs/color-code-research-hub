@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3ca4965c1d807779fafc816112d0856ab5bf5e62e498ccc8d7989d94e7dc8c2d.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9d67160c934d9c98f55e1788c097fcd8b8e88a5cae005854b0d7345dae74c108.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -61,7 +61,7 @@
         "/ApiLayerStack/HttpApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiDeployment2ABEB12F4c26a9399adaf2ccb285472efd4fc0a5"
+            "data": "HttpApiDeployment2ABEB12F62bf5ace0ce0ab34dbc3c04ffa081b40"
           }
         ],
         "/ApiLayerStack/HttpApi/DeploymentStage.prod/Resource": [
@@ -470,6 +470,36 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApireportsreportIdGET827D0A54"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/{reportId}/pdf/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsreportIdpdf1DB04CC9"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/{reportId}/pdf/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsreportIdpdfOPTIONS025FE86A"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/{reportId}/pdf/POST/ApiPermission.ApiLayerStackHttpApi9A58276C.POST..reports.{reportId}.pdf": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsreportIdpdfPOSTApiPermissionApiLayerStackHttpApi9A58276CPOSTreportsreportIdpdf8C70542F"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/{reportId}/pdf/POST/ApiPermission.Test.ApiLayerStackHttpApi9A58276C.POST..reports.{reportId}.pdf": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsreportIdpdfPOSTApiPermissionTestApiLayerStackHttpApi9A58276CPOSTreportsreportIdpdfEAAF3612"
+          }
+        ],
+        "/ApiLayerStack/HttpApi/Default/reports/{reportId}/pdf/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApireportsreportIdpdfPOSTBA27DDCB"
           }
         ],
         "/ApiLayerStack/HttpApi/Default/ideations/Resource": [
@@ -950,6 +980,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ReportGet3F9696DD"
+          }
+        ],
+        "/ApiLayerStack/ReportPdfGenerate/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportPdfGenerateServiceRoleB1CE4B44"
+          }
+        ],
+        "/ApiLayerStack/ReportPdfGenerate/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportPdfGenerateServiceRoleDefaultPolicy8D21B2D3"
+          }
+        ],
+        "/ApiLayerStack/ReportPdfGenerate/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ReportPdfGenerate72C89D58"
           }
         ],
         "/ApiLayerStack/IdeationStart/ServiceRole/Resource": [

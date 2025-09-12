@@ -99,47 +99,27 @@ export function ResearchReportHistory({ team, limit = 20 }: ResearchReportHistor
   };
 
   const handleDownload = async (report: ResearchReport) => {
-    // Prioritize the formatted .md report over the raw JSON
-    const s3Key = report.s3ReportKey || report.fullReportS3Key || report.s3Files?.response || report.s3Key;
-    
-    if (!s3Key && !report.downloadUrl) {
-      toast.error('Download not available for this report');
-      return;
-    }
-
     try {
-      let downloadUrl = report.downloadUrl;
+      // Use V2 API to generate PDF
+      const response = await v2Api.generateReportPdf(report.reportId);
       
-      // If we have an s3Key, fetch a fresh presigned URL
-      if (s3Key) {
-        const encodedKey = btoa(s3Key);
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/research/download/${encodedKey}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to get download URL');
-        }
-        
-        const data = await response.json();
-        if (data.download_url) {
-          downloadUrl = data.download_url;
-        } else {
-          throw new Error('No download URL received');
-        }
+      if (!response.pdf_url) {
+        throw new Error('No PDF URL received');
       }
       
-      // Use the fresh URL (or existing one if no s3Key)
+      // Download the PDF
       const link = document.createElement('a');
-      link.href = downloadUrl;
-      // Always download as .md if it's a report (prefer formatted report)
-      const isFormattedReport = report.s3ReportKey || report.fullReportS3Key || s3Key?.includes('/report.md') || s3Key?.includes('/formatted_report.md');
-      link.download = isFormattedReport ? `research_${report.reportId}.md` : `research_${report.reportId}.json`;
+      link.href = response.pdf_url;
+      link.download = `research_${report.reportId}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      toast.success('Download started');
+      
+      const message = response.cached ? 'PDF downloaded (cached)' : 'PDF generated and downloaded';
+      toast.success(message);
     } catch (error) {
-      console.error('Download failed:', error);
-      toast.error('Failed to download report');
+      console.error('PDF download failed:', error);
+      toast.error('Failed to generate PDF');
     }
   };
 

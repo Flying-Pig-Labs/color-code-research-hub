@@ -135,8 +135,13 @@ export class ApiLayerStack extends Stack {
     const reportsList = makeFn('ReportsList', 'handlers.research_reports_list.handler');
     reports.addMethod('GET', new apigw.LambdaIntegration(reportsList), { authorizer });
     const reportGet = makeFn('ReportGet', 'handlers.report_get.handler');
-    reports.addResource('{reportId}')
-      .addMethod('GET', new apigw.LambdaIntegration(reportGet), { authorizer });
+    const reportItem = reports.addResource('{reportId}');
+    reportItem.addMethod('GET', new apigw.LambdaIntegration(reportGet), { authorizer });
+    
+    // PDF generation endpoint
+    const reportPdfGenerate = makeFn('ReportPdfGenerate', 'handlers.report_pdf_generate.handler');
+    reportItem.addResource('pdf')
+      .addMethod('POST', new apigw.LambdaIntegration(reportPdfGenerate), { authorizer });
 
     // Ideation (using legacy PipelineBatchJobs table)
     const ideationStart = makeFn('IdeationStart', 'handlers.ideation_start.handler');

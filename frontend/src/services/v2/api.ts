@@ -74,6 +74,7 @@ export const v2Api = {
     apiFetch(`/projects/${projectId}/report/start`, { method: 'POST', body: JSON.stringify({}) }),
   getReport: (reportId: string) => apiFetch(`/reports/${reportId}`),
   listReports: () => apiFetch('/reports'),
+  generateReportPdf: (reportId: string) => apiFetch(`/reports/${reportId}/pdf`, { method: 'POST' }),
 
   startIdeation: (projectId: string, body: { reportId: string }) =>
     apiFetch(`/projects/${projectId}/ideation/start`, {
