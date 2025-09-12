@@ -113,17 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * @returns {boolean} True if authentication successful, false otherwise
    */
   const login = (username: string, password: string): boolean => {
-    // Hardcoded credentials for beta access
-    // TODO: Replace with proper authentication service in production
-    if (username === 'beta' && password === 'f@stf@shion') {
-      // Legacy fallback no longer grants API access; guide user to Cognito
-      // Keep UX flow working, but force Cognito acquisition of id_token
-      setIsAuthenticated(false);
-      if (typeof window !== 'undefined') {
-        window.location.assign('/v2/auth');
-      }
-      return false;
-    }
+    // Legacy login is disabled - users must use Cognito
     return false;
   };
 

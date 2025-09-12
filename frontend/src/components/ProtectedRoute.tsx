@@ -2,77 +2,58 @@
  * @fileoverview Protected route wrapper component for authentication control.
  * 
  * This component implements route-level authentication by checking the user's
- * authentication status and redirecting to login if not authenticated.
- * 
- * Used to wrap any routes that require user authentication, providing
- * automatic redirection to the login page for unauthenticated users.
+ * authentication status. It NEVER navigates - only gates UI rendering.
  * 
  * @author Color Code Research Hub Team
  * @version 1.0.0
  */
 
-import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
-import { useAuthGate } from '@/hooks/useAuthGate';
 import UserOnboarding from '@/components/UserOnboarding';
 
 /**
  * Props interface for the ProtectedRoute component.
- * 
- * @interface ProtectedRouteProps
- * @property {React.ReactNode} children - The components to render if authenticated
  */
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-/**
- * Protected route component that enforces authentication and onboarding requirements.
- * 
- * Checks the current authentication status and user profile completion:
- * - Redirects to login page if not authenticated
- * - Shows onboarding flow if authenticated but profile incomplete
- * - Renders protected content if authenticated and profile complete
- * 
- * @param {ProtectedRouteProps} props - Component props
- * @param {React.ReactNode} props.children - Content to render if authenticated and onboarded
- * @returns {JSX.Element} Either the protected content, onboarding flow, or redirect to login
- * 
- * @example
- * ```tsx
- * <ProtectedRoute>
- *   <Dashboard />
- * </ProtectedRoute>
- * ```
- */
 const AUTH_DISABLED = (import.meta as any)?.env?.VITE_AUTH_DISABLED === 'true';
 
+/**
+ * Protected route component that gates UI based on authentication.
+ * NEVER navigates - only shows appropriate UI state.
+ */
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const { needsOnboarding, isLoading: userLoading } = useUser();
-  const { ready: authReady, isLoading: authLoading } = useAuthGate();
 
   if (AUTH_DISABLED) {
     return <>{children}</>;
   }
 
-  // Show loading while auth is not ready
-  if (!authReady || authLoading || userLoading) {
+  // Check if we have a valid token
+  const hasValidToken = !!sessionStorage.getItem('id_token');
+
+  // Show loading while checking auth
+  if (userLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-2">
           <div className="animate-pulse">Loading...</div>
-          <div className="text-sm text-gray-500">Checking authentication...</div>
         </div>
       </div>
     );
   }
 
-  // Only redirect if auth is ready and user is not authenticated
-  // This prevents race conditions with the API layer
-  if (authReady && !isAuthenticated) {
-    return <Navigate to="/v2/auth" replace />;
+  // Show login prompt if not authenticated (API layer will redirect)
+  if (!isAuthenticated || !hasValidToken) {
+    return (
+      <div className="p-6 text-center text-sm text-muted-foreground">
+        Please log in to continue.
+      </div>
+    );
   }
 
   // Show onboarding if user needs to complete profile

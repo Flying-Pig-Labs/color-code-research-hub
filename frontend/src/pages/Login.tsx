@@ -14,21 +14,7 @@ const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect authenticated users to the app
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/v2/projects", { replace: true });
-      return;
-    }
-
-    // Auto-redirect unauthenticated users to Cognito after a short delay
-    // This gives users a chance to see they're being redirected
-    const timer = setTimeout(() => {
-      navigate("/v2/auth", { replace: true });
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [isAuthenticated, navigate]);
+  // No automatic redirects - let API layer handle auth redirects
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +59,7 @@ const Login = () => {
               You'll be taken to our secure authentication page in a moment.
             </div>
             <Button
-              onClick={() => navigate("/v2/auth")}
+              onClick={() => {/* API layer will handle redirects */}}
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               <LogIn className="mr-2 h-4 w-4" />

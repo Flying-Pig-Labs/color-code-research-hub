@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects, useCreateProject } from '@/hooks/v2';
-import { useAuthGate } from '@/hooks/useAuthGate';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -62,7 +62,11 @@ const Projects: React.FC = () => {
   const createProject = useCreateProject();
   const { toast } = useToast();
   const { user } = useUser();
-  const { ready, isAuthenticated } = useAuthGate();
+  const { isAuthenticated } = useAuth();
+  
+  // Gate all rendering and fetching on authentication
+  const hasValidToken = !!sessionStorage.getItem('id_token');
+  if (!isAuthenticated || !hasValidToken) return null;
   
   // Form state
   const [title, setTitle] = useState('');
@@ -80,8 +84,6 @@ const Projects: React.FC = () => {
 
   // Enrich projects with ideas count & final repo (DoubleDowns)
   React.useEffect(() => {
-    // Only make API calls when auth is ready and user is authenticated
-    if (!ready || !isAuthenticated) return;
 
     (async () => {
       try {
@@ -125,7 +127,7 @@ const Projects: React.FC = () => {
         setLastUpdated({});
       }
     })();
-  }, [ready, isAuthenticated]);
+  }, []);
 
   /**
    * Validate form inputs.
@@ -220,33 +222,6 @@ const Projects: React.FC = () => {
   };
 
   const hasProjects = projects && projects.length > 0;
-
-  // Don't render anything until auth is ready
-  if (!ready) {
-    return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Checking authentication...
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render content if not authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto" />
-          <div className="space-y-2">
-            <h2 className="text-lg font-medium">Authentication Required</h2>
-            <p className="text-muted-foreground">Please log in to view your projects</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
