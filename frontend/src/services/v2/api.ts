@@ -1,16 +1,18 @@
 import { envConfig } from '@/config/environment';
 
-// Throttle auth redirects to prevent rapid refresh loops
-let lastAuthRedirect = 0;
-const AUTH_REDIRECT_COOLDOWN_MS = 5000;
+// Global redirect guard to prevent concurrent redirects
+let isRedirecting = false;
+
 function maybeRedirectToAuth() {
   if (typeof window === 'undefined') return;
+  if (isRedirecting) return; // Already redirecting, don't fire again
+  
   const path = window.location.pathname || '';
   // Never redirect from the auth routes themselves
   if (path.startsWith('/v2/auth')) return;
-  const now = Date.now();
-  if (now - lastAuthRedirect < AUTH_REDIRECT_COOLDOWN_MS) return;
-  lastAuthRedirect = now;
+  
+  isRedirecting = true;
+  console.log('Single redirect to auth initiated');
   window.location.assign('/v2/auth');
 }
 
