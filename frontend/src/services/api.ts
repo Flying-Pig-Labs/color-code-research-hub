@@ -147,71 +147,14 @@ function createTimeoutController(timeout: number = API_TIMEOUT): AbortController
   return controller;
 }
 
-/**
- * Generic fetch wrapper with comprehensive error handling and timeout management.
- * 
- * Provides a consistent interface for all API calls with:
- * - Automatic timeout handling
- * - CORS-compliant configuration  
- * - Structured error handling
- * - Response validation
- * - Type-safe return values
- * 
- * @template T - Expected response type
- * @param {string} url - API endpoint URL
- * @param {RequestInit} options - Fetch options (method, body, headers, etc.)
- * @returns {Promise<T>} Parsed JSON response
- * @throws {ApiError} Structured error with type classification
- */
+export { apiFetch } from '@/lib/apiFetch';
+
+// Keep existing error handling types for backward compatibility
 async function fetchWithErrorHandling<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const controller = createTimeoutController();
-  
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...apiClient.headers,
-        ...options.headers,
-      },
-      credentials: 'omit',
-      signal: controller.signal,
-    });
-
-    if (response && response.status === 401) {
-      throw new ApiError(
-        ApiErrorType.AUTH_ERROR,
-        'Authentication failed. Please check your API key.',
-        { status: response.status }
-      );
-    }
-
-    if (response && !response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new ApiError(
-        ApiErrorType.SERVER_ERROR,
-        errorData.message || `Server error: ${response.status}`,
-        { status: response.status, data: errorData }
-      );
-    }
-    
-    if (!response) {
-      throw new ApiError(
-        ApiErrorType.UNKNOWN_ERROR,
-        'Invalid response from server',
-        { response }
-      );
-    }
-
-    return await response.json();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    throw handleApiError(error);
-  }
+  return apiFetch(url, options);
 }
 
 // API Service Interface
