@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,6 +25,9 @@ const Auth: React.FC = () => {
   const signUpUrl = useMemo(() => buildAuthorizeUrl('signup'), []);
   const missingEnv = !signInUrl || !signUpUrl;
   
+  // Circuit breaker to prevent redirect loops
+  const [hasRedirected, setHasRedirected] = useState(false);
+  
   // If arriving at /v2/auth with an existing Hosted UI session, ensure a fresh choice is possible
   // Optional: clear local tokens when force=true is present
   useEffect(() => {
@@ -46,10 +49,21 @@ const Auth: React.FC = () => {
 
   // Redirect authenticated users to the app; optionally auto-forward unauthenticated to Hosted UI
   useEffect(() => {
-    if (AUTH_DISABLED || isAuthenticated) {
+    // CRITICAL: Check if we actually have a valid token before declaring user authenticated
+    const hasValidToken = !!sessionStorage.getItem('id_token');
+    
+    if (AUTH_DISABLED) {
       navigate("/v2/projects", { replace: true });
       return;
     }
+    
+    // Only redirect if user is TRULY authenticated with a valid token
+    if (isAuthenticated && hasValidToken) {
+      navigate("/v2/projects", { replace: true });
+      return;
+    }
+    
+    // If we get here, user is not authenticated - show auth UI
     // Auto-kick to Cognito Hosted UI if configuration is present, to avoid lingering on spinner
     if (!missingEnv && signInUrl) {
       const t = setTimeout(() => {
