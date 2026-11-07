@@ -1,0 +1,4 @@
+# Ignore build-copied prompt assets
+prompts/
+prompts-txt/
+

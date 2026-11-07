@@ -1,0 +1,248 @@
+interface ResearchRequest {
+  task: string;
+  team?: string;
+  companyName?: string;
+  vendorName?: string;
+  targetCompany?: string;  // For red team
+  targetVendor?: string;   // For black team
+}
+
+interface ResearchResponse {
+  request_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  result?: any;
+  research_id?: string;  // New: unique research ID
+  s3_prefix?: string;    // New: S3 folder prefix
+  s3_files?: {           // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
+  s3_key?: string;       // Deprecated: kept for backwards compatibility
+  download_url?: string;
+  error?: string;
+  summary?: string;
+  summaryWordCount?: number;
+  reportId?: string;
+  reportProcessed?: boolean;
+  team?: string;
+  title?: string;
+  vendorName?: string;
+  companyName?: string;
+}
+
+interface AsyncJobResponse {
+  success: boolean;
+  request_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  metadata?: {
+    title: string;
+    requester: string;
+    tags: string[];
+    model: string;
+    reasoning_effort: string;
+  };
+  timestamp: string;
+}
+
+interface StatusCheckResponse {
+  success: boolean;
+  request_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  content?: string;
+  research_id?: string;    // New: unique research ID
+  s3_prefix?: string;      // New: S3 folder prefix
+  s3_location?: string;
+  s3_files?: {             // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
+  s3_key?: string;
+  download_url?: string;
+  model_used?: string;
+  timestamp: string;
+  error?: string;
+  summary?: string;
+  summaryWordCount?: number;
+  reportId?: string;
+  reportProcessed?: boolean;
+  team?: string;
+  title?: string;
+  vendorName?: string;
+  companyName?: string;
+}
+
+import { apiFetchWithBase } from '@/lib/apiFetch';
+import { envConfig } from '@/config/environment';
+
+// Use API Gateway proxy to avoid CORS/private network issues
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// Import the ENHANCED prompts with all creative divergence directives
+// @ts-ignore - JS module import
+import { RED_TEAM_PROMPT } from '../../prompts/red-team';
+import { WHITE_TEAM_PROMPT } from '../../prompts/white-team';
+import { BLACK_TEAM_PROMPT } from '../../prompts/black-team';
+
+export async function submitResearch(request: ResearchRequest): Promise<ResearchResponse> {
+  try {
+    const data: AsyncJobResponse = await apiFetchWithBase(envConfig.researchApiBaseUrl, '/api/research', {
+      method: 'POST',
+      headers: {
+        'X-User-Id': 'fprior',  // Add user header
+      },
+      body: JSON.stringify({
+        content: request.task,
+        title: request.companyName ? `${request.companyName} Research` : 'Research Request',
+        model: 'sonar-deep-research',
+        reasoning_effort: 'high',
+        team: request.team || 'unknown',
+        companyName: request.companyName,
+        vendorName: request.vendorName,
+        targetCompany: request.targetCompany, // For red team
+        targetVendor: request.targetVendor     // For black team
+      }),
+    });
+    
+    // Return the async job response
+    return {
+      request_id: data.request_id,
+      status: data.status,
+      result: data.metadata ? {
+        metadata: data.metadata,
+        timestamp: data.timestamp
+      } : undefined
+    };
+  } catch (error) {
+    console.error('Error submitting research:', error);
+    throw error;
+  }
+}
+
+export async function checkResearchStatus(requestId: string): Promise<ResearchResponse> {
+  try {
+    const data: StatusCheckResponse = await apiFetchWithBase(envConfig.researchApiBaseUrl, `/api/research/status/${requestId}`);
+    
+    // Transform the status check response to match expected format
+    return {
+      request_id: data.request_id,
+      status: data.status,
+      result: data.status === 'completed' ? {
+        content: data.content,
+        s3_location: data.s3_location,
+        model_used: data.model_used,
+        timestamp: data.timestamp
+      } : undefined,
+      research_id: data.research_id,
+      s3_prefix: data.s3_prefix,
+      s3_files: data.s3_files,
+      s3_key: data.s3_key,
+      download_url: data.download_url,
+      error: data.error,
+      summary: data.summary,
+      summaryWordCount: data.summaryWordCount,
+      reportId: data.reportId || data.research_id,  // Use research_id as fallback
+      reportProcessed: data.reportProcessed,
+      team: data.team,
+      title: data.title,
+      vendorName: data.vendorName,
+      companyName: data.companyName
+    };
+  } catch (error) {
+    console.error('Error checking research status:', error);
+    throw error;
+  }
+}
+
+// Export prompt formatting functions that use the enhanced prompts
+export const formatRedTeamPrompt = (formData: any) => {
+  return RED_TEAM_PROMPT
+    .replace('{{targetCompany}}', formData.targetCompany || formData.companyName || 'Not specified')
+    .replace('{{analysisFocus}}', formData.analysisFocus ? formData.analysisFocus.map((focus: string) => `• ${focus}`).join('\n') : '• Comprehensive competitive analysis');
+};
+
+export const formatWhiteTeamPrompt = (formData: any) => {
+  return WHITE_TEAM_PROMPT
+    .replace('{{companyName}}', formData.companyName || 'Not specified')
+    .replace('{{opportunityTypes}}', formData.opportunityTypes ? formData.opportunityTypes.map((type: string) => `• ${type}`).join('\n') : '• All opportunity types')
+    .replace('{{targetCustomerSize}}', formData.targetCustomerSize ? formData.targetCustomerSize.map((size: string) => `• ${size}`).join('\n') : '• All customer segments')
+    .replace('{{businessModelPreference}}', formData.businessModelPreference ? formData.businessModelPreference.map((model: string) => `• ${model}`).join('\n') : '• Open to all business models')
+    .replace('{{technicalApproach}}', formData.technicalApproach || 'Technology-agnostic')
+    .replace('{{marketEntrySpeed}}', formData.marketEntrySpeed || 'Standard')
+    .replace('{{competitiveLandscape}}', formData.competitiveLandscape || 'Moderate competition')
+    .replace('{{minimumOpportunitySize}}', formData.minimumOpportunitySize || 'No minimum threshold')
+    .replace('{{successMetrics}}', formData.successMetrics ? formData.successMetrics.map((metric: string, index: number) => `${index + 1}. ${metric}`).join('\n') : '1. Market potential\n2. Technical feasibility\n3. Competitive advantage');
+};
+
+export interface ResearchReport {
+  reportId: string;
+  userId?: string;         // New: user who created the report
+  team: string;
+  createdAt: string;
+  requestId: string;
+  status?: 'pending' | 'processing' | 'completed' | 'failed' | 'submitted'; // Add status for processing jobs
+  jobType?: 'research' | 'ideation'; // Add job type
+  s3Prefix?: string;       // New: S3 folder prefix
+  s3Files?: {             // New: individual file paths
+    request?: string;
+    response?: string;
+    metadata?: string;
+  };
+  s3Key?: string;          // Deprecated: kept for backwards compatibility
+  s3ReportKey?: string;    // New: formatted report S3 key
+  fullReportS3Key?: string; // New: full report S3 key
+  title?: string;
+  vendorName?: string;
+  companyName?: string;
+  contentSummary?: string;
+  processedSummary?: string;
+  summaryWordCount?: number;
+  downloadUrl?: string;
+  objective?: string;       // Research objective/target from DynamoDB
+  processingTimeMs?: number; // Processing duration in milliseconds from DynamoDB
+  processingCompletedAt?: string; // Completion timestamp from DynamoDB
+  metadata?: {
+    title?: string;
+    vendorName?: string;
+    companyName?: string;
+    team?: string;
+    [key: string]: any;
+  };
+  formData?: {
+    researchType?: 'innovation' | 'medical-device' | 'private-equity' | 'data-center' | 'city-revitalization';
+    investmentScale?: 'seed' | 'growth' | 'enterprise';
+    timeline?: 'short-term' | 'medium-term' | 'long-term';
+    riskProfile?: 'conservative' | 'moderate' | 'aggressive';
+    researchTopology?: 'hierarchical' | 'byzantine' | 'federated';
+    [key: string]: any;
+  };
+  pipelineDurationSeconds?: number;
+  pipelineStartedAt?: string;
+  pipelineCompletedAt?: string;
+}
+
+export async function listResearchReports(team?: string, limit: number = 50): Promise<ResearchReport[]> {
+  try {
+    const params = new URLSearchParams();
+    if (team) params.append('team', team);
+    params.append('limit', limit.toString());
+    
+    const data = await apiFetchWithBase(envConfig.researchApiBaseUrl, `/api/research/reports?${params.toString()}`);
+    return data.reports || [];
+  } catch (error) {
+    console.error('Error listing research reports:', error);
+    throw error;
+  }
+}
+
+// Use the ENHANCED Black Team prompt with creative divergence
+export const formatBlackTeamPrompt = (formData: any) => {
+  return BLACK_TEAM_PROMPT
+    .replace('{{companyName}}', formData.companyName || 'Not specified')
+    .replace('{{targetVendor}}', formData.targetVendor || formData.vendorName || 'Not specified')
+    .replace('{{existingTools}}', formData.existingTools ? formData.existingTools.join(', ') : 'No specific tools identified')
+    .replace('{{toolCategories}}', formData.toolCategories ? formData.toolCategories.map((category: string) => `• ${category}`).join('\n') : '• Comprehensive tool replacement')
+    .replace('{{informationSources}}', formData.informationSources ? Object.entries(formData.informationSources).filter(([_, enabled]) => enabled).map(([source]) => `• ${source.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}`).join('\n') : '• Standard public information sources')
+    .replace('{{implementationComplexity}}', formData.implementationComplexity || 'Medium')
+    .replace('{{replacementSuccessMetrics}}', formData.replacementSuccessMetrics ? formData.replacementSuccessMetrics.slice(0, 3).join(', ') : 'Performance, Cost, Features');
+};

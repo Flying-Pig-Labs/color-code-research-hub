@@ -1,0 +1,5 @@
+# User-scoped API Lambda dependencies
+PyJWT==2.8.0
+requests==2.31.0
+boto3==1.34.0
+botocore==1.34.0

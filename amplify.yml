@@ -1,0 +1,86 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm use 20
+        - npm ci
+    build:
+      commands:
+        # Load repo root .env.production if present (some teams commit it at root)
+        - 'if [ -f ./.env.production ]; then set -a; . ./.env.production; set +a; fi'
+        # If a .env.production file exists in the repo, load it into env first
+        - 'if [ -f frontend/.env.production ]; then set -a; . frontend/.env.production; set +a; fi'
+        # Fail fast if required env vars are missing; rely on Amplify env config
+        - 'test -n "$VITE_COGNITO_DOMAIN" || (echo "Missing VITE_COGNITO_DOMAIN" && exit 1)'
+        - 'test -n "$VITE_COGNITO_CLIENT_ID" || (echo "Missing VITE_COGNITO_CLIENT_ID" && exit 1)'
+        - 'test -n "$VITE_COGNITO_REDIRECT_URI" || (echo "Missing VITE_COGNITO_REDIRECT_URI" && exit 1)'
+        - 'test -n "$VITE_API_BASE_URL" || (echo "Missing VITE_API_BASE_URL" && exit 1)'
+        - 'echo "Using env: $VITE_COGNITO_DOMAIN $VITE_COGNITO_CLIENT_ID $VITE_COGNITO_REDIRECT_URI $VITE_API_BASE_URL"'
+        - npm run build
+        - ls -la frontend/  # Debug: Check frontend directory contents
+        - ls -la frontend/dist || echo "dist directory not found"  # Debug: Check if dist exists
+    postBuild:
+      commands:
+        # Optional: Invalidate CloudFront cache if distribution ID is provided
+        - 'if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ]; then echo "Invalidating CloudFront $CLOUDFRONT_DISTRIBUTION_ID..."; aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*" || echo "CloudFront invalidation failed (continuing)"; else echo "No CLOUDFRONT_DISTRIBUTION_ID set; skipping invalidation."; fi'
+        
+        # Ensure Amplify branch/app env vars are set via AWS CLI (best-effort)
+        - 'APP_ID=${AMPLIFY_APP_ID:-d3i4a0icgmkocs}'
+        - 'BRANCH=${AWS_BRANCH:-main}'
+        - 'API_URL_FALLBACK=${VITE_API_BASE_URL:-https://g5rpch8h1l.execute-api.us-east-1.amazonaws.com/prod}'
+        - 'COG_DOMAIN_FALLBACK=${VITE_COGNITO_DOMAIN:-truflr-ai-prod}'
+        - 'COG_CLIENT_FALLBACK=${VITE_COGNITO_CLIENT_ID:-3sqlej98hh2s5vo117ha3hg0i4}'
+        - 'COG_REDIRECT_FALLBACK=${VITE_COGNITO_REDIRECT_URI:-https://www.truflr.ai/v2/auth/callback}'
+        - 'echo "Updating Amplify branch env vars for $APP_ID/$BRANCH..."'
+        - >-
+          aws amplify update-branch \
+            --app-id "$APP_ID" \
+            --branch-name "$BRANCH" \
+            --environment-variables
+            VITE_API_BASE_URL=$API_URL_FALLBACK,VITE_API_GATEWAY_URL=$API_URL_FALLBACK,VITE_COGNITO_DOMAIN=$COG_DOMAIN_FALLBACK,VITE_COGNITO_CLIENT_ID=$COG_CLIENT_FALLBACK,VITE_COGNITO_REDIRECT_URI=$COG_REDIRECT_FALLBACK \
+          || echo "Amplify update-branch failed (insufficient permissions or invalid app/branch)."
+        - 'echo "Updating Amplify app-level env vars for $APP_ID..."'
+        - >-
+          aws amplify update-app \
+            --app-id "$APP_ID" \
+            --environment-variables
+            VITE_API_BASE_URL=$API_URL_FALLBACK,VITE_COGNITO_DOMAIN=$COG_DOMAIN_FALLBACK,VITE_COGNITO_CLIENT_ID=$COG_CLIENT_FALLBACK,VITE_COGNITO_REDIRECT_URI=$COG_REDIRECT_FALLBACK \
+          || echo "Amplify update-app failed (insufficient permissions)."
+  artifacts:
+    baseDirectory: frontend/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+  customHeaders:
+    # Ensure SPA shell is never cached and assets are short-cached
+    - pattern: '**/index.html'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=0, must-revalidate'
+    - pattern: 'index.html'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=0, must-revalidate'
+    - pattern: '**/*.js'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=3600, must-revalidate'
+    - pattern: '**/*.css'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=3600, must-revalidate'
+    # Default: cache other static assets aggressively
+    - pattern: '**/*'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'
+  rewrites:
+    - source: '/<*>'
+      target: '/index.html'
+      status: '200'
+    - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json)$)([^.]+$)/>'
+      target: '/index.html'
+      status: '200'

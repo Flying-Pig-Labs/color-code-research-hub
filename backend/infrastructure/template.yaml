@@ -1,0 +1,1472 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Color Code Research Hub - Competitive intelligence platform with three specialized AI research teams
+  (Red/Black/White) for market disruption analysis, vendor replacement, and whitespace discovery.
+  Features 20+ Lambda functions, DynamoDB tables, API Gateway, and integration with Perplexity AI
+  for deep research. Deploy to us-east-1 with stack name: color-code-research-hub
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        GITHUB_ORG: !Ref GitHubOrg
+        CLIENT_COMPANY_NAME: !Ref ClientCompanyName
+  HttpApi:
+    CorsConfiguration:
+      AllowOrigins:
+        - "*"
+      AllowHeaders:
+        - "Content-Type"
+        - "Authorization"
+        - "X-Api-Key"
+        - "Accept"
+        - "Idempotency-Key"
+      AllowMethods:
+        - GET
+        - POST
+        - OPTIONS
+        - PUT
+        - DELETE
+      MaxAge: 86400
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Default: Flying-Pig-Labs
+    Description: GitHub organization name
+  
+  ClientCompanyName:
+    Type: String
+    Default: Your Company
+    Description: Client company name
+
+  # V2 Data Layer resource names (defaults match CDK DataLayerStack)
+  UsersTableNameParam:
+    Type: String
+    Default: Users
+  CreditLedgerTableNameParam:
+    Type: String
+    Default: CreditLedger
+  ProjectsTableNameParam:
+    Type: String
+    Default: Projects
+  ReportsTableNameParam:
+    Type: String
+    Default: ResearchReports
+  IdeationsTableNameParam:
+    Type: String
+    Default: PipelineBatchJobs
+  DoubleDownsTableNameParam:
+    Type: String
+    Default: DoubleDowns
+  PipelineReposTableNameParam:
+    Type: String
+    Default: PipelineRepos
+  ArtifactsBucketNameParam:
+    Type: String
+    Default: datalayerstack-artifacts
+  StripeApiKeySecretArn:
+    Type: String
+    Default: arn:aws:secretsmanager:us-east-1:984906149037:secret:stripe_api_key-pmgNww
+  StripePriceCredit:
+    Type: String
+    Default: ""
+  StripeWebhookSecret:
+    Type: String
+    Default: ""
+
+  CognitoUserPoolIdParam:
+    Type: String
+    Default: ""
+  
+  CognitoUserPoolArnParam:
+    Type: String
+    Default: ""
+  
+
+Resources:
+  # Shared execution role for V2 Python Lambdas
+  V2LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: V2DynamoAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchGetItem
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                Resource:
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UsersTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CreditLedgerTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ProjectsTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ReportsTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IdeationsTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DoubleDownsTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PipelineReposTableNameParam}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ResearchReports
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PipelineBatchJobs
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PipelineRepos
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ReportsTableNameParam}/index/*
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ProjectsTableNameParam}/index/*
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CreditLedgerTableNameParam}/index/*
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IdeationsTableNameParam}/index/*
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DoubleDownsTableNameParam}/index/*
+        - PolicyName: V2ArtifactsS3
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}
+                  - !Sub arn:aws:s3:::${ArtifactsBucketNameParam}/*
+                  - !Sub arn:aws:s3:::${ResearchResultsBucket}
+                  - !Sub arn:aws:s3:::${ResearchResultsBucket}/*
+        - PolicyName: V2StripeSecret
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref StripeApiKeySecretArn
+  # SQS Queue for Report Processing
+  ReportProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-ReportProcessingQueue'
+      VisibilityTimeout: 960  # 16 minutes (longer than Lambda timeout)
+      MessageRetentionPeriod: 86400  # 24 hours
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt ReportProcessingDLQ.Arn
+        maxReceiveCount: 3
+
+  # Dead Letter Queue for failed processing
+  ReportProcessingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-ReportProcessingDLQ'
+      MessageRetentionPeriod: 1209600  # 14 days
+
+  # DynamoDB Table for Plan Generation Jobs
+  # Stores async job state, progress tracking, and results
+  # TTL enabled for automatic cleanup after 24 hours
+  PlanGenerationJobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PlanGenerationJobs
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+        - Key: Application
+          Value: color-code-research-hub
+
+  # DynamoDB Table for Research Reports Metadata
+  # Stores research report metadata with team-based indexing
+  # Supports multi-tenant architecture with TTL cleanup
+  ResearchReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ResearchReports
+      AttributeDefinitions:
+        - AttributeName: reportId
+          AttributeType: S
+        - AttributeName: team
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: reportId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: team-createdAt-index
+          KeySchema:
+            - AttributeName: team
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Application
+          Value: color-code-research-hub
+
+  # SQS Queue for Research Requests
+
+  # S3 Bucket for Research Results
+  # Stores full research reports with versioning and encryption
+  # Lifecycle policy deletes reports after 90 days
+  ResearchResultsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'color-code-research-results-${AWS::AccountId}'
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldResearchResults
+            Status: Enabled
+            ExpirationInDays: 90
+      Tags:
+        - Key: Application
+          Value: color-code-research-hub
+
+
+  # Reference to existing Secrets Manager secret
+  # The secret is already created and contains the necessary configuration
+
+  # Lambda Functions
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: health.handler
+      Events:
+        HealthCheck:
+          Type: HttpApi
+          Properties:
+            Path: /health
+            Method: GET
+
+  # GitHub Repository Function (Legacy - calls GitHub API)
+  GitHubReposFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: githubRepos.handler
+      Environment:
+        Variables:
+          GITHUB_TOKEN_SECRET_ARN: arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-sIuriy
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+      Events:
+        ListRepos:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/github/repos
+            Method: GET
+        ListOrgRepos:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/github/repos/{org}
+            Method: GET
+
+  # Repository Data Function (DynamoDB-backed - faster, no rate limits)
+  RepositoryDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: repositoryData.handler
+      Environment:
+        Variables:
+          REPOSITORIES_TABLE: Repositories
+          BUILD_HISTORY_TABLE: BuildHistory  
+          ISSUES_TABLE: Issues
+          PRS_TABLE: PullRequests
+          SHARK_REVIEWS_TABLE: SharkTankReviews
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Scan
+                - dynamodb:Query
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource: 
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Repositories
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/BuildHistory
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Issues
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PullRequests
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SharkTankReviews
+      Events:
+        ListRepositories:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories
+            Method: GET
+        CreateRepository:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories
+            Method: POST
+        GetRepositoryIssues:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/{repoId}/issues
+            Method: GET
+        GetRepositoryPulls:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/{repoId}/pulls
+            Method: GET
+        GetRepositoryBuilds:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/{repoId}/builds
+            Method: GET
+        GetIssueComments:
+          Type: HttpApi
+          Properties:
+            Path: /api/issues/{issueId}/comments
+            Method: GET
+        GetRepositoriesFromIdeations:
+          Type: HttpApi
+          Properties:
+            Path: /api/repositories/from-ideations
+            Method: GET
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: SecretsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: '*'
+  
+
+  # Start Plan Generation Function (Async entry point)
+  StartPlanGenerationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: startPlanGeneration.handler
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+          ORCHESTRATOR_FUNCTION_NAME: !Ref PlanOrchestratorFunction
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+                - lambda:InvokeAsync
+              Resource: !GetAtt PlanOrchestratorFunction.Arn
+      Events:
+        StartJob:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/plan/async/start
+            Method: POST
+
+  # Plan Orchestrator Function (Main processing)
+  PlanOrchestratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: planOrchestrator.handler
+      Timeout: 900 # 15 minutes
+      MemorySize: 3008
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+          ANTHROPIC_API_KEY: '{{resolve:secretsmanager:anthropic_key:SecretString:anthropic_key}}'
+          AWS_BEDROCK_REGION: us-east-1
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:UpdateItem
+                - dynamodb:PutItem
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:github_token-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:BlueOceanApiKeys7FCB6430-*
+
+  # Get Job Status Function
+  GetJobStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: getJobStatus.handler
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+      Events:
+        GetStatus:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/plan/async/status/{jobId}
+            Method: GET
+
+  # List Plan Generation Jobs Function
+  ListPlanJobsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: listPlanGenerationJobs.handler
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          JOBS_TABLE_NAME: !Ref PlanGenerationJobsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: !GetAtt PlanGenerationJobsTable.Arn
+      Events:
+        ListJobs:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/plan/async/list
+            Method: GET
+        OptionsListJobs:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/plan/async/list
+            Method: OPTIONS
+
+  # Lambda Layer for Python Dependencies
+  PythonDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: python-dependencies-layer
+      Description: Layer containing Python dependencies for report processing
+      ContentUri: ../layers/python-dependencies/
+      CompatibleRuntimes:
+        - python3.11
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: python3.11
+
+  # Research API Function - Perplexity Integration (Python)
+  ResearchApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: researchApi.handler
+      Runtime: python3.11
+      Timeout: 900
+      MemorySize: 512
+      Layers:
+        - !Ref PythonDependenciesLayer
+      Environment:
+        Variables:
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+          REPORT_PROCESSING_FUNCTION_NAME: !Ref ReportProcessingFunction
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:perplexity-key-*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:GetObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+                - !Sub '${ResearchReportsTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: !GetAtt ReportProcessingFunction.Arn
+      Events:
+        ResearchEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research
+            Method: POST
+        OptionsResearch:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research
+            Method: OPTIONS
+        ResearchStatusEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/status/{requestId}
+            Method: GET
+        OptionsResearchStatus:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/status/{requestId}
+            Method: OPTIONS
+        ResearchDownloadEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/download/{s3Key}
+            Method: GET
+        OptionsResearchDownload:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/download/{s3Key}
+            Method: OPTIONS
+        ResearchReportsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/reports
+            Method: GET
+        OptionsResearchReports:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/reports
+            Method: OPTIONS
+
+  # Enhanced Research Report Function - Node.js with advanced data formats
+  GenerateResearchReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: generateResearchReport.handler
+      Runtime: nodejs18.x
+      Timeout: 900
+      MemorySize: 1024
+      Environment:
+        Variables:
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:perplexity-key-*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:GetObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+                - !Sub '${ResearchReportsTable.Arn}/index/*'
+      Events:
+        # Enhanced research endpoints with structured data
+        EnhancedResearchEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/v2
+            Method: POST
+        OptionsEnhancedResearch:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/v2
+            Method: OPTIONS
+        EnhancedResearchStatusEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/v2/status/{requestId}
+            Method: GET
+        OptionsEnhancedResearchStatus:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/v2/status/{requestId}
+            Method: OPTIONS
+        EnhancedResearchReportsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/v2/reports
+            Method: GET
+        OptionsEnhancedResearchReports:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/v2/reports
+            Method: OPTIONS
+
+  # DynamoDB Stream Processor - Detects completed research and sends to SQS
+  ResearchStreamProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: researchStreamProcessor.handler
+      Runtime: nodejs18.x
+      Timeout: 60
+      MemorySize: 256
+      Environment:
+        Variables:
+          REPORT_PROCESSING_QUEUE_URL: !Ref ReportProcessingQueue
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+              Resource: !GetAtt ReportProcessingQueue.Arn
+            - Effect: Allow
+              Action:
+                - dynamodb:DescribeStream
+                - dynamodb:GetRecords
+                - dynamodb:GetShardIterator
+                - dynamodb:ListStreams
+              Resource: 
+                - !Sub '${ResearchReportsTable.Arn}/stream/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:UpdateItem
+                - dynamodb:GetItem
+              Resource: !GetAtt ResearchReportsTable.Arn
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:perplexity-key*'
+                - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:openai_key*'
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt ResearchReportsTable.StreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+
+  # Report Processing Function - Enhanced Research Post-Processing (Node.js)
+  ReportProcessingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: reportProcessor.handler
+      Runtime: nodejs18.x
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          REPORT_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:anthropic_key-*
+                - arn:aws:secretsmanager:us-east-1:984906149037:secret:openai_key-*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:GetObject
+                - s3:ListBucket
+              Resource: 
+                - !Sub '${ResearchResultsBucket.Arn}/*'
+                - !GetAtt ResearchResultsBucket.Arn
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+                - !Sub '${ResearchReportsTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: 
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+                - arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0
+            - Effect: Allow
+              Action:
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource: !GetAtt ReportProcessingQueue.Arn
+      Events:
+        ProcessFromQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ReportProcessingQueue.Arn
+            BatchSize: 1  # Process one report at a time
+        ProcessReportEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/reports/process
+            Method: POST
+        OptionsProcessReport:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/reports/process
+            Method: OPTIONS
+        EnhanceReportEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/reports/enhance/{reportId}
+            Method: POST
+        OptionsEnhanceReport:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/reports/enhance/{reportId}
+            Method: OPTIONS
+        LogsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/logs
+            Method: GET
+        MetricsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/metrics
+            Method: GET
+        SystemStatusEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/system/status
+            Method: GET
+        HealthEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/health
+            Method: GET
+        # OPTIONS methods for new endpoints
+        OptionsSwarmsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/swarms
+            Method: OPTIONS
+        OptionsSwarmDetailsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/swarms/{id}
+            Method: OPTIONS
+        OptionsLogsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/logs
+            Method: OPTIONS
+        OptionsMetricsEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/metrics
+            Method: OPTIONS
+        OptionsSystemStatusEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/system/status
+            Method: OPTIONS
+        OptionsHealthEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/claude-flow/health
+            Method: OPTIONS
+
+  # Get Individual Report Function
+  GetReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: getReportHandler.handler
+      Runtime: nodejs18.x
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          RESEARCH_REPORTS_TABLE: !Ref ResearchReportsTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: !Sub '${ResearchResultsBucket.Arn}/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource: 
+                - !GetAtt ResearchReportsTable.Arn
+      Events:
+        GetReportEndpoint:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/reports/{reportId}
+            Method: GET
+        OptionsGetReport:
+          Type: HttpApi
+          Properties:
+            
+            Path: /api/research/reports/{reportId}
+            Method: OPTIONS
+
+  
+  # ===== V2 Functions on the same API (Python 3.11) =====
+
+  V2BillingStripeSession:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: billing_stripe_session.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+          PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
+          REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+          IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
+          DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+          STRIPE_PRICE_CREDIT: !Ref StripePriceCredit
+          STRIPE_API_KEY_SECRET_ARN: !Ref StripeApiKeySecretArn
+      Events:
+        CreateCheckout:
+          Type: HttpApi
+          Properties:
+            
+            Path: /billing/stripe/create-checkout-session
+            Method: POST
+
+
+  V2BillingStripeWebhook:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: billing_stripe_webhook.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+          STRIPE_WEBHOOK_SECRET: !Ref StripeWebhookSecret
+      Events:
+        Webhook:
+          Type: HttpApi
+          Properties:
+            
+            Path: /billing/stripe/webhook
+            Method: POST
+
+
+  V2CreditsBalance:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: credits_balance.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+      Events:
+        GetBalance:
+          Type: HttpApi
+          Properties:
+            
+            Path: /credits/balance
+            Method: GET
+
+
+  V2ProjectsCreate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: projects_create.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
+      Events:
+        CreateProject:
+          Type: HttpApi
+          Properties:
+            
+            Path: /projects
+            Method: POST
+
+
+  V2ProjectsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: projects_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
+      Events:
+        ListProjects:
+          Type: HttpApi
+          Properties:
+            
+            Path: /projects
+            Method: GET
+
+
+  V2ProjectsGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: projects_get.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
+      Events:
+        GetProject:
+          Type: HttpApi
+          Properties:
+            
+            Path: /projects/{projectId}
+            Method: GET
+
+
+  V2ReportStart:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: report_start.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+          PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
+          REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+      Events:
+        StartReport:
+          Type: HttpApi
+          Properties:
+            
+            Path: /projects/{projectId}/report/start
+            Method: POST
+
+
+  V2ReportGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: report_get.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+      Events:
+        GetReport:
+          Type: HttpApi
+          Properties:
+            
+            Path: /reports/{reportId}
+            Method: GET
+
+
+  V2IdeationStart:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: ideation_start.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+          IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
+          REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+      Events:
+        StartIdeation:
+          Type: HttpApi
+          Properties:
+            
+            Path: /projects/{projectId}/ideation/start
+            Method: POST
+
+
+  V2IdeationGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: ideation_get.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+      Events:
+        GetIdeation:
+          Type: HttpApi
+          Properties:
+            
+            Path: /ideations/{ideationId}
+            Method: GET
+
+
+  V2DoubleStart:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: double_start.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+          IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
+          DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+      Events:
+        StartDouble:
+          Type: HttpApi
+          Properties:
+            
+            Path: /projects/{projectId}/double-down/start
+            Method: POST
+
+
+  V2DoubleGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: double_get.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+      Events:
+        GetDouble:
+          Type: HttpApi
+          Properties:
+            
+            Path: /double-downs/{doubleId}
+            Method: GET
+
+
+  V2AdminUsers:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: admin_users.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+      Events:
+        AdminUsersList:
+          Type: HttpApi
+          Properties:
+            
+            Path: /admin/users
+            Method: GET
+
+
+  V2AdminUserGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: admin_user_get.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+          PROJECTS_TABLE_NAME: !Ref ProjectsTableNameParam
+      Events:
+        AdminUserGetEvt:
+          Type: HttpApi
+          Properties:
+            
+            Path: /admin/users/{id}
+            Method: GET
+
+
+  V2AdminMetrics:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: admin_metrics.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+      Events:
+        AdminMetricsGet:
+          Type: HttpApi
+          Properties:
+            
+            Path: /admin/metrics
+            Method: GET
+        AdminMetricsSummaryGet:
+          Type: HttpApi
+          Properties:
+            
+            Path: /admin/metrics/summary
+            Method: GET
+
+
+  V2AdminCreditsAdjust:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: admin_credits_adjust.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          CREDIT_LEDGER_TABLE_NAME: !Ref CreditLedgerTableNameParam
+      Events:
+        AdminAdjust:
+          Type: HttpApi
+          Properties:
+            
+            Path: /admin/credits/adjust
+            Method: POST
+
+
+  V2ReportsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: reports_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          REPORTS_TABLE_NAME: !Ref ReportsTableNameParam
+      Events:
+        ListReports:
+          Type: HttpApi
+          Properties:
+            
+            Path: /reports
+            Method: GET
+
+  V2IdeationsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: ideations_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          IDEATIONS_TABLE_NAME: !Ref IdeationsTableNameParam
+      Events:
+        ListIdeations:
+          Type: HttpApi
+          Properties:
+            
+            Path: /ideations
+            Method: GET
+
+  V2DoublesList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: doubles_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableNameParam
+          DOUBLES_TABLE_NAME: !Ref DoubleDownsTableNameParam
+      Events:
+        ListDoubles:
+          Type: HttpApi
+          Properties:
+            
+            Path: /double-downs
+            Method: GET
+
+  V2GeneratePdfFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/handlers/
+      Handler: generatePdf.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          ARTIFACTS_BUCKET_NAME: !Ref ArtifactsBucketNameParam
+
+  # Pipeline Tables Functions (Real Data)
+  V2ResearchReportsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/
+      Handler: handlers.research_reports_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          RESEARCH_REPORTS_TABLE: ResearchReports
+      Events:
+        ListResearchReports:
+          Type: HttpApi
+          Properties:
+            Path: /research-reports
+            Method: GET
+
+  V2PipelineIdeationsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: pipeline_ideations_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          PIPELINE_BATCH_JOBS_TABLE: !Ref IdeationsTableNameParam
+      Events:
+        ListPipelineIdeations:
+          Type: HttpApi
+          Properties:
+            Path: /pipeline-ideations
+            Method: GET
+
+  V2PipelineReposList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: pipeline_repos_list.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          PIPELINE_REPOS_TABLE: !Ref PipelineReposTableNameParam
+      Events:
+        ListPipelineRepos:
+          Type: HttpApi
+          Properties:
+            Path: /pipeline-repos
+            Method: GET
+
+  V2PipelineItemPdfGenerate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/v2/handlers/
+      Handler: pipeline_item_pdf_generate.handler
+      Runtime: python3.11
+      Role: !GetAtt V2LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          PIPELINE_REPOS_TABLE: !Ref PipelineReposTableNameParam
+          RESEARCH_BUCKET: !Ref ResearchResultsBucket
+          DEBUG_PDF: 'true'
+      Events:
+        PipelineItemPdfPost:
+          Type: HttpApi
+          Properties:
+            Path: /pipeline-items/{itemId}/pdf
+            Method: POST
+
+
+Outputs:
+  ApiGatewayUrl:
+    Description: HTTP API endpoint URL
+    Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiUrl
+  
+  JobsTableName:
+    Description: Name of the DynamoDB table for job tracking
+    Value: !Ref PlanGenerationJobsTable
+    Export:
+      Name: !Sub ${AWS::StackName}-JobsTable
+  
+  StartPlanGenerationFunctionArn:
+    Description: ARN of the Start Plan Generation Lambda function
+    Value: !GetAtt StartPlanGenerationFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-StartPlanFunction
+  
+  PlanOrchestratorFunctionArn:
+    Description: ARN of the Plan Orchestrator Lambda function
+    Value: !GetAtt PlanOrchestratorFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-OrchestratorFunction
+  
+  GetJobStatusFunctionArn:
+    Description: ARN of the Get Job Status Lambda function
+    Value: !GetAtt GetJobStatusFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-GetStatusFunction
+  
+  ResearchResultsBucketName:
+    Description: Name of the S3 bucket for research results
+    Value: !Ref ResearchResultsBucket
+    Export:
+      Name: !Sub ${AWS::StackName}-ResearchBucket
+  
+  ReportProcessingFunctionArn:
+    Description: ARN of the Report Processing Lambda function
+    Value: !GetAtt ReportProcessingFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-ReportProcessingFunction

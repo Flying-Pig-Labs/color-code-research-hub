@@ -1,0 +1,11 @@
+{
+  "companyName": "Salesforce",
+  "teamType": "red",
+  "analysisFocus": ["revenue_unbundling", "feature_extraction", "geographic_gaps"],
+  "marketScope": "global",
+  "disruptionTimeline": 6,
+  "investmentRange": ["small", "medium"],
+  "targetMarketSize": ["billion_plus", "hundred_million"],
+  "competitiveIntensity": "low_competition",
+  "customKeywords": ["CRM", "sales automation", "enterprise software", "B2B SaaS"]
+}

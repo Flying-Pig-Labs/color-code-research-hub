@@ -1,0 +1,19 @@
+{
+  "companyName": "Google",
+  "teamType": "black",
+  "toolCategories": ["data_infrastructure", "ml_ai", "monitoring"],
+  "informationSources": {
+    "eng_blogs": true,
+    "patents": true,
+    "github": true,
+    "conferences": true,
+    "job_posts": true,
+    "social_media": false,
+    "podcasts": true
+  },
+  "implementationComplexity": "core",
+  "teamSizeConstraint": "small",
+  "techStackPreference": ["python", "go", "cloud_native"],
+  "costComparisonBaseline": "industry_avg",
+  "evidenceThreshold": 3
+}

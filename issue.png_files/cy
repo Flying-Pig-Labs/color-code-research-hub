@@ -1,0 +1,947 @@
+<!DOCTYPE html><html
+lang="en-US"><head> <script src="https://5f3c395.ccm19.de/app/public/app.js?apiKey=e3bf7471514b2c2d3a237730b73679e644172c43cff3c25e&amp;domain=ab04aa7&amp;lang=en-US&amp;theme=1618c8b" referrerpolicy="origin"></script> <meta
+charset="utf-8"><meta
+http-equiv="X-UA-Compatible" content="IE=edge"><meta
+name="viewport" content="width=device-width, initial-scale=1"><meta
+name="format-detection" content="telephone=no"><title>Cy – Supertype</title><link
+rel="home" href="https://supertype.de/" /><link
+rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon"> <script type="text/javascript">window.csrfTokenName="CRAFT_CSRF_TOKEN"
+window.csrfTokenValue="YaG0f0tam34m1MBoOvYNw_4GQF\u007E_mTCoD8MB7SDK"
+window.licenses={web:{"1":"Up to 3 Users \u0026 10.000 Pageviews\/Month","2":"Up to 10 Users \u0026 50.000 Pageviews\/Month","3":"Up to 25 Users \u0026 100.000 Pageviews\/Month","4":"Up to 50 Users \u0026 500.000 Pageviews\/Month","5":"Up to 100 Users \u0026 1.000.000 Pageviews\/Month","6":"Up to 150 Users \u0026 2.000.000 Pageviews\/Month","7":"Up to 200 Users \u0026 3.000.000 Pageviews\/Month","8":"Up to 250 Users \u0026 5.000.000 Pageviews\/Month","9":"Up to 300 Users \u0026 10.000.000 Pageviews\/Month","10":"Up to 350 Users \u0026 20.000.000 Pageviews\/Month"},office:{"1":"Up to 3 Users","2":"Up to 10 Users","3":"Up to 25 Users","4":"Up to 50 Users","5":"Up to 100 Users","6":"Up to 150 Users","7":"Up to 200 Users","8":"Up to 250 Users","9":"Up to 300 Users","10":"Up to 350 Users"},app:{"1":"1 App or ePub","2":"Up to 2 Apps or ePubs","3":"Up to 3 Apps or ePubs","4":"Up to 4 Apps or ePubs","5":"Up to 5 Apps or ePubs","6":"Up to 6 Apps or ePubs","7":"Up to 7 Apps or ePubs","8":"Up to 8 Apps or ePubs","9":"Up to 9 Apps or ePubs"},}</script> <link
+rel="stylesheet" type="text/css" href="/assets/css/app.f46bc8e355f21f38a7a3.css"> <script>!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','383535573312884');fbq('track','PageView');</script> <noscript><img
+height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=383535573312884&ev=PageView&noscript=1"
+/></noscript></head><body><div
+class="o-page " id="app"><header
+class="o-page__header"><nav
+class="c-navigation" :class="{ 'has-scrolled': hasScrolled }"><div
+class="o-inner o-inner--flat"><div
+class="c-navigation__inner"><a
+class="c-navigation__logo" href="https://supertype.de/">
+<img
+class="c-navigation__logo-image" src="/assets/images/logo.svg" alt="Supertype" />
+</a><div
+class="c-navigation__primary-menu">
+<button
+class="c-navigation__burger" type="button" @click="toggleMenu">
+<icon
+name="burger"></icon>
+</button><div
+class="c-navigation__primary-menu-list" :class="{ 'is-opened' : menuOpened }"><ul
+class="c-navigation__list"><li
+class="c-navigation__item">
+<a
+class="c-navigation__link " href="https://supertype.de/custom">
+Custom Type
+</a></li><li
+class="c-navigation__item">
+<a
+class="c-navigation__link is-active" href="https://supertype.de/fonts">
+Retail Fonts
+</a></li><li
+class="c-navigation__item">
+<a
+class="c-navigation__link " href="https://supertype.de/articles">
+Articles
+</a></li><li
+class="c-navigation__item">
+<a
+class="c-navigation__link " href="https://supertype.de/about">
+About
+</a></li><li
+class="c-navigation__item is-desktop-hidden">
+<a
+class="c-navigation__link" href="/auth/account">
+Account
+</a></li></ul></div></div><div
+class="c-navigation__secondary-menu"><ul
+class="c-navigation__list"><li
+class="c-navigation__item is-mobile-hidden">
+<a
+class="c-navigation__link" href="/auth/login">
+Login
+</a></li><li
+class="c-navigation__item">
+<cart-navigation-item
+v-cloak></cart-navigation-item></li></ul></div></div></div></nav></header><main
+class="o-page__content">
+<css
+v-cloak>
+@font-face {
+font-family: 'Cy Thin 3157';
+src:
+url('/assets/retailfonts/Cy/Cy-Thin.woff2?3745') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-Thin.woff?3743') format('woff')
+;
+font-weight: 100;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy ExtraLight 3164';
+src:
+url('/assets/retailfonts/Cy/Cy-ExtraLight.woff2?3716') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-ExtraLight.woff?3714') format('woff')
+;
+font-weight: 200;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy Light 3172';
+src:
+url('/assets/retailfonts/Cy/Cy-Light.woff2?3721') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-Light.woff?3719') format('woff')
+;
+font-weight: 300;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy SemiLight 3222';
+src:
+url('/assets/retailfonts/Cy/Cy-SemiLight.woff2?3738') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-SemiLight.woff?3737') format('woff')
+;
+font-weight: 400;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy Regular 3181';
+src:
+url('/assets/retailfonts/Cy/Cy-Regular.woff2?3754') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-Regular.woff?3752') format('woff')
+;
+font-weight: 500;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy SemiBold 3189';
+src:
+url('/assets/retailfonts/Cy/Cy-SemiBold.woff2?3734') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-SemiBold.woff?3732') format('woff')
+;
+font-weight: 600;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy Bold 3199';
+src:
+url('/assets/retailfonts/Cy/Cy-Bold.woff2?3704') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-Bold.woff?3702') format('woff')
+;
+font-weight: 700;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy ExtraBold 3207';
+src:
+url('/assets/retailfonts/Cy/Cy-ExtraBold.woff2?3710') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-ExtraBold.woff?3708') format('woff')
+;
+font-weight: 800;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy Black 3214';
+src:
+url('/assets/retailfonts/Cy/Cy-Black.woff2?3700') format('woff2')
+,
+url('/assets/retailfonts/Cy/Cy-Black.woff?3698') format('woff')
+;
+font-weight: 900;
+font-style: normal;
+}
+</css><css
+v-cloak>
+</css><section
+class="o-module o-module--white"><div
+class="c-font"><div
+class="u-text--center"><div
+class="c-font__header"><h1 class="c-font__headline" style="font-family: 'Cy Bold 3199'">
+Cy</h1><div
+class="o-hint">
+9 Fonts</div></div><div
+class="c-font__actions"><div
+class="c-font__actions-left"><div
+class="c-font__button-group">
+<button
+class="c-font__button o-button o-button--line" @click="showModal('languages')">
+<span>
+135 Languages
+</span>
+<icon
+name="web"></icon>
+</button></div><modal
+id="languages" title="Language support" v-cloak><div
+class="o-columns o-columns--4">
+Afrikaans<br>
+Albanian<br>
+Aromanian<br>
+Arumanian<br>
+Arvanitic<br>
+Asturian<br>
+Asu<br>
+Azerbaijani<br>
+Baraba Tatar<br>
+Basque<br>
+Bemba<br>
+Bena<br>
+Bislama<br>
+Bosnian<br>
+Breton<br>
+Catalan<br>
+Chamorro<br>
+Chichewa<br>
+Chiga<br>
+Cornish<br>
+Crimerian Tatar<br>
+Croatian<br>
+Czech<br>
+Danish<br>
+Dutch<br>
+Embu<br>
+English<br>
+Esperanto<br>
+Estonian<br>
+Faroese<br>
+Filipino<br>
+Finnish<br>
+Franco-Provençal<br>
+French<br>
+Friulian<br>
+Gagauz<br>
+Galician<br>
+Ganda<br>
+German<br>
+Greenlandic<br>
+Gusii<br>
+Hawaiian<br>
+Hungarian<br>
+Icelandic<br>
+Inari Saami<br>
+Indonesian<br>
+Interlingua<br>
+Irish<br>
+Istro-Romanian<br>
+Italian<br>
+Jola-Fonyi<br>
+Kabuverdianu<br>
+Kalaallisut<br>
+Kalenjin<br>
+Kamba<br>
+Karaim<br>
+Kikuyu<br>
+Kinyarwanda<br>
+Ladin<br>
+Ladino<br>
+Latvian<br>
+Lithuanian<br>
+Lovari Roma<br>
+Lower Sorbian<br>
+Lule Sámi<br>
+Luo<br>
+Luxembourgish<br>
+Luyia<br>
+Machame<br>
+Makhuwa-Meetto<br>
+Makonde<br>
+Malagasy<br>
+Malay<br>
+Maltese<br>
+Manx<br>
+Maori<br>
+Meru<br>
+Moldavian<br>
+Morisyen<br>
+North Ndebele<br>
+Northern Sotho<br>
+Northern Sámi<br>
+Norwegian Bokmål<br>
+Norwegian Nynorsk<br>
+Nyankole<br>
+Occitan<br>
+Oromo<br>
+Polish<br>
+Portuguese<br>
+Quechua<br>
+Romani Pan-Vlax<br>
+Romanian<br>
+Romansh<br>
+Rombo<br>
+Rundi<br>
+Rwa<br>
+Samburu<br>
+Samoan<br>
+Sango<br>
+Sangu<br>
+Scottish Gaelic<br>
+Sena<br>
+Serbian<br>
+Shambala<br>
+Shona<br>
+Slovak<br>
+Slovenian<br>
+Soga<br>
+Somali<br>
+Southern Sotho<br>
+Southern Sámi<br>
+Spanish<br>
+Swahili<br>
+Swedish<br>
+Tahitian<br>
+Taita<br>
+Teso<br>
+Tongan<br>
+Tswana<br>
+Turkish<br>
+Turkmen<br>
+xiTsonga<br>
+Ume Sámi<br>
+Upper Sorbian<br>
+Uzbek<br>
+Veps<br>
+Vunjo<br>
+Walloon<br>
+Walser<br>
+Welsh<br>
+Wolof<br>
+isiXhosa<br>
+Yapese<br>
+Yiddish<br>
+Zulu<br></div>
+</modal></div><div
+class="c-font__actions-right">
+<a
+class="c-font__buy o-button" href="#buying-options">
+<span>
+Buying Options
+</span>
+<icon
+name="arrow-down" size="large"></icon>
+</a></div></div></div></div></section><section
+class="o-module o-module--grey"><div
+class="o-inner"><slider>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-23.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-14.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-11.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-17.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-12.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-26.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-32.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-15.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-16.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-18.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-19.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-21.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-22.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-13.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-27.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-28.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-29.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-30.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-34.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-37.svg" width="680" height="340">
+</slide>
+<slide>
+<img
+src="/assets/uploads/Zeichenfläche-1-Kopie-24.svg" width="680" height="340">
+</slide>
+<slide
+/>
+</slider></div></section><section
+class="o-module o-module--grey"><div
+class="o-inner"><tabs
+v-cloak>
+<tab
+title="All Styles" icon="styles" :is-active="true"><div
+class="u-readability u-centered"><div
+class="grid" data-grid="wide"><div
+class="grid__item">
+<type-tester-styles
+font-styles="[{&quot;id&quot;:&quot;3157&quot;,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;,&quot;purchasableId&quot;:&quot;3158&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;100&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Thin 3157&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff?3743&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff2?3745&quot;},{&quot;id&quot;:&quot;3164&quot;,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;,&quot;purchasableId&quot;:&quot;3165&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;200&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraLight 3164&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff?3714&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff2?3716&quot;},{&quot;id&quot;:&quot;3172&quot;,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;,&quot;purchasableId&quot;:&quot;3173&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;300&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Light 3172&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff?3719&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff2?3721&quot;},{&quot;id&quot;:&quot;3222&quot;,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;,&quot;purchasableId&quot;:&quot;3223&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;400&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiLight 3222&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff?3737&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff2?3738&quot;},{&quot;id&quot;:&quot;3181&quot;,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;,&quot;purchasableId&quot;:&quot;3182&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;500&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Regular 3181&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff?3752&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff2?3754&quot;},{&quot;id&quot;:&quot;3189&quot;,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;,&quot;purchasableId&quot;:&quot;3190&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;600&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiBold 3189&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff?3732&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff2?3734&quot;},{&quot;id&quot;:&quot;3199&quot;,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3200&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;},{&quot;id&quot;:&quot;3207&quot;,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;,&quot;purchasableId&quot;:&quot;3208&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;800&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraBold 3207&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff?3708&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff2?3710&quot;},{&quot;id&quot;:&quot;3214&quot;,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;,&quot;purchasableId&quot;:&quot;3215&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;900&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Black 3214&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff?3698&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff2?3700&quot;}]"
+text="Unpredictable Geometry"
+:size="40"
+v-cloak
+>
+</type-tester-styles></div></div></div>
+</tab>
+<tab
+title="Demo" icon="article" :is-active="false"><div
+class="u-readability u-centered"><div
+class="grid" data-grid="wide"><div
+class="grid__item">
+<type-tester-text
+raw-font-styles="[{&quot;id&quot;:&quot;3157&quot;,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;,&quot;purchasableId&quot;:&quot;3158&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;100&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Thin 3157&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff?3743&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff2?3745&quot;},{&quot;id&quot;:&quot;3164&quot;,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;,&quot;purchasableId&quot;:&quot;3165&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;200&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraLight 3164&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff?3714&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff2?3716&quot;},{&quot;id&quot;:&quot;3172&quot;,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;,&quot;purchasableId&quot;:&quot;3173&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;300&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Light 3172&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff?3719&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff2?3721&quot;},{&quot;id&quot;:&quot;3222&quot;,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;,&quot;purchasableId&quot;:&quot;3223&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;400&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiLight 3222&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff?3737&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff2?3738&quot;},{&quot;id&quot;:&quot;3181&quot;,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;,&quot;purchasableId&quot;:&quot;3182&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;500&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Regular 3181&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff?3752&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff2?3754&quot;},{&quot;id&quot;:&quot;3189&quot;,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;,&quot;purchasableId&quot;:&quot;3190&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;600&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiBold 3189&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff?3732&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff2?3734&quot;},{&quot;id&quot;:&quot;3199&quot;,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3200&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;},{&quot;id&quot;:&quot;3207&quot;,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;,&quot;purchasableId&quot;:&quot;3208&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;800&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraBold 3207&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff?3708&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff2?3710&quot;},{&quot;id&quot;:&quot;3214&quot;,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;,&quot;purchasableId&quot;:&quot;3215&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;900&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Black 3214&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff?3698&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff2?3700&quot;}]"
+font-style="Cy Black 3214"
+:size="80"
+:columns="1"
+line-height="1.00"
+v-cloak
+>
+The unpredictability of geometry
+</type-tester-text></div><div
+class="grid__item">
+<type-tester-text
+raw-font-styles="[{&quot;id&quot;:&quot;3157&quot;,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;,&quot;purchasableId&quot;:&quot;3158&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;100&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Thin 3157&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff?3743&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff2?3745&quot;},{&quot;id&quot;:&quot;3164&quot;,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;,&quot;purchasableId&quot;:&quot;3165&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;200&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraLight 3164&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff?3714&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff2?3716&quot;},{&quot;id&quot;:&quot;3172&quot;,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;,&quot;purchasableId&quot;:&quot;3173&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;300&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Light 3172&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff?3719&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff2?3721&quot;},{&quot;id&quot;:&quot;3222&quot;,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;,&quot;purchasableId&quot;:&quot;3223&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;400&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiLight 3222&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff?3737&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff2?3738&quot;},{&quot;id&quot;:&quot;3181&quot;,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;,&quot;purchasableId&quot;:&quot;3182&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;500&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Regular 3181&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff?3752&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff2?3754&quot;},{&quot;id&quot;:&quot;3189&quot;,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;,&quot;purchasableId&quot;:&quot;3190&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;600&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiBold 3189&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff?3732&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff2?3734&quot;},{&quot;id&quot;:&quot;3199&quot;,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3200&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;},{&quot;id&quot;:&quot;3207&quot;,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;,&quot;purchasableId&quot;:&quot;3208&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;800&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraBold 3207&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff?3708&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff2?3710&quot;},{&quot;id&quot;:&quot;3214&quot;,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;,&quot;purchasableId&quot;:&quot;3215&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;900&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Black 3214&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff?3698&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff2?3700&quot;}]"
+font-style="Cy Regular 3181"
+:size="50"
+:columns="1"
+line-height="1.00"
+v-cloak
+>
+The unpredictability of geometry
+</type-tester-text></div></div></div>
+</tab>
+<tab
+title="OpenType Features" icon="opentype" :is-active="false"><div
+class="u-readability u-centered"><div
+class="grid" data-grid="wide"><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="1a viola e 2o violino"
+title="Ordinals"
+subtitle=""
+feature="[&quot;ordn&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="fishy, fling"
+title=" Standard Ligatures"
+subtitle=""
+feature="[&quot;liga&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="0123456789"
+title="Old Style Figures"
+subtitle=""
+feature="[&quot;onum&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="0123456789"
+title="Tabular Lining Figures"
+subtitle=""
+feature="[&quot;tnum&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="Eat 1/4, leave 8/17"
+title="Fractions"
+subtitle=""
+feature="[&quot;frac&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="a2 + b3 ≠ c4"
+title="Superscript Figures"
+subtitle=""
+feature="[&quot;sups&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="summer moon aaa"
+title="Contextual Alternates"
+subtitle=""
+feature="[&quot;calt&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="Rectangular Oval aaa"
+title="Stylistic Set 1"
+subtitle=""
+feature="[&quot;ss01&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="Circular Square aaa"
+title="Stylistic Set 2"
+subtitle=""
+feature="[&quot;ss02&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="Circular Square aaa"
+title="Stylistic Set 3"
+subtitle=""
+feature="[&quot;ss03&quot;]"
+v-cloak
+>
+</type-tester-feature></div><div
+class="grid__item">
+<type-tester-feature
+font-style="Cy SemiLight 3222"
+:size="30"
+text="Circular Square aaa"
+title="Stylistic Set 4"
+subtitle=""
+feature="[&quot;ss04&quot;]"
+v-cloak
+>
+</type-tester-feature></div></div></div>
+</tab>
+</tabs></div></section><section
+class="o-module o-module--white"><div
+class="o-inner"><type-tester-glyphs
+raw-font-styles="[{&quot;id&quot;:&quot;3157&quot;,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;,&quot;purchasableId&quot;:&quot;3158&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;100&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Thin 3157&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff?3743&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff2?3745&quot;},{&quot;id&quot;:&quot;3164&quot;,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;,&quot;purchasableId&quot;:&quot;3165&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;200&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraLight 3164&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff?3714&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff2?3716&quot;},{&quot;id&quot;:&quot;3172&quot;,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;,&quot;purchasableId&quot;:&quot;3173&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;300&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Light 3172&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff?3719&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff2?3721&quot;},{&quot;id&quot;:&quot;3222&quot;,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;,&quot;purchasableId&quot;:&quot;3223&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;400&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiLight 3222&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff?3737&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff2?3738&quot;},{&quot;id&quot;:&quot;3181&quot;,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;,&quot;purchasableId&quot;:&quot;3182&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;500&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Regular 3181&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff?3752&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff2?3754&quot;},{&quot;id&quot;:&quot;3189&quot;,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;,&quot;purchasableId&quot;:&quot;3190&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;600&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiBold 3189&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff?3732&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff2?3734&quot;},{&quot;id&quot;:&quot;3199&quot;,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3200&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;},{&quot;id&quot;:&quot;3207&quot;,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;,&quot;purchasableId&quot;:&quot;3208&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;800&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraBold 3207&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff?3708&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff2?3710&quot;},{&quot;id&quot;:&quot;3214&quot;,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;,&quot;purchasableId&quot;:&quot;3215&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;900&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Black 3214&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff?3698&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff2?3700&quot;}]"
+font-style="Cy SemiLight 3222"
+v-cloak
+></type-tester-glyphs></div></section><section
+class="o-module o-module--grey"><div
+class="o-inner"><div
+class="grid" data-grid="wide"><div
+class="grid__item"><h2 class="c-type-details__title">
+Unpredictable Geometry</h2></div><div
+class="grid__item" data-grid--medium="8/12"><div
+class="o-text"><p>Cy does what she wants. You cannot contain her to a circle or a square, ’cause she’ll mix it up like you just don’ care. Actually Cy’s not that bad for you can control each weight’s 801 glyphs via different OpenType features. Enjoy playing around with Cy creating the best look for your headline with that predictable unpredectability — or is it unpredictible predictability!?<br
+/></p></div></div><div
+class="grid__item" data-grid--medium="4/12"><div
+class="c-type-details__designer"><div
+class="c-type-details__image" style="background-image: url(/imager/assets/uploads/designer/1238/juergen_8b6a54d1f92a03f961565c8b90f6c4b7.jpg)"></div><div
+class="c-type-details__designer-text"><div
+class="c-type-details__designer-description o-hint">
+Designer</div><div
+class="c-type-details__designer-name">
+Jürgen Huber</div></div></div></div></div></div></section>
+<css
+v-cloak>
+@font-face {
+font-family: 'Cy Text Bold 11399';
+src: url('/assets/retailfonts/CyText/CyText-Bold.woff2?11357') format('woff2'),
+url('/assets/retailfonts/CyText/CyText-Bold.woff?11356') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy Glitch Bold 13741';
+src: url('/assets/retailfonts/CyGlitch/CyGlitch-Bold.woff2?13713') format('woff2'),
+url('/assets/retailfonts/CyGlitch/CyGlitch-Bold.woff?13712') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+@font-face {
+font-family: 'Cy Curly Bold 15117';
+src: url('/assets/retailfonts/CyCurly/CyCurly-Bold.woff2?15092') format('woff2'),
+url('/assets/retailfonts/CyCurly/CyCurly-Bold.woff?15093') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><section
+class="o-module o-module--white"><div
+class="o-inner"><div
+class="c-type-related-fonts"><div
+class="c-type-related-fonts__header"><h3 class="c-type-related-fonts__header-title">
+Related Families</h3></div><div
+class="c-type-related-fonts__items"><div
+class="grid" data-grid--small="wide"><div
+class="grid__item" data-grid--small="6/12">
+<a
+class="c-type-related-fonts__item" href="https://supertype.de/fonts/cy-text"><h4 class="c-type-related-fonts__title" style="font-family: 'Cy Text Bold 11399'">
+Cy Text</h4><div
+class="o-hint">
+4 Fonts</div>
+</a></div><div
+class="grid__item" data-grid--small="6/12">
+<a
+class="c-type-related-fonts__item" href="https://supertype.de/fonts/cy-glitch"><h4 class="c-type-related-fonts__title" style="font-family: 'Cy Glitch Bold 13741'">
+Cy Glitch</h4><div
+class="o-hint">
+9 Fonts</div>
+</a></div><div
+class="grid__item" data-grid--small="6/12">
+<a
+class="c-type-related-fonts__item" href="https://supertype.de/fonts/cy-curly"><h4 class="c-type-related-fonts__title" style="font-family: 'Cy Curly Bold 15117'">
+Cy Curly</h4><div
+class="o-hint">
+9 Fonts</div>
+</a></div></div></div></div></div></section><section
+class="o-module o-module--white" id="buying-options"><div
+class="o-inner o-inner--narrow"><div
+class="grid" data-grid="wide"><div
+class="grid__item"><h2 class="u-text--center">
+Buying Options</h2><p
+class="o-hint u-text--center" v-if="1">
+Get off 20% for multiple Single Fonts!</p></div><div
+class="grid__item">
+<tabs>
+<tab
+title="Desktop &amp; Web" icon="web">
+<type-buy
+:font-styles-buyable="1"
+license="web"
+raw-packages="[{&quot;id&quot;:&quot;3224&quot;,&quot;title&quot;:&quot;Cy Family&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3225&quot;,&quot;price&quot;:&quot;263.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;,&quot;styles&quot;:[{&quot;id&quot;:3157,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;},{&quot;id&quot;:3164,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;},{&quot;id&quot;:3172,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;},{&quot;id&quot;:3222,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;},{&quot;id&quot;:3181,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;},{&quot;id&quot;:3189,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;},{&quot;id&quot;:3199,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;},{&quot;id&quot;:3207,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;},{&quot;id&quot;:3214,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;}]}]"
+raw-variable-fonts="[]"
+raw-styles="[{&quot;id&quot;:&quot;3157&quot;,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;,&quot;purchasableId&quot;:&quot;3158&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;100&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Thin 3157&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff?3743&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff2?3745&quot;},{&quot;id&quot;:&quot;3164&quot;,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;,&quot;purchasableId&quot;:&quot;3165&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;200&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraLight 3164&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff?3714&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff2?3716&quot;},{&quot;id&quot;:&quot;3172&quot;,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;,&quot;purchasableId&quot;:&quot;3173&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;300&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Light 3172&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff?3719&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff2?3721&quot;},{&quot;id&quot;:&quot;3222&quot;,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;,&quot;purchasableId&quot;:&quot;3223&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;400&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiLight 3222&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff?3737&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff2?3738&quot;},{&quot;id&quot;:&quot;3181&quot;,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;,&quot;purchasableId&quot;:&quot;3182&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;500&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Regular 3181&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff?3752&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff2?3754&quot;},{&quot;id&quot;:&quot;3189&quot;,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;,&quot;purchasableId&quot;:&quot;3190&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;600&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiBold 3189&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff?3732&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff2?3734&quot;},{&quot;id&quot;:&quot;3199&quot;,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3200&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;},{&quot;id&quot;:&quot;3207&quot;,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;,&quot;purchasableId&quot;:&quot;3208&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;800&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraBold 3207&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff?3708&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff2?3710&quot;},{&quot;id&quot;:&quot;3214&quot;,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;,&quot;purchasableId&quot;:&quot;3215&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;900&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Black 3214&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff?3698&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff2?3700&quot;}]"
+v-cloak
+></type-buy>
+</tab>
+<tab
+title="App or ePub" icon="app">
+<type-buy
+:font-styles-buyable="1"
+license="app"
+raw-packages="[{&quot;id&quot;:&quot;3224&quot;,&quot;title&quot;:&quot;Cy Family&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3225&quot;,&quot;price&quot;:&quot;263.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;,&quot;styles&quot;:[{&quot;id&quot;:3157,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;},{&quot;id&quot;:3164,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;},{&quot;id&quot;:3172,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;},{&quot;id&quot;:3222,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;},{&quot;id&quot;:3181,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;},{&quot;id&quot;:3189,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;},{&quot;id&quot;:3199,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;},{&quot;id&quot;:3207,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;},{&quot;id&quot;:3214,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;}]}]"
+raw-variable-fonts="[]"
+raw-styles="[{&quot;id&quot;:&quot;3157&quot;,&quot;title&quot;:&quot;Cy Thin&quot;,&quot;shortTitle&quot;:&quot;Thin&quot;,&quot;purchasableId&quot;:&quot;3158&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;100&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Thin 3157&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff?3743&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Thin.woff2?3745&quot;},{&quot;id&quot;:&quot;3164&quot;,&quot;title&quot;:&quot;Cy ExtraLight&quot;,&quot;shortTitle&quot;:&quot;ExtraLight&quot;,&quot;purchasableId&quot;:&quot;3165&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;200&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraLight 3164&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff?3714&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraLight.woff2?3716&quot;},{&quot;id&quot;:&quot;3172&quot;,&quot;title&quot;:&quot;Cy Light&quot;,&quot;shortTitle&quot;:&quot;Light&quot;,&quot;purchasableId&quot;:&quot;3173&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;300&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Light 3172&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff?3719&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Light.woff2?3721&quot;},{&quot;id&quot;:&quot;3222&quot;,&quot;title&quot;:&quot;Cy SemiLight&quot;,&quot;shortTitle&quot;:&quot;SemiLight&quot;,&quot;purchasableId&quot;:&quot;3223&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;400&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiLight 3222&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff?3737&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiLight.woff2?3738&quot;},{&quot;id&quot;:&quot;3181&quot;,&quot;title&quot;:&quot;Cy Regular&quot;,&quot;shortTitle&quot;:&quot;Regular&quot;,&quot;purchasableId&quot;:&quot;3182&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;500&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Regular 3181&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff?3752&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Regular.woff2?3754&quot;},{&quot;id&quot;:&quot;3189&quot;,&quot;title&quot;:&quot;Cy SemiBold&quot;,&quot;shortTitle&quot;:&quot;SemiBold&quot;,&quot;purchasableId&quot;:&quot;3190&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;600&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy SemiBold 3189&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff?3732&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-SemiBold.woff2?3734&quot;},{&quot;id&quot;:&quot;3199&quot;,&quot;title&quot;:&quot;Cy Bold&quot;,&quot;shortTitle&quot;:&quot;Bold&quot;,&quot;purchasableId&quot;:&quot;3200&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;700&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Bold 3199&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff?3702&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Bold.woff2?3704&quot;},{&quot;id&quot;:&quot;3207&quot;,&quot;title&quot;:&quot;Cy ExtraBold&quot;,&quot;shortTitle&quot;:&quot;ExtraBold&quot;,&quot;purchasableId&quot;:&quot;3208&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;800&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy ExtraBold 3207&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff?3708&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-ExtraBold.woff2?3710&quot;},{&quot;id&quot;:&quot;3214&quot;,&quot;title&quot;:&quot;Cy Black&quot;,&quot;shortTitle&quot;:&quot;Black&quot;,&quot;purchasableId&quot;:&quot;3215&quot;,&quot;price&quot;:&quot;39.0000&quot;,&quot;width&quot;:&quot;normal&quot;,&quot;weight&quot;:&quot;900&quot;,&quot;style&quot;:&quot;normal&quot;,&quot;manuallyHinted&quot;:&quot;0&quot;,&quot;family&quot;:&quot;Cy Black 3214&quot;,&quot;woff&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff?3698&quot;,&quot;woff2&quot;:&quot;\/assets\/retailfonts\/Cy\/Cy-Black.woff2?3700&quot;}]"
+v-cloak
+></type-buy>
+</tab>
+</tabs><cart-discount
+v-cloak v-if="1">
+Get off 20% for multiple Single Fonts!
+</cart-discount></div></div></div></section><section
+class="o-module o-module--grey"><div
+class="o-inner o-inner--wide"><div
+class="grid" data-grid--small="wide"><div
+class="grid__item"><div
+class="u-text--center"><h2>
+Custom Type</h2><div
+class="u-readability u-centered o-text--grey">
+Understanding and utilising our clients’ individual company values, we define the formal characteristics they wish to see reflected in their typeface and corporate design identity.</div></div></div><div
+class="grid__item"><div
+class="u-text--center">
+<a
+class="o-button o-button--grey" href="/custom">
+<span>
+Learn More About Custom Type
+</span>
+<icon
+name="arrow-right"></icon>
+</a></div></div></div></div></section><section
+class="o-module o-module--white"><div
+class="o-inner o-inner--x-narrow"><div
+class="c-newsletter u-text--center"><div
+class="grid" data-grid--small="wide"><div
+class="grid__item"><h2>
+Stay in the loop!</h2><div
+class="o-text--grey"><p>If you like what we do and are interested in getting news every few months, subscribe to our newsletter!</p></div></div><div
+class="grid__item"><form
+action="" method="POST">
+<input
+type="hidden" name="CRAFT_CSRF_TOKEN" value="YaG0f0tam34m1MBoOvYNw_4GQF~_mTCoD8MB7SDK">
+<input
+type="hidden" name="action" value="mailchimpSubscribe/list/subscribe">
+<input
+type="hidden" name="redirect" value="newsletter/receipt"><div
+class="grid" data-grid="center"><div
+class="grid__item" data-grid--small="10/12"><div
+class="o-field" data-field><div
+class="o-field__content"><div
+class="c-newsletter-input">
+<input
+class="o-field__input o-text-input c-newsletter-input__input"
+type="email"
+id="email_718808177"
+name="email"
+value=""
+placeholder="Email"
+/>
+<button
+class="o-button c-newsletter-input__button" type="submit">
+Subscribe
+</button></div></div><div
+class="o-field__error is-hidden" data-field-error>
+<span
+data-field-error-text>
+</span></div></div></div><div
+class="grid__item">
+<a
+class="c-newsletter__link" href="https://www.instagram.com/supertype.de/" target="_blank">
+<icon
+name="instagram"></icon>
+<span>Follow on Instagram</span>
+</a>
+<a
+class="c-newsletter__link" href="https://twitter.com/supertype_de" target="_blank">
+<icon
+name="twitter"></icon>
+<span>Follow on Twitter</span>
+</a></div></div></form></div></div></div></div></section>						<cart
+v-cloak></cart></main><footer
+class="o-page__footer"><div
+class="c-footer"><div
+class="o-inner"><div
+class="grid" data-grid--small="x-wide"><div
+class="grid__item"><div
+class="grid"><div
+class="grid__item" data-grid--small="6/12" data-grid--large="3/12"><h3>
+Follow us</h3><div
+class="c-footer__text"><p>
+<a
+href="https://www.instagram.com/supertype.de/" target="_blank">
+<icon
+name="instagram" size="small"></icon>
+<span>Instagram</span>
+</a>
+<br>
+<a
+href="https://twitter.com/supertype_de" target="_blank">
+<icon
+name="twitter" size="small"></icon>
+<span>Twitter</span>
+</a>
+<br>
+<a
+href="/newsletter">
+<icon
+name="newsletter" size="small"></icon>
+<span>Newsletter</span>
+</a></p></div></div><div
+class="grid__item" data-grid--small="6/12" data-grid--large="3/12"><h3>
+Information</h3><div
+class="c-footer__text"><ul
+class="c-footer__list"><li
+class="c-footer__item">
+<a
+href="https://supertype.de/licenses">
+End User Licence Agreement
+</a></li><li
+class="c-footer__item">
+<a
+href="https://supertype.de/disclaimer">
+Disclaimer
+</a></li><li
+class="c-footer__item">
+<a
+href="https://supertype.de/agb-terms">
+Terms &amp; Conditions / AGB
+</a></li><li
+class="c-footer__item">
+<a
+href="https://supertype.de/privacy">
+Privacy Policy / Datenschutzerklärung
+</a></li><li
+class="c-footer__item">
+<a
+href="https://supertype.de/impressum">
+Site Notice / Impressum
+</a></li><li
+class="c-footer__item">
+<a
+href="#" onclick="CCM.openWidget();return false;">Cookie Settings</a></li></ul></div></div><div
+class="grid__item" data-grid--small="6/12" data-grid--large="3/12"><h3>
+Company</h3><div
+class="c-footer__text"><p>
+supertype<br>
+Jürgen Huber<br>
+Clayallee 290<br>
+14169 Berlin Germany</p></div></div><div
+class="grid__item" data-grid--small="6/12" data-grid--large="3/12"><h3>
+Contact</h3><div
+class="c-footer__text"><p> <script type="text/javascript">document.write("<n uers=\"znvygb:pbagnpg@fhcreglcr.qr\">pbagnpg@fhcreglcr.qr</n>".replace(/[a-zA-Z]/g,function(c){return String.fromCharCode((c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26);}));</script> <br>
+Jürgen Huber <a
+href="tel:+491793966327">+49 179 39 66 327</a><br>
+Martin Wenzel <a
+href="tel:+4915203545006">+49 152 035 45 006</a></p></div></div></div></div><div
+class="grid__item"><div
+class="c-footer__text">
+<css
+v-cloak>
+@font-face {
+font-family: 'Cy Bold 3199';
+src: url('/assets/retailfonts/Cy/Cy-Bold.woff2?3704') format('woff2'),
+url('/assets/retailfonts/Cy/Cy-Bold.woff?3702') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/cy" style="font-family: 'Cy Bold 3199', 'Realist';">
+Cy
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Hothouse Bold 201';
+src: url('/assets/retailfonts/Hothouse/Hothouse-Bold.woff2?1776') format('woff2'),
+url('/assets/retailfonts/Hothouse/Hothouse-Bold.woff?1775') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/hothouse" style="font-family: 'Hothouse Bold 201', 'Realist';">
+Hot​house
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Ode Bold 86';
+src: url('/assets/retailfonts/Ode/Ode-Bold.woff2?2645') format('woff2'),
+url('/assets/retailfonts/Ode/Ode-Bold.woff?2644') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/ode" style="font-family: 'Ode Bold 86', 'Realist';">
+Ode
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Profile Pro Bold 3497';
+src: url('/assets/retailfonts/ProfilePro/ProfilePro-Bold.woff2?3503') format('woff2'),
+url('/assets/retailfonts/ProfilePro/ProfilePro-Bold.woff?3500') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/profile" style="font-family: 'Profile Pro Bold 3497', 'Realist';">
+Profile Pro
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Scarlet Script Bold 358';
+src: url('/assets/retailfonts/ScarletScript/ScarletScript-Bold.woff2?4307') format('woff2'),
+url('/assets/retailfonts/ScarletScript/ScarletScript-Bold.woff?4304') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/scarlet-script" style="font-family: 'Scarlet Script Bold 358', 'Realist';">
+Scarlet Script
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Crickle Bold 12628';
+src: url('/assets/retailfonts/Crickle/Crickle-Bold.woff2?12040') format('woff2'),
+url('/assets/retailfonts/Crickle/Crickle-Bold.woff?12035') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/crickle" style="font-family: 'Crickle Bold 12628', 'Realist';">
+Crickle
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Cy Curly Bold 15117';
+src: url('/assets/retailfonts/CyCurly/CyCurly-Bold.woff2?15092') format('woff2'),
+url('/assets/retailfonts/CyCurly/CyCurly-Bold.woff?15093') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/cy-curly" style="font-family: 'Cy Curly Bold 15117', 'Realist';">
+Cy Curly
+</a>
+<css
+v-cloak>
+@font-face {
+font-family: 'Cy Mono Bold 13131';
+src: url('/assets/retailfonts/CyMono/CyMono-Bold.woff2?13022') format('woff2'),
+url('/assets/retailfonts/CyMono/CyMono-Bold.woff?13021') format('woff');
+font-weight: 700;
+font-style: normal;
+}
+</css><a
+class="c-footer__button" href="https://supertype.de/fonts/cy-mono" style="font-family: 'Cy Mono Bold 13131', 'Realist';">
+Cy Mono
+</a></div></div></div></div></div></footer></div> <script>var gaProperty='UA-125243438-1';var disableStr='ga-disable-'+gaProperty;if(document.cookie.indexOf(disableStr+'=true')>-1){window[disableStr]=true;}
+function gaOptout(){document.cookie=disableStr+'=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';window[disableStr]=true;alert('Das Tracking durch Google Analytics wurde in Ihrem Browser für diese Website deaktiviert.');}
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create',gaProperty,'auto');ga('set','anonymizeIp',true);ga('send','pageview');</script> <script defer src="/assets/js/app.f46bc8e355f21f38a7a3.js"></script> </body></html>

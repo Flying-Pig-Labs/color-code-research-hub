@@ -1,0 +1,16 @@
+{
+  "default": [
+    {
+      "key": "project/analysis",
+      "value": "{\"agent-team-composer\": {\"type\": \"web-based-tool\", \"purpose\": \"transform-readme-to-github-project-plan\", \"tech-stack\": [\"React\", \"TypeScript\", \"Vite\", \"Express\", \"Claude-AI\"], \"workflow\": [\"parse-readme\", \"generate-phases\", \"create-epics\", \"format-issues\", \"push-to-github\"], \"key-features\": [\"5-step-wizard\", \"ai-powered-generation\", \"github-integration\", \"sparc-formatting\"]}}",
+      "namespace": "default",
+      "timestamp": 1753310824049
+    },
+    {
+      "key": "design/approach",
+      "value": "{\"tabs\": [\"RESEARCH\", \"PLAN\", \"BUILD\"], \"plan-tab-features\": [\"list-github-repos\", \"select-repo\", \"display-milestones\", \"interactive-selection\", \"run-cli\", \"show-progress\", \"display-results\"], \"integration\": \"add-new-route-/plan\", \"components-needed\": [\"PlanTab\", \"RepoSelector\", \"MilestoneDisplay\", \"ProgressTracker\", \"ResultsView\"], \"backend-needs\": [\"github-repos-lambda\", \"run-cli-lambda\", \"progress-websocket\"]}",
+      "namespace": "default",
+      "timestamp": 1753310859651
+    }
+  ]
+}

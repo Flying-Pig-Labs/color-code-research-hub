@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cy font for titles/headings, IBM Plex Mono for body text */
+
+/* Definition of the sophisticated design system - Swiss design principles
+Typography-focused with clean lines and minimal color palette.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Sophisticated Color System - Clean whites with charcoal/navy + light brown accent */
+    --background: 0 0% 100%;  /* Pure white background for maximum clarity */
+    --foreground: 220 15% 15%;  /* Deep charcoal text */
+
+    --card: 0 0% 100%;  /* Clean white cards */
+    --card-foreground: 220 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+
+    --primary: 220 25% 25%;  /* Sophisticated charcoal primary */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 96%;  /* Subtle gray secondary */
+    --secondary-foreground: 220 15% 15%;
+
+    --muted: 220 10% 95%;  /* Very light gray for muted elements */
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 30 40% 60%;  /* Light brown accent - warm and sophisticated */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 10% 90%;  /* Subtle gray borders */
+    --input: 220 10% 96%;   /* Light input backgrounds */
+    --ring: 30 40% 60%;   /* Light brown focus rings */
+
+    --radius: 0.5rem;  /* Slightly smaller radius for cleaner look */
+
+    /* Sophisticated accent variations */
+    --light-brown: 30 40% 60%;
+    --light-brown-light: 30 40% 90%;
+    --light-brown-dark: 30 40% 45%;
+
+    /* Refined team colors - more subtle but still distinct */
+    --red-team: 0 65% 50%;  /* Refined red */
+    --red-team-light: 0 65% 96%;
+    --red-team-dark: 0 65% 40%;
+    
+    --black-team: 220 25% 25%;  /* Uses our sophisticated charcoal */
+    --black-team-light: 220 25% 95%;
+    --black-team-dark: 220 25% 15%;
+    
+    --white-team: 45 15% 50%;  /* Warm gray for white team */
+    --white-team-light: 45 15% 96%;
+    --white-team-dark: 45 15% 35%;
+
+    /* Minimal gradients - only for subtle depth */
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 10% 98%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(30 40% 60%) 0%, hsl(30 45% 65%) 100%);
+    
+    /* Clean shadows - Swiss design inspired */
+    --shadow-subtle: 0 1px 3px 0 hsl(220 15% 15% / 0.08);
+    --shadow-card: 0 4px 12px -2px hsl(220 15% 15% / 0.08);
+    --shadow-elevated: 0 8px 24px -4px hsl(220 15% 15% / 0.12);
+
+    /* Smooth, invisible transitions */
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-gentle: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    /* Typography scale - Cy for headings, IBM Plex Mono for body */
+    --font-heading: 'Cy', 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
+    --font-body: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
+
+    /* Sidebar (keep existing functionality) */
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 220 15% 15%;
+    --sidebar-primary: 220 25% 25%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 220 10% 95%;
+    --sidebar-accent-foreground: 220 25% 25%;
+    --sidebar-border: 220 10% 90%;
+    --sidebar-ring: 30 40% 60%;
+  }
+
+  .dark {
+    /* Sophisticated dark mode - deep navy with light brown accents */
+    --background: 220 25% 8%;
+    --foreground: 0 0% 95%;
+
+    --card: 220 25% 10%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 220 25% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 95%;
+    --primary-foreground: 220 25% 8%;
+
+    --secondary: 220 20% 15%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 220 15% 12%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 30 45% 65%;  /* Slightly lighter brown in dark mode */
+    --accent-foreground: 220 25% 8%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 20% 18%;
+    --input: 220 20% 15%;
+    --ring: 30 45% 65%;
+
+    /* Dark mode shadows */
+    --shadow-subtle: 0 1px 3px 0 hsl(220 25% 5% / 0.3);
+    --shadow-card: 0 4px 12px -2px hsl(220 25% 5% / 0.4);
+    --shadow-elevated: 0 8px 24px -4px hsl(220 25% 5% / 0.5);
+
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 30 45% 65%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 220 20% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 30 45% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Typography hierarchy using Cy font for headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 1.875rem;
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+}
+
+/* Subtle lift animation for cards - Swiss design inspired */
+@keyframes gentle-lift {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-card);
+  }
+  100% {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+  }
+}
+
+.animate-gentle-lift {
+  animation: gentle-lift 0.2s ease-out forwards;
+}
+
+/* Remove the old wave animation but keep similar effect for landing page if needed */
+@keyframes subtle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float {
+  animation: subtle-float 4s ease-in-out infinite;
+}

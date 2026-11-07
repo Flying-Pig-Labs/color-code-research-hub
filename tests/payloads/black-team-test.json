@@ -1,0 +1,46 @@
+{
+  "repository": "Flying-Pig-Labs/ci-black-p7j2n",
+  "branch": "main", 
+  "researchConfig": {
+    "teamType": "black",
+    "researchSpecs": {
+      "toolCategories": [
+        "Analytics & Monitoring",
+        "Customer Support",
+        "Data Management"
+      ],
+      "informationSources": {
+        "Public Documentation": true,
+        "User Reviews": true,
+        "Competitor Analysis": false,
+        "Technical Specs": true,
+        "Pricing Information": true,
+        "User Interviews": false,
+        "Market Research": true,
+        "Industry Reports": true
+      },
+      "implementationComplexity": "medium",
+      "teamSizeConstraint": "medium",
+      "techStackPreference": [
+        "React/Next.js",
+        "Node.js",
+        "Python",
+        "Cloud Native"
+      ],
+      "costComparisonBaseline": "current_tool",
+      "customCostThreshold": null,
+      "evidenceThreshold": 3,
+      "existingTools": [
+        "Salesforce Analytics",
+        "Zendesk",
+        "Tableau",
+        "New Relic"
+      ],
+      "timeToMarket": "medium"
+    },
+    "metadata": {
+      "timestamp": "2024-01-20T15:30:00.000Z",
+      "client": "CarMax"
+    }
+  }
+}
